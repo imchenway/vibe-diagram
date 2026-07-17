@@ -25,7 +25,7 @@ The repository-root `plugins/vibe-diagram/` tree is the builder-only generated p
 
 The public repository is <https://github.com/imchenway/vibe-diagram>. Its two public Codex source structures are the repo marketplace backed by `.agents/plugins/marketplace.json` and the GitHub skill path backed by `skills/vibe-diagram/`.
 
-GitHub installation is scoped to the pinned RC `v0.1.0-rc.1`. GitHub runtime validation remains `Unverified` until the real-client checks in the compatibility ledger are completed; these instructions are not a stable-release or aggregate compatibility claim.
+GitHub installation is scoped to the pinned RC `v0.1.0-rc.1`. GitHub runtime validation is scoped to the App-bundled Codex runtime: the repo marketplace and GitHub skill path each passed install, discovery, invocation, HTML delivery, and uninstall checks. Upgrade, Codex App UI, Linux, and Windows remain `Unverified`; these instructions are not a stable-release or aggregate compatibility claim.
 
 ### Codex App plugin
 
@@ -98,9 +98,9 @@ These layouts are static package definitions. They do not constitute installatio
 
 The compatibility ledger is [docs/compatibility.md](docs/compatibility.md). A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. It does not prove the complete unit suite, the two-build deterministic check, transaction failure matrix, static evidence recomputation, or the second complete suite. Those process gates require separate execution evidence. Current artifact hash bindings are recorded in `docs/static-validation.json`; that file does not prove the process gates either.
 
-Client runtime validation remains `Unverified` for all four client families at the aggregate compatibility level. A scoped local-repository Marketplace observation now covers install, discovery, invocation, and HTML delivery through the Codex App-bundled runtime; it does not cover the App UI, a GitHub source, upgrade, or uninstall. The evidence is recorded in `docs/runtime/macos-codex-app-local-marketplace.json`.
+Client runtime validation remains `Unverified` for all four client families at the aggregate compatibility level. The historical local-repository Marketplace observation is recorded in `docs/runtime/macos-codex-app-local-marketplace.json`. The pinned GitHub repo marketplace and GitHub skill path were separately installed, discovered, invoked, used to deliver linted HTML, and uninstalled through the Codex App-bundled runtime; the recomputable evidence is recorded in `docs/runtime/macos-codex-app-github-sources.json`. This does not cover upgrade or Codex App UI confirmation.
 
-The Codex stable gate is 2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24 independent real-client evidence units. 4 local real-client evidence units have passed and 20 real-client evidence units remain unexecuted, so this release-candidate snapshot cannot be promoted to stable. Linux and Windows remain `Unverified`. macOS browser sequence interaction is tracked separately and is not client-runtime evidence.
+The Codex stable gate is 2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24 independent real-client evidence units. 10 GitHub-source real-client evidence units have passed and 14 real-client evidence units remain unexecuted, so this release-candidate snapshot cannot be promoted to stable. Linux and Windows remain `Unverified`. macOS browser sequence interaction is tracked separately and is not client-runtime evidence.
 
 ## License
 

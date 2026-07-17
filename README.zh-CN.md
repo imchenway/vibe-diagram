@@ -25,7 +25,7 @@
 
 公开仓库是 <https://github.com/imchenway/vibe-diagram>。两种 Codex 公开来源结构分别是由 `.agents/plugins/marketplace.json` 支持的 repo marketplace，以及由 `skills/vibe-diagram/` 支持的 GitHub skill 路径。
 
-GitHub 安装仅面向固定 RC 标签 `v0.1.0-rc.1`。GitHub 运行时验证仍为 `Unverified`，直到兼容性账本中的真实客户端检查完成；以下说明不代表稳定版或聚合兼容性结论。
+GitHub 安装仅面向固定 RC 标签 `v0.1.0-rc.1`。GitHub 运行时验证仅覆盖 App 内置 Codex 运行时：repo marketplace 与 GitHub skill 路径分别通过安装、发现、调用、HTML 交付和卸载检查。升级、Codex App UI、Linux 与 Windows 仍为 `Unverified`；以下说明不代表稳定版或聚合兼容性结论。
 
 ### Codex App 插件
 
@@ -87,9 +87,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --sync-publication
 
 兼容性账本见 [docs/compatibility.md](docs/compatibility.md)。构建报告中的 `static_validation: passed` 属于 package-static-valid，仅表示 builder production preflight 已通过。它不能证明完整 unit suite、two-build deterministic check、transaction failure matrix、static evidence 重算或第二轮完整 suite；这些流程门禁需要另行执行并留存证据。`docs/static-validation.json` 只记录当前工件 hash 绑定，同样不能证明上述流程门禁。
 
-四端聚合兼容性层面的运行时验证仍为 `Unverified`。当前新增一份 scoped 本地仓库 Marketplace 证据，覆盖 Codex App 内置运行时的安装、发现、调用和 HTML 交付；它不覆盖 App UI、GitHub 来源、升级或卸载。证据记录在 `docs/runtime/macos-codex-app-local-marketplace.json`。
+四端聚合兼容性层面的运行时验证仍为 `Unverified`。历史本地仓库 Marketplace 观测记录在 `docs/runtime/macos-codex-app-local-marketplace.json`。固定 GitHub repo marketplace 与 GitHub skill 路径已分别通过 App 内置 Codex 运行时完成安装、发现、调用、lint 后 HTML 交付和卸载；可重算证据记录在 `docs/runtime/macos-codex-app-github-sources.json`。该证据不覆盖升级或 Codex App UI 确认。
 
-Codex 稳定版门禁是 2 种安装入口 x 2 个 macOS 客户端表面 x 6 个生命周期动作 = 24 个相互独立的真实客户端证据单元。4 个本地真实客户端证据单元已通过，20 个真实客户端证据单元仍未执行，因此当前 release-candidate snapshot 不能提升为稳定版。Linux 与 Windows 仍为 `Unverified`。macOS 浏览器时序交互单独记录，不是客户端运行时证据。
+Codex 稳定版门禁是 2 种安装入口 x 2 个 macOS 客户端表面 x 6 个生命周期动作 = 24 个相互独立的真实客户端证据单元。10 个 GitHub 来源真实客户端证据单元已通过，14 个真实客户端证据单元仍未执行，因此当前 release-candidate snapshot 不能提升为稳定版。Linux 与 Windows 仍为 `Unverified`。macOS 浏览器时序交互单独记录，不是客户端运行时证据。
 
 ## 许可
 

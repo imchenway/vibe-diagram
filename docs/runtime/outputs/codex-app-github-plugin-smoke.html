@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Codex App GitHub 插件 smoke 交付验收</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #102033;
+      --muted: #5a6c80;
+      --paper: #fbfdff;
+      --panel: rgba(255, 255, 255, 0.94);
+      --line: #8db3d8;
+      --blue: #1f6fb2;
+      --blue-soft: #e8f3ff;
+      --green: #17785a;
+      --green-soft: #e9f8f2;
+      --amber: #986506;
+      --amber-soft: #fff6de;
+      --red: #a63a3a;
+      --red-soft: #fff0f0;
+      --violet: #6254ad;
+      --violet-soft: #f1efff;
+      --shadow: 0 18px 48px rgba(20, 57, 92, 0.10);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(214, 233, 255, 0.82), transparent 30rem),
+        radial-gradient(circle at 88% 4%, rgba(228, 246, 239, 0.78), transparent 28rem),
+        linear-gradient(rgba(93, 133, 173, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93, 133, 173, 0.045) 1px, transparent 1px),
+        linear-gradient(180deg, #ffffff 0%, #f7fbff 56%, #fbfdff 100%);
+      background-size: auto, auto, 28px 28px, 28px 28px, auto;
+      overflow-x: clip;
+    }
+
+    main {
+      width: min(1320px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: clamp(28px, 5vw, 64px) 0 48px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 920px;
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4.8vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+    }
+
+    .summary {
+      max-width: 900px;
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.7vw, 18px);
+      line-height: 1.75;
+    }
+
+    code {
+      padding: 0.12em 0.36em;
+      border: 1px solid rgba(31, 111, 178, 0.18);
+      border-radius: 6px;
+      color: #163e63;
+      background: rgba(232, 243, 255, 0.72);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.9em;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .template-layout {
+      min-height: 360px;
+      padding: 18px;
+      border: 1px solid rgba(141, 179, 216, 0.50);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.80);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .acceptance-ledger {
+      display: grid;
+      grid-template-rows: auto repeat(8, auto);
+      gap: 12px;
+    }
+
+    .boundary,
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 0.92fr 1.22fr 1.52fr 0.76fr 0.98fr;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid rgba(141, 179, 216, 0.42);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.66);
+    }
+
+    .ledger-head {
+      position: sticky;
+      top: 8px;
+      z-index: 2;
+      border-color: rgba(31, 111, 178, 0.36);
+      background: rgba(242, 248, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(20, 57, 92, 0.08);
+    }
+
+    .slot {
+      display: grid;
+      grid-template-rows: auto auto;
+      align-content: center;
+      justify-items: start;
+      gap: 7px;
+      min-width: 0;
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid rgba(141, 179, 216, 0.58);
+      border-radius: 16px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.95);
+      overflow-wrap: anywhere;
+    }
+
+    .ledger-head .slot {
+      min-height: 58px;
+      padding: 11px 13px;
+    }
+
+    .slot b {
+      display: block;
+      max-width: 100%;
+      font-size: 13px;
+      line-height: 1.38;
+    }
+
+    .slot > span {
+      display: block;
+      max-width: 100%;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.58;
+    }
+
+    .core {
+      border-color: rgba(31, 111, 178, 0.56);
+      background: linear-gradient(180deg, #ffffff, var(--blue-soft));
+    }
+
+    .support {
+      border-color: rgba(98, 84, 173, 0.45);
+      background: linear-gradient(180deg, #ffffff, var(--violet-soft));
+    }
+
+    .data {
+      border-color: rgba(23, 120, 90, 0.45);
+      background: linear-gradient(180deg, #ffffff, var(--green-soft));
+    }
+
+    .risk {
+      border-color: rgba(166, 58, 58, 0.42);
+      background: linear-gradient(180deg, #ffffff, var(--red-soft));
+    }
+
+    .ops {
+      border-color: rgba(152, 101, 6, 0.42);
+      background: linear-gradient(180deg, #ffffff, var(--amber-soft));
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .status-observed {
+      color: var(--green);
+      background: var(--green-soft);
+      border: 1px solid rgba(23, 120, 90, 0.28);
+    }
+
+    .status-unverified {
+      color: var(--red);
+      background: var(--red-soft);
+      border: 1px solid rgba(166, 58, 58, 0.28);
+    }
+
+    .notes {
+      margin-top: 22px;
+      padding: 20px;
+      border: 1px solid rgba(141, 179, 216, 0.48);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 12px 32px rgba(20, 57, 92, 0.07);
+    }
+
+    .notes h2 {
+      margin: 0;
+      font-size: clamp(18px, 2.2vw, 24px);
+      letter-spacing: -0.02em;
+    }
+
+    .notes p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .note-card {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      min-height: 118px;
+      padding: 15px;
+      border: 1px solid rgba(166, 58, 58, 0.28);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, var(--red-soft));
+    }
+
+    .note-card strong {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .note-card span:last-child {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .ledger-head {
+        display: none;
+      }
+
+      .acceptance-ledger {
+        grid-template-rows: auto;
+      }
+
+      .ledger-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ledger-row .slot::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+
+      .ledger-row .slot:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .notes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        width: min(100vw - 20px, 600px);
+        padding-top: 24px;
+      }
+
+      .template-layout {
+        padding: 10px;
+        border-radius: 18px;
+      }
+
+      .ledger-row {
+        grid-template-columns: 1fr;
+        padding: 8px;
+      }
+
+      .ledger-row .slot:last-child {
+        grid-column: auto;
+      }
+
+      .slot {
+        min-height: 0;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        width: 100%;
+        padding: 0;
+      }
+
+      .template-layout,
+      .notes {
+        box-shadow: none;
+        background: #ffffff;
+      }
+
+      .ledger-head {
+        position: static;
+        display: grid;
+        box-shadow: none;
+      }
+
+      .ledger-row,
+      .note-card {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+<main data-diagram-type="delivery-acceptance"
+      data-template-family="delivery-acceptance"
+      data-template-id="acceptance-ledger"
+      data-template-layout="acceptance-ledger">
+  <p class="eyebrow">Delivery acceptance · GitHub plugin smoke</p>
+  <h1 data-slot="title">Codex App GitHub 插件 smoke 交付验收</h1>
+  <p class="summary" data-slot="summary">本账本只呈现本次已观测的 Marketplace、插件版本与状态、版本来源一致性，以及新执行中的 skill 发现和调用事实；没有对应观测证据的项目保持 <strong>Unverified</strong>。</p>
+
+  <section class="template-layout acceptance-ledger" aria-label="Codex App GitHub 插件 smoke 验收账本">
+    <div class="ledger-head boundary" role="row">
+      <div class="slot support" data-slot="ledger-head-1" role="columnheader"><b>验收项</b><span>独立检查边界</span></div>
+      <div class="slot data" data-slot="ledger-head-2" role="columnheader"><b>观测入口</b><span>已执行命令或运行环节</span></div>
+      <div class="slot risk" data-slot="ledger-head-3" role="columnheader"><b>证据</b><span>本次已观测结果</span></div>
+      <div class="slot ops" data-slot="ledger-head-4" role="columnheader"><b>判定</b><span>不跨边界外推</span></div>
+      <div class="slot" data-slot="ledger-head-5" role="columnheader"><b>边界</b><span>该行未证明的事项</span></div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r1-req" data-label="验收项" role="cell">
+        <b>R1 · 添加 Marketplace</b>
+        <span>App 内置 Codex 从 GitHub 标签添加 Marketplace。</span>
+      </div>
+      <div class="slot support" data-slot="r1-change" data-label="观测入口" role="cell">
+        <b><code>https://github.com/imchenway/vibe-diagram.git</code></b>
+        <span>目标标签 <code>v0.1.0-rc.1</code>。</span>
+      </div>
+      <div class="slot data" data-slot="r1-evidence" data-label="证据" role="cell">
+        <b>添加成功</b>
+        <span>Marketplace 名称为 <code>imchenway</code>。</span>
+      </div>
+      <div class="slot ops" data-slot="r1-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅判定本次添加结果。</span>
+      </div>
+      <div class="slot risk" data-slot="r1-action" data-label="边界" role="cell">
+        <b>不代表独立 skill 路径安装</b>
+        <span>该路径另列为 Unverified。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r2-req" data-label="验收项" role="cell">
+        <b>R2 · 添加插件</b>
+        <span>通过 Marketplace 名称添加插件。</span>
+      </div>
+      <div class="slot support" data-slot="r2-change" data-label="观测入口" role="cell">
+        <b><code>codex plugin add vibe-diagram@imchenway --json</code></b>
+        <span>记录 JSON 命令结果。</span>
+      </div>
+      <div class="slot data" data-slot="r2-evidence" data-label="证据" role="cell">
+        <b>命令成功</b>
+        <span>插件版本为 <code>0.1.0-rc.1</code>。</span>
+      </div>
+      <div class="slot ops" data-slot="r2-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅覆盖该版本的添加结果。</span>
+      </div>
+      <div class="slot risk" data-slot="r2-action" data-label="边界" role="cell">
+        <b>不代表升级已验证</b>
+        <span>升级另列为 Unverified。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r3-req" data-label="验收项" role="cell">
+        <b>R3 · 标签来源一致性</b>
+        <span>Marketplace clone 的 HEAD 与目标标签精确一致。</span>
+      </div>
+      <div class="slot support" data-slot="r3-change" data-label="观测入口" role="cell">
+        <b>Marketplace clone</b>
+        <span>比对 HEAD 与 <code>v0.1.0-rc.1</code>。</span>
+      </div>
+      <div class="slot data" data-slot="r3-evidence" data-label="证据" role="cell">
+        <b><code>31dff0c170ef33ae779890330d58cf689a6b95e7</code></b>
+        <span>HEAD 精确匹配 <code>v0.1.0-rc.1</code>。</span>
+      </div>
+      <div class="slot ops" data-slot="r3-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅判定该 clone 的版本来源。</span>
+      </div>
+      <div class="slot risk" data-slot="r3-action" data-label="边界" role="cell">
+        <b>不代表升级链路</b>
+        <span>没有升级观测证据。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r4-req" data-label="验收项" role="cell">
+        <b>R4 · 插件列表状态</b>
+        <span>App 内置 Codex 报告安装、启用和来源类型。</span>
+      </div>
+      <div class="slot support" data-slot="r4-change" data-label="观测入口" role="cell">
+        <b><code>plugin list --json</code></b>
+        <span>查看 App 内置 Codex 的 JSON 列表。</span>
+      </div>
+      <div class="slot data" data-slot="r4-evidence" data-label="证据" role="cell">
+        <b><code>installed: true</code> · <code>enabled: true</code></b>
+        <span>Marketplace 来源类型为 <code>git</code>。</span>
+      </div>
+      <div class="slot ops" data-slot="r4-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅覆盖列表返回的状态。</span>
+      </div>
+      <div class="slot risk" data-slot="r4-action" data-label="边界" role="cell">
+        <b>不代表 App UI 已确认</b>
+        <span>UI 确认另列为 Unverified。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r5-req" data-label="验收项" role="cell">
+        <b>R5 · 新执行发现并调用 skill</b>
+        <span>本次新执行实际使用注入的 skill。</span>
+      </div>
+      <div class="slot support" data-slot="r5-change" data-label="观测入口" role="cell">
+        <b>当前 Codex 执行</b>
+        <span>读取 skill 入口并按其 delivery-acceptance 路由生成本页。</span>
+      </div>
+      <div class="slot data" data-slot="r5-evidence" data-label="证据" role="cell">
+        <b><code>vibe-diagram:vibe-diagram</code></b>
+        <span><code>&lt;codex-home&gt;/plugins/cache/imchenway/vibe-diagram/0.1.0-rc.1/skills/vibe-diagram/SKILL.md</code></span>
+      </div>
+      <div class="slot ops" data-slot="r5-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>标识已在本次执行中实际调用。</span>
+      </div>
+      <div class="slot risk" data-slot="r5-action" data-label="边界" role="cell">
+        <b>不外推其他执行</b>
+        <span>该判定只覆盖本次新执行。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r6-req" data-label="验收项" role="cell">
+        <b>R6 · GitHub skill 路径独立安装</b>
+        <span>独立于插件 Marketplace 的 skill 安装路径。</span>
+      </div>
+      <div class="slot support" data-slot="r6-change" data-label="观测入口" role="cell">
+        <b>本次未观测</b>
+        <span>没有独立安装结果。</span>
+      </div>
+      <div class="slot data" data-slot="r6-evidence" data-label="证据" role="cell">
+        <b>无对应证据</b>
+        <span>不得并入插件添加的通过结论。</span>
+      </div>
+      <div class="slot ops" data-slot="r6-decision" data-label="判定" role="cell">
+        <b><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span></b>
+        <span>没有完成判定。</span>
+      </div>
+      <div class="slot risk" data-slot="r6-action" data-label="边界" role="cell">
+        <b>保持未验证</b>
+        <span>不得写成已完成。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r7-req" data-label="验收项" role="cell">
+        <b>R7 · 升级</b>
+        <span>已安装插件的版本升级。</span>
+      </div>
+      <div class="slot support" data-slot="r7-change" data-label="观测入口" role="cell">
+        <b>本次未观测</b>
+        <span>没有升级执行结果。</span>
+      </div>
+      <div class="slot data" data-slot="r7-evidence" data-label="证据" role="cell">
+        <b>无对应证据</b>
+        <span>添加成功不等同于升级成功。</span>
+      </div>
+      <div class="slot ops" data-slot="r7-decision" data-label="判定" role="cell">
+        <b><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span></b>
+        <span>没有完成判定。</span>
+      </div>
+      <div class="slot risk" data-slot="r7-action" data-label="边界" role="cell">
+        <b>保持未验证</b>
+        <span>不得写成已完成。</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r8-req" data-label="验收项" role="cell">
+        <b>R8 · Codex App UI 确认</b>
+        <span>通过 App 图形界面确认插件状态。</span>
+      </div>
+      <div class="slot support" data-slot="r8-change" data-label="观测入口" role="cell">
+        <b>本次未观测</b>
+        <span>没有 UI 确认结果。</span>
+      </div>
+      <div class="slot data" data-slot="r8-evidence" data-label="证据" role="cell">
+        <b>无对应证据</b>
+        <span><code>plugin list --json</code> 不等同于 UI 确认。</span>
+      </div>
+      <div class="slot ops" data-slot="r8-decision" data-label="判定" role="cell">
+        <b><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span></b>
+        <span>没有完成判定。</span>
+      </div>
+      <div class="slot risk" data-slot="r8-action" data-label="边界" role="cell">
+        <b>保持未验证</b>
+        <span>不得写成已完成。</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes" data-slot="evidence-and-notes" aria-labelledby="unverified-title">
+    <h2 id="unverified-title">未验证边界</h2>
+    <p>以下三项没有被本次已观测事实覆盖，因此不进入通过结论。</p>
+    <div class="notes-grid">
+      <div class="note-card"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>GitHub skill 路径独立安装</strong><span>没有独立安装证据。</span></div>
+      <div class="note-card"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>升级</strong><span>没有升级执行证据。</span></div>
+      <div class="note-card"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>Codex App UI 确认</strong><span>没有 UI 确认证据。</span></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

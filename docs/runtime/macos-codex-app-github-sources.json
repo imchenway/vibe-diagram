@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "scope": "macos-codex-app-github-sources",
+  "observed_at_utc": "2026-07-17T04:51:05Z",
+  "client": {
+    "os": "macOS",
+    "application": "Codex",
+    "bundle_id": "com.openai.codex",
+    "app_version": "26.715.21425",
+    "app_build": "5488",
+    "bundled_codex_version": "0.145.0-alpha.18",
+    "surface": "app-bundled-codex-runtime"
+  },
+  "release": {
+    "repository": "https://github.com/imchenway/vibe-diagram",
+    "tag": "v0.1.0-rc.1",
+    "commit": "31dff0c170ef33ae779890330d58cf689a6b95e7",
+    "main_actions": "success",
+    "tag_actions": "success"
+  },
+  "installations": {
+    "github_marketplace_plugin": {
+      "entry": "repo-marketplace",
+      "source_url": "https://github.com/imchenway/vibe-diagram.git",
+      "ref": "v0.1.0-rc.1",
+      "installed_path": "<codex-home>/plugins/cache/imchenway/vibe-diagram/0.1.0-rc.1",
+      "source_tree_sha256": "f55793ab7b19d140a4c52d65d090995dfcc15a4c756ba32eb81ac6efbe9005e4",
+      "installed_tree_sha256": "f55793ab7b19d140a4c52d65d090995dfcc15a4c756ba32eb81ac6efbe9005e4",
+      "lifecycle": {
+        "install": {
+          "status": "passed",
+          "evidence": "The App-bundled Codex added imchenway/vibe-diagram at v0.1.0-rc.1, installed vibe-diagram@imchenway 0.1.0-rc.1, and reported the marketplace source type as git"
+        },
+        "discovery": {
+          "status": "passed",
+          "evidence": "A new App-bundled codex exec context discovered the injected skill as vibe-diagram:vibe-diagram"
+        },
+        "invocation": {
+          "status": "passed",
+          "evidence": "The new App-bundled codex exec context invoked vibe-diagram:vibe-diagram and exited with code 0"
+        },
+        "html_delivery": {
+          "status": "passed",
+          "evidence": "The GitHub plugin smoke HTML was created, the delivery-acceptance linter returned OK, and the remote/private-path scan found no matches"
+        },
+        "upgrade": {
+          "status": "unverified",
+          "evidence": "not executed"
+        },
+        "uninstall": {
+          "status": "passed",
+          "evidence": "The App-bundled Codex removed the exact plugin and marketplace, subsequent JSON lists contained no matching entry, and the pinned plugin was then reinstalled as the final usable state"
+        }
+      },
+      "artifacts": {
+        "request_path": "docs/runtime/fixtures/codex-app-github-plugin-request.md",
+        "request_sha256": "6a4c147b515b9501e91bf9c04bc060cf690fe39510418da7753179719e54ee39",
+        "html_path": "docs/runtime/outputs/codex-app-github-plugin-smoke.html",
+        "html_sha256": "dedcebdd8b09cec29559574d89e732106df02a50e2a23b468ebac4539eb0aad5",
+        "actual_skill_id": "vibe-diagram:vibe-diagram",
+        "linter": "passed",
+        "remote_resource_scan": "passed"
+      }
+    },
+    "github_skill_path": {
+      "entry": "github-skill-path",
+      "source_url": "https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.1/skills/vibe-diagram",
+      "ref": "v0.1.0-rc.1",
+      "installed_path": "<codex-home>/skills/vibe-diagram",
+      "source_tree_sha256": "f783c7e629144aebee7ca9eb45e1840a11da809ce3c26036f8afb588e066bf97",
+      "installed_tree_sha256": "f783c7e629144aebee7ca9eb45e1840a11da809ce3c26036f8afb588e066bf97",
+      "lifecycle": {
+        "install": {
+          "status": "passed",
+          "evidence": "The system skill-installer installed the pinned GitHub tree to <codex-home>/skills/vibe-diagram without replacing an existing skill"
+        },
+        "discovery": {
+          "status": "passed",
+          "evidence": "A new App-bundled codex exec context discovered the native skill as vibe-diagram"
+        },
+        "invocation": {
+          "status": "passed",
+          "evidence": "The new App-bundled codex exec context invoked the native vibe-diagram skill and exited with code 0"
+        },
+        "html_delivery": {
+          "status": "passed",
+          "evidence": "The GitHub skill smoke HTML was created, the delivery-acceptance linter returned OK, and the remote/private-path scan found no matches"
+        },
+        "upgrade": {
+          "status": "unverified",
+          "evidence": "not executed"
+        },
+        "uninstall": {
+          "status": "passed",
+          "evidence": "The exact native skill directory was moved into the macOS Trash after verification so it remains recoverable and does not duplicate the final plugin installation"
+        }
+      },
+      "artifacts": {
+        "request_path": "docs/runtime/fixtures/codex-app-github-skill-request.md",
+        "request_sha256": "94c6e2bf87fae5549ce1e1acff2910d246de995df5d0d9733bb217ec982db23e",
+        "html_path": "docs/runtime/outputs/codex-app-github-skill-smoke.html",
+        "html_sha256": "cfaeda23cef02ed28a39956be9ad8590284d65316bcb2b6063815a2170e1821c",
+        "actual_skill_id": "vibe-diagram",
+        "linter": "passed",
+        "remote_resource_scan": "passed"
+      }
+    }
+  },
+  "aggregate": {
+    "stable_gate_units": 24,
+    "passed_units": 10,
+    "unexecuted_units": 14,
+    "app_ui_surface": "unverified",
+    "linux": "unverified",
+    "windows": "unverified",
+    "stable_promotion": "blocked"
+  }
+}

@@ -32,6 +32,9 @@ BROWSER_EVIDENCE = ROOT / "docs" / "macos-browser-validation.json"
 LOCAL_CODEX_RUNTIME_EVIDENCE = (
     ROOT / "docs" / "runtime" / "macos-codex-app-local-marketplace.json"
 )
+GITHUB_CODEX_RUNTIME_EVIDENCE = (
+    ROOT / "docs" / "runtime" / "macos-codex-app-github-sources.json"
+)
 CANONICAL = ROOT / "skills" / "vibe-diagram"
 TEMPLATE_ROOT = CANONICAL / "assets" / "templates"
 FIXTURE_ROOT = ROOT / "tests" / "fixtures"
@@ -592,6 +595,164 @@ def _validate_local_codex_runtime_evidence(evidence: object) -> None:
         raise AssertionError("local Codex evidence extrapolates beyond the observed surface")
 
 
+def _validate_github_codex_runtime_evidence(evidence: object) -> None:
+    if not isinstance(evidence, dict) or set(evidence) != {
+        "schema_version",
+        "scope",
+        "observed_at_utc",
+        "client",
+        "release",
+        "installations",
+        "aggregate",
+    }:
+        raise AssertionError("invalid GitHub Codex runtime evidence schema")
+    _require_schema_version(evidence["schema_version"], "GitHub Codex runtime evidence")
+    if evidence["scope"] != "macos-codex-app-github-sources":
+        raise AssertionError("invalid GitHub Codex runtime evidence scope")
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z", evidence["observed_at_utc"]) is None:
+        raise AssertionError("invalid GitHub Codex runtime observation timestamp")
+
+    client = evidence["client"]
+    if not isinstance(client, dict) or set(client) != {
+        "os",
+        "application",
+        "bundle_id",
+        "app_version",
+        "app_build",
+        "bundled_codex_version",
+        "surface",
+    }:
+        raise AssertionError("invalid GitHub Codex client schema")
+    if client["os"] != "macOS" or client["application"] != "Codex":
+        raise AssertionError("invalid GitHub Codex client identity")
+    if client["bundle_id"] != "com.openai.codex":
+        raise AssertionError("invalid GitHub Codex bundle identity")
+    if client["surface"] != "app-bundled-codex-runtime":
+        raise AssertionError("invalid GitHub Codex runtime surface")
+    for key in ("app_version", "app_build", "bundled_codex_version"):
+        if not isinstance(client[key], str) or not client[key].strip():
+            raise AssertionError(f"GitHub Codex {key} must be non-empty")
+
+    if evidence["release"] != {
+        "repository": "https://github.com/imchenway/vibe-diagram",
+        "tag": "v0.1.0-rc.1",
+        "commit": "31dff0c170ef33ae779890330d58cf689a6b95e7",
+        "main_actions": "success",
+        "tag_actions": "success",
+    }:
+        raise AssertionError("invalid GitHub Codex release binding")
+
+    installations = evidence["installations"]
+    if not isinstance(installations, dict) or set(installations) != {
+        "github_marketplace_plugin",
+        "github_skill_path",
+    }:
+        raise AssertionError("invalid GitHub Codex installation entries")
+
+    expected_lifecycle = {
+        "install": "passed",
+        "discovery": "passed",
+        "invocation": "passed",
+        "html_delivery": "passed",
+        "upgrade": "unverified",
+        "uninstall": "passed",
+    }
+    for entry_name, entry in installations.items():
+        if not isinstance(entry, dict) or set(entry) != {
+            "entry",
+            "source_url",
+            "ref",
+            "installed_path",
+            "source_tree_sha256",
+            "installed_tree_sha256",
+            "lifecycle",
+            "artifacts",
+        }:
+            raise AssertionError(f"invalid GitHub Codex installation schema: {entry_name}")
+        lifecycle = entry["lifecycle"]
+        if not isinstance(lifecycle, dict) or set(lifecycle) != set(expected_lifecycle):
+            raise AssertionError(f"invalid GitHub Codex lifecycle schema: {entry_name}")
+        for action, status in expected_lifecycle.items():
+            record = lifecycle[action]
+            if not isinstance(record, dict) or set(record) != {"status", "evidence"}:
+                raise AssertionError(f"invalid GitHub Codex lifecycle record: {entry_name}/{action}")
+            if record["status"] != status:
+                raise AssertionError(f"invalid GitHub Codex lifecycle status: {entry_name}/{action}")
+            if not isinstance(record["evidence"], str) or not record["evidence"].strip():
+                raise AssertionError(f"missing GitHub Codex lifecycle evidence: {entry_name}/{action}")
+
+    plugin = installations["github_marketplace_plugin"]
+    if plugin["entry"] != "repo-marketplace":
+        raise AssertionError("invalid GitHub marketplace entry")
+    if plugin["source_url"] != "https://github.com/imchenway/vibe-diagram.git":
+        raise AssertionError("invalid GitHub marketplace source")
+    if plugin["ref"] != "v0.1.0-rc.1":
+        raise AssertionError("invalid GitHub marketplace ref")
+    if plugin["installed_path"] != "<codex-home>/plugins/cache/imchenway/vibe-diagram/0.1.0-rc.1":
+        raise AssertionError("invalid GitHub marketplace installed path")
+    plugin_hash = tree_record(ROOT / "plugins" / "vibe-diagram").tree_sha256
+    if plugin["source_tree_sha256"] != plugin_hash or plugin["installed_tree_sha256"] != plugin_hash:
+        raise AssertionError("GitHub marketplace plugin tree hash is stale")
+
+    skill = installations["github_skill_path"]
+    if skill["entry"] != "github-skill-path":
+        raise AssertionError("invalid GitHub skill entry")
+    if skill["source_url"] != "https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.1/skills/vibe-diagram":
+        raise AssertionError("invalid GitHub skill source")
+    if skill["ref"] != "v0.1.0-rc.1":
+        raise AssertionError("invalid GitHub skill ref")
+    if skill["installed_path"] != "<codex-home>/skills/vibe-diagram":
+        raise AssertionError("invalid GitHub skill installed path")
+    canonical_hash = tree_record(CANONICAL).tree_sha256
+    if skill["source_tree_sha256"] != canonical_hash or skill["installed_tree_sha256"] != canonical_hash:
+        raise AssertionError("GitHub skill tree hash is stale")
+
+    expected_artifacts = {
+        "github_marketplace_plugin": {
+            "request_path": "docs/runtime/fixtures/codex-app-github-plugin-request.md",
+            "html_path": "docs/runtime/outputs/codex-app-github-plugin-smoke.html",
+            "actual_skill_id": "vibe-diagram:vibe-diagram",
+        },
+        "github_skill_path": {
+            "request_path": "docs/runtime/fixtures/codex-app-github-skill-request.md",
+            "html_path": "docs/runtime/outputs/codex-app-github-skill-smoke.html",
+            "actual_skill_id": "vibe-diagram",
+        },
+    }
+    for entry_name, paths in expected_artifacts.items():
+        artifacts = installations[entry_name]["artifacts"]
+        if not isinstance(artifacts, dict) or set(artifacts) != {
+            "request_path",
+            "request_sha256",
+            "html_path",
+            "html_sha256",
+            "actual_skill_id",
+            "linter",
+            "remote_resource_scan",
+        }:
+            raise AssertionError(f"invalid GitHub Codex artifacts: {entry_name}")
+        for key, value in paths.items():
+            if artifacts[key] != value:
+                raise AssertionError(f"invalid GitHub Codex artifact binding: {entry_name}/{key}")
+        if artifacts["request_sha256"] != file_sha256(ROOT / artifacts["request_path"]):
+            raise AssertionError(f"stale GitHub Codex request hash: {entry_name}")
+        if artifacts["html_sha256"] != file_sha256(ROOT / artifacts["html_path"]):
+            raise AssertionError(f"stale GitHub Codex HTML hash: {entry_name}")
+        if artifacts["linter"] != "passed" or artifacts["remote_resource_scan"] != "passed":
+            raise AssertionError(f"GitHub Codex HTML checks did not pass: {entry_name}")
+
+    if evidence["aggregate"] != {
+        "stable_gate_units": 24,
+        "passed_units": 10,
+        "unexecuted_units": 14,
+        "app_ui_surface": "unverified",
+        "linux": "unverified",
+        "windows": "unverified",
+        "stable_promotion": "blocked",
+    }:
+        raise AssertionError("GitHub Codex evidence extrapolates beyond the observed surface")
+
+
 class DocumentationContractTests(unittest.TestCase):
     def test_public_document_inventory_and_language_boundary(self) -> None:
         for path in (README, README_ZH, CHANGELOG, COMPATIBILITY, ADR, ADR_MARKETPLACE):
@@ -634,8 +795,8 @@ class DocumentationContractTests(unittest.TestCase):
             "public Codex source structures",
             "GitHub installation is scoped to the pinned RC",
             "2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24",
-            "4 local real-client evidence units have passed",
-            "20 real-client evidence units remain unexecuted",
+            "10 GitHub-source real-client evidence units have passed",
+            "14 real-client evidence units remain unexecuted",
             "Linux and Windows remain `Unverified`",
         )
         english = README.read_text(encoding="utf-8")
@@ -672,8 +833,8 @@ class DocumentationContractTests(unittest.TestCase):
             "两种 Codex 公开来源结构",
             "GitHub 安装仅面向固定 RC 标签",
             "2 种安装入口 x 2 个 macOS 客户端表面 x 6 个生命周期动作 = 24",
-            "4 个本地真实客户端证据单元已通过",
-            "20 个真实客户端证据单元仍未执行",
+            "10 个 GitHub 来源真实客户端证据单元已通过",
+            "14 个真实客户端证据单元仍未执行",
             "Linux 与 Windows 仍为 `Unverified`",
         )
         for value in chinese_required:
@@ -697,8 +858,8 @@ class DocumentationContractTests(unittest.TestCase):
                 self.assertIn(value, english)
             with self.subTest(value=value, document="README.zh-CN.md"):
                 self.assertIn(value, chinese)
-        self.assertIn("GitHub runtime validation remains `Unverified`", english)
-        self.assertIn("GitHub 运行时验证仍为 `Unverified`", chinese)
+        self.assertIn("GitHub runtime validation is scoped to the App-bundled Codex runtime", english)
+        self.assertIn("GitHub 运行时验证仅覆盖 App 内置 Codex 运行时", chinese)
 
     def test_build_report_and_evidence_keep_artifact_and_process_proof_separate(self) -> None:
         english = README.read_text(encoding="utf-8")
@@ -758,8 +919,8 @@ class DocumentationContractTests(unittest.TestCase):
         self.assertEqual(1, text.count("## [Unreleased]"))
         self.assertIn(f"{_version()} release-candidate snapshot", text)
         self.assertIn("builder-only Codex publication projection", text)
-        self.assertIn("4 local real-client evidence units have passed", text)
-        self.assertIn("20 real-client evidence units remain unexecuted", text)
+        self.assertIn("10 GitHub-source real-client evidence units have passed", text)
+        self.assertIn("14 real-client evidence units remain unexecuted", text)
         self.assertIsNone(re.search(r"\b20\d{2}-\d{2}-\d{2}\b", text))
         self.assertNotIn("Release URL", text)
 
@@ -789,15 +950,22 @@ class DocumentationContractTests(unittest.TestCase):
         self.assertIn("--sync-publication", text)
         self.assertIn("--check", text)
         self.assertIn("2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24", text)
-        self.assertIn("4 local real-client evidence units have passed", text)
-        self.assertIn("20 real-client evidence units remain unexecuted", text)
-        self.assertIn("Install = Passed; Discovery = Passed; Invocation = Passed; HTML delivery = Passed", text)
-        self.assertIn("Upgrade = Unverified; Uninstall = Unverified; Codex App UI confirmation = Unverified", text)
+        self.assertIn("10 GitHub-source real-client evidence units have passed", text)
+        self.assertIn("14 real-client evidence units remain unexecuted", text)
+        self.assertIn("GitHub marketplace: Install = Passed; Discovery = Passed; Invocation = Passed; HTML delivery = Passed; Upgrade = Unverified; Uninstall = Passed", text)
+        self.assertIn("GitHub skill path: Install = Passed; Discovery = Passed; Invocation = Passed; HTML delivery = Passed; Upgrade = Unverified; Uninstall = Passed", text)
+        self.assertIn("Codex App UI confirmation = Unverified", text)
 
     def test_local_codex_runtime_evidence_is_scoped_and_recomputable(self) -> None:
         self.assertTrue(LOCAL_CODEX_RUNTIME_EVIDENCE.is_file())
         _validate_local_codex_runtime_evidence(
             _read_evidence(LOCAL_CODEX_RUNTIME_EVIDENCE)
+        )
+
+    def test_github_codex_runtime_evidence_is_scoped_and_recomputable(self) -> None:
+        self.assertTrue(GITHUB_CODEX_RUNTIME_EVIDENCE.is_file())
+        _validate_github_codex_runtime_evidence(
+            _read_evidence(GITHUB_CODEX_RUNTIME_EVIDENCE)
         )
 
     def test_static_package_passed_requires_current_recomputable_evidence(self) -> None:
