@@ -51,8 +51,6 @@ FIXTURES = (
     "sequence-no-js.html",
 )
 PUBLIC_OVERCLAIM_PATTERNS = (
-    r"github\.com/imchenway/vibe-diagram",
-    r"https?://github\.com",
     r"production.ready",
     r"works with all four clients",
     r"officially supported",
@@ -67,7 +65,6 @@ PUBLIC_OVERCLAIM_PATTERNS = (
     r"runtime\s*[:=]?\s*passed",
     r"released on",
     r"https?://[^\s)]*/releases",
-    r"(?m)^[ \t]*(?:codex|npx|pipx|uvx)[ \t]+(?:plugin[ \t]+)?install\b",
     r"/plugin\s+install",
     r"available (?:now )?to install",
     r"现在(?:即可|可以)安装",
@@ -634,8 +631,8 @@ class DocumentationContractTests(unittest.TestCase):
             "builder-only generated projection",
             "only publication write entry point",
             "read-only",
-            "planned public source structures",
-            "not currently usable installation instructions",
+            "public Codex source structures",
+            "GitHub installation is scoped to the pinned RC",
             "2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24",
             "4 local real-client evidence units have passed",
             "20 real-client evidence units remain unexecuted",
@@ -672,8 +669,8 @@ class DocumentationContractTests(unittest.TestCase):
             "builder-only 生成投影",
             "唯一 publication 写入口",
             "只读",
-            "计划中的两种公开来源结构",
-            "不是现在可用的安装命令",
+            "两种 Codex 公开来源结构",
+            "GitHub 安装仅面向固定 RC 标签",
             "2 种安装入口 x 2 个 macOS 客户端表面 x 6 个生命周期动作 = 24",
             "4 个本地真实客户端证据单元已通过",
             "20 个真实客户端证据单元仍未执行",
@@ -682,6 +679,26 @@ class DocumentationContractTests(unittest.TestCase):
         for value in chinese_required:
             with self.subTest(value=value, document="README.zh-CN.md"):
                 self.assertIn(value, chinese)
+
+    def test_readmes_publish_exact_pinned_github_install_and_uninstall_paths(self) -> None:
+        english = README.read_text(encoding="utf-8")
+        chinese = README_ZH.read_text(encoding="utf-8")
+        shared = (
+            "https://github.com/imchenway/vibe-diagram",
+            "codex plugin marketplace add imchenway/vibe-diagram --ref v0.1.0-rc.1",
+            "codex plugin add vibe-diagram@imchenway",
+            "codex plugin remove vibe-diagram@imchenway",
+            "codex plugin marketplace remove imchenway",
+            "https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.1/skills/vibe-diagram",
+            "$skill-installer",
+        )
+        for value in shared:
+            with self.subTest(value=value, document="README.md"):
+                self.assertIn(value, english)
+            with self.subTest(value=value, document="README.zh-CN.md"):
+                self.assertIn(value, chinese)
+        self.assertIn("GitHub runtime validation remains `Unverified`", english)
+        self.assertIn("GitHub 运行时验证仍为 `Unverified`", chinese)
 
     def test_build_report_and_evidence_keep_artifact_and_process_proof_separate(self) -> None:
         english = README.read_text(encoding="utf-8")

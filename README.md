@@ -4,7 +4,7 @@ Chinese overview: [README.zh-CN.md](README.zh-CN.md).
 
 ## What it is
 
-`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. The current Unreleased 0.1.0-rc.1 release-candidate snapshot is a local repository artifact, not a public release or client-runtime compatibility claim.
+`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. The current Unreleased 0.1.0-rc.1 release-candidate snapshot is not a stable release or an aggregate client-runtime compatibility claim.
 
 ## Repository model
 
@@ -19,11 +19,37 @@ Client manifests and overlays live under `adapters/`. Generated outputs are disp
 
 No generated package is a second source of truth.
 
-The repository-root `plugins/vibe-diagram/` tree is a builder-only generated projection for Codex and a candidate for future version-control tracking. It is not canonical and must not be edited by hand. The deterministic repo marketplace catalog is `.agents/plugins/marketplace.json`, which points to `./plugins/vibe-diagram`.
+The repository-root `plugins/vibe-diagram/` tree is the builder-only generated projection included for Codex publication. It is not canonical and must not be edited by hand. The deterministic repo marketplace catalog is `.agents/plugins/marketplace.json`, which points to `./plugins/vibe-diagram`.
 
-## Planned Codex public sources
+## Codex installation
 
-The two planned public source structures are a repo marketplace backed by that catalog and a GitHub skill-path source backed by `skills/vibe-diagram/` at a future stable tag. They describe the repository layout being prepared; they are not currently usable installation instructions. Public installation commands, URLs, and lifecycle instructions require later GitHub publication and real-client validation.
+The public repository is <https://github.com/imchenway/vibe-diagram>. Its two public Codex source structures are the repo marketplace backed by `.agents/plugins/marketplace.json` and the GitHub skill path backed by `skills/vibe-diagram/`.
+
+GitHub installation is scoped to the pinned RC `v0.1.0-rc.1`. GitHub runtime validation remains `Unverified` until the real-client checks in the compatibility ledger are completed; these instructions are not a stable-release or aggregate compatibility claim.
+
+### Codex App plugin
+
+Use the Codex CLI bundled with the macOS Codex App, or another compatible `codex` executable:
+
+```bash
+codex plugin marketplace add imchenway/vibe-diagram --ref v0.1.0-rc.1
+codex plugin add vibe-diagram@imchenway
+```
+
+Start a new Codex task after installation so the new skill catalog is loaded. To uninstall the plugin and repository marketplace:
+
+```bash
+codex plugin remove vibe-diagram@imchenway
+codex plugin marketplace remove imchenway
+```
+
+### GitHub skill path
+
+In a Codex task, ask:
+
+> Use `$skill-installer` to install `https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.1/skills/vibe-diagram`.
+
+Start a new Codex task after the installer completes.
 
 ## Artifact contract
 

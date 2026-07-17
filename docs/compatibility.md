@@ -15,9 +15,9 @@
 
 `docs/static-validation.json` 只绑定当前 artifact、package 与 publication hash；完整 unit suite、two-build deterministic check、transaction failure matrix、evidence recomputation 与 second full suite 是另行执行的流程证据。这些流程不能由 build report 或 evidence JSON 单独证明，也不代表聚合运行时列通过。
 
-已观测的 scoped Codex 证据记录在 `docs/runtime/macos-codex-app-local-marketplace.json`：installation entry = local repository marketplace；client surface = App-bundled Codex runtime。Install = Passed; Discovery = Passed; Invocation = Passed; HTML delivery = Passed。Upgrade = Unverified; Uninstall = Unverified; Codex App UI confirmation = Unverified。GitHub repository、GitHub marketplace install 与 GitHub skill install 仍为 Unverified，因此上方 Codex 聚合行不提升。
+已观测的 scoped Codex 证据记录在 `docs/runtime/macos-codex-app-local-marketplace.json`：installation entry = local repository marketplace；client surface = App-bundled Codex runtime。Install = Passed; Discovery = Passed; Invocation = Passed; HTML delivery = Passed。Upgrade = Unverified; Uninstall = Unverified; Codex App UI confirmation = Unverified。公开 GitHub repository 已建立，但 GitHub marketplace install 与 GitHub skill install 的运行时验证仍为 Unverified，因此上方 Codex 聚合行不提升。
 
-Codex stable gate: 2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24 independent real-client evidence units. 4 local real-client evidence units have passed; 20 real-client evidence units remain unexecuted. 计划中的 repo marketplace 与 GitHub skill 路径仍不是当前公开安装命令；Linux and Windows remain Unverified。
+Codex stable gate: 2 installation entries x 2 macOS surfaces x 6 lifecycle actions = 24 independent real-client evidence units. 4 local real-client evidence units have passed; 20 real-client evidence units remain unexecuted. 固定 RC 标签下的 repo marketplace 与 GitHub skill 路径安装说明已经给出，但其 GitHub 运行时验证仍为 Unverified；Linux and Windows remain Unverified。
 
 macOS sequence interaction: Passed
 

@@ -4,7 +4,7 @@
 
 ## 项目定位
 
-`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。当前版本是 Unreleased 0.1.0-rc.1 release-candidate snapshot；它只是本地仓库工件，不代表已经公开发布或客户端运行时兼容。
+`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。当前版本是 Unreleased 0.1.0-rc.1 release-candidate snapshot；它不是稳定版，也不代表四类客户端的聚合运行时兼容。
 
 ## 单一事实源
 
@@ -19,11 +19,37 @@
 
 本仓不会复制第二份中文 canonical Skill；中文 README 只是快速入口。
 
-仓库根 `plugins/vibe-diagram/` 是面向 Codex 的 builder-only 生成投影，也是未来纳入版本控制的候选；它不是第二份 canonical，也不得手工编辑。确定性 repo marketplace catalog 位于 `.agents/plugins/marketplace.json`，并指向 `./plugins/vibe-diagram`。
+仓库根 `plugins/vibe-diagram/` 是本仓为 Codex publication 纳入的 builder-only 生成投影；它不是第二份 canonical，也不得手工编辑。确定性 repo marketplace catalog 位于 `.agents/plugins/marketplace.json`，并指向 `./plugins/vibe-diagram`。
 
-## 计划中的 Codex 公开来源
+## Codex 安装
 
-计划中的两种公开来源结构分别是由上述 catalog 支持的 repo marketplace，以及未来稳定 tag 下由 `skills/vibe-diagram/` 支持的 GitHub skill 路径来源。它们只是正在准备的仓库结构，不是现在可用的安装命令。真实安装命令、URL 和生命周期说明必须等 GitHub 公开发布并取得真实客户端证据后再补充。
+公开仓库是 <https://github.com/imchenway/vibe-diagram>。两种 Codex 公开来源结构分别是由 `.agents/plugins/marketplace.json` 支持的 repo marketplace，以及由 `skills/vibe-diagram/` 支持的 GitHub skill 路径。
+
+GitHub 安装仅面向固定 RC 标签 `v0.1.0-rc.1`。GitHub 运行时验证仍为 `Unverified`，直到兼容性账本中的真实客户端检查完成；以下说明不代表稳定版或聚合兼容性结论。
+
+### Codex App 插件
+
+使用 macOS Codex App 内置的 Codex CLI，或其他兼容的 `codex` 可执行文件：
+
+```bash
+codex plugin marketplace add imchenway/vibe-diagram --ref v0.1.0-rc.1
+codex plugin add vibe-diagram@imchenway
+```
+
+安装完成后新建一个 Codex 任务，使新的 skill catalog 被加载。卸载插件与仓库 marketplace：
+
+```bash
+codex plugin remove vibe-diagram@imchenway
+codex plugin marketplace remove imchenway
+```
+
+### GitHub skill 路径
+
+在 Codex 任务中提出：
+
+> 使用 `$skill-installer` 安装 `https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.1/skills/vibe-diagram`。
+
+安装器完成后新建一个 Codex 任务。
 
 ## 产物契约
 
