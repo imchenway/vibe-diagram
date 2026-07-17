@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "scope": "macos-codex-app-local-repository-marketplace",
+  "observed_at_utc": "2026-07-17T02:07:08Z",
+  "client": {
+    "os": "macOS",
+    "application": "Codex",
+    "bundle_id": "com.openai.codex",
+    "app_version": "26.715.21316",
+    "app_build": "5484",
+    "bundled_codex_version": "0.145.0-alpha.18",
+    "surface": "app-bundled-codex-runtime"
+  },
+  "installation": {
+    "entry": "local-repository-marketplace",
+    "source": "repository-root",
+    "marketplace_name": "imchenway",
+    "plugin_id": "vibe-diagram@imchenway",
+    "plugin_version": "0.1.0-rc.1",
+    "cache_path": "<codex-home>/plugins/cache/imchenway/vibe-diagram/0.1.0-rc.1",
+    "source_plugin_tree_sha256": "f55793ab7b19d140a4c52d65d090995dfcc15a4c756ba32eb81ac6efbe9005e4",
+    "installed_plugin_tree_sha256": "f55793ab7b19d140a4c52d65d090995dfcc15a4c756ba32eb81ac6efbe9005e4"
+  },
+  "lifecycle": {
+    "install": {
+      "status": "passed",
+      "evidence": "codex plugin marketplace add <repository-root> --json and codex plugin add vibe-diagram@imchenway --json installed and enabled version 0.1.0-rc.1"
+    },
+    "discovery": {
+      "status": "passed",
+      "evidence": "A new App-bundled codex exec context reported skill id vibe-diagram:vibe-diagram and the installed cache SKILL.md path"
+    },
+    "invocation": {
+      "status": "passed",
+      "evidence": "App-bundled codex exec --ephemeral --sandbox workspace-write invoked the installed skill and exited with code 0"
+    },
+    "html_delivery": {
+      "status": "passed",
+      "evidence": "The requested self-contained HTML exists, the delivery-acceptance linter returned OK, and the remote-resource scan returned no matches"
+    },
+    "upgrade": {
+      "status": "unverified",
+      "evidence": "not executed"
+    },
+    "uninstall": {
+      "status": "unverified",
+      "evidence": "not executed"
+    }
+  },
+  "artifacts": {
+    "request_path": "docs/runtime/fixtures/codex-app-vibe-diagram-request.md",
+    "request_sha256": "a4b6cdf56f72e9fce437499c1b11fc35e7b9ecb36b7bed9a79d906301b18c1d7",
+    "request_record": "public-normalized reproduction; only the privacy-path prohibition wording changed after execution; observed facts and output requirements are unchanged",
+    "html_path": "docs/runtime/outputs/codex-app-plugin-smoke.html",
+    "html_sha256": "eea1ae4146eb488113a1f58873a9db5ecaa75eb7be632f5561954bb858293a6a",
+    "linter": "passed",
+    "remote_resource_scan": "passed",
+    "visual_qa": {
+      "status": "reviewed",
+      "blocking_issues": 0,
+      "observation": "The 1440x813 desktop and 500x757 effective narrow viewports are fully readable without horizontal clipping; an earlier 390px screenshot was rejected because macOS Chrome headless enforced a 500px minimum layout width and cropped the image."
+    },
+    "screenshot_sizes": {
+      "desktop": "1440x900",
+      "narrow": "500x844"
+    },
+    "effective_viewports": {
+      "desktop": "1440x813",
+      "narrow": "500x757"
+    }
+  },
+  "boundaries": {
+    "app_ui_confirmation": "unverified",
+    "github_repository": "unverified",
+    "github_marketplace_install": "unverified",
+    "github_skill_install": "unverified"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "vibe-diagram",
+  "version": "${VERSION}",
+  "description": "Create polished, self-contained HTML diagrams.",
+  "author": {
+    "name": "imchenway"
+  },
+  "license": "Apache-2.0"
+}

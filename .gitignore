@@ -1,0 +1,12 @@
+build/
+.build.staging-*/
+.build.backup/
+.publication.staging-*/
+.publication.backup/
+__pycache__/
+*.py[cod]
+.DS_Store
+.coverage
+.pytest_cache/
+docs/TASK_*
+docs/superpowers/plans/

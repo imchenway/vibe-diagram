@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Codex App 插件 smoke 交付验收</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #102033;
+      --muted: #5a6c80;
+      --paper: #fbfdff;
+      --panel: rgba(255, 255, 255, 0.94);
+      --line: #8db3d8;
+      --blue: #1f6fb2;
+      --blue-soft: #e8f3ff;
+      --green: #17785a;
+      --green-soft: #e9f8f2;
+      --amber: #986506;
+      --amber-soft: #fff6de;
+      --red: #a63a3a;
+      --red-soft: #fff0f0;
+      --violet: #6254ad;
+      --violet-soft: #f1efff;
+      --shadow: 0 18px 48px rgba(20, 57, 92, 0.10);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--paper);
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(214, 233, 255, 0.82), transparent 30rem),
+        radial-gradient(circle at 88% 4%, rgba(228, 246, 239, 0.78), transparent 28rem),
+        linear-gradient(rgba(93, 133, 173, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93, 133, 173, 0.045) 1px, transparent 1px),
+        linear-gradient(180deg, #ffffff 0%, #f7fbff 56%, #fbfdff 100%);
+      background-size: auto, auto, 28px 28px, 28px 28px, auto;
+      overflow-x: clip;
+    }
+
+    main {
+      width: min(1280px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: clamp(28px, 5vw, 64px) 0 48px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 0 0 12px;
+      font-size: clamp(30px, 4.8vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+    }
+
+    .summary {
+      max-width: 860px;
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.7vw, 18px);
+      line-height: 1.75;
+    }
+
+    code {
+      padding: 0.12em 0.36em;
+      border: 1px solid rgba(31, 111, 178, 0.18);
+      border-radius: 6px;
+      color: #163e63;
+      background: rgba(232, 243, 255, 0.72);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 0.9em;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .template-layout {
+      min-height: 360px;
+      padding: 18px;
+      border: 1px solid rgba(141, 179, 216, 0.50);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.80);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .acceptance-ledger {
+      display: grid;
+      grid-template-rows: auto repeat(3, auto);
+      gap: 12px;
+    }
+
+    .boundary,
+    .ledger-row {
+      display: grid;
+      grid-template-columns: 0.86fr 1.2fr 1.46fr 0.72fr 0.92fr;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid rgba(141, 179, 216, 0.42);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.66);
+    }
+
+    .ledger-head {
+      position: sticky;
+      top: 8px;
+      z-index: 2;
+      border-color: rgba(31, 111, 178, 0.36);
+      background: rgba(242, 248, 255, 0.96);
+      box-shadow: 0 8px 24px rgba(20, 57, 92, 0.08);
+    }
+
+    .ledger-row {
+      transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .ledger-row:hover {
+      border-color: rgba(31, 111, 178, 0.52);
+      box-shadow: 0 10px 26px rgba(20, 57, 92, 0.07);
+      transform: translateY(-1px);
+    }
+
+    .slot {
+      display: grid;
+      grid-template-rows: auto auto;
+      align-content: center;
+      justify-items: start;
+      gap: 7px;
+      min-width: 0;
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid rgba(141, 179, 216, 0.58);
+      border-radius: 16px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.95);
+      overflow-wrap: anywhere;
+    }
+
+    .ledger-head .slot {
+      min-height: 58px;
+      padding: 11px 13px;
+    }
+
+    .slot b {
+      display: block;
+      max-width: 100%;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .slot > span {
+      display: block;
+      max-width: 100%;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.58;
+    }
+
+    .core {
+      border-color: rgba(31, 111, 178, 0.56);
+      background: linear-gradient(180deg, #ffffff, var(--blue-soft));
+    }
+
+    .support {
+      border-color: rgba(98, 84, 173, 0.45);
+      background: linear-gradient(180deg, #ffffff, var(--violet-soft));
+    }
+
+    .data {
+      border-color: rgba(23, 120, 90, 0.45);
+      background: linear-gradient(180deg, #ffffff, var(--green-soft));
+    }
+
+    .risk {
+      border-color: rgba(166, 58, 58, 0.42);
+      background: linear-gradient(180deg, #ffffff, var(--red-soft));
+    }
+
+    .ops {
+      border-color: rgba(152, 101, 6, 0.42);
+      background: linear-gradient(180deg, #ffffff, var(--amber-soft));
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .status-observed {
+      color: var(--green);
+      background: var(--green-soft);
+      border: 1px solid rgba(23, 120, 90, 0.28);
+    }
+
+    .status-unverified {
+      color: var(--red);
+      background: var(--red-soft);
+      border: 1px solid rgba(166, 58, 58, 0.28);
+    }
+
+    .unverified-list {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .notes {
+      margin-top: 22px;
+      padding: 20px;
+      border: 1px solid rgba(141, 179, 216, 0.48);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: 0 12px 32px rgba(20, 57, 92, 0.07);
+    }
+
+    .notes h2 {
+      margin: 0;
+      font-size: clamp(18px, 2.2vw, 24px);
+      letter-spacing: -0.02em;
+    }
+
+    .notes > p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .unverified-item {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      min-height: 112px;
+      padding: 15px;
+      border: 1px solid rgba(166, 58, 58, 0.28);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #ffffff, var(--red-soft));
+    }
+
+    .unverified-item strong {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .ledger-head {
+        display: none;
+      }
+
+      .acceptance-ledger {
+        grid-template-rows: auto;
+      }
+
+      .ledger-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .ledger-row .slot::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+
+      .ledger-row .slot:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .unverified-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        width: min(100vw - 20px, 600px);
+        padding-top: 24px;
+      }
+
+      .template-layout {
+        padding: 10px;
+        border-radius: 18px;
+      }
+
+      .ledger-row {
+        grid-template-columns: 1fr;
+        padding: 8px;
+      }
+
+      .ledger-row .slot:last-child {
+        grid-column: auto;
+      }
+
+      .slot {
+        min-height: 0;
+      }
+
+      .unverified-list {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        background: #ffffff;
+      }
+
+      main {
+        width: 100%;
+        padding: 0;
+      }
+
+      .template-layout,
+      .notes {
+        box-shadow: none;
+        background: #ffffff;
+      }
+
+      .ledger-head {
+        position: static;
+        display: grid;
+        box-shadow: none;
+      }
+
+      .ledger-row {
+        break-inside: avoid;
+      }
+
+      .ledger-row:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<main data-diagram-type="delivery-acceptance"
+      data-template-family="delivery-acceptance"
+      data-template-id="acceptance-ledger"
+      data-template-layout="acceptance-ledger">
+  <p class="eyebrow">Delivery acceptance · runtime smoke</p>
+  <h1 data-slot="title">Codex App 插件 smoke 交付验收</h1>
+  <p class="summary" data-slot="summary">本账本仅呈现本次已观测的 Marketplace、插件安装、App 状态与新会话调用事实；未覆盖项保持 <strong>Unverified</strong>。</p>
+
+  <section class="template-layout acceptance-ledger" aria-label="Codex App 插件 smoke 验收账本">
+    <div class="ledger-head boundary" role="row">
+      <div class="slot support" data-slot="ledger-head-1" role="columnheader"><b>验收项</b><span>本次 smoke 的检查边界</span></div>
+      <div class="slot data" data-slot="ledger-head-2" role="columnheader"><b>观测动作</b><span>实际执行或查看的入口</span></div>
+      <div class="slot risk" data-slot="ledger-head-3" role="columnheader"><b>观测证据</b><span>命令结果、状态或调用项</span></div>
+      <div class="slot ops" data-slot="ledger-head-4" role="columnheader"><b>判定</b><span>只判断当前观测项</span></div>
+      <div class="slot" data-slot="ledger-head-5" role="columnheader"><b>未覆盖边界</b><span>不得外推为已完成</span></div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r1-req" data-label="验收项" role="cell">
+        <b>R1 · Marketplace 添加</b>
+        <span>本地仓库作为 Marketplace 来源</span>
+      </div>
+      <div class="slot support" data-slot="r1-change" data-label="观测动作" role="cell">
+        <b><code>codex plugin marketplace add &lt;repository-root&gt; --json</code></b>
+        <span><code>&lt;repository-root&gt;</code> 为本次本地仓库绝对路径的公开占位符。</span>
+      </div>
+      <div class="slot data" data-slot="r1-evidence" data-label="观测证据" role="cell">
+        <b>命令成功</b>
+        <span>Marketplace 名为 <code>imchenway</code>。</span>
+      </div>
+      <div class="slot ops" data-slot="r1-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅覆盖本地 Marketplace 添加结果。</span>
+      </div>
+      <div class="slot risk" data-slot="r1-action" data-label="未覆盖边界" role="cell">
+        <b><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span></b>
+        <span>GitHub 仓库</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r2-req" data-label="验收项" role="cell">
+        <b>R2 · 安装与 App 状态</b>
+        <span>插件安装结果与 App 内置 Codex 列表状态</span>
+      </div>
+      <div class="slot support" data-slot="r2-change" data-label="观测动作" role="cell">
+        <b><code>codex plugin add vibe-diagram@imchenway --json</code></b>
+        <span>并查看 <code>/Applications/Codex.app/Contents/Resources/codex plugin list</code>。</span>
+      </div>
+      <div class="slot data" data-slot="r2-evidence" data-label="观测证据" role="cell">
+        <b>安装命令成功 · <code>0.1.0-rc.1</code></b>
+        <span>App 内置列表显示 <code>installed, enabled</code>。</span>
+      </div>
+      <div class="slot ops" data-slot="r2-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅覆盖该版本的安装与列表状态。</span>
+      </div>
+      <div class="slot risk" data-slot="r2-action" data-label="未覆盖边界" role="cell">
+        <b><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span></b>
+        <span>升级<br />卸载</span>
+      </div>
+    </div>
+
+    <div class="ledger-row" role="row">
+      <div class="slot core" data-slot="r3-req" data-label="验收项" role="cell">
+        <b>R3 · 新会话发现与调用</b>
+        <span>App 内置 Codex 新会话的实际调用项</span>
+      </div>
+      <div class="slot support" data-slot="r3-change" data-label="观测动作" role="cell">
+        <b>App 内置 Codex 新会话</b>
+        <span>发现实际调用项 <code>vibe-diagram:vibe-diagram</code>。</span>
+      </div>
+      <div class="slot data" data-slot="r3-evidence" data-label="观测证据" role="cell">
+        <b><code>vibe-diagram:vibe-diagram</code></b>
+        <span><code>&lt;codex-home&gt;/plugins/cache/imchenway/vibe-diagram/0.1.0-rc.1/skills/vibe-diagram/SKILL.md</code><br /><code>&lt;codex-home&gt;</code> 为本机 Codex home 的公开占位符。</span>
+      </div>
+      <div class="slot ops" data-slot="r3-decision" data-label="判定" role="cell">
+        <b><span class="status status-observed"><span aria-hidden="true">✓</span>已观测</span></b>
+        <span>仅覆盖该新会话中的发现与实际调用项。</span>
+      </div>
+      <div class="slot risk" data-slot="r3-action" data-label="未覆盖边界" role="cell">
+        <b><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span></b>
+        <span>GitHub skill 路径安装</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="notes" data-slot="evidence-and-notes" aria-labelledby="unverified-title">
+    <h2 id="unverified-title">明确未验证范围</h2>
+    <p>以下项目没有被本次已观测事实覆盖，状态保持 <strong>Unverified</strong>。</p>
+    <div class="unverified-list">
+      <div class="unverified-item"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>GitHub 仓库</strong></div>
+      <div class="unverified-item"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>GitHub skill 路径安装</strong></div>
+      <div class="unverified-item"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>升级</strong></div>
+      <div class="unverified-item"><span class="status status-unverified"><span aria-hidden="true">○</span>Unverified</span><strong>卸载</strong></div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

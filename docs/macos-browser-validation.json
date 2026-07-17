@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "scope": "macos-local-sequence-interaction",
+  "platform": {
+    "os": "macOS",
+    "browser": "Google Chrome",
+    "browser_version": "150.0.7871.116"
+  },
+  "viewports": {
+    "desktop": "1440x900",
+    "mobile": "390x844"
+  },
+  "canonical_tree_sha256": "f783c7e629144aebee7ca9eb45e1840a11da809ce3c26036f8afb588e066bf97",
+  "sequence_kernel_sha256": "031935140f1675a30da20f17ce6c888e417a58495191e1b86c231ce9cc91eca3",
+  "fixtures": {
+    "sequence-complex-overview-detail.html": "63b06811382c9e63fd63238d9f4d9376a69cda4bb992d99f2ff4804544230f56",
+    "sequence-interaction-matrix.html": "379d4019a87f83cbfd7834f821a4ce4ad9eb5b24114f441d958ff085f50302be",
+    "sequence-no-js.html": "38cec2940e624ba5fca7ce44cd6558b789c2d0fc1de54024360c4119893a27c8"
+  },
+  "product_templates": {
+    "code-sequence/async-callback-sequence.html": {
+      "sha256": "a177515103eca9f022ced9f9b5e7e5248a03021064c7f88d95c6f50a474801c8",
+      "desktop_rendered": true,
+      "enhancement_initialized": true,
+      "structured_routes_visible": true,
+      "mobile_ledger_readable": true,
+      "print_content_not_clipped": true
+    },
+    "code-sequence/participant-timeline.html": {
+      "sha256": "f5846db047e6807851c80a01aad2cda5edf6b8acc546803d9eb1b18c6b3c02a5",
+      "desktop_rendered": true,
+      "enhancement_initialized": true,
+      "structured_routes_visible": true,
+      "mobile_ledger_readable": true,
+      "print_content_not_clipped": true
+    },
+    "code-sequence/retry-exception-sequence.html": {
+      "sha256": "3a801fe9167bdd59a755c65da973c3d55e08e79abe241041bc76f603dedeef4d",
+      "desktop_rendered": true,
+      "enhancement_initialized": true,
+      "structured_routes_visible": true,
+      "mobile_ledger_readable": true,
+      "print_content_not_clipped": true
+    },
+    "code-sequence/transaction-boundary-sequence.html": {
+      "sha256": "4444d406c40fd1388180549f1458888858d4100ecb7fbbe440219fad8cd98a69",
+      "desktop_rendered": true,
+      "enhancement_initialized": true,
+      "structured_routes_visible": true,
+      "mobile_ledger_readable": true,
+      "print_content_not_clipped": true
+    },
+    "fault-debugging/debugging-sequence.html": {
+      "sha256": "067f18075aaf20f6d063c51eadc331acc38d632b2b72e55ce7003bde2c7b75bf",
+      "desktop_rendered": true,
+      "enhancement_initialized": true,
+      "structured_routes_visible": true,
+      "mobile_ledger_readable": true,
+      "print_content_not_clipped": true
+    },
+    "feature-iteration/current-target-sequence.html": {
+      "sha256": "8d1e86b70395b21810fbcd4f37dacb9f0590a75fc602e781faeec2ad9028ef0a",
+      "desktop_rendered": true,
+      "enhancement_initialized": true,
+      "structured_routes_visible": true,
+      "mobile_ledger_readable": true,
+      "print_content_not_clipped": true
+    }
+  },
+  "measurements": {
+    "wide": {
+      "anchor_message_id": "wide-dispatch",
+      "center_ratio_before": 0.4990520450394211,
+      "center_ratio_after_scale": 0.4944509953527086,
+      "center_ratio_after_resize": 0.498671791795713,
+      "minimum_effective_text_px": 12,
+      "left_margin_px": 35.703125,
+      "right_margin_px": 50.703125,
+      "page_scroll_width_px": 1425,
+      "page_client_width_px": 1425
+    },
+    "long": {
+      "computed_position": "sticky",
+      "participant_top_before_px": 1135.078125,
+      "participant_top_after_px": 1135.078125,
+      "header_height_px": 86,
+      "scroll_padding_top_px": 86
+    },
+    "print": {
+      "clipped_element_count": 0
+    }
+  },
+  "checks": {
+    "modes": {
+      "width_auto": true,
+      "width_contained": true,
+      "width_wide": true,
+      "height_auto": true,
+      "height_flow": true,
+      "height_scroll": true
+    },
+    "short": {
+      "toolbar_hidden": true,
+      "no_nested_vertical_scroll": true
+    },
+    "wide": {
+      "full_width": true,
+      "safe_page_margins": true,
+      "no_page_horizontal_overflow": true,
+      "four_scale_controls_work": true,
+      "viewport_anchor_preserved": true,
+      "minimum_effective_text_12px": true
+    },
+    "long": {
+      "internal_vertical_scroll": true,
+      "participants_sticky": true,
+      "horizontal_alignment_preserved": true,
+      "focus_not_obscured": true
+    },
+    "mobile": {
+      "toolbar_disabled": true,
+      "sticky_disabled": true,
+      "ledger_readable": true,
+      "no_page_horizontal_overflow": true
+    },
+    "no_js": {
+      "enhancement_absent": true,
+      "toolbar_absent": true,
+      "structured_route_readable": true
+    },
+    "print": {
+      "toolbar_hidden": true,
+      "sticky_reset": true,
+      "overflow_expanded": true,
+      "content_not_clipped": true
+    },
+    "complex": {
+      "overview_present": true,
+      "details_linked": true
+    }
+  },
+  "unverified": {
+    "clients": {
+      "Codex": "unverified",
+      "Claude Code": "unverified",
+      "Gemini CLI": "unverified",
+      "GitHub Copilot CLI": "unverified"
+    },
+    "operating_systems": {
+      "Linux": "unverified",
+      "Windows": "unverified"
+    }
+  }
+}

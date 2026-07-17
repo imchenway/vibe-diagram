@@ -1,0 +1,30 @@
+{
+  "build_report_sha256": "c81ed16752042e9f57483aa3c48e99da38a93c19cc206f8eaa3df45422f42bf7",
+  "canonical_tree_sha256": "f783c7e629144aebee7ca9eb45e1840a11da809ce3c26036f8afb588e066bf97",
+  "clients": {
+    "claude": {
+      "manifest_sha256": "b54a819eb5d996addc638864f1e9a0bb125fa39b986f39f0729f422464348fe5",
+      "package_tree_sha256": "f006704e0c1385e690de091b74fceb52e11c347da64847f39f477dfcb58b14f7"
+    },
+    "codex": {
+      "manifest_sha256": "7569afdd6e7a168c4c9f324ccd12c1978cd1a1ae9c2dd5c771b658a0bacee2a4",
+      "package_tree_sha256": "f55793ab7b19d140a4c52d65d090995dfcc15a4c756ba32eb81ac6efbe9005e4"
+    },
+    "copilot": {
+      "manifest_sha256": "b54a819eb5d996addc638864f1e9a0bb125fa39b986f39f0729f422464348fe5",
+      "package_tree_sha256": "24618e4b98a4602dc579d8b95e7b19f91556061b67aac83db610bf5bd6800abf"
+    },
+    "gemini": {
+      "manifest_sha256": "4dcf0bd1c7aa053cdab2a76fd17dec9c612055e781056f89e5a8bb70a839c6df",
+      "package_tree_sha256": "efc03047317f088ccc64190fc2eb33e3f4fef92ca9299bc727d98a0e432a5e5d"
+    }
+  },
+  "codex_publication": {
+    "manifest_sha256": "7569afdd6e7a168c4c9f324ccd12c1978cd1a1ae9c2dd5c771b658a0bacee2a4",
+    "marketplace_sha256": "0e7b0e76ac8fee76201b597b515072047909b2037a858577d9c160f56547774e",
+    "package_tree_sha256": "f55793ab7b19d140a4c52d65d090995dfcc15a4c756ba32eb81ac6efbe9005e4"
+  },
+  "package_version": "0.1.0-rc.1",
+  "runtime_validation": "unverified",
+  "schema_version": 2
+}

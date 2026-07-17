@@ -1,0 +1,5 @@
+{
+  "name": "vibe-diagram",
+  "version": "${VERSION}",
+  "description": "Create polished, self-contained HTML diagrams."
+}
