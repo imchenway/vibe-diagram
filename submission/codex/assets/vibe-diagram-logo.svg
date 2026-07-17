@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Vibe Diagram</title>
+  <desc id="desc">A blue rounded square containing connected white diagram nodes.</desc>
+  <defs>
+    <linearGradient id="background" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2C84CB" />
+      <stop offset="1" stop-color="#18598F" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#background)" />
+  <path d="M140 156H256M256 156V256M256 256H372M256 256V356M140 356H256" fill="none" stroke="#FFFFFF" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="128" cy="156" r="38" fill="#FFFFFF" />
+  <circle cx="256" cy="156" r="38" fill="#FFFFFF" />
+  <circle cx="384" cy="256" r="38" fill="#FFFFFF" />
+  <circle cx="256" cy="356" r="38" fill="#FFFFFF" />
+  <circle cx="128" cy="356" r="38" fill="#FFFFFF" />
+  <circle cx="256" cy="256" r="46" fill="#E9F8F2" stroke="#FFFFFF" stroke-width="16" />
+</svg>

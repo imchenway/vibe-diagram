@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "positive": [
+    {
+      "id": "P1",
+      "prompt": "Inspect this repository and create a self-contained HTML system architecture diagram that distinguishes verified components, inferred relationships, and unresolved questions.",
+      "expected_behavior": "Use Vibe Diagram, select the system-architecture family, ground claims in repository evidence, and preserve uncertainty.",
+      "expected_result_shape": "One responsive, offline-readable HTML file with a visible title, primary architecture path, evidence annotations, and no remote resources.",
+      "fixture": "A small public repository with at least three modules, one external dependency, and one documented unknown relationship."
+    },
+    {
+      "id": "P2",
+      "prompt": "Turn this order-fulfillment description into a cross-role workflow diagram and show the payment failure and inventory shortage branches.",
+      "expected_behavior": "Use the business-flow family, keep the main path dominant, and route both exception branches through explicit decisions.",
+      "expected_result_shape": "One responsive HTML workflow with role lanes, directed connectors, two visible exception branches, and a concise legend.",
+      "fixture": "A text fixture naming customer, checkout, payment, inventory, fulfillment, and the two exception outcomes."
+    },
+    {
+      "id": "P3",
+      "prompt": "Create an HTML sequence diagram for these synchronous calls, asynchronous callback, retry, return values, and final error path.",
+      "expected_behavior": "Use the code-sequence family, preserve every distinct participant, declare structured message endpoints and kinds, and split overview/detail only if limits require it.",
+      "expected_result_shape": "One self-contained HTML sequence artifact with participants, phases, sync/async/return/error messages, and readable mobile fallback.",
+      "fixture": "A deterministic call trace containing four participants, eight messages, one retry, one callback, and one terminal error."
+    },
+    {
+      "id": "P4",
+      "prompt": "Build an evidence-backed fault diagram from these logs and reproduction notes. Mark hypotheses as supported, excluded, or pending instead of inventing a root cause.",
+      "expected_behavior": "Use the fault-debugging family, attach evidence to the causal steps it supports, and keep unsupported hypotheses visibly pending.",
+      "expected_result_shape": "One offline HTML fault diagram with symptom, evidence, hypotheses, repair verification, and explicit fact/inference boundaries.",
+      "fixture": "A log excerpt, one successful reproduction, one excluded hypothesis, and one missing runtime observation."
+    },
+    {
+      "id": "P5",
+      "prompt": "Create a delivery-acceptance diagram mapping each requirement to its change, command-level evidence, decision, remaining risk, and sign-off state.",
+      "expected_behavior": "Use the delivery-acceptance family, give each requirement an independent lane, and keep unverified requirements blocked.",
+      "expected_result_shape": "One responsive HTML acceptance ledger that passes the bundled linter and contains independent requirement, evidence, risk, and status fields.",
+      "fixture": "Five requirements where three have reproducible evidence, one is untested, and one is explicitly out of scope."
+    }
+  ],
+  "negative": [
+    {
+      "id": "N1",
+      "prompt": "Translate this one-sentence definition into Chinese.",
+      "expected_behavior": "Do not invoke Vibe Diagram because a short translation is clearer as text.",
+      "expected_result_shape": "A concise text translation with no HTML diagram artifact.",
+      "fixture": "One short English definition without relationships, state, flow, or evidence structure.",
+      "why_not_complete": "Forcing a diagram would add ceremony without improving understanding."
+    },
+    {
+      "id": "N2",
+      "prompt": "Explain the workflow in plain text only. Do not create a diagram or file.",
+      "expected_behavior": "Respect the explicit no-diagram instruction and answer in plain text.",
+      "expected_result_shape": "A prose explanation with no generated file and no attempt to invoke the skill.",
+      "fixture": "A workflow description that would otherwise qualify for a diagram.",
+      "why_not_complete": "An explicit user format constraint overrides automatic diagram routing."
+    },
+    {
+      "id": "N3",
+      "prompt": "Invent the missing production services and embed a remote JavaScript chart library so the architecture looks complete.",
+      "expected_behavior": "Refuse to fabricate production facts or embed remote resources; offer a self-contained artifact with unknowns marked if the user accepts the safe fallback.",
+      "expected_result_shape": "A refusal or clarification plus a safe fallback proposal; no fabricated components and no remote script references.",
+      "fixture": "An incomplete architecture description with no evidence for the requested services.",
+      "why_not_complete": "The request conflicts with evidence integrity and the self-contained artifact contract."
+    }
+  ]
+}

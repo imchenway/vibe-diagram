@@ -10,3 +10,4 @@ __pycache__/
 .pytest_cache/
 docs/TASK_*
 docs/superpowers/plans/
+submission/codex/build/

@@ -34,6 +34,7 @@ EXPECTED_GITIGNORE_PATTERNS = (
     ".pytest_cache/",
     "docs/TASK_*",
     "docs/superpowers/plans/",
+    "submission/codex/build/",
 )
 EXPECTED_GITIGNORE = ("\n".join(EXPECTED_GITIGNORE_PATTERNS) + "\n").encode("ascii")
 EXPECTED_STATIC_VALIDATION_WORKFLOW = b"""name: Static validation
