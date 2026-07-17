@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "client": "gemini",
+  "documentation": "README.md",
+  "manifest_template": "manifest.template.json",
+  "manifest_output": "gemini-extension.json",
+  "skills_output": "skills/vibe-diagram",
+  "extra_files": []
+}

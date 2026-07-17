@@ -1,0 +1,42 @@
+name: Static validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.9"
+          - "3.14"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - name: Verify static state
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --check
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
+          test -z "$(git ls-files --others --ignored --exclude-standard)"

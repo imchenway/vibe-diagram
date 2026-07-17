@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "client": "codex",
+  "documentation": "README.md",
+  "manifest_template": "manifest.template.json",
+  "manifest_output": ".codex-plugin/plugin.json",
+  "skills_output": "skills/vibe-diagram",
+  "extra_files": [
+    {
+      "source": "files/agents/openai.yaml",
+      "output": "skills/vibe-diagram/agents/openai.yaml"
+    }
+  ]
+}

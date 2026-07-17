@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "submission_type": "skills-only",
+  "listing": {
+    "name": "Vibe Diagram",
+    "short_description": "Self-contained HTML diagrams for complex ideas",
+    "long_description": "Turn architecture, workflows, sequences, state, debugging, design, decisions, and delivery acceptance into self-contained HTML diagrams.",
+    "category": "Developer Tools",
+    "website_url": "https://github.com/imchenway/vibe-diagram",
+    "support_url": "https://github.com/imchenway/vibe-diagram/issues",
+    "privacy_policy_url": "https://github.com/imchenway/vibe-diagram/blob/main/docs/public/PRIVACY.md",
+    "terms_of_service_url": "https://github.com/imchenway/vibe-diagram/blob/main/docs/public/TERMS.md",
+    "logo_source": "submission/codex/assets/vibe-diagram-logo.svg",
+    "starter_prompts": [
+      "Create a self-contained HTML architecture diagram from this repository.",
+      "Turn this workflow into a responsive HTML diagram with exception paths.",
+      "Build an evidence-backed HTML diagram that separates facts, inference, and risks."
+    ],
+    "release_notes": "Skills-only plugin submission candidate for Vibe Diagram 0.1.0-rc.2."
+  },
+  "publisher": {
+    "developer_name": "imchenway",
+    "identity_verification": "pending-user-action"
+  },
+  "availability": {
+    "countries_or_regions": [],
+    "status": "pending-user-confirmation"
+  },
+  "test_cases": "test-cases.json",
+  "bundle": {
+    "source": "build/codex/skills/vibe-diagram",
+    "archive_prefix": "vibe-diagram"
+  },
+  "readiness": {
+    "state": "blocked",
+    "blockers": [
+      "verified-developer-or-business-identity",
+      "apps-management-write-access",
+      "availability-selection",
+      "publisher-approval-of-legal-text",
+      "codex-app-ui-runtime-verification",
+      "upgrade-runtime-verification"
+    ]
+  }
+}
