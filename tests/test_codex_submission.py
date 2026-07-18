@@ -48,7 +48,6 @@ class CodexSubmissionTests(unittest.TestCase):
         self.assertEqual(
             [
                 "apps-management-write-access",
-                "codex-app-ui-runtime-verification",
                 "upgrade-runtime-verification",
             ],
             record["blockers"],

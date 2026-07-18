@@ -36,7 +36,6 @@
     "state": "blocked",
     "blockers": [
       "apps-management-write-access",
-      "codex-app-ui-runtime-verification",
       "upgrade-runtime-verification"
     ]
   }
