@@ -58,7 +58,7 @@ class DocumentationContractTests(unittest.TestCase):
         chinese = README_ZH.read_text(encoding="utf-8")
 
         english_required = (
-            f"Unreleased {version} release-candidate snapshot",
+            f"Unreleased {version} stable-candidate snapshot",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -70,7 +70,7 @@ class DocumentationContractTests(unittest.TestCase):
             "package-static-valid",
             "does not prove the complete unit suite",
             "evidence remains in command or CI output",
-            "Runtime verification remains `Unverified` for RC.2",
+            "Runtime verification remains `Unverified` for the local 0.1.0 candidate",
             "No installation, discovery, invocation, HTML-delivery, upgrade, or uninstall result is inherited",
         )
         for value in english_required:
@@ -78,7 +78,7 @@ class DocumentationContractTests(unittest.TestCase):
                 self.assertIn(value, english)
 
         chinese_required = (
-            f"Unreleased {version} release-candidate snapshot",
+            f"Unreleased {version} stable-candidate snapshot",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -90,7 +90,7 @@ class DocumentationContractTests(unittest.TestCase):
             "package-static-valid",
             "不能证明完整 unit suite",
             "证据保留在命令或 CI 输出中",
-            "RC.2 的运行时验证仍为 `Unverified`",
+            "本地 0.1.0 候选的运行时验证仍为 `Unverified`",
             "不继承旧标签的安装、发现、调用、HTML 交付、升级或卸载结论",
         )
         for value in chinese_required:
@@ -114,10 +114,10 @@ class DocumentationContractTests(unittest.TestCase):
                 self.assertIn(value, english)
                 self.assertIn(value, chinese)
 
-    def test_changelog_is_an_unreleased_rc2_snapshot(self) -> None:
+    def test_changelog_is_an_unreleased_stable_candidate_snapshot(self) -> None:
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertEqual(1, text.count("## [Unreleased]"))
-        self.assertIn(f"{_version()} release-candidate snapshot", text)
+        self.assertIn(f"{_version()} stable-candidate snapshot", text)
         self.assertIn("Runtime verification remains Unverified", text)
         self.assertIsNone(re.search(r"\b20\d{2}-\d{2}-\d{2}\b", text))
         self.assertNotIn("Release URL", text)

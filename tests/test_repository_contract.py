@@ -32,6 +32,7 @@ EXPECTED_GITIGNORE_PATTERNS = (
     ".DS_Store",
     ".coverage",
     ".pytest_cache/",
+    ".idea/",
     "submission/codex/build/",
     "docs/*",
     "!docs/public/",
@@ -91,7 +92,7 @@ EXPECTED_PUBLIC_DOCS = {
 
 class RepositoryContractTests(unittest.TestCase):
     def test_public_document_inventory_is_exact(self) -> None:
-        docs_root = ROOT / "docs"
+        docs_root = ROOT / "docs" / "public"
         actual = {
             path.relative_to(ROOT).as_posix()
             for path in docs_root.rglob("*")
@@ -121,8 +122,8 @@ class RepositoryContractTests(unittest.TestCase):
             with self.subTest(invalid=invalid):
                 self.assertIsNone(STRICT_SEMVER.fullmatch(invalid))
 
-    def test_release_candidate_version_bytes_are_exact(self) -> None:
-        self.assertEqual(b"0.1.0-rc.2\n", (ROOT / "VERSION").read_bytes())
+    def test_stable_candidate_version_bytes_are_exact(self) -> None:
+        self.assertEqual(b"0.1.0\n", (ROOT / "VERSION").read_bytes())
 
     def test_license_is_exact_apache_2_0_text(self) -> None:
         raw = (ROOT / "LICENSE").read_bytes()
@@ -235,7 +236,7 @@ class RepositoryContractTests(unittest.TestCase):
             if not path.is_file():
                 continue
             relative = path.relative_to(ROOT)
-            if relative.parts[0] in {".git", "build"}:
+            if relative.parts[0] in {".git", ".idea", "build"}:
                 continue
             if "__pycache__" in relative.parts or relative.name == ".DS_Store":
                 continue

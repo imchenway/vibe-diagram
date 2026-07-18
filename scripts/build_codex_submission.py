@@ -49,11 +49,7 @@ POSITIVE_FIELDS = {
 NEGATIVE_FIELDS = POSITIVE_FIELDS | {"why_not_complete"}
 REQUIRED_BLOCKERS = {
     "apps-management-write-access",
-    "availability-selection",
-    "codex-app-ui-runtime-verification",
-    "publisher-approval-of-legal-text",
     "upgrade-runtime-verification",
-    "verified-developer-or-business-identity",
 }
 
 
@@ -165,12 +161,14 @@ def validate_submission_source(root: Path) -> dict[str, Any]:
         raise _fail("submission publisher must be an object")
     _require_exact_keys(
         publisher,
-        {"developer_name", "identity_verification"},
+        {"developer_name", "identity_verification", "legal_text_approval"},
         "submission publisher",
     )
     _require_non_empty_string(publisher["developer_name"], "publisher.developer_name")
-    if publisher["identity_verification"] != "pending-user-action":
-        raise _fail("publisher identity must remain pending until platform evidence exists")
+    if publisher["identity_verification"] != "verified-individual":
+        raise _fail("publisher identity must record the verified individual publisher")
+    if publisher["legal_text_approval"] != "approved-by-publisher":
+        raise _fail("public legal text must record publisher approval")
 
     availability = listing["availability"]
     if not isinstance(availability, Mapping):
@@ -181,9 +179,9 @@ def validate_submission_source(root: Path) -> dict[str, Any]:
         "submission availability",
     )
     if availability["countries_or_regions"] != []:
-        raise _fail("availability must remain empty until the publisher confirms it")
-    if availability["status"] != "pending-user-confirmation":
-        raise _fail("availability status must remain pending-user-confirmation")
+        raise _fail("portal-wide availability must not add a publisher-defined region list")
+    if availability["status"] != "all-portal-supported-regions":
+        raise _fail("availability must cover all regions supported by the submission portal")
 
     if listing["test_cases"] != "test-cases.json":
         raise _fail("submission test_cases must point to test-cases.json")

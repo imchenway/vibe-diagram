@@ -4,7 +4,7 @@ Chinese overview: [README.zh-CN.md](README.zh-CN.md).
 
 ## What it is
 
-`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. The current Unreleased 0.1.0-rc.2 release-candidate snapshot is not a stable release or an aggregate client-runtime compatibility claim.
+`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. The current Unreleased 0.1.0 stable-candidate snapshot is not a published stable release or an aggregate client-runtime compatibility claim.
 
 ## Repository model
 
@@ -98,7 +98,7 @@ These layouts are static package definitions. They do not constitute installatio
 
 A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. It does not prove the complete unit suite, deterministic process checks, or the second complete suite. Static-valid status requires those commands to pass together; the evidence remains in command or CI output and is not committed as repository documentation.
 
-Runtime verification remains `Unverified` for RC.2. No installation, discovery, invocation, HTML-delivery, upgrade, or uninstall result is inherited from an earlier tag. Stable promotion remains blocked until current, scoped real-client evidence exists.
+Runtime verification remains `Unverified` for the local 0.1.0 candidate. No installation, discovery, invocation, HTML-delivery, upgrade, or uninstall result is inherited from an earlier tag. Stable publication remains blocked until current, scoped real-client evidence exists.
 
 ## License
 
