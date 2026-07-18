@@ -48,11 +48,8 @@ class CodexSubmissionTests(unittest.TestCase):
         self.assertEqual(
             [
                 "apps-management-write-access",
-                "availability-selection",
                 "codex-app-ui-runtime-verification",
-                "publisher-approval-of-legal-text",
                 "upgrade-runtime-verification",
-                "verified-developer-or-business-identity",
             ],
             record["blockers"],
         )
@@ -67,9 +64,10 @@ class CodexSubmissionTests(unittest.TestCase):
         self.assertEqual(TERMS_URL, listing["listing"]["terms_of_service_url"])
         self.assertEqual(LOGO_SOURCE.as_posix(), listing["listing"]["logo_source"])
         self.assertEqual(3, len(listing["listing"]["starter_prompts"]))
-        self.assertEqual("pending-user-action", listing["publisher"]["identity_verification"])
+        self.assertEqual("verified-individual", listing["publisher"]["identity_verification"])
+        self.assertEqual("approved-by-publisher", listing["publisher"]["legal_text_approval"])
         self.assertEqual([], listing["availability"]["countries_or_regions"])
-        self.assertEqual("pending-user-confirmation", listing["availability"]["status"])
+        self.assertEqual("all-portal-supported-regions", listing["availability"]["status"])
 
     def test_submission_cases_are_exact_reviewer_ready_positive_and_negative_sets(self) -> None:
         payload = read_json_unique(SUBMISSION_ROOT / "test-cases.json")

@@ -16,15 +16,16 @@
       "Turn this workflow into a responsive HTML diagram with exception paths.",
       "Build an evidence-backed HTML diagram that separates facts, inference, and risks."
     ],
-    "release_notes": "Skills-only plugin submission candidate for Vibe Diagram 0.1.0-rc.2."
+    "release_notes": "Skills-only plugin submission candidate for Vibe Diagram 0.1.0."
   },
   "publisher": {
     "developer_name": "imchenway",
-    "identity_verification": "pending-user-action"
+    "identity_verification": "verified-individual",
+    "legal_text_approval": "approved-by-publisher"
   },
   "availability": {
     "countries_or_regions": [],
-    "status": "pending-user-confirmation"
+    "status": "all-portal-supported-regions"
   },
   "test_cases": "test-cases.json",
   "bundle": {
@@ -34,10 +35,7 @@
   "readiness": {
     "state": "blocked",
     "blockers": [
-      "verified-developer-or-business-identity",
       "apps-management-write-access",
-      "availability-selection",
-      "publisher-approval-of-legal-text",
       "codex-app-ui-runtime-verification",
       "upgrade-runtime-verification"
     ]

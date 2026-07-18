@@ -4,7 +4,7 @@
 
 ## 项目定位
 
-`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。当前版本是 Unreleased 0.1.0-rc.2 release-candidate snapshot；它不是稳定版，也不代表四类客户端的聚合运行时兼容。
+`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。当前版本是 Unreleased 0.1.0 stable-candidate snapshot；它不是已发布稳定版，也不代表四类客户端的聚合运行时兼容。
 
 ## 单一事实源
 
@@ -87,7 +87,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --sync-publication
 
 构建报告中的 `static_validation: passed` 属于 package-static-valid，仅表示 builder production preflight 已通过。它不能证明完整 unit suite、确定性流程检查或第二轮完整 suite。static-valid 要求这些命令整体通过；证据保留在命令或 CI 输出中，不作为仓库文档提交。
 
-RC.2 的运行时验证仍为 `Unverified`。它不继承旧标签的安装、发现、调用、HTML 交付、升级或卸载结论。在得到当前、范围明确的真实客户端证据前，稳定版提升继续阻断。
+本地 0.1.0 候选的运行时验证仍为 `Unverified`。它不继承旧标签的安装、发现、调用、HTML 交付、升级或卸载结论。在得到当前、范围明确的真实客户端证据前，稳定版发布继续阻断。
 
 ## 许可
 

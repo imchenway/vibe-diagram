@@ -8,6 +8,7 @@ __pycache__/
 .DS_Store
 .coverage
 .pytest_cache/
+.idea/
 submission/codex/build/
 docs/*
 !docs/public/
