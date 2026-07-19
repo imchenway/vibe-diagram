@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
-- 0.1.0 stable-candidate snapshot: retain the host-neutral canonical skill, deterministic four-client package definitions, static validators, and transaction-safe local build pipeline.
-- Keep the builder-only Codex publication projection, deterministic repo marketplace catalog, and pinned `v0.1.0-rc.2` plugin and skill installation instructions.
-- Limit tracked documentation to the three public policy files. Runtime verification remains Unverified and no result is inherited from an earlier tag.
+- No changes yet.
+
+## [0.1.0] - 2026-07-18
+
+- Published the stable GitHub tag for the host-neutral canonical Skill, deterministic four-client package definitions, static validators, and transaction-safe local build pipeline.
+- Verified the GitHub-path Codex CLI lane through installation, discovery, invocation, HTML delivery, replacement upgrade, and uninstall isolation.
+- Documented the pinned `v0.1.0` `$skill-installer` and bundled-helper flows, including recoverable replacement and removal.
+- Kept the curated `$skill-installer` index and public Plugins Directory outside the direct-install claim; those discovery surfaces require separate publication lifecycles.

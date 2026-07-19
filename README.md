@@ -4,7 +4,7 @@ Chinese overview: [README.zh-CN.md](README.zh-CN.md).
 
 ## What it is
 
-`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. The current Unreleased 0.1.0 stable-candidate snapshot is not a published stable release or an aggregate client-runtime compatibility claim.
+`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. `v0.1.0` is the stable GitHub tag. Its verified GitHub skill lane does not claim aggregate compatibility across every generated client package.
 
 ## Repository model
 
@@ -21,35 +21,73 @@ No generated package is a second source of truth.
 
 The repository-root `plugins/vibe-diagram/` tree is the builder-only generated projection included for Codex publication. It is not canonical and must not be edited by hand. The deterministic repo marketplace catalog is `.agents/plugins/marketplace.json`, which points to `./plugins/vibe-diagram`.
 
-## Codex installation
+## Codex Skill installation
 
-The public repository is <https://github.com/imchenway/vibe-diagram>. Its two public Codex source structures are the repo marketplace backed by `.agents/plugins/marketplace.json` and the GitHub skill path backed by `skills/vibe-diagram/`.
+The public repository is <https://github.com/imchenway/vibe-diagram>. The stable standalone Skill source is:
 
-GitHub installation instructions are pinned to RC `v0.1.0-rc.2`. Runtime verification for this RC remains `Unverified`: installation, discovery, invocation, HTML delivery, upgrade, and uninstall have not been established for any client surface. These instructions identify source paths and do not claim stable support or aggregate compatibility.
+<https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram>
 
-### Codex App plugin
+The GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`: clean installation, fresh-process discovery and invocation, HTML delivery, replacement from the release-candidate baseline, and uninstall isolation passed. This lane-scoped result does not claim aggregate compatibility for the other client packages.
 
-Use the Codex CLI bundled with the macOS Codex App, or another compatible `codex` executable:
+### Install from a Codex task
+
+Ask Codex:
+
+> Use `$skill-installer` to install `https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram`.
+
+Start a new Codex task after installation so the new Skill catalog is loaded. A simple first invocation is:
+
+> Use `$vibe-diagram` to create a self-contained HTML architecture diagram for this repository and run the bundled linter.
+
+### Install with the bundled helper
+
+The system Skill installer can also be called directly:
 
 ```bash
-codex plugin marketplace add imchenway/vibe-diagram --ref v0.1.0-rc.2
-codex plugin add vibe-diagram@imchenway
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
+  --repo imchenway/vibe-diagram \
+  --path skills/vibe-diagram \
+  --ref v0.1.0
 ```
 
-Start a new Codex task after installation so the new skill catalog is loaded. To uninstall the plugin and repository marketplace:
+The helper stops when `$CODEX_ROOT/skills/vibe-diagram` already exists. Use the recoverable replacement flow below instead of overwriting an installed copy.
+
+### Upgrade or reinstall
+
+Move the installed Skill outside the discovery directory, then install the pinned stable tag again:
 
 ```bash
-codex plugin remove vibe-diagram@imchenway
-codex plugin marketplace remove imchenway
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+BACKUP_ROOT="$CODEX_ROOT/backups/skills"
+BACKUP_PATH="$BACKUP_ROOT/vibe-diagram-$(date +%Y%m%d%H%M%S)"
+mkdir -p "$BACKUP_ROOT"
+mv "$CODEX_ROOT/skills/vibe-diagram" "$BACKUP_PATH"
+python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
+  --repo imchenway/vibe-diagram \
+  --path skills/vibe-diagram \
+  --ref v0.1.0
 ```
 
-### GitHub skill path
+Keep the backup until the replacement has passed a new-task invocation and its bundled linter.
 
-In a Codex task, ask:
+### Recoverable uninstall
 
-> Use `$skill-installer` to install `https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.2/skills/vibe-diagram`.
+Move the Skill outside `$CODEX_ROOT/skills/` so a new Codex task no longer discovers it:
 
-Start a new Codex task after the installer completes.
+```bash
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+BACKUP_ROOT="$CODEX_ROOT/backups/skills"
+BACKUP_PATH="$BACKUP_ROOT/vibe-diagram-uninstalled-$(date +%Y%m%d%H%M%S)"
+mkdir -p "$BACKUP_ROOT"
+mv "$CODEX_ROOT/skills/vibe-diagram" "$BACKUP_PATH"
+```
+
+Start a new Codex task after removal. Restore the selected backup to `$CODEX_ROOT/skills/vibe-diagram` if you need to roll back.
+
+### Searchability boundary
+
+GitHub-path installation is a direct-install lane. It does not add `vibe-diagram` to the curated `$skill-installer` index or the public Plugins Directory. The repository also contains the separate builder-generated Codex marketplace projection under `plugins/vibe-diagram/` and `.agents/plugins/marketplace.json`; that plugin publication path has its own review lifecycle.
 
 ## Artifact contract
 
@@ -98,7 +136,7 @@ These layouts are static package definitions. They do not constitute installatio
 
 A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. It does not prove the complete unit suite, deterministic process checks, or the second complete suite. Static-valid status requires those commands to pass together; the evidence remains in command or CI output and is not committed as repository documentation.
 
-Runtime verification remains `Unverified` for the local 0.1.0 candidate. No installation, discovery, invocation, HTML-delivery, upgrade, or uninstall result is inherited from an earlier tag. Stable publication remains blocked until current, scoped real-client evidence exists.
+The GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`. That conclusion is limited to the standalone Skill installed from the pinned GitHub tag; it does not claim aggregate compatibility for Codex plugins, Claude Code, Gemini CLI, or GitHub Copilot CLI.
 
 ## License
 

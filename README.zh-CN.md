@@ -4,7 +4,7 @@
 
 ## 项目定位
 
-`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。当前版本是 Unreleased 0.1.0 stable-candidate snapshot；它不是已发布稳定版，也不代表四类客户端的聚合运行时兼容。
+`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。`v0.1.0` 是稳定 GitHub 标签。已验证的 GitHub Skill lane 不代表四类生成包的聚合兼容性。
 
 ## 单一事实源
 
@@ -21,35 +21,73 @@
 
 仓库根 `plugins/vibe-diagram/` 是本仓为 Codex publication 纳入的 builder-only 生成投影；它不是第二份 canonical，也不得手工编辑。确定性 repo marketplace catalog 位于 `.agents/plugins/marketplace.json`，并指向 `./plugins/vibe-diagram`。
 
-## Codex 安装
+## Codex Skill 安装
 
-公开仓库是 <https://github.com/imchenway/vibe-diagram>。两种 Codex 公开来源结构分别是由 `.agents/plugins/marketplace.json` 支持的 repo marketplace，以及由 `skills/vibe-diagram/` 支持的 GitHub skill 路径。
+公开仓库是 <https://github.com/imchenway/vibe-diagram>。稳定的独立 Skill 来源为：
 
-GitHub 安装说明固定到 RC 标签 `v0.1.0-rc.2`。该 RC 的运行时验证仍为 `Unverified`：尚未在任何客户端表面确立安装、发现、调用、HTML 交付、升级或卸载结论。以下说明只标识源路径，不代表稳定支持或聚合兼容性。
+<https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram>
 
-### Codex App 插件
+GitHub-path Codex CLI lane 已针对 `v0.1.0` 完成运行时验证：全新安装、新进程发现与调用、HTML 交付、从候选基线替换升级以及卸载隔离均已通过。该 lane 级结论不代表聚合兼容性，也不覆盖其他客户端生成包。
 
-使用 macOS Codex App 内置的 Codex CLI，或其他兼容的 `codex` 可执行文件：
+### 在 Codex 任务中安装
+
+向 Codex 提出：
+
+> 使用 `$skill-installer` 安装 `https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram`。
+
+安装完成后新建一个 Codex 任务，使新的 Skill catalog 被加载。首次调用可使用：
+
+> 使用 `$vibe-diagram` 为当前仓库生成一份自包含 HTML 架构图，并运行 bundled linter。
+
+### 使用内置 helper 安装
+
+也可以直接调用系统 Skill 安装器：
 
 ```bash
-codex plugin marketplace add imchenway/vibe-diagram --ref v0.1.0-rc.2
-codex plugin add vibe-diagram@imchenway
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
+  --repo imchenway/vibe-diagram \
+  --path skills/vibe-diagram \
+  --ref v0.1.0
 ```
 
-安装完成后新建一个 Codex 任务，使新的 skill catalog 被加载。卸载插件与仓库 marketplace：
+当 `$CODEX_ROOT/skills/vibe-diagram` 已存在时，helper 会停止而不会覆盖。此时应使用下方的可恢复替换流程。
+
+### 升级或重新安装
+
+先把已安装 Skill 移出发现目录，再重新安装固定的稳定标签：
 
 ```bash
-codex plugin remove vibe-diagram@imchenway
-codex plugin marketplace remove imchenway
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+BACKUP_ROOT="$CODEX_ROOT/backups/skills"
+BACKUP_PATH="$BACKUP_ROOT/vibe-diagram-$(date +%Y%m%d%H%M%S)"
+mkdir -p "$BACKUP_ROOT"
+mv "$CODEX_ROOT/skills/vibe-diagram" "$BACKUP_PATH"
+python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
+  --repo imchenway/vibe-diagram \
+  --path skills/vibe-diagram \
+  --ref v0.1.0
 ```
 
-### GitHub skill 路径
+在替换后的版本通过新任务调用和 bundled linter 前保留备份。
 
-在 Codex 任务中提出：
+### 可恢复卸载
 
-> 使用 `$skill-installer` 安装 `https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.2/skills/vibe-diagram`。
+把 Skill 移出 `$CODEX_ROOT/skills/`，新 Codex 任务将不再发现它：
 
-安装器完成后新建一个 Codex 任务。
+```bash
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+BACKUP_ROOT="$CODEX_ROOT/backups/skills"
+BACKUP_PATH="$BACKUP_ROOT/vibe-diagram-uninstalled-$(date +%Y%m%d%H%M%S)"
+mkdir -p "$BACKUP_ROOT"
+mv "$CODEX_ROOT/skills/vibe-diagram" "$BACKUP_PATH"
+```
+
+移除后新建一个 Codex 任务。需要回滚时，把选定备份恢复到 `$CODEX_ROOT/skills/vibe-diagram`。
+
+### 可搜索性边界
+
+GitHub-path 是直装 lane，不会让 `vibe-diagram` 出现在 curated `$skill-installer` 索引或公共 Plugins Directory 中。本仓仍包含 `plugins/vibe-diagram/` 与 `.agents/plugins/marketplace.json` 下由 builder 生成的独立 Codex marketplace 投影；插件发布遵循另一套审核生命周期。
 
 ## 产物契约
 
@@ -87,7 +125,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --sync-publication
 
 构建报告中的 `static_validation: passed` 属于 package-static-valid，仅表示 builder production preflight 已通过。它不能证明完整 unit suite、确定性流程检查或第二轮完整 suite。static-valid 要求这些命令整体通过；证据保留在命令或 CI 输出中，不作为仓库文档提交。
 
-本地 0.1.0 候选的运行时验证仍为 `Unverified`。它不继承旧标签的安装、发现、调用、HTML 交付、升级或卸载结论。在得到当前、范围明确的真实客户端证据前，稳定版发布继续阻断。
+GitHub-path Codex CLI lane 已针对 `v0.1.0` 完成运行时验证。该结论只覆盖从固定 GitHub 标签安装的独立 Skill，不代表 Codex 插件、Claude Code、Gemini CLI 或 GitHub Copilot CLI 的聚合兼容性。
 
 ## 许可
 
