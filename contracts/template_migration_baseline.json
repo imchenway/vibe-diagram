@@ -19,6 +19,13 @@
       "business-flow/bpmn-light-flow.html",
       "business-flow/exception-branch-flow.html",
       "business-flow/stage-track.html"
+    ],
+    "B03": [
+      "state-data-model/data-flow-model.html",
+      "state-data-model/er-lite.html",
+      "state-data-model/lifecycle-track.html",
+      "state-data-model/state-event-matrix.html",
+      "state-data-model/state-machine.html"
     ]
   },
   "templates": {
@@ -5610,8 +5617,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "dab612e2d090206057779017e85ccb69cb7295bdf94d3839ccdfa6008affbd74",
-        "structure_sha256": "86591e4c998a2b2649a11761bb1b1d5d9a25ba4a6500494870a759f9bb5f4b03",
+        "file_sha256": "c2821f18e3e998945a0c1b597782b981597e493df8cc7d4451fed477c3b11b1b",
+        "structure_sha256": "69f7b98c85a71fa38015c385fc806fafb11a0f35477515c0c2b9821cabff9a57",
         "data_slots": [
           "title",
           "summary",
@@ -5690,7 +5697,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "state-data-model/er-lite.html": {
       "source": {
@@ -5799,8 +5806,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "aefa30fbe0975f5d309aa4433b900884dd0dff09f8d11a834f2735d037b7d3b9",
-        "structure_sha256": "4ac34580a302ec27408f61470da4139eef9d8129b173b4ae9018699853a6e9fd",
+        "file_sha256": "46c5c18497a3295eb95865d02882a86bcf43ca9ee53968a67fed8f00251a5eb2",
+        "structure_sha256": "ad4301a3b22ee2d591e73a2291c15fcd1be6448d96554b55db2c882676e295d4",
         "data_slots": [
           "title",
           "summary",
@@ -5903,7 +5910,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "state-data-model/lifecycle-track.html": {
       "source": {
@@ -6000,8 +6007,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0a2e0c645e845685428a9a636f2c862efb3ca9e559b74e58b66528421593cd67",
-        "structure_sha256": "77de583d5f8201a5fe6a0cd5ecd662118f9a6adb0329bd6db5e20894b540758b",
+        "file_sha256": "d0da78d987aecb28a0df6a760a307a46ed93140634deb2fe12f16179417e4cda",
+        "structure_sha256": "d69ec6c8985cd77f6abb7480b817378e4feaf665b686883013482e2cd7a04192",
         "data_slots": [
           "title",
           "summary",
@@ -6092,7 +6099,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "state-data-model/state-event-matrix.html": {
       "source": {
@@ -6219,8 +6226,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ba3bd0c26b0efd1fa84d6972913feb5ef0bfcb2794fe08dda7fd354cec07bf0e",
-        "structure_sha256": "e4902ab00b18926454baa26bd9bbcd50d028a424f6e609299d72492dce911091",
+        "file_sha256": "2b19a76c1cb23a60f8c57072c40856c0d2991bdb65743b36da18b50aef18c0e2",
+        "structure_sha256": "d702456687e21194936f8a3fee3d898d3df3bc77cfce1234b2e28428e2c7c6a8",
         "data_slots": [
           "title",
           "summary",
@@ -6341,7 +6348,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "state-data-model/state-machine.html": {
       "source": {
@@ -6408,8 +6415,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "5824042e060d1e76cd64eba5be4882e183a163af50e883d79f70e9507d462bf6",
-        "structure_sha256": "09c73d7262bb4bc59608dde4e6712c09c774fe9a2a669b47b1508d6eee84a514",
+        "file_sha256": "c3a9b0da2fd3c3c4a85dbe75f1827673e118763c3564dc90542ca5542f1fc659",
+        "structure_sha256": "67f39847f5730a7bc259ccc6bdc49e4007220a754c064f4a0e08f4133bad5fba",
         "data_slots": [
           "title",
           "summary",
@@ -6470,7 +6477,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/api-integration.html": {
       "source": {

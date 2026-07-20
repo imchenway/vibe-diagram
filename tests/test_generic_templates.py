@@ -27,6 +27,13 @@ B02_TEMPLATES = (
     "business-flow/exception-branch-flow.html",
     "business-flow/stage-track.html",
 )
+B03_TEMPLATES = (
+    "state-data-model/data-flow-model.html",
+    "state-data-model/er-lite.html",
+    "state-data-model/lifecycle-track.html",
+    "state-data-model/state-event-matrix.html",
+    "state-data-model/state-machine.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -45,9 +52,12 @@ class GenericTemplateTests(unittest.TestCase):
         interaction = json.loads(INTERACTION_PATH.read_text(encoding="utf-8"))
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(["B00", "B01", "B02"], interaction["scope"]["completed_batches"])
         self.assertEqual(
-            sorted((*B01_TEMPLATES, *B02_TEMPLATES)),
+            ["B00", "B01", "B02", "B03"],
+            interaction["scope"]["completed_batches"],
+        )
+        self.assertEqual(
+            sorted((*B01_TEMPLATES, *B02_TEMPLATES, *B03_TEMPLATES)),
             interaction["scope"]["completed_templates"],
         )
         self.assertEqual(list(B01_TEMPLATES), policy["migration_batches"]["B01"])
@@ -110,6 +120,62 @@ class GenericTemplateTests(unittest.TestCase):
                 self.assertIn("data-fallback-for=", html)
                 for key in ("data_slots", "macros", "slot_macro_pairs"):
                     self.assertEqual(entry["source"][key], entry["canonical"][key])
+
+    def test_b03_closes_state_data_model_with_profile_specific_semantics(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B03_TEMPLATES), policy_data["migration_batches"]["B03"])
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "state-data-model").glob("*.html")
+        }
+        self.assertEqual(expected, set(B03_TEMPLATES))
+        minimums = {
+            B03_TEMPLATES[0]: (8, 7, "graph"),
+            B03_TEMPLATES[1]: (12, 9, "graph"),
+            B03_TEMPLATES[2]: (10, 9, "timeline"),
+            B03_TEMPLATES[3]: (15, 9, "matrix"),
+            B03_TEMPLATES[4]: (5, 4, "graph"),
+        }
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+        matrix = (TEMPLATE_ROOT / B03_TEMPLATES[3]).read_text(encoding="utf-8")
+        self.assertEqual(3, matrix.count("data-matrix-row-id="))
+        self.assertEqual(3, matrix.count("data-matrix-col-id="))
+        self.assertEqual(9, matrix.count("data-matrix-row="))
+
+    def test_b03_templates_pass_both_parsers_and_embed_shared_kernel(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B03_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
 
     def test_b01_templates_pass_independent_generic_contract_parsers(self) -> None:
         linter = _load_linter()

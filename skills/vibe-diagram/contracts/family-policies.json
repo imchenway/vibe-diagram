@@ -18,6 +18,13 @@
       "business-flow/bpmn-light-flow.html",
       "business-flow/exception-branch-flow.html",
       "business-flow/stage-track.html"
+    ],
+    "B03": [
+      "state-data-model/data-flow-model.html",
+      "state-data-model/er-lite.html",
+      "state-data-model/lifecycle-track.html",
+      "state-data-model/state-event-matrix.html",
+      "state-data-model/state-machine.html"
     ]
   },
   "families": {
