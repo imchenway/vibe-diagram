@@ -26,6 +26,12 @@
       "state-data-model/lifecycle-track.html",
       "state-data-model/state-event-matrix.html",
       "state-data-model/state-machine.html"
+    ],
+    "B04": [
+      "business-architecture/capability-domain-map.html",
+      "business-architecture/participant-boundary.html",
+      "business-architecture/rule-constraint-heatmap.html",
+      "business-architecture/value-chain-map.html"
     ]
   },
   "templates": {
@@ -130,8 +136,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "06c578580c47669c2494969be2d68a1fb52dcfb6fc27391e84e33ae89d94c4ca",
-        "structure_sha256": "6055e9802d2f67b67d225f2897fe9e963472bc887c5dbb2e2f8cee76b06f0e2e",
+        "file_sha256": "f71126de3d92ab58f59a7930c0ae941450357729d5c4cb5a3c185ec711ee48de",
+        "structure_sha256": "54a15cec650563709d1aabeea6cd44b03ed0593fc082b9b1c5be14134ccf8d9a",
         "data_slots": [
           "title",
           "summary",
@@ -228,7 +234,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-architecture/participant-boundary.html": {
       "source": {
@@ -307,8 +313,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "812d7a8c7e2629bc88c1b2e04edc0b5bf3d2ef5a2b37912696be8f1074527302",
-        "structure_sha256": "a9bcfab2ae5259009502fc5485bea37eb8a71cc3cf7a11ba3840ca15f517d79c",
+        "file_sha256": "eeb9d55b92b2137317e5d469284b3eddcd72d9edb755932e1bc34d5f95dcaec9",
+        "structure_sha256": "a20b1a4a11c4ad5d72529530e0554f80f3c65bc333831d5ed5030b62202f8cd5",
         "data_slots": [
           "title",
           "summary",
@@ -381,7 +387,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-architecture/rule-constraint-heatmap.html": {
       "source": {
@@ -490,8 +496,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "1fd308067f5a7e895c770b899589edb35deb3cbec6c9545a4cbe21b407d5af46",
-        "structure_sha256": "e20cd5b7a31ef21ce87f9f445cfcd263aad999c40b78af71f32e0f14c9b7cad7",
+        "file_sha256": "879aa6651a432cc46a48a0fbd6b3928d46619c80aae6a3ac5af34ee383e0e819",
+        "structure_sha256": "8d4be5014f0d869a8b336df1199341061644d94168b17b38ba1ce14a3a271c11",
         "data_slots": [
           "title",
           "summary",
@@ -594,7 +600,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-architecture/value-chain-map.html": {
       "source": {
@@ -679,8 +685,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "96c22c8beb02d3b971ffe004d7561de083efb7e453df16d4e9fac42b76787b12",
-        "structure_sha256": "48109cd48419102fae766cf5df2e969b64036acc1259aa22d780dae59b0ece89",
+        "file_sha256": "0a33933c853ad46f52e1aa437a03f5a20f0d5504325fb3bfc13f3d117d6663b3",
+        "structure_sha256": "bda8d0d1bd27b08a51ef77b5ef567046f8254cd7d6901ff8f56938a725e7d0a3",
         "data_slots": [
           "title",
           "summary",
@@ -759,7 +765,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-flow/bpmn-light-flow.html": {
       "source": {

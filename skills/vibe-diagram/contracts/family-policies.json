@@ -25,6 +25,12 @@
       "state-data-model/lifecycle-track.html",
       "state-data-model/state-event-matrix.html",
       "state-data-model/state-machine.html"
+    ],
+    "B04": [
+      "business-architecture/capability-domain-map.html",
+      "business-architecture/participant-boundary.html",
+      "business-architecture/rule-constraint-heatmap.html",
+      "business-architecture/value-chain-map.html"
     ]
   },
   "families": {

@@ -34,6 +34,12 @@ B03_TEMPLATES = (
     "state-data-model/state-event-matrix.html",
     "state-data-model/state-machine.html",
 )
+B04_TEMPLATES = (
+    "business-architecture/capability-domain-map.html",
+    "business-architecture/participant-boundary.html",
+    "business-architecture/rule-constraint-heatmap.html",
+    "business-architecture/value-chain-map.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -53,11 +59,13 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03"],
+            ["B00", "B01", "B02", "B03", "B04"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
-            sorted((*B01_TEMPLATES, *B02_TEMPLATES, *B03_TEMPLATES)),
+            sorted(
+                (*B01_TEMPLATES, *B02_TEMPLATES, *B03_TEMPLATES, *B04_TEMPLATES)
+            ),
             interaction["scope"]["completed_templates"],
         )
         self.assertEqual(list(B01_TEMPLATES), policy["migration_batches"]["B01"])
@@ -163,6 +171,61 @@ class GenericTemplateTests(unittest.TestCase):
             SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
         ).read_text(encoding="utf-8").rstrip("\n")
         for relative in B03_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+
+    def test_b04_closes_business_architecture_without_flattening_its_grammars(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B04_TEMPLATES), policy_data["migration_batches"]["B04"])
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "business-architecture").glob("*.html")
+        }
+        self.assertEqual(expected, set(B04_TEMPLATES))
+        minimums = {
+            B04_TEMPLATES[0]: (11, 10, "graph"),
+            B04_TEMPLATES[1]: (7, 6, "graph"),
+            B04_TEMPLATES[2]: (12, 9, "matrix"),
+            B04_TEMPLATES[3]: (8, 8, "graph"),
+        }
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+        heatmap = (TEMPLATE_ROOT / B04_TEMPLATES[2]).read_text(encoding="utf-8")
+        self.assertEqual(3, heatmap.count("data-matrix-row-id="))
+        self.assertEqual(3, heatmap.count("data-matrix-col-id="))
+        self.assertEqual(9, heatmap.count("data-matrix-row="))
+
+    def test_b04_templates_pass_both_parsers_and_embed_shared_kernel(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B04_TEMPLATES:
             family, name = relative.split("/", 1)
             template_id = Path(name).stem
             html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
