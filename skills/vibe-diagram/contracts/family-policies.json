@@ -73,6 +73,13 @@
       "system-architecture/network-topology.html",
       "system-architecture/system-context.html",
       "system-architecture/workload-overview.html"
+    ],
+    "B12": [
+      "system-architecture/api-integration.html",
+      "system-architecture/data-architecture.html",
+      "system-architecture/data-flow.html",
+      "system-architecture/event-driven.html",
+      "system-architecture/router-v6.html"
     ]
   },
   "families": {

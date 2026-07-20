@@ -10,6 +10,46 @@
 
 .router-pipeline{display:grid;grid-template-columns:1fr 28px 1.2fr 28px 1.2fr 28px 1fr;gap:12px;align-items:center}.router-group{display:grid;gap:10px}.boundary-hub{display:grid;grid-template-columns:1fr 1.25fr 1fr;grid-template-rows:auto auto;gap:16px}.boundary-box{grid-row:1/3;border:2px dashed rgba(31,111,178,.46);border-radius:28px;padding:18px;display:grid;gap:12px}.entry-core-foundation{display:grid;grid-template-columns:170px 1fr 210px;grid-template-rows:auto auto auto;gap:14px}.entry-core-foundation .foundation{grid-column:1/4}.whitebox-cluster{display:grid;grid-template-columns:170px 1fr 170px;gap:16px}.component-box{border:2px solid rgba(31,111,178,.42);border-radius:22px;padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.environment-zones{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.env-zone{border:1.5px solid rgba(141,179,216,.58);border-radius:22px;padding:14px;display:grid;gap:12px}.north-south-layers{display:grid;gap:12px}.north-south-layers .layer{display:grid;grid-template-columns:180px 1fr 1fr;gap:12px}.data-domain-map{display:grid;grid-template-columns:180px 1fr 180px;grid-template-rows:auto auto;gap:14px}.domain-center{grid-row:1/3;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;border:1.5px solid rgba(23,120,90,.4);border-radius:22px;padding:14px}.dfd-trust-boundary{display:grid;grid-template-columns:180px 1fr 180px;gap:16px}.trust-box{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.contract-mesh{display:grid;grid-template-columns:1fr 220px 1fr;gap:16px}.contract-center{display:grid;gap:12px;border:1.6px solid rgba(31,111,178,.44);border-radius:22px;padding:14px}.event-bus{display:grid;grid-template-rows:auto 68px auto;gap:14px}.bus-line{display:grid;place-items:center;border-radius:18px;background:linear-gradient(90deg,var(--blue-soft),var(--violet-soft));border:1.5px solid rgba(98,84,173,.38);font-weight:900}.event-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.network-zones{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.security-threat-controls{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:16px}.security-center{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;gap:12px}.identity-access-path{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:center}.failure-domain-recovery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.failure-domain{border:1.5px dashed rgba(166,58,58,.34);border-radius:22px;padding:14px;display:grid;gap:12px}.telemetry-pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.delivery-rail{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.rail-stage{min-height:128px}.stack{display:grid;gap:12px}.wide{grid-column:1/-1}
 </style>
+  <style data-adaptive-viewport-kernel="1">
+[data-diagram-canvas][data-diagram-contract="1"] {
+  --diagram-scale: 1;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  transform-origin: top left;
+}
+
+[data-diagram-width="contained"] { inline-size: min(100%, 72rem); margin-inline: auto; }
+[data-diagram-width="auto"] { inline-size: 100%; }
+[data-diagram-width="wide"] { inline-size: max-content; min-inline-size: 100%; }
+[data-diagram-height="flow"] { block-size: auto; }
+[data-diagram-height="auto"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
+[data-diagram-height="scroll"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
+[data-diagram-scaled="true"] > [data-diagram-stage] {
+  transform: scale(var(--diagram-scale));
+  transform-origin: top left;
+}
+[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
+[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
+[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+.diagram-fallback { display: none; }
+
+@media (max-width: 48rem) {
+  [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
+}
+
+@media print {
+  [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
+  [data-diagram-controls] { display: none !important; }
+  .diagram-fallback { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-template-contract="1">[data-diagram-id="data-architecture"]>[data-diagram-stage]{min-inline-size:60rem}.semantic-relation{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:48rem){[data-diagram-id="data-architecture"]>[data-diagram-stage]{min-inline-size:0}}</style>
 </head>
 <body>
 <main data-diagram-type="system-architecture"
@@ -21,12 +61,79 @@
       data-routing-confidence="{{routing_confidence}}">
   <h1 data-slot="title">{{title}}</h1>
   <p class="summary" data-slot="summary">{{summary}}</p>
-  <section class="template-layout data-domain-map" aria-label="Data architecture template canvas">
-    <div class="stack">    <div class="slot " data-slot="data-producers"><b>Data producers</b><span>{{data-producers}}</span></div>    <div class="slot " data-slot="ingestion-path"><b>Ingestion path</b><span>{{ingestion-path}}</span></div></div>
-    <div class="domain-center">    <div class="slot data" data-slot="domain-a"><b>Domain a</b><span>{{domain-a}}</span></div>    <div class="slot data" data-slot="domain-b"><b>Domain b</b><span>{{domain-b}}</span></div>    <div class="slot ops" data-slot="governance"><b>Governance</b><span>{{governance}}</span></div>    <div class="slot support" data-slot="lineage"><b>Lineage</b><span>{{lineage}}</span></div></div>
-    <div class="stack">    <div class="slot " data-slot="data-consumers"><b>Data consumers</b><span>{{data-consumers}}</span></div>    <div class="slot " data-slot="serving-path"><b>Serving path</b><span>{{serving-path}}</span></div></div>
-  </section>
+  <div data-diagram-controls="data-architecture" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="data-architecture" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack"><section data-diagram-stage data-reading-guide="data integration landmarks" class="template-layout data-domain-map" aria-label="Data architecture template canvas">
+    <div class="stack">    <div id="data-producers" class="slot " data-diagram-node-id="data-producers" data-semantic-role="integration-object" data-slot="data-producers"><b>Data producers</b><span>{{data-producers}}</span></div>    <div id="ingestion-path" class="slot " data-diagram-node-id="ingestion-path" data-semantic-role="integration-object" data-slot="ingestion-path"><b>Ingestion path</b><span>{{ingestion-path}}</span></div></div>
+    <div class="domain-center">    <div id="domain-a" class="slot data" data-diagram-node-id="domain-a" data-semantic-role="integration-object" data-slot="domain-a"><b>Domain a</b><span>{{domain-a}}</span></div>    <div id="domain-b" class="slot data" data-diagram-node-id="domain-b" data-semantic-role="integration-object" data-slot="domain-b"><b>Domain b</b><span>{{domain-b}}</span></div>    <div id="governance" class="slot ops" data-diagram-node-id="governance" data-semantic-role="integration-object" data-slot="governance"><b>Governance</b><span>{{governance}}</span></div>    <div id="lineage" class="slot support" data-diagram-node-id="lineage" data-semantic-role="integration-object" data-slot="lineage"><b>Lineage</b><span>{{lineage}}</span></div></div>
+    <div class="stack">    <div id="data-consumers" class="slot " data-diagram-node-id="data-consumers" data-semantic-role="integration-object" data-slot="data-consumers"><b>Data consumers</b><span>{{data-consumers}}</span></div>    <div id="serving-path" class="slot " data-diagram-node-id="serving-path" data-semantic-role="integration-object" data-slot="serving-path"><b>Serving path</b><span>{{serving-path}}</span></div></div>
+  <span class="semantic-relation" data-diagram-relation-id="data-producers-ingestion-path" data-from="data-producers" data-to="ingestion-path" data-relation-kind="data-flow" data-semantic="data-producers feeds ingestion-path">data-producers feeds ingestion-path</span><span class="semantic-relation" data-diagram-relation-id="ingestion-path-domain-a" data-from="ingestion-path" data-to="domain-a" data-relation-kind="data-flow" data-semantic="ingestion-path feeds domain-a">ingestion-path feeds domain-a</span><span class="semantic-relation" data-diagram-relation-id="domain-a-domain-b" data-from="domain-a" data-to="domain-b" data-relation-kind="data-flow" data-semantic="domain-a feeds domain-b">domain-a feeds domain-b</span><span class="semantic-relation" data-diagram-relation-id="domain-b-governance" data-from="domain-b" data-to="governance" data-relation-kind="data-flow" data-semantic="domain-b feeds governance">domain-b feeds governance</span><span class="semantic-relation" data-diagram-relation-id="governance-lineage" data-from="governance" data-to="lineage" data-relation-kind="data-flow" data-semantic="governance feeds lineage">governance feeds lineage</span><span class="semantic-relation" data-diagram-relation-id="lineage-data-consumers" data-from="lineage" data-to="data-consumers" data-relation-kind="data-flow" data-semantic="lineage feeds data-consumers">lineage feeds data-consumers</span><span class="semantic-relation" data-diagram-relation-id="data-consumers-serving-path" data-from="data-consumers" data-to="serving-path" data-relation-kind="data-flow" data-semantic="data-consumers feeds serving-path">data-consumers feeds serving-path</span></section></div>
+  <details class="diagram-fallback" data-fallback-for="data-architecture"><summary>Data integration landmarks</summary><ol><li>data-producers</li><li>ingestion-path</li><li>domain-a</li><li>domain-b</li><li>governance</li><li>lineage</li><li>data-consumers</li><li>serving-path</li></ol></details>
   <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
 </main>
+<script data-adaptive-viewport-kernel="1">
+(() => {
+  "use strict";
+  const allowed = new Set(["fit", "0.75", "0.9", "1"]);
+  const reset = (canvas) => {
+    canvas.style.removeProperty("--diagram-scale");
+    canvas.removeAttribute("data-diagram-scaled");
+  };
+  const apply = (canvas, requested = "fit") => {
+    reset(canvas);
+    if (!allowed.has(requested)) return false;
+    const stage = canvas.querySelector(":scope > [data-diagram-stage]");
+    if (!stage || !canvas.clientWidth || !stage.scrollWidth) return false;
+    const scale = requested === "fit"
+      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
+      : Number(requested);
+    if (!Number.isFinite(scale) || scale < 0.75 || scale > 1) return false;
+    canvas.style.setProperty("--diagram-scale", String(scale));
+    canvas.setAttribute("data-diagram-scaled", "true");
+    return true;
+  };
+  const reflect = (controls, requested, applied) => {
+    controls.querySelectorAll("[data-diagram-zoom-control]").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.diagramZoomControl === requested && applied)
+      );
+    });
+    const status = controls.querySelector("[data-diagram-zoom-status]");
+    if (status) status.value = applied ? (requested === "fit" ? "Fit width" : `${Number(requested) * 100}%`) : "Scroll";
+  };
+  const bind = (root = document) => {
+    root.querySelectorAll("[data-diagram-controls]").forEach((controls) => {
+      const id = controls.dataset.diagramControls;
+      const canvas = id ? root.querySelector(`[data-diagram-id="${CSS.escape(id)}"]`) : null;
+      if (!canvas || controls.dataset.diagramBound === "true") return;
+      controls.dataset.diagramBound = "true";
+      controls.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-diagram-zoom-control]");
+        if (!button || !controls.contains(button)) return;
+        const requested = button.dataset.diagramZoomControl;
+        const applied = apply(canvas, requested);
+        reflect(controls, requested, applied);
+      });
+    });
+  };
+  const enhance = (root = document) => {
+    bind(root);
+    root.querySelectorAll('[data-diagram-canvas][data-diagram-contract="1"]')
+      .forEach((canvas) => {
+        try {
+          apply(canvas, canvas.dataset.diagramZoom || "fit");
+        } catch (_error) {
+          reset(canvas);
+        }
+      });
+  };
+  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
 </body>
 </html>

@@ -82,6 +82,13 @@ B11_TEMPLATES = (
     "system-architecture/system-context.html",
     "system-architecture/workload-overview.html",
 )
+B12_TEMPLATES = (
+    "system-architecture/api-integration.html",
+    "system-architecture/data-architecture.html",
+    "system-architecture/data-flow.html",
+    "system-architecture/event-driven.html",
+    "system-architecture/router-v6.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -101,7 +108,7 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11"],
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
@@ -118,6 +125,7 @@ class GenericTemplateTests(unittest.TestCase):
                     *B09_TEMPLATES,
                     *B10_TEMPLATES,
                     *B11_TEMPLATES,
+                    *B12_TEMPLATES,
                 )
             ),
             interaction["scope"]["completed_templates"],
@@ -356,6 +364,10 @@ class GenericTemplateTests(unittest.TestCase):
     def test_b11_closes_system_topology_slice(self) -> None:
         policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B11_TEMPLATES),policy_data["migration_batches"]["B11"])
         counts=(8,7,9,8,7,8);self._assert_completed_generic_batch(B11_TEMPLATES,{p:(n,n-1,"graph") for p,n in zip(B11_TEMPLATES,counts)})
+
+    def test_b12_closes_system_data_integration_slice(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B12_TEMPLATES),policy_data["migration_batches"]["B12"])
+        counts=(7,8,8,7,8);self._assert_completed_generic_batch(B12_TEMPLATES,{p:(n,n-1,"graph") for p,n in zip(B12_TEMPLATES,counts)})
 
     def _assert_completed_generic_batch(self, templates, minimums) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
