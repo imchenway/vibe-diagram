@@ -59,6 +59,12 @@
       "delivery-acceptance/delivery-timeline.html",
       "delivery-acceptance/evidence-swimlane.html",
       "delivery-acceptance/risk-action-board.html"
+    ],
+    "B10": [
+      "page-mockup/artboard-filmstrip.html",
+      "page-mockup/artboard-wireframe.html",
+      "page-mockup/primary-path-page-flow.html",
+      "page-mockup/responsive-state-board.html"
     ]
   },
   "families": {

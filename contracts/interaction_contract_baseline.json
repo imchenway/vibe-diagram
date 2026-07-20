@@ -8,7 +8,7 @@
   "scope": {
     "generic_template_count": 52,
     "sequence_template_count": 6,
-    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09"],
+    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10"],
     "completed_templates": [
       "business-architecture/capability-domain-map.html",
       "business-architecture/participant-boundary.html",
@@ -33,6 +33,10 @@
       "feature-iteration/current-target-flow.html",
       "feature-iteration/diff-heatmap.html",
       "feature-iteration/release-rollback-track.html",
+      "page-mockup/artboard-filmstrip.html",
+      "page-mockup/artboard-wireframe.html",
+      "page-mockup/primary-path-page-flow.html",
+      "page-mockup/responsive-state-board.html",
       "state-data-model/data-flow-model.html",
       "state-data-model/er-lite.html",
       "state-data-model/lifecycle-track.html",

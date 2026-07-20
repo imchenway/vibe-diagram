@@ -60,6 +60,12 @@
       "delivery-acceptance/delivery-timeline.html",
       "delivery-acceptance/evidence-swimlane.html",
       "delivery-acceptance/risk-action-board.html"
+    ],
+    "B10": [
+      "page-mockup/artboard-filmstrip.html",
+      "page-mockup/artboard-wireframe.html",
+      "page-mockup/primary-path-page-flow.html",
+      "page-mockup/responsive-state-board.html"
     ]
   },
   "templates": {
@@ -5021,8 +5027,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "2ecbb9562a9fa91e7e6d4aafa2e40f4fb2d12e94ebef2cac4d8a158a67e2632c",
-        "structure_sha256": "627cc876fbe9174ae1636d26a0e4123a5f3a891deefd207188974e31cde9f453",
+        "file_sha256": "60a178e013e0f89354aa7a92e90077c0897252d6d6269f1f5be53dd377501317",
+        "structure_sha256": "2f16e4a82e33f20f25ca67859995838598bf98b47b3853155fba3633ff76cb61",
         "data_slots": [
           "title",
           "summary",
@@ -5119,7 +5125,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "page-mockup/artboard-wireframe.html": {
       "source": {
@@ -5198,8 +5204,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ac5722a2ff49f066c76f23cb5c1d7a6f68dbe27c67279531c4eefbf3a5acb3a7",
-        "structure_sha256": "6bee0e1931ffe7212d4f306040836042c927cfcb12b5ae20e84eea25b5d5851d",
+        "file_sha256": "1aeb35ea5592f89cea16f7ad658875e94b2965acecf8b4989db57f7315c90ae5",
+        "structure_sha256": "08ba15a5d3227c0f572aae257b512a13615ebf76545bbac03ff709e31a48fc48",
         "data_slots": [
           "title",
           "summary",
@@ -5272,7 +5278,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "page-mockup/primary-path-page-flow.html": {
       "source": {
@@ -5339,8 +5345,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "b55263f4fbb33a4aabfbcb843ea4a844c29a19b342206384b1883e7cd216d554",
-        "structure_sha256": "fe9c8d5b5fc46a50bfd0022aa1bbb35ceb614a5bb4d65d17ed3e31d018934e61",
+        "file_sha256": "d4c83154b5374b6f7cc977c19a983842a3ba56db213ec600e471351f14eb530a",
+        "structure_sha256": "d5c04617628c4caf4fd5160ccde4ee890b6391fa9874acfb270f64780ea3def3",
         "data_slots": [
           "title",
           "summary",
@@ -5401,7 +5407,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "page-mockup/responsive-state-board.html": {
       "source": {
@@ -5486,8 +5492,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "373367d991746ad65b9375c7dac1b7aff78994f49d29bcff7199eb72e95a7141",
-        "structure_sha256": "c88f265f98711d9af720ba5f30a889ada957e822fe8a488bd9d2a02377f02b99",
+        "file_sha256": "514e296910412c9e557494aa3847e48fdd670eaabe98cd03daa98670990f2ad3",
+        "structure_sha256": "06dd8410826231e52ef54a5cafe25dcc66573c0a40f60e96bda61235e3a9f230",
         "data_slots": [
           "title",
           "summary",
@@ -5566,7 +5572,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "state-data-model/data-flow-model.html": {
       "source": {
