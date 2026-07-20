@@ -27,6 +27,8 @@ REFERENCE_NAMES = (
     "system-architecture.md",
     "technical-design.md",
 )
+RUNTIME_WORKFLOW_NAME = "runtime-workflow.md"
+ALL_REFERENCE_NAMES = (*REFERENCE_NAMES, RUNTIME_WORKFLOW_NAME)
 SEQUENCE_REFERENCE_NAMES = {
     "code-sequence.md",
     "fault-debugging.md",
@@ -50,6 +52,10 @@ FORBIDDEN_HOST_TERMS = (
 
 def _read_skill() -> str:
     return SKILL_PATH.read_text(encoding="utf-8")
+
+
+def _read_runtime_workflow() -> str:
+    return (REFERENCE_ROOT / RUNTIME_WORKFLOW_NAME).read_text(encoding="utf-8")
 
 
 def _frontmatter(text: str) -> dict:
@@ -99,26 +105,44 @@ class SkillContractTests(unittest.TestCase):
         self.assertLessEqual(len(text.splitlines()), 500)
         expected_headings = (
             "# Vibe Diagram",
+            "## Update gate",
+            "## Runtime workflow",
+            "## Reference index",
+        )
+        positions = [text.index(heading) for heading in expected_headings]
+        self.assertEqual(sorted(positions), positions)
+        for name in ALL_REFERENCE_NAMES:
+            self.assertIn(f"references/{name}", text)
+
+        runtime = _read_runtime_workflow()
+        runtime_headings = (
+            "# Vibe Diagram Runtime Workflow",
             "## Scope and activation",
             "## Artifact contract",
             "## Capability-based delivery",
             "## Candidate atlas calibration mode",
             "## Automatic routing",
-            "## Reference index",
             "## Shared diagram grammar",
             "## Layout, arrows, and collision control",
             "## Visual quality and accessibility",
             "## Evidence and uncertainty",
             "## Pre-delivery checks",
         )
-        positions = [text.index(heading) for heading in expected_headings]
-        self.assertEqual(sorted(positions), positions)
-        for name in REFERENCE_NAMES:
-            self.assertIn(f"references/{name}", text)
+        runtime_positions = [runtime.index(heading) for heading in runtime_headings]
+        self.assertEqual(sorted(runtime_positions), runtime_positions)
+
+    def test_update_gate_runs_before_loading_runtime_workflow(self) -> None:
+        text = _read_skill()
+        command = "scripts/update_skill.py"
+        runtime = f"references/{RUNTIME_WORKFLOW_NAME}"
+        self.assertIn("on every invocation", text.lower())
+        self.assertIn("--check-and-update", text)
+        self.assertLess(text.index(command), text.index(runtime))
+        self.assertIn("continue with the installed version", text)
 
     def test_exact_reference_inventory(self) -> None:
         actual = tuple(sorted(path.name for path in REFERENCE_ROOT.glob("*.md"))) if REFERENCE_ROOT.exists() else ()
-        self.assertEqual(REFERENCE_NAMES, actual)
+        self.assertEqual(tuple(sorted(ALL_REFERENCE_NAMES)), actual)
 
     def test_reference_template_paths_resolve(self) -> None:
         referenced = set()
@@ -153,13 +177,13 @@ class SkillContractTests(unittest.TestCase):
             self.assertRegex(digest, r"^[0-9a-f]{64}$")
 
     def test_artifact_contract_is_html_first(self) -> None:
-        text = _read_skill()
+        text = _read_runtime_workflow()
         self.assertIn("self-contained single-file HTML", text)
         self.assertRegex(text, r"PNG.*SVG.*explicitly requests")
         self.assertIn("must not replace the HTML artifact", text)
 
     def test_delivery_branches_only_on_capabilities(self) -> None:
-        section = _read_skill().split("## Capability-based delivery", 1)[1].split("\n## ", 1)[0]
+        section = _read_runtime_workflow().split("## Capability-based delivery", 1)[1].split("\n## ", 1)[0]
         expected = {"can_write_file", "can_attach_file", "can_open_local_link", "text_only"}
         actual = set(re.findall(r"(?m)^- `([^`]+)`:", section))
         self.assertEqual(expected, actual)
@@ -183,20 +207,20 @@ class SkillContractTests(unittest.TestCase):
         self.assertIn("concurrency, consistency, compensation, retry, undo, and soft-delete", state_data)
 
     def test_output_language_follows_user_with_english_fallback(self) -> None:
-        text = _read_skill()
+        text = _read_runtime_workflow()
         self.assertIn("Follow the user's language", text)
         self.assertIn("use English when the language cannot be determined", text)
 
     def test_host_and_vibego_terms_are_absent(self) -> None:
         text = _read_skill() + "\n" + "\n".join(
-            (REFERENCE_ROOT / name).read_text(encoding="utf-8") for name in REFERENCE_NAMES
+            (REFERENCE_ROOT / name).read_text(encoding="utf-8") for name in ALL_REFERENCE_NAMES
         )
         for term in FORBIDDEN_HOST_TERMS:
             self.assertNotIn(term, text)
 
     def test_canonical_text_is_english(self) -> None:
         text = _read_skill() + "\n" + "\n".join(
-            (REFERENCE_ROOT / name).read_text(encoding="utf-8") for name in REFERENCE_NAMES
+            (REFERENCE_ROOT / name).read_text(encoding="utf-8") for name in ALL_REFERENCE_NAMES
         )
         self.assertIsNone(re.search(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]", text))
 

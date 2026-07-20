@@ -49,7 +49,6 @@ POSITIVE_FIELDS = {
 NEGATIVE_FIELDS = POSITIVE_FIELDS | {"why_not_complete"}
 REQUIRED_BLOCKERS = {
     "apps-management-write-access",
-    "upgrade-runtime-verification",
 }
 
 
