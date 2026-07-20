@@ -48,7 +48,6 @@ class CodexSubmissionTests(unittest.TestCase):
         self.assertEqual(
             [
                 "apps-management-write-access",
-                "upgrade-runtime-verification",
             ],
             record["blockers"],
         )
@@ -165,7 +164,7 @@ class CodexSubmissionTests(unittest.TestCase):
                 self.assertEqual(sorted(names, key=lambda value: value.encode("utf-8")), names)
                 self.assertIn("vibe-diagram/SKILL.md", names)
                 self.assertIn("vibe-diagram/agents/openai.yaml", names)
-                self.assertEqual(72, len(names))
+                self.assertEqual(76, len(names))
                 for info in archive.infolist():
                     self.assertEqual((1980, 1, 1, 0, 0, 0), info.date_time)
                     self.assertEqual(zipfile.ZIP_STORED, info.compress_type)
@@ -182,7 +181,7 @@ class CodexSubmissionTests(unittest.TestCase):
             self.assertEqual("package-static-valid", first_report["validation_scope"])
             self.assertEqual("unverified", first_report["runtime_validation"])
             self.assertEqual("blocked", first_report["submission_readiness"])
-            self.assertEqual(72, first_report["bundle"]["file_count"])
+            self.assertEqual(76, first_report["bundle"]["file_count"])
 
 
 if __name__ == "__main__":
