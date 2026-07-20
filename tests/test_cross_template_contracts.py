@@ -109,7 +109,45 @@ class CrossTemplateContractTests(unittest.TestCase):
         self.assertEqual(
             expected_template_state, baseline["evidence"]["canonical_templates"]
         )
+        self.assertEqual("pending", baseline["evidence"]["browser_runtime"])
         self.assertEqual("unverified", baseline["evidence"]["client_runtime"])
+
+    def test_completed_generic_scope_keeps_sequence_and_runtime_boundaries(self) -> None:
+        baseline = build_packages.load_interaction_contract(ROOT)
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        completed = {
+            relative
+            for paths in policy["migration_batches"].values()
+            for relative in paths
+        }
+        self.assertEqual(set(build_packages.TEMPLATE_PATHS) - SEQUENCE_PATHS, completed)
+        self.assertEqual(sorted(completed), baseline["scope"]["completed_templates"])
+        self.assertEqual(
+            ["B00", *policy["migration_batches"]],
+            baseline["scope"]["completed_batches"],
+        )
+        self.assertEqual(sorted(SEQUENCE_PATHS), policy["sequence_exclusions"])
+        self.assertEqual(
+            {
+                "synthetic_contracts": "required",
+                "canonical_templates": "complete",
+                "browser_runtime": "pending",
+                "client_runtime": "unverified",
+            },
+            baseline["evidence"],
+        )
+
+        reference = (
+            SKILL_ROOT / "references" / "adaptive-readability.md"
+        ).read_text(encoding="utf-8")
+        for required in (
+            "All 52 canonical generic templates",
+            "six sequence templates",
+            "browser_runtime",
+            "client_runtime",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, reference)
 
     def test_shared_runtime_assets_do_not_encode_template_families(self) -> None:
         runtime_paths = (

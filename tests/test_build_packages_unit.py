@@ -387,12 +387,8 @@ class BuildPackagesUnitTests(unittest.TestCase):
             _copy_valid_repository(bad_change)
             path = bad_change / "contracts" / "template_migration_baseline.json"
             contract = json.loads(path.read_text(encoding="utf-8"))
-            unchanged_path = next(
-                name
-                for name, entry in contract["templates"].items()
-                if entry["source"] == entry["canonical"]
-            )
-            contract["templates"][unchanged_path]["canonical"]["file_sha256"] = "0" * 64
+            migrated_path = contract["interaction_migration_batches"]["B01"][0]
+            contract["templates"][migrated_path]["change_reason"] = None
             _write_json(path, contract)
             with self.assertRaises(ValidationError):
                 load_template_contract(bad_change)
@@ -458,13 +454,8 @@ class BuildPackagesUnitTests(unittest.TestCase):
                 source_snapshot_drift / "contracts" / "template_migration_baseline.json"
             )
             contract = json.loads(contract_path.read_text(encoding="utf-8"))
-            relative = next(
-                name
-                for name, entry in contract["templates"].items()
-                if entry["source"] == entry["canonical"]
-            )
+            relative = next(iter(contract["templates"]))
             contract["templates"][relative]["source"]["file_sha256"] = "0" * 64
-            contract["templates"][relative]["canonical"]["file_sha256"] = "0" * 64
             _write_json(contract_path, contract)
             with self.assertRaises(ValidationError):
                 load_template_contract(source_snapshot_drift)

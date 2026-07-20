@@ -66,7 +66,7 @@
   },
   "evidence": {
     "synthetic_contracts": "required",
-    "canonical_templates": "partial",
+    "canonical_templates": "complete",
     "browser_runtime": "pending",
     "client_runtime": "unverified"
   }
