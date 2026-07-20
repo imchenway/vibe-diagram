@@ -7,6 +7,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,11 +66,11 @@ def _write_archive(path: Path, skill: Path, version: str) -> None:
 
 
 class SkillUpdateTests(unittest.TestCase):
-    def test_repository_and_installed_versions_are_v011(self) -> None:
-        self.assertEqual("0.1.1", (ROOT / "VERSION").read_text(encoding="ascii").strip())
-        self.assertEqual("0.1.1", (SKILL_ROOT / "VERSION").read_text(encoding="ascii").strip())
+    def test_repository_and_installed_versions_are_v012(self) -> None:
+        self.assertEqual("0.1.2", (ROOT / "VERSION").read_text(encoding="ascii").strip())
+        self.assertEqual("0.1.2", (SKILL_ROOT / "VERSION").read_text(encoding="ascii").strip())
         manifest = json.loads((SKILL_ROOT / "update.json").read_text(encoding="utf-8"))
-        self.assertEqual(_manifest_for(SKILL_ROOT, "0.1.1"), manifest)
+        self.assertEqual(_manifest_for(SKILL_ROOT, "0.1.2"), manifest)
 
     def test_strict_version_comparison(self) -> None:
         self.assertLess(UPDATE.parse_version("0.1.1"), UPDATE.parse_version("0.1.2"))
@@ -110,6 +111,38 @@ class SkillUpdateTests(unittest.TestCase):
                 )
                 self.assertEqual("current", result.status)
             self.assertEqual(["manifest", "manifest"], calls)
+
+    def test_current_and_offline_checks_do_not_acquire_update_lock(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            skill = Path(temporary) / "skills" / "vibe-diagram"
+            _write_skill(skill, "0.1.1", "runtime\n")
+            manifest = _manifest_for(skill, "0.1.1")
+
+            def offline() -> dict:
+                raise OSError("offline")
+
+            with mock.patch.object(
+                UPDATE,
+                "_update_lock",
+                side_effect=AssertionError("read-only checks must not acquire the update lock"),
+            ):
+                current = UPDATE.check_and_update(
+                    skill,
+                    fetch_manifest=lambda: manifest,
+                    fetch_archive=lambda _ref, _target: self.fail(
+                        "archive must not be fetched"
+                    ),
+                )
+                unavailable = UPDATE.check_and_update(
+                    skill,
+                    fetch_manifest=offline,
+                    fetch_archive=lambda _ref, _target: self.fail(
+                        "archive must not be fetched"
+                    ),
+                )
+
+            self.assertEqual("current", current.status)
+            self.assertEqual("offline", unavailable.status)
 
     def test_managed_package_skips_network_update(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

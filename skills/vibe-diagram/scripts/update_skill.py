@@ -344,17 +344,19 @@ def check_and_update(
     if _managed_package(skill_root, local_version):
         return UpdateResult("managed", local_version, message="package manager owns this skill tree")
     try:
+        raw_manifest = fetch_manifest()
+    except (OSError, urllib.error.URLError) as exc:
+        return UpdateResult("offline", local_version, message=str(exc))
+    try:
+        manifest = validate_manifest(raw_manifest)
+    except UpdateError as exc:
+        return UpdateResult("failed", local_version, message=str(exc))
+    remote_version = str(manifest["version"])
+    if parse_version(remote_version) <= parse_version(local_version):
+        return UpdateResult("current", local_version, remote_version)
+    try:
         with _update_lock(skill_root):
             local_version = read_version(skill_root)
-            try:
-                raw_manifest = fetch_manifest()
-            except (OSError, urllib.error.URLError) as exc:
-                return UpdateResult("offline", local_version, message=str(exc))
-            try:
-                manifest = validate_manifest(raw_manifest)
-            except UpdateError as exc:
-                return UpdateResult("failed", local_version, message=str(exc))
-            remote_version = str(manifest["version"])
             if parse_version(remote_version) <= parse_version(local_version):
                 return UpdateResult("current", local_version, remote_version)
             staging = Path(tempfile.mkdtemp(prefix=".vibe-diagram-update-", dir=skill_root.parent))

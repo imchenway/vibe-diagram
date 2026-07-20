@@ -58,8 +58,8 @@ class DocumentationContractTests(unittest.TestCase):
         chinese = README_ZH.read_text(encoding="utf-8")
 
         english_required = (
-            "`v0.1.0` remains the latest runtime-verified public GitHub tag",
-            f"repository version is the update-capable `{version}` candidate",
+            "`v0.1.1` established the released update-capable standalone Skill lane",
+            f"repository version `{version}` keeps current and offline checks read-only",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -71,7 +71,7 @@ class DocumentationContractTests(unittest.TestCase):
             "package-static-valid",
             "does not prove the complete unit suite",
             "evidence remains in command or CI output",
-            "GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`",
+            "GitHub-path Codex CLI evidence is limited to the standalone Skill lane",
             "does not claim aggregate compatibility",
             "curated `$skill-installer` index",
             "public Plugins Directory",
@@ -81,8 +81,8 @@ class DocumentationContractTests(unittest.TestCase):
                 self.assertIn(value, english)
 
         chinese_required = (
-            "`v0.1.0` 仍是最近一个完成运行时验证的公开 GitHub 标签",
-            f"`{version}` 候选",
+            "`v0.1.1` 建立了已发布、具备更新能力的独立 Skill lane",
+            f"仓库版本 `{version}` 让 current 与 offline 检查保持只读",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -94,7 +94,7 @@ class DocumentationContractTests(unittest.TestCase):
             "package-static-valid",
             "不能证明完整 unit suite",
             "证据保留在命令或 CI 输出中",
-            "GitHub-path Codex CLI lane 已针对 `v0.1.0` 完成运行时验证",
+            "GitHub-path Codex CLI 证据仅覆盖独立 Skill lane",
             "不代表四类生成包的聚合兼容性",
             "curated `$skill-installer` 索引",
             "公共 Plugins Directory",
@@ -133,10 +133,10 @@ class DocumentationContractTests(unittest.TestCase):
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertEqual(1, text.count("## [Unreleased]"))
         self.assertIn("## [0.1.0] - 2026-07-18", text)
-        self.assertNotIn(f"## [{_version()}] -", text)
+        self.assertIn(f"## [{_version()}] - 2026-07-20", text)
         self.assertIn("0.1.1", text)
         self.assertIn("automatic update", text)
-        self.assertIn("GitHub-path Codex CLI lane", text)
+        self.assertIn("fresh Codex CLI discovery", text)
         self.assertIn("curated `$skill-installer` index", text)
         self.assertNotIn("v0.1.0-rc.2", text)
         self.assertNotIn("Release URL", text)

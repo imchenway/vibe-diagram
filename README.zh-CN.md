@@ -4,7 +4,7 @@
 
 ## 项目定位
 
-`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。`v0.1.0` 仍是最近一个完成运行时验证的公开 GitHub 标签；仓库版本正在准备具备更新能力的 `0.1.1` 候选。已验证的 GitHub Skill lane 不代表四类生成包的聚合兼容性。
+`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。`v0.1.1` 建立了已发布、具备更新能力的独立 Skill lane；仓库版本 `0.1.2` 让 current 与 offline 检查保持只读，只有发现更高版本后才进入写入激活。GitHub Skill 证据不代表四类生成包的聚合兼容性。
 
 ## 单一事实源
 
@@ -23,13 +23,13 @@
 
 ## Codex Skill 安装
 
-公开仓库是 <https://github.com/imchenway/vibe-diagram>。完成 `0.1.1` 发布提升并创建移动的 `stable` ref 后，永久的独立 Skill 安装入口为：
+公开仓库是 <https://github.com/imchenway/vibe-diagram>。移动的 `stable` ref 已建立，永久的独立 Skill 安装入口为：
 
 <https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram>
 
 永久 URL 是面向新直装用户的移动安装通道。每次调用直装的 `0.1.1+` 时，bootstrap 都会读取轻量 stable manifest、比较严格版本，并在加载运行时工作流前从不可变版本标签升级。网络失败或发行包无效时继续使用本地版本；由生成包管理的副本跳过自更新。
 
-GitHub-path Codex CLI lane 目前只针对 `v0.1.0` 完成运行时验证：全新安装、新进程发现与调用、HTML 交付、从候选基线替换升级以及卸载隔离均已通过。`0.1.1` 自动更新生命周期仍需在 stable ref、标签和真实客户端生命周期完成后验证。
+公开 GitHub-path 证据已覆盖从 `stable` 安装、新进程发现与调用、HTML 交付与 bundled-linter 修复、offline fail-open 检查，以及 `v0.1.1` 的在线 current 检查。`v0.1.1` 到更高 stable 标签的真实替换，仍需在 `v0.1.2` 提升并实际执行后补齐。
 
 ### 在 Codex 任务中安装
 
@@ -75,7 +75,7 @@ python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-g
 
 ### 自动与手动更新
 
-对直装的 `v0.1.1+`，bootstrap 每次调用都运行更新门禁：版本已最新时静默继续；发现新稳定标签时先校验、备份并更新，再加载运行时工作流；stable 来源不可用时继续使用本地版本。宿主仍可能要求网络或文件权限授权。
+对直装的 `v0.1.1+`，bootstrap 每次调用都运行更新门禁：版本已最新时静默继续；发现新稳定标签时先校验、备份并更新，再加载运行时工作流；stable 来源不可用时继续使用本地版本。从 `v0.1.2` 起，current 与 offline 检查不创建锁文件，只有检测到更高版本后才需要写权限；激活阶段仍可能要求宿主授权网络或文件操作。
 
 可以直接向已安装 Skill 提出：
 
@@ -151,7 +151,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --sync-publication
 
 构建报告中的 `static_validation: passed` 属于 package-static-valid，仅表示 builder production preflight 已通过。它不能证明完整 unit suite、确定性流程检查或第二轮完整 suite。static-valid 要求这些命令整体通过；证据保留在命令或 CI 输出中，不作为仓库文档提交。
 
-GitHub-path Codex CLI lane 已针对 `v0.1.0` 完成运行时验证。该结论只覆盖从固定 GitHub 标签安装的独立 Skill；`v0.1.1`、移动的 `stable` ref 和新的自动更新路径仍需完成声明的真实客户端生命周期。这里不代表 Codex 插件、Claude Code、Gemini CLI 或 GitHub Copilot CLI 的聚合兼容性。
+GitHub-path Codex CLI 证据仅覆盖独立 Skill lane：公开 `stable` 安装、新进程发现与调用、HTML 交付与 lint、offline fail-open，以及 `v0.1.1` 的在线 current 检查。公开的更高版本替换仍待实际执行；这里不代表 Codex 插件、Claude Code、Gemini CLI 或 GitHub Copilot CLI 的聚合兼容性。
 
 ## 许可
 

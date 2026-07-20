@@ -4,7 +4,7 @@ Chinese overview: [README.zh-CN.md](README.zh-CN.md).
 
 ## What it is
 
-`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. `v0.1.0` remains the latest runtime-verified public GitHub tag; the repository version is the update-capable `0.1.1` candidate. Its verified GitHub skill lane does not claim aggregate compatibility across every generated client package.
+`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. `v0.1.1` established the released update-capable standalone Skill lane; repository version `0.1.2` keeps current and offline checks read-only until a newer release actually requires activation. The GitHub Skill evidence does not claim aggregate compatibility across every generated client package.
 
 ## Repository model
 
@@ -23,13 +23,13 @@ The repository-root `plugins/vibe-diagram/` tree is the builder-only generated p
 
 ## Codex Skill installation
 
-The public repository is <https://github.com/imchenway/vibe-diagram>. After the `0.1.1` release promotion creates the moving `stable` ref, the permanent standalone Skill source is:
+The public repository is <https://github.com/imchenway/vibe-diagram>. The moving `stable` ref is live, and the permanent standalone Skill source is:
 
 <https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram>
 
 The permanent URL is a moving install channel for new direct installations. Every direct-installed `0.1.1+` invocation fetches the small stable manifest, compares strict versions, and upgrades from an immutable version tag before loading the runtime workflow. Network failure or an invalid release keeps the installed version available. Package-managed generated copies skip self-update.
 
-The GitHub-path Codex CLI lane is runtime-verified only for `v0.1.0`: clean installation, fresh-process discovery and invocation, HTML delivery, replacement from the release-candidate baseline, and uninstall isolation passed. The new `0.1.1` automatic-update lifecycle remains unverified until the stable ref, tag, and real-client lifecycle are completed.
+Public GitHub-path evidence now covers installation from `stable`, fresh-process discovery and invocation, HTML delivery with bundled-linter repair, an offline fail-open check, and an online current-version check at `v0.1.1`. A real replacement from `v0.1.1` to a newer stable tag remains outside that evidence until `v0.1.2` is promoted and exercised.
 
 ### Install from a Codex task
 
@@ -75,7 +75,7 @@ Keep the backup until the replacement has passed a new-task invocation and its b
 
 ### Automatic and manual updates
 
-For a direct-installed `v0.1.1+` copy, the bootstrap runs the update gate on every invocation. It silently continues when current, installs a verified newer stable tag before loading the runtime workflow, and continues with the local version when the stable source is unavailable. The host may still require network or filesystem approval.
+For a direct-installed `v0.1.1+` copy, the bootstrap runs the update gate on every invocation. It silently continues when current, installs a verified newer stable tag before loading the runtime workflow, and continues with the local version when the stable source is unavailable. Starting with `v0.1.2`, current and offline checks do not create a lock file; write permission is needed only after a newer version is detected. The host may still require network or filesystem approval for activation.
 
 Ask the installed Skill to update explicitly:
 
@@ -162,7 +162,7 @@ These layouts are static package definitions. They do not constitute installatio
 
 A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. It does not prove the complete unit suite, deterministic process checks, or the second complete suite. Static-valid status requires those commands to pass together; the evidence remains in command or CI output and is not committed as repository documentation.
 
-The GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`. That conclusion is limited to the standalone Skill installed from the pinned GitHub tag; `v0.1.1`, the moving `stable` ref, and the new automatic-update path remain unverified until their declared real-client lifecycle passes. No result here claims aggregate compatibility for Codex plugins, Claude Code, Gemini CLI, or GitHub Copilot CLI.
+The GitHub-path Codex CLI evidence is limited to the standalone Skill lane. It covers the public `stable` installation, fresh-process discovery and invocation, HTML delivery and linting, offline fail-open behavior, and an online current-version check at `v0.1.1`. It does not yet cover a public newer-version replacement, and no result here claims aggregate compatibility for Codex plugins, Claude Code, Gemini CLI, or GitHub Copilot CLI.
 
 ## License
 
