@@ -37,6 +37,12 @@
       "technical-design/data-consistency-boundary.html",
       "technical-design/module-contract-data-topology.html",
       "technical-design/release-switch-track.html"
+    ],
+    "B06": [
+      "fault-debugging/before-after-flow.html",
+      "fault-debugging/bpmn-debug-flow.html",
+      "fault-debugging/causal-chain.html",
+      "fault-debugging/state-data-breakpoint.html"
     ]
   },
   "families": {

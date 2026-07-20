@@ -8,7 +8,7 @@
   "scope": {
     "generic_template_count": 52,
     "sequence_template_count": 6,
-    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05"],
+    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06"],
     "completed_templates": [
       "business-architecture/capability-domain-map.html",
       "business-architecture/participant-boundary.html",
@@ -19,6 +19,10 @@
       "business-flow/stage-track.html",
       "business-flow/swimlane-flow.html",
       "decision-communication/option-matrix-path.html",
+      "fault-debugging/before-after-flow.html",
+      "fault-debugging/bpmn-debug-flow.html",
+      "fault-debugging/causal-chain.html",
+      "fault-debugging/state-data-breakpoint.html",
       "state-data-model/data-flow-model.html",
       "state-data-model/er-lite.html",
       "state-data-model/lifecycle-track.html",

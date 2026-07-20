@@ -38,6 +38,12 @@
       "technical-design/data-consistency-boundary.html",
       "technical-design/module-contract-data-topology.html",
       "technical-design/release-switch-track.html"
+    ],
+    "B06": [
+      "fault-debugging/before-after-flow.html",
+      "fault-debugging/bpmn-debug-flow.html",
+      "fault-debugging/causal-chain.html",
+      "fault-debugging/state-data-breakpoint.html"
     ]
   },
   "templates": {
@@ -3580,8 +3586,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "827189eefa5e69fe6f96351e6a9d9be81ff75ef3cad3719c18bce9d7fd02666a",
-        "structure_sha256": "ebdb52d7b82e55dd28b4e7a88a1a6d7c95de40607738156494d9bb5157ba0cd5",
+        "file_sha256": "a07a7a5535f271fec6c2d7dde946b64ad89a56d74e75d506f5fdc9f64b6d695c",
+        "structure_sha256": "eacc405867efdf28f246fb8754f8b69ee91f130b27ef9aaa0c4f405feeacc994",
         "data_slots": [
           "title",
           "summary",
@@ -3660,7 +3666,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "fault-debugging/bpmn-debug-flow.html": {
       "source": {
@@ -3727,8 +3733,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "f98821d29847630fc286bc69fcf869fb3bf96fd58e0373fa31742d7660abdc65",
-        "structure_sha256": "258c5a500a9774ba589c3919ce410f5973ca4729dfabae28b86ed7c778bbc0eb",
+        "file_sha256": "bf01bf21c69389bcd497a4a3fa8830fb0eede5df185e3be717808001a0768b89",
+        "structure_sha256": "4f6ff67cfe81fc995912224de008f7f7836bb90fe1be114f26e2381c00d51468",
         "data_slots": [
           "title",
           "summary",
@@ -3789,7 +3795,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "fault-debugging/causal-chain.html": {
       "source": {
@@ -3856,8 +3862,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "12e1a783f79cd2fd9432e8a585612014bbdaf3e55b957e932977225012697713",
-        "structure_sha256": "585720301aeecfdf0c71cf7081cd1d6718bbbc1cd1503490d0b273847844a438",
+        "file_sha256": "d57961dd72bc0678b566e58e4f42dab736a79681c6fb90029793e5403e0efc35",
+        "structure_sha256": "4d684b750e004b7ad05c4795a3944667fe1632d389351a03e0d6f7de0a0f1e02",
         "data_slots": [
           "title",
           "summary",
@@ -3918,7 +3924,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "fault-debugging/debugging-sequence.html": {
       "source": {
@@ -4174,8 +4180,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "c15f02dd3e70906d1e139f15c7eefadf04220c346df131793931d33b50d6f40e",
-        "structure_sha256": "9edf4a9a4440f4b824a35287da9e7c0f7ab3e35fc5e94d7e19d43f03a902f9e0",
+        "file_sha256": "eb97dc949a824650d5801b352c9e8feab749f9f41877d98f4e6a46a344affe6e",
+        "structure_sha256": "276a28e7df0f59f928e743bb633cba713cfe8c7b68a69cdbb2a8386fe9583262",
         "data_slots": [
           "title",
           "summary",
@@ -4248,7 +4254,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "feature-iteration/current-target-flow.html": {
       "source": {

@@ -46,6 +46,12 @@ B05_TEMPLATES = (
     "technical-design/module-contract-data-topology.html",
     "technical-design/release-switch-track.html",
 )
+B06_TEMPLATES = (
+    "fault-debugging/before-after-flow.html",
+    "fault-debugging/bpmn-debug-flow.html",
+    "fault-debugging/causal-chain.html",
+    "fault-debugging/state-data-breakpoint.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -65,7 +71,7 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03", "B04", "B05"],
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
@@ -76,6 +82,7 @@ class GenericTemplateTests(unittest.TestCase):
                     *B03_TEMPLATES,
                     *B04_TEMPLATES,
                     *B05_TEMPLATES,
+                    *B06_TEMPLATES,
                 )
             ),
             interaction["scope"]["completed_templates"],
@@ -287,6 +294,26 @@ class GenericTemplateTests(unittest.TestCase):
                 self.assertEqual(script, _block(html, "script"))
                 for key in ("data_slots", "macros", "slot_macro_pairs"):
                     self.assertEqual(entry["source"][key], entry["canonical"][key])
+
+    def test_b06_closes_only_non_sequence_fault_debugging_templates(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B06_TEMPLATES), policy_data["migration_batches"]["B06"])
+        self.assertNotIn("fault-debugging/debugging-sequence.html", B06_TEMPLATES)
+        minimums = {B06_TEMPLATES[0]:(8,7,"graph"),B06_TEMPLATES[1]:(5,4,"graph"),B06_TEMPLATES[2]:(5,4,"graph"),B06_TEMPLATES[3]:(7,6,"matrix")}
+        self._assert_completed_generic_batch(B06_TEMPLATES, minimums)
+
+    def _assert_completed_generic_batch(self, templates, minimums) -> None:
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        linter = _load_linter(); policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (SKILL_ROOT / "assets/contracts/adaptive-viewport/v1.css").read_text(encoding="utf-8").rstrip("\n")
+        script = (SKILL_ROOT / "assets/contracts/adaptive-viewport/v1.js").read_text(encoding="utf-8").rstrip("\n")
+        for relative in templates:
+            nodes, relations, profile = minimums[relative]; html=(TEMPLATE_ROOT/relative).read_text(encoding="utf-8"); family,name=relative.split("/",1); entry=migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertEqual([],linter.lint_generic_contract(html,family,Path(name).stem)); self.assertEqual([],build_packages.generic_contract_errors(html,family,Path(name).stem,policy))
+                self.assertEqual(nodes,html.count("data-diagram-node-id=")); self.assertGreaterEqual(html.count("data-diagram-relation-id="),relations); self.assertIn(f'data-diagram-profile="{profile}"',html)
+                self.assertIn("data-reading-guide",html); self.assertIn("data-fallback-for=",html); self.assertEqual(css,_block(html,"style")); self.assertEqual(script,_block(html,"script"))
+                for key in ("data_slots","macros","slot_macro_pairs"): self.assertEqual(entry["source"][key],entry["canonical"][key])
 
     def test_b01_templates_pass_independent_generic_contract_parsers(self) -> None:
         linter = _load_linter()
