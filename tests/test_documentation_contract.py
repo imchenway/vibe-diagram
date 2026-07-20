@@ -52,13 +52,13 @@ class DocumentationContractTests(unittest.TestCase):
         self.assertIsNotNone(re.search(r"[\u3400-\u9fff]", chinese))
         self.assertIn("README.zh-CN.md", english)
 
-    def test_readmes_state_static_and_runtime_boundaries(self) -> None:
+    def test_readmes_state_static_and_lane_scoped_runtime_boundaries(self) -> None:
         version = _version()
         english = README.read_text(encoding="utf-8")
         chinese = README_ZH.read_text(encoding="utf-8")
 
         english_required = (
-            f"Unreleased {version} stable-candidate snapshot",
+            f"`v{version}` is the stable GitHub tag",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -70,15 +70,17 @@ class DocumentationContractTests(unittest.TestCase):
             "package-static-valid",
             "does not prove the complete unit suite",
             "evidence remains in command or CI output",
-            "Runtime verification remains `Unverified` for the local 0.1.0 candidate",
-            "No installation, discovery, invocation, HTML-delivery, upgrade, or uninstall result is inherited",
+            "GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`",
+            "does not claim aggregate compatibility",
+            "curated `$skill-installer` index",
+            "public Plugins Directory",
         )
         for value in english_required:
             with self.subTest(document="README.md", value=value):
                 self.assertIn(value, english)
 
         chinese_required = (
-            f"Unreleased {version} stable-candidate snapshot",
+            f"`v{version}` 是稳定 GitHub 标签",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -90,36 +92,45 @@ class DocumentationContractTests(unittest.TestCase):
             "package-static-valid",
             "不能证明完整 unit suite",
             "证据保留在命令或 CI 输出中",
-            "本地 0.1.0 候选的运行时验证仍为 `Unverified`",
-            "不继承旧标签的安装、发现、调用、HTML 交付、升级或卸载结论",
+            "GitHub-path Codex CLI lane 已针对 `v0.1.0` 完成运行时验证",
+            "不代表聚合兼容性",
+            "curated `$skill-installer` 索引",
+            "公共 Plugins Directory",
         )
         for value in chinese_required:
             with self.subTest(document="README.zh-CN.md", value=value):
                 self.assertIn(value, chinese)
 
-    def test_readmes_publish_exact_rc2_install_and_uninstall_paths(self) -> None:
+    def test_readmes_publish_exact_stable_skill_lifecycle_paths(self) -> None:
         english = README.read_text(encoding="utf-8")
         chinese = README_ZH.read_text(encoding="utf-8")
         shared = (
             "https://github.com/imchenway/vibe-diagram",
-            "codex plugin marketplace add imchenway/vibe-diagram --ref v0.1.0-rc.2",
-            "codex plugin add vibe-diagram@imchenway",
-            "codex plugin remove vibe-diagram@imchenway",
-            "codex plugin marketplace remove imchenway",
-            "https://github.com/imchenway/vibe-diagram/tree/v0.1.0-rc.2/skills/vibe-diagram",
+            "https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram",
             "$skill-installer",
+            "skill-installer/scripts/install-skill-from-github.py",
+            "--repo imchenway/vibe-diagram",
+            "--path skills/vibe-diagram",
+            "--ref v0.1.0",
+            "backups/skills",
         )
         for value in shared:
             with self.subTest(value=value):
                 self.assertIn(value, english)
                 self.assertIn(value, chinese)
 
-    def test_changelog_is_an_unreleased_stable_candidate_snapshot(self) -> None:
+        self.assertNotIn("v0.1.0-rc.2", english)
+        self.assertNotIn("v0.1.0-rc.2", chinese)
+        self.assertIn("Start a new Codex task", english)
+        self.assertIn("新建一个 Codex 任务", chinese)
+
+    def test_changelog_records_the_stable_github_skill_lane(self) -> None:
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertEqual(1, text.count("## [Unreleased]"))
-        self.assertIn(f"{_version()} stable-candidate snapshot", text)
-        self.assertIn("Runtime verification remains Unverified", text)
-        self.assertIsNone(re.search(r"\b20\d{2}-\d{2}-\d{2}\b", text))
+        self.assertIn(f"## [{_version()}] - 2026-07-18", text)
+        self.assertIn("GitHub-path Codex CLI lane", text)
+        self.assertIn("curated `$skill-installer` index", text)
+        self.assertNotIn("v0.1.0-rc.2", text)
         self.assertNotIn("Release URL", text)
 
     def test_public_documents_do_not_overclaim_release_or_compatibility(self) -> None:
