@@ -185,16 +185,12 @@ def stage_archive(archive_path: Path, staging_root: Path) -> Path:
                 mode = (info.external_attr >> 16) & 0o170000
                 if mode == stat.S_IFLNK:
                     raise UpdateError(f"archive symlink is forbidden: {info.filename}")
-                if path.parts[-3:] == ("vibe-diagram", "VERSION"):
+                if len(path.parts) == 4 and path.parts[1:] == (
+                    "skills",
+                    "vibe-diagram",
+                    "VERSION",
+                ):
                     version_markers.append(path.parent)
-                elif len(path.parts) >= 3 and path.parts[-3:] == ("skills", "vibe-diagram", "VERSION"):
-                    version_markers.append(path.parent)
-            if not version_markers:
-                version_markers = [
-                    _safe_zip_name(info.filename).parent
-                    for info in members
-                    if _safe_zip_name(info.filename).as_posix().endswith("/skills/vibe-diagram/VERSION")
-                ]
             if len(set(version_markers)) != 1:
                 raise UpdateError("release archive must contain one skill VERSION marker")
             prefix = version_markers[0]
