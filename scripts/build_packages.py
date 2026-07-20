@@ -156,6 +156,9 @@ REFERENCE_PATHS: Tuple[str, ...] = (
     "system-architecture.md",
     "technical-design.md",
 )
+RUNTIME_WORKFLOW_PATH = "runtime-workflow.md"
+UPDATE_MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
+CANONICAL_FILE_COUNT = 75
 ADAPTER_IDENTITIES = {
     "codex": (
         "README.md",
@@ -682,6 +685,19 @@ def canonical_file_map(root: Path) -> Dict[PurePosixPath, Path]:
     return dict(sorted(files.items(), key=lambda item: item[0].as_posix().encode("utf-8")))
 
 
+def update_tree_sha256(root: Path) -> str:
+    digest = hashlib.sha256()
+    for relative, path in canonical_file_map(root).items():
+        if relative == PurePosixPath("update.json"):
+            continue
+        payload = path.read_bytes()
+        digest.update(relative.as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(len(payload).to_bytes(8, "big"))
+        digest.update(hashlib.sha256(payload).digest())
+    return digest.hexdigest()
+
+
 def load_template_contract(root: Path) -> Dict[str, Any]:
     path = _ensure_path(
         root, PurePosixPath("contracts/template_migration_baseline.json"), "file"
@@ -754,7 +770,9 @@ def load_reference_contract(root: Path) -> Dict[str, Any]:
     expected = {
         relative.name
         for relative in canonical_file_map(root)
-        if relative.parent == PurePosixPath("references") and relative.suffix == ".md"
+        if relative.parent == PurePosixPath("references")
+        and relative.suffix == ".md"
+        and relative.name != RUNTIME_WORKFLOW_PATH
     }
     if set(references) != set(REFERENCE_PATHS) or expected != set(REFERENCE_PATHS):
         raise _fail("reference contract must contain the exact 11 canonical references")
@@ -1334,12 +1352,18 @@ def validate_canonical(root: Path) -> None:
     files = canonical_file_map(root)
     expected = {
         PurePosixPath("SKILL.md"),
+        PurePosixPath("VERSION"),
+        PurePosixPath("update.json"),
+        PurePosixPath("scripts/update_skill.py"),
         PurePosixPath("scripts/vibe_diagram_lint.py"),
+        PurePosixPath("references") / RUNTIME_WORKFLOW_PATH,
         *(PurePosixPath("references") / name for name in REFERENCE_PATHS),
         *(PurePosixPath("assets/templates") / name for name in TEMPLATE_PATHS),
     }
-    if set(files) != expected or len(files) != 71:
-        raise _fail("canonical skill tree must contain the exact 71-file inventory")
+    if set(files) != expected or len(files) != CANONICAL_FILE_COUNT:
+        raise _fail(
+            f"canonical skill tree must contain the exact {CANONICAL_FILE_COUNT}-file inventory"
+        )
     canonical_text = "\n".join(
         path.read_text(encoding="utf-8")
         for relative, path in files.items()
@@ -1363,6 +1387,30 @@ def validate_canonical(root: Path) -> None:
         raise _fail("canonical skill frontmatter exceeds its size limit")
     if len(skill_text.splitlines()) > 500:
         raise _fail("canonical SKILL.md exceeds 500 lines")
+    if (
+        "On every invocation" not in skill_text
+        or "scripts/update_skill.py --check-and-update --json" not in skill_text
+        or f"references/{RUNTIME_WORKFLOW_PATH}" not in skill_text
+    ):
+        raise _fail("canonical SKILL.md is missing the update bootstrap contract")
+
+    version = read_version(root)
+    if files[PurePosixPath("VERSION")].read_bytes() != f"{version}\n".encode("ascii"):
+        raise _fail("canonical skill VERSION does not match repository VERSION")
+    update_manifest = read_json_unique(files[PurePosixPath("update.json")])
+    if set(update_manifest) != UPDATE_MANIFEST_KEYS:
+        raise _fail("canonical update manifest has an invalid key set")
+    if (
+        type(update_manifest["schema_version"]) is not int
+        or update_manifest["schema_version"] != 1
+        or update_manifest["channel"] != "stable"
+        or update_manifest["version"] != version
+        or update_manifest["ref"] != f"v{version}"
+    ):
+        raise _fail("canonical update manifest identity is invalid")
+    _validate_sha256(update_manifest["tree_sha256"], "update manifest tree_sha256")
+    if update_manifest["tree_sha256"] != update_tree_sha256(root):
+        raise _fail("canonical update manifest tree digest drifted")
 
     reference_contract = load_reference_contract(root)
     reference_texts = []
@@ -1372,7 +1420,10 @@ def validate_canonical(root: Path) -> None:
         if sha256_file(path) != reference_contract["references"][name]:
             raise _fail(f"canonical reference hash drifted: {name}")
         reference_texts.append(path.read_text(encoding="utf-8"))
-    canonical_prose = "\n".join([skill_text] + reference_texts)
+    runtime_workflow = files[
+        PurePosixPath("references") / RUNTIME_WORKFLOW_PATH
+    ].read_text(encoding="utf-8")
+    canonical_prose = "\n".join([skill_text, runtime_workflow] + reference_texts)
     referenced_templates = set(
         re.findall(r"\.\./assets/templates/([a-z0-9-]+/[a-z0-9-]+\.html)", canonical_prose)
     )
@@ -1473,7 +1524,11 @@ def _expected_package_paths(spec: AdapterSpec) -> set:
 def _canonical_relative_paths() -> Tuple[PurePosixPath, ...]:
     return (
         PurePosixPath("SKILL.md"),
+        PurePosixPath("VERSION"),
+        PurePosixPath("update.json"),
+        PurePosixPath("scripts/update_skill.py"),
         PurePosixPath("scripts/vibe_diagram_lint.py"),
+        PurePosixPath("references") / RUNTIME_WORKFLOW_PATH,
         *(PurePosixPath("references") / name for name in REFERENCE_PATHS),
         *(PurePosixPath("assets/templates") / name for name in TEMPLATE_PATHS),
     )
@@ -1801,7 +1856,7 @@ def assemble_client_package(
     if package_root.exists() or package_root.is_symlink():
         raise _fail(f"package staging output already exists: {package_root}")
     expected_outputs = _expected_package_paths(spec)
-    expected_count = 74 if spec.client == "codex" else 73
+    expected_count = 78 if spec.client == "codex" else 77
     if len(expected_outputs) != expected_count:
         raise _fail(f"client output whitelist has an invalid size: {spec.client}")
     for output in expected_outputs:
