@@ -65,6 +65,14 @@
       "page-mockup/artboard-wireframe.html",
       "page-mockup/primary-path-page-flow.html",
       "page-mockup/responsive-state-board.html"
+    ],
+    "B11": [
+      "system-architecture/component-breakdown.html",
+      "system-architecture/deployment-topology.html",
+      "system-architecture/logical-layering.html",
+      "system-architecture/network-topology.html",
+      "system-architecture/system-context.html",
+      "system-architecture/workload-overview.html"
     ]
   },
   "families": {

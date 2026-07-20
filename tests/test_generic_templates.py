@@ -74,6 +74,14 @@ B10_TEMPLATES = (
     "page-mockup/primary-path-page-flow.html",
     "page-mockup/responsive-state-board.html",
 )
+B11_TEMPLATES = (
+    "system-architecture/component-breakdown.html",
+    "system-architecture/deployment-topology.html",
+    "system-architecture/logical-layering.html",
+    "system-architecture/network-topology.html",
+    "system-architecture/system-context.html",
+    "system-architecture/workload-overview.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -93,7 +101,7 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10"],
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
@@ -109,6 +117,7 @@ class GenericTemplateTests(unittest.TestCase):
                     *B08_TEMPLATES,
                     *B09_TEMPLATES,
                     *B10_TEMPLATES,
+                    *B11_TEMPLATES,
                 )
             ),
             interaction["scope"]["completed_templates"],
@@ -343,6 +352,10 @@ class GenericTemplateTests(unittest.TestCase):
     def test_b10_closes_page_mockup_templates(self) -> None:
         policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B10_TEMPLATES),policy_data["migration_batches"]["B10"])
         self._assert_completed_generic_batch(B10_TEMPLATES,{B10_TEMPLATES[0]:(11,10,"artboard"),B10_TEMPLATES[1]:(7,6,"artboard"),B10_TEMPLATES[2]:(5,4,"graph"),B10_TEMPLATES[3]:(8,7,"artboard")})
+
+    def test_b11_closes_system_topology_slice(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B11_TEMPLATES),policy_data["migration_batches"]["B11"])
+        counts=(8,7,9,8,7,8);self._assert_completed_generic_batch(B11_TEMPLATES,{p:(n,n-1,"graph") for p,n in zip(B11_TEMPLATES,counts)})
 
     def _assert_completed_generic_batch(self, templates, minimums) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))

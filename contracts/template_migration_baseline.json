@@ -66,6 +66,14 @@
       "page-mockup/artboard-wireframe.html",
       "page-mockup/primary-path-page-flow.html",
       "page-mockup/responsive-state-board.html"
+    ],
+    "B11": [
+      "system-architecture/component-breakdown.html",
+      "system-architecture/deployment-topology.html",
+      "system-architecture/logical-layering.html",
+      "system-architecture/network-topology.html",
+      "system-architecture/system-context.html",
+      "system-architecture/workload-overview.html"
     ]
   },
   "templates": {
@@ -6755,8 +6763,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "d8bd63744617faf882edcaaa13613e37acb8f4edc35760f45e2581d9cf269434",
-        "structure_sha256": "a40eabfd4eb56e6b84a50293866621b6069e59413fada00296a5390cd0681aa1",
+        "file_sha256": "3baad10ebb6a21275d6f6aa1d42e9b351c5e88f03683ca3fd8dcec1f2193ab12",
+        "structure_sha256": "6507f6cc6f48fdcada86f80f1f39aa84f310fce7912e4bd95ad9951e3b743a28",
         "data_slots": [
           "title",
           "summary",
@@ -6835,7 +6843,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/data-architecture.html": {
       "source": {
@@ -7385,8 +7393,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "3dc71d7844b26527798bcabf85c996c0f9398d72ba5e4b2be9441d38b7827ebc",
-        "structure_sha256": "5c58a4e16db0fc062f9f9e5d2bda9e2caacd4953f8d32a72a739a494aa27bd38",
+        "file_sha256": "8aeeebe0701244f700768555cc018d050b241aa9453478d73d064635dcc2587e",
+        "structure_sha256": "5ec2e619cf543eefea43586f89d2f287e624a97877c5e669394a34dbb3c10a2a",
         "data_slots": [
           "title",
           "summary",
@@ -7459,7 +7467,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/event-driven.html": {
       "source": {
@@ -7822,8 +7830,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0b24197486dc6a5e92cf5964d101995efacb9c9949bd985d44f2ad199e9e4add",
-        "structure_sha256": "11e4c45dd1ead52b7236c27a59b69ec2ff50a8a366fe240ccd12b01e674eec76",
+        "file_sha256": "791f95b4b3a0213854978595a781aa42ade5f4ed6c130efb475ad43b784421f6",
+        "structure_sha256": "e8a93f57fed7b05d91b02577f33c1c6bf5284222e266c4282ed1c735c074a74a",
         "data_slots": [
           "title",
           "summary",
@@ -7908,7 +7916,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/network-topology.html": {
       "source": {
@@ -7993,8 +8001,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "8f79ef807018a408d3aed74236edfd1b2d8e6456a932dda8a2443c994fefa74b",
-        "structure_sha256": "3550b88f8dff29f55d093aeabb66743454dd4bd258f903004807bed4bab2a50f",
+        "file_sha256": "a3f54b87ef72d9b904b193b2ccd961e956928e9131ce00dd95083239ff28c578",
+        "structure_sha256": "98e26b1c82feb9d02c59b8e2a3b4857d12385df8c1486dd8cf02a5d9c73a92a1",
         "data_slots": [
           "title",
           "summary",
@@ -8073,7 +8081,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/observability-view.html": {
       "source": {
@@ -8740,8 +8748,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "247e226e50ee6628e08cbb99ba58ab4bdc0be50a39f6692ae068bd49d72292b2",
-        "structure_sha256": "25fb56a822cbb304911a84c3e84bd3d39c40b493b53ccf1e0192ff7ca608d4da",
+        "file_sha256": "b1998d05973854863062cb3cfb0a92c0377076fb55222e84c9aabcdfa426bf64",
+        "structure_sha256": "281796941d45a45ba1c7284983b84befe60a5be5884b1c4cd8a8b67c2980d820",
         "data_slots": [
           "title",
           "summary",
@@ -8814,7 +8822,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/workload-overview.html": {
       "source": {
@@ -8894,8 +8902,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "c6560b02bc22c21fef2911d0a907d4bf73d0f5338ae33f33cf7a329e648193c5",
-        "structure_sha256": "8a2174327ee13fde1e5286d0d22e30e985d90f0b4c79bfc13f03425d70d7bf2e",
+        "file_sha256": "d03aae90c545ba0e02d0061f8681463b3d578930fbb2c9498f6158195d6ebe4b",
+        "structure_sha256": "4d7b44a5ed85ced935256e3ce06c163e422db7d3872b79b9935a9f85a2ba52f0",
         "data_slots": [
           "title",
           "summary",
@@ -8969,7 +8977,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "technical-design/api-contract-swimlane.html": {
       "source": {
