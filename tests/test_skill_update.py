@@ -66,11 +66,11 @@ def _write_archive(path: Path, skill: Path, version: str) -> None:
 
 
 class SkillUpdateTests(unittest.TestCase):
-    def test_repository_and_installed_versions_are_v012(self) -> None:
-        self.assertEqual("0.1.2", (ROOT / "VERSION").read_text(encoding="ascii").strip())
-        self.assertEqual("0.1.2", (SKILL_ROOT / "VERSION").read_text(encoding="ascii").strip())
+    def test_repository_and_installed_versions_are_v013(self) -> None:
+        self.assertEqual("0.1.3", (ROOT / "VERSION").read_text(encoding="ascii").strip())
+        self.assertEqual("0.1.3", (SKILL_ROOT / "VERSION").read_text(encoding="ascii").strip())
         manifest = json.loads((SKILL_ROOT / "update.json").read_text(encoding="utf-8"))
-        self.assertEqual(_manifest_for(SKILL_ROOT, "0.1.2"), manifest)
+        self.assertEqual(_manifest_for(SKILL_ROOT, "0.1.3"), manifest)
 
     def test_strict_version_comparison(self) -> None:
         self.assertLess(UPDATE.parse_version("0.1.1"), UPDATE.parse_version("0.1.2"))
@@ -286,6 +286,29 @@ class SkillUpdateTests(unittest.TestCase):
             with self.assertRaises(UPDATE.UpdateError):
                 UPDATE.stage_archive(archive_path, base / "staging")
             self.assertFalse((base / "escaped.txt").exists())
+
+    def test_repository_archive_selects_canonical_skill_over_plugin_projection(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            skill = base / "canonical"
+            archive_path = base / "release.zip"
+            _write_skill(skill, "0.1.3", "canonical runtime\n")
+            _write_archive(archive_path, skill, "0.1.3")
+            with zipfile.ZipFile(archive_path, "a") as archive:
+                archive.writestr(
+                    "vibe-diagram-0.1.3/plugins/vibe-diagram/skills/"
+                    "vibe-diagram/VERSION",
+                    "0.1.3\n",
+                )
+
+            candidate = UPDATE.stage_archive(archive_path, base / "staging")
+
+            self.assertEqual(
+                "canonical runtime\n",
+                (candidate / "references" / "runtime-workflow.md").read_text(
+                    encoding="utf-8"
+                ),
+            )
 
     def test_readme_exposes_fixed_install_and_manual_update_commands(self) -> None:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")

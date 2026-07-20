@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-07-20
+
+- Exported the generated-plugin `VERSION` marker out of GitHub release archives so legacy standalone updaters see one canonical Skill root.
+- Required the updater to select the exact repository-root canonical Skill path even when a custom archive contains generated package projections.
+- Recorded the safely rejected `v0.1.2` replacement attempt without treating it as a successful runtime upgrade.
+
 ## [0.1.2] - 2026-07-20
 
 - Kept current-version and offline update checks read-only so normal Skill invocation does not need to create a lock file.
