@@ -8,7 +8,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_ROOT_FILES = frozenset(
-    {".gitignore", "AGENTS.md", "CONTEXT.md", "LICENSE", "VERSION"}
+    {".gitattributes", ".gitignore", "AGENTS.md", "CONTEXT.md", "LICENSE", "VERSION"}
+)
+EXPECTED_GITATTRIBUTES = (
+    b"plugins/vibe-diagram/skills/vibe-diagram/VERSION export-ignore\n"
 )
 APACHE_2_0_SHA256 = (
     "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
@@ -123,7 +126,7 @@ class RepositoryContractTests(unittest.TestCase):
                 self.assertIsNone(STRICT_SEMVER.fullmatch(invalid))
 
     def test_stable_candidate_version_bytes_are_exact(self) -> None:
-        self.assertEqual(b"0.1.2\n", (ROOT / "VERSION").read_bytes())
+        self.assertEqual(b"0.1.3\n", (ROOT / "VERSION").read_bytes())
 
     def test_license_is_exact_apache_2_0_text(self) -> None:
         raw = (ROOT / "LICENSE").read_bytes()
@@ -152,6 +155,9 @@ class RepositoryContractTests(unittest.TestCase):
             ),
             patterns,
         )
+
+    def test_release_archive_exports_only_the_canonical_version_marker(self) -> None:
+        self.assertEqual(EXPECTED_GITATTRIBUTES, (ROOT / ".gitattributes").read_bytes())
 
     def test_publication_targets_are_real_non_symlink_paths(self) -> None:
         plugin = ROOT / "plugins" / "vibe-diagram"
