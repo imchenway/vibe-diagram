@@ -462,8 +462,12 @@ class BuildPackagesUnitTests(unittest.TestCase):
 
     def test_canonical_file_map_is_relative_complete_and_rejects_symlinks(self) -> None:
         files = canonical_file_map(ROOT)
-        self.assertEqual(71, len(files))
+        self.assertEqual(75, len(files))
         self.assertIn(PurePosixPath("SKILL.md"), files)
+        self.assertIn(PurePosixPath("VERSION"), files)
+        self.assertIn(PurePosixPath("update.json"), files)
+        self.assertIn(PurePosixPath("scripts/update_skill.py"), files)
+        self.assertIn(PurePosixPath("references/runtime-workflow.md"), files)
         self.assertIn(
             PurePosixPath("assets/templates/code-sequence/participant-timeline.html"), files
         )
