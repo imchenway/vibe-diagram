@@ -28,6 +28,7 @@ from scripts.build_packages import (
     replace_build_transactionally,
     sync_publication,
     tree_record,
+    update_tree_sha256,
     validate_publication_tree,
 )
 
@@ -52,6 +53,22 @@ def _copy_repository(destination: Path, *, seed_publication: bool = True) -> Non
             assemble_publication_tree(destination, expected)
             shutil.copytree(expected / "plugins", destination / "plugins")
             shutil.copytree(expected / ".agents", destination / ".agents")
+
+
+def _set_repository_version(repository: Path, version: str) -> None:
+    """Keep the repository and canonical Skill version contract in sync."""
+    (repository / "VERSION").write_text(f"{version}\n", encoding="ascii")
+    skill_root = repository / "skills" / "vibe-diagram"
+    (skill_root / "VERSION").write_text(f"{version}\n", encoding="ascii")
+    manifest_path = skill_root / "update.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["version"] = version
+    manifest["ref"] = f"v{version}"
+    manifest["tree_sha256"] = update_tree_sha256(repository)
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
 
 def _file_bytes(root: Path) -> dict[str, bytes]:
@@ -230,7 +247,7 @@ class BuildTransactionTests(unittest.TestCase):
                     repository = base / state
                     _copy_repository(repository, seed_publication=state == "update")
                     if state == "update":
-                        (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+                        _set_repository_version(repository, "1.2.3")
                     backup = repository / ".publication.backup"
                     journal_path = backup / PUBLICATION_JOURNAL
                     snapshots: list[tuple[dict[str, object], bytes]] = []
@@ -344,7 +361,7 @@ class BuildTransactionTests(unittest.TestCase):
                         old_plugin = _file_bytes(plugin)
                         old_catalog = catalog.read_bytes() if catalog.is_file() else None
                         if state == "update":
-                            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+                            _set_repository_version(repository, "1.2.3")
                         backup = repository / ".publication.backup"
 
                         def operation(source: Path, destination: Path) -> str | None:
@@ -451,10 +468,7 @@ class BuildTransactionTests(unittest.TestCase):
                         old_plugin = _file_bytes(plugin)
                         old_catalog = catalog.read_bytes() if catalog.is_file() else None
                         if state == "update":
-                            (repository / "VERSION").write_text(
-                                "1.2.3\n",
-                                encoding="ascii",
-                            )
+                            _set_repository_version(repository, "1.2.3")
                         backup = repository / ".publication.backup"
                         journal_path = backup / PUBLICATION_JOURNAL
                         journal_writes = 0
@@ -503,7 +517,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             plugin = repository / "plugins" / "vibe-diagram"
             catalog = repository / ".agents" / "plugins" / "marketplace.json"
             backup = repository / ".publication.backup"
@@ -536,7 +550,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             plugin = repository / "plugins" / "vibe-diagram"
             catalog = repository / ".agents" / "plugins" / "marketplace.json"
             backup = repository / ".publication.backup"
@@ -602,7 +616,7 @@ class BuildTransactionTests(unittest.TestCase):
             catalog = repository / ".agents" / "plugins" / "marketplace.json"
             old_plugin = _file_bytes(plugin)
             old_catalog = catalog.read_bytes()
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
             journal = backup / PUBLICATION_JOURNAL
 
@@ -629,7 +643,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             plugin = repository / "plugins" / "vibe-diagram"
             catalog = repository / ".agents" / "plugins" / "marketplace.json"
             backup = repository / ".publication.backup"
@@ -666,7 +680,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
 
             def fail_staging_cleanup(path: Path) -> None:
@@ -697,7 +711,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
 
             def fail_backup_cleanup(path: Path) -> None:
@@ -728,7 +742,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
 
             def leave_staging(path: Path) -> None:
@@ -761,7 +775,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
 
             def leave_backup(path: Path) -> None:
@@ -841,7 +855,7 @@ class BuildTransactionTests(unittest.TestCase):
             catalog = repository / ".agents" / "plugins" / "marketplace.json"
             old_plugin = _file_bytes(plugin)
             old_catalog = catalog.read_bytes()
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
             real_validate = build_packages.validate_publication_tree
 
@@ -883,7 +897,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
 
             def delete_backup_then_fail(path: Path) -> None:
@@ -921,7 +935,7 @@ class BuildTransactionTests(unittest.TestCase):
             _copy_repository(repository)
             old_plugin = repository / "plugins" / "vibe-diagram"
             (old_plugin / "drift-link").symlink_to("LICENSE")
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
             backup_license = backup / "plugins" / "vibe-diagram" / "LICENSE"
 
@@ -1016,7 +1030,7 @@ class BuildTransactionTests(unittest.TestCase):
             catalog = repository / ".agents" / "plugins" / "marketplace.json"
             old_plugin = _file_bytes(plugin)
             old_catalog = catalog.read_bytes()
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
             real_validate = build_packages.validate_publication_tree
 
@@ -1064,7 +1078,7 @@ class BuildTransactionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             repository = Path(temporary) / "repository"
             _copy_repository(repository)
-            (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+            _set_repository_version(repository, "1.2.3")
             backup = repository / ".publication.backup"
             journal = backup / PUBLICATION_JOURNAL
 
@@ -1126,7 +1140,7 @@ class BuildTransactionTests(unittest.TestCase):
                     old_plugin = _file_bytes(plugin)
                     old_catalog = catalog.read_bytes() if catalog.is_file() else None
                     if state == "update":
-                        (repository / "VERSION").write_text("1.2.3\n", encoding="ascii")
+                        _set_repository_version(repository, "1.2.3")
                     failure_injected = False
 
                     def fail_catalog_promotion(source: Path, destination: Path) -> None:
@@ -1206,7 +1220,7 @@ class BuildTransactionTests(unittest.TestCase):
             self.assertEqual("passed", first_report["static_validation"])
             self.assertEqual("unverified", first_report["runtime_validation"])
             self.assertEqual(set(CLIENTS), set(first_report["clients"]))
-            self.assertEqual(71, first_report["canonical"]["file_count"])
+            self.assertEqual(75, first_report["canonical"]["file_count"])
             canonical_paths = [record["path"] for record in first_report["canonical"]["files"]]
             self.assertEqual(sorted(canonical_paths, key=lambda value: value.encode("utf-8")), canonical_paths)
             for client in CLIENTS:
