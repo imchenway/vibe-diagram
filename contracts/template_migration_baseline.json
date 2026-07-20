@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "signature_algorithm": "htmlparser-events-v1",
   "source_contract_sha256": "cab7874937427e6092defb67b2e28f280d9d31022788c9c6382bbfe334f93959",
   "sequence_redesign_allowlist": [
@@ -10,6 +10,12 @@
     "fault-debugging/debugging-sequence.html",
     "feature-iteration/current-target-sequence.html"
   ],
+  "interaction_migration_batches": {
+    "B01": [
+      "business-flow/swimlane-flow.html",
+      "decision-communication/option-matrix-path.html"
+    ]
+  },
   "templates": {
     "business-architecture/capability-domain-map.html": {
       "source": {
@@ -1303,8 +1309,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "fd495a86abef9588cb03f047439dc9e2cf950e4fe99538226028e2f0e7a38343",
-        "structure_sha256": "fcc2bd0aef1e16e475f757a683382287925149ccaa0e35b47d7f3e4ceb10e534",
+        "file_sha256": "cd9f72a0323a0c53c9041c28f4129f2a276d1f4c1495a38c751fd19121680019",
+        "structure_sha256": "a404a6f929b9a4c158a91c4e24d628fa63625d56770f4918fdcf988cd958f43f",
         "data_slots": [
           "title",
           "summary",
@@ -1389,7 +1395,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "code-sequence/async-callback-sequence.html": {
       "source": {
@@ -2239,8 +2245,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "b11f5086b7b70f603e4f5d212ce487d84ec4f7a44fe1caac5bc5fbc35f282f62",
-        "structure_sha256": "5ca1ebecd1e2bc681446f2e803557ea21e93ec71a49fbfd2f9a5d16a09da4eb5",
+        "file_sha256": "8a4612312ae6ea8d470416180612e6661b434b484be84078882f24d8ee4df434",
+        "structure_sha256": "b60cb3e541db837984b89c9ba395cd85e80cb9e014849585bc877b658a37b390",
         "data_slots": [
           "title",
           "summary",
@@ -2331,7 +2337,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "decision-communication/recommended-path.html": {
       "source": {

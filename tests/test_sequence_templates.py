@@ -320,16 +320,21 @@ class SequenceTemplateTests(unittest.TestCase):
             for relative, entry in contract["templates"].items()
             if entry["source"] != entry["canonical"]
         }
-        self.assertEqual(set(SEQUENCE_TEMPLATE_PATHS), changed)
+        self.assertTrue(set(SEQUENCE_TEMPLATE_PATHS) <= changed)
         self.assertTrue(
             all(contract["templates"][relative]["change_reason"] == CHANGE_REASON
-                for relative in changed)
+                for relative in SEQUENCE_TEMPLATE_PATHS)
         )
 
     def test_non_sequence_contract_entries_remain_source_equal_canonical(self) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        generic_migrated = {
+            relative
+            for paths in contract["interaction_migration_batches"].values()
+            for relative in paths
+        }
         for relative, entry in contract["templates"].items():
-            if relative not in SEQUENCE_TEMPLATE_PATHS:
+            if relative not in SEQUENCE_TEMPLATE_PATHS and relative not in generic_migrated:
                 with self.subTest(relative=relative):
                     self.assertEqual(entry["source"], entry["canonical"])
                     self.assertIsNone(entry["change_reason"])

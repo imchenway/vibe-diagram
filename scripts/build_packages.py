@@ -65,6 +65,7 @@ TEMPLATE_CONTRACT_KEYS = {
     "signature_algorithm",
     "source_contract_sha256",
     "sequence_redesign_allowlist",
+    "interaction_migration_batches",
     "templates",
 }
 TEMPLATE_ENTRY_KEYS = {"source", "canonical", "change_reason"}
@@ -272,7 +273,13 @@ GENERIC_HEIGHT_MODES = frozenset({"flow", "auto", "scroll"})
 GENERIC_MOBILE_MODES = frozenset({"stack", "scroll", "summary"})
 GENERIC_LIMIT_KEYS = frozenset({"nodes", "relations", "groups", "details"})
 FAMILY_POLICY_KEYS = frozenset(
-    {"schema_version", "contract_version", "sequence_exclusions", "families"}
+    {
+        "schema_version",
+        "contract_version",
+        "sequence_exclusions",
+        "migration_batches",
+        "families",
+    }
 )
 FAMILY_POLICY_FAMILY_KEYS = frozenset({"limits", "templates"})
 FAMILY_POLICY_TEMPLATE_KEYS = frozenset({"profile", "limits"})
@@ -725,8 +732,8 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
     contract = read_json_unique(path)
     if set(contract) != TEMPLATE_CONTRACT_KEYS:
         raise _fail("template contract has an invalid root schema")
-    if type(contract["schema_version"]) is not int or contract["schema_version"] != 2:
-        raise _fail("template contract schema_version must be integer 2")
+    if type(contract["schema_version"]) is not int or contract["schema_version"] != 3:
+        raise _fail("template contract schema_version must be integer 3")
     if contract["signature_algorithm"] != "htmlparser-events-v1":
         raise _fail("template contract signature_algorithm is invalid")
     _validate_sha256(contract["source_contract_sha256"], "source_contract_sha256")
@@ -735,6 +742,15 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
     allowlist = contract["sequence_redesign_allowlist"]
     if allowlist != list(SEQUENCE_REDESIGN_PATHS):
         raise _fail("template contract sequence redesign allowlist is invalid")
+    migration_batches = contract["interaction_migration_batches"]
+    policy_path = _ensure_path(
+        root,
+        PurePosixPath("skills/vibe-diagram/contracts/family-policies.json"),
+        "file",
+    )
+    policy = load_family_policies(policy_path)
+    if migration_batches != policy["migration_batches"]:
+        raise _fail("template contract migration batches differ from the family policy")
     templates = contract["templates"]
     if not isinstance(templates, dict):
         raise _fail("template contract templates must be an object")
@@ -767,8 +783,13 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
     ).encode("utf-8")
     if hashlib.sha256(source_payload).hexdigest() != SOURCE_TEMPLATE_SNAPSHOTS_SHA256:
         raise _fail("template contract frozen source snapshots have drifted")
-    if changed != set(SEQUENCE_REDESIGN_PATHS):
-        raise _fail("exactly the six approved sequence templates must differ")
+    completed = {
+        relative
+        for entries in migration_batches.values()
+        for relative in entries
+    }
+    if changed != set(SEQUENCE_REDESIGN_PATHS) | completed:
+        raise _fail("changed templates differ from the approved sequence and interaction migrations")
     return contract
 
 
@@ -998,6 +1019,29 @@ def _validated_limits(value: Any, label: str, *, partial: bool) -> Dict[str, int
     return result
 
 
+def _validated_migration_batches(value: Any) -> Dict[str, List[str]]:
+    if not isinstance(value, dict) or list(value) != sorted(value):
+        raise _fail("family policy migration batches must be an ordered object")
+    generic_templates = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
+    seen = set()
+    result: Dict[str, List[str]] = {}
+    for batch, paths in value.items():
+        if re.fullmatch(r"B(?:0[1-9]|1[0-3])", batch) is None:
+            raise _fail(f"family policy migration batch id is invalid: {batch}")
+        if (
+            not isinstance(paths, list)
+            or not paths
+            or paths != sorted(paths)
+            or len(paths) != len(set(paths))
+            or not set(paths) <= generic_templates
+            or seen & set(paths)
+        ):
+            raise _fail(f"family policy migration batch paths are invalid: {batch}")
+        seen.update(paths)
+        result[batch] = paths
+    return result
+
+
 def load_family_policies(path: Path) -> Dict[str, Any]:
     policy = read_json_unique(path)
     if set(policy) != FAMILY_POLICY_KEYS:
@@ -1009,6 +1053,7 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
     exclusions = policy["sequence_exclusions"]
     if exclusions != sorted(SEQUENCE_REDESIGN_PATHS):
         raise _fail("family policy sequence exclusions are invalid")
+    _validated_migration_batches(policy["migration_batches"])
     families = policy["families"]
     if not isinstance(families, dict) or len(families) != 10:
         raise _fail("family policy must define exactly ten generic families")
@@ -1220,6 +1265,21 @@ def generic_contract_errors(
         if canvas_id and canvas_id not in parser.fallback_ids:
             errors.append("Every diagram canvas requires a matching data-fallback-for baseline.")
     return list(dict.fromkeys(errors))
+
+
+def adaptive_kernel_errors(html: str, css: str, script: str) -> List[str]:
+    errors = []
+    for tag, expected in (("style", css), ("script", script)):
+        matches = re.findall(
+            rf'<{tag} data-adaptive-viewport-kernel="1">\n(.*?)\n</{tag}>',
+            html,
+            flags=re.DOTALL,
+        )
+        if len(matches) != 1:
+            errors.append(f"Migrated generic template requires exactly one adaptive {tag} kernel.")
+        elif matches[0] != expected.rstrip("\n"):
+            errors.append(f"Migrated generic template adaptive {tag} kernel has drifted.")
+    return errors
 
 
 def _allowed_embedded_reference(value: str) -> bool:
@@ -1731,6 +1791,14 @@ def validate_canonical(root: Path) -> None:
     policy = load_family_policies(files[PurePosixPath("contracts/family-policies.json")])
     interaction_contract = load_interaction_contract(root)
     completed_templates = set(interaction_contract["scope"]["completed_templates"])
+    migration_batches = policy["migration_batches"]
+    policy_completed = {
+        relative for paths in migration_batches.values() for relative in paths
+    }
+    if completed_templates != policy_completed or interaction_contract["scope"][
+        "completed_batches"
+    ] != ["B00", *migration_batches]:
+        raise _fail("interaction baseline differs from the trusted migration batches")
 
     asset_requirements = {
         "assets/contracts/adaptive-viewport/v1.css": ("data-diagram-canvas", "--diagram-scale"),
@@ -1798,6 +1866,17 @@ def validate_canonical(root: Path) -> None:
         elif relative in completed_templates:
             generic_errors = generic_contract_errors(
                 html, family, Path(relative).stem, policy
+            )
+            generic_errors.extend(
+                adaptive_kernel_errors(
+                    html,
+                    files[
+                        PurePosixPath("assets/contracts/adaptive-viewport/v1.css")
+                    ].read_text(encoding="utf-8"),
+                    files[
+                        PurePosixPath("assets/contracts/adaptive-viewport/v1.js")
+                    ].read_text(encoding="utf-8"),
+                )
             )
             if generic_errors:
                 raise _fail(

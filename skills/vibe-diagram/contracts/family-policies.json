@@ -9,6 +9,12 @@
     "fault-debugging/debugging-sequence.html",
     "feature-iteration/current-target-sequence.html"
   ],
+  "migration_batches": {
+    "B01": [
+      "business-flow/swimlane-flow.html",
+      "decision-communication/option-matrix-path.html"
+    ]
+  },
   "families": {
     "business-architecture": {
       "limits": {"nodes": 32, "relations": 40, "groups": 10, "details": 8},

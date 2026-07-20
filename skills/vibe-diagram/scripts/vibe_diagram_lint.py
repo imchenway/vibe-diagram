@@ -108,7 +108,13 @@ GENERIC_HEIGHT_MODES = frozenset({"flow", "auto", "scroll"})
 GENERIC_MOBILE_MODES = frozenset({"stack", "scroll", "summary"})
 GENERIC_LIMIT_KEYS = frozenset({"nodes", "relations", "groups", "details"})
 FAMILY_POLICY_KEYS = frozenset(
-    {"schema_version", "contract_version", "sequence_exclusions", "families"}
+    {
+        "schema_version",
+        "contract_version",
+        "sequence_exclusions",
+        "migration_batches",
+        "families",
+    }
 )
 FAMILY_POLICY_FAMILY_KEYS = frozenset({"limits", "templates"})
 FAMILY_POLICY_TEMPLATE_KEYS = frozenset({"profile", "limits"})
@@ -183,6 +189,30 @@ def _validated_limits(value: Any, label: str, *, partial: bool) -> Dict[str, int
     return result
 
 
+def _validated_migration_batches(
+    value: Any, generic_templates: set[str]
+) -> Dict[str, List[str]]:
+    if not isinstance(value, dict) or list(value) != sorted(value):
+        raise ValueError("family policy migration batches must be an ordered object")
+    seen = set()
+    result: Dict[str, List[str]] = {}
+    for batch, paths in value.items():
+        if re.fullmatch(r"B(?:0[1-9]|1[0-3])", batch) is None:
+            raise ValueError(f"family policy migration batch id is invalid: {batch}")
+        if (
+            not isinstance(paths, list)
+            or not paths
+            or paths != sorted(paths)
+            or len(paths) != len(set(paths))
+            or not set(paths) <= generic_templates
+            or seen & set(paths)
+        ):
+            raise ValueError(f"family policy migration batch paths are invalid: {batch}")
+        seen.update(paths)
+        result[batch] = paths
+    return result
+
+
 def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
     policy = _read_json_unique(path)
     if set(policy) != FAMILY_POLICY_KEYS:
@@ -234,6 +264,7 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
     expected = all_templates - set(EXPECTED_SEQUENCE_EXCLUSIONS)
     if covered != expected:
         raise ValueError("family policy must cover the exact 52 non-sequence templates")
+    _validated_migration_batches(policy["migration_batches"], expected)
     return policy
 
 
@@ -424,6 +455,26 @@ def lint_generic_contract(
 ) -> List[str]:
     trusted = load_family_policies() if policy is None else policy
     return generic_contract_errors(html, family, template_id, trusted)
+
+
+def lint_adaptive_kernel(html: str) -> List[str]:
+    errors = []
+    paths = {
+        "style": SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css",
+        "script": SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js",
+    }
+    for tag, path in paths.items():
+        expected = path.read_text(encoding="utf-8").rstrip("\n")
+        matches = re.findall(
+            rf'<{tag} data-adaptive-viewport-kernel="1">\n(.*?)\n</{tag}>',
+            html,
+            flags=re.DOTALL,
+        )
+        if len(matches) != 1:
+            errors.append(f"Migrated generic template requires exactly one adaptive {tag} kernel.")
+        elif matches[0] != expected:
+            errors.append(f"Migrated generic template adaptive {tag} kernel has drifted.")
+    return errors
 
 
 class HtmlSignals(HTMLParser):
@@ -1014,6 +1065,18 @@ def main(argv: Optional[List[str]] = None) -> int:
         )
         if requires_sequence or "data-sequence-canvas" in html:
             errors.extend(lint_sequence_contract(html))
+        policy = load_family_policies()
+        completed = {
+            relative
+            for paths in policy["migration_batches"].values()
+            for relative in paths
+        }
+        for attrs in identity.main_attrs:
+            family = attrs.get("data-template-family", "").strip()
+            template_id = attrs.get("data-template-id", "").strip()
+            if f"{family}/{template_id}.html" in completed:
+                errors.extend(lint_generic_contract(html, family, template_id, policy))
+                errors.extend(lint_adaptive_kernel(html))
     except (OSError, UnicodeError, ValueError) as exc:
         errors = [str(exc)]
     errors = _deduplicate(errors)

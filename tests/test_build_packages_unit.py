@@ -349,14 +349,14 @@ class BuildPackagesUnitTests(unittest.TestCase):
     def test_contract_loaders_validate_current_frozen_contracts(self) -> None:
         template = load_template_contract(ROOT)
         reference = load_reference_contract(ROOT)
-        self.assertEqual(2, template["schema_version"])
+        self.assertEqual(3, template["schema_version"])
         self.assertEqual(58, len(template["templates"]))
         changed = [
             path
             for path, entry in template["templates"].items()
             if entry["source"] != entry["canonical"]
         ]
-        self.assertEqual(6, len(changed))
+        self.assertEqual(8, len(changed))
         self.assertEqual(1, reference["schema_version"])
         self.assertEqual(11, len(reference["references"]))
 

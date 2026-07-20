@@ -93,10 +93,22 @@ class CrossTemplateContractTests(unittest.TestCase):
 
     def test_interaction_baseline_separates_static_and_runtime_evidence(self) -> None:
         baseline = build_packages.load_interaction_contract(ROOT)
-        self.assertEqual(["B00"], baseline["scope"]["completed_batches"])
-        self.assertEqual([], baseline["scope"]["completed_templates"])
+        self.assertEqual("B00", baseline["scope"]["completed_batches"][0])
+        self.assertEqual(
+            sorted(baseline["scope"]["completed_templates"]),
+            baseline["scope"]["completed_templates"],
+        )
         self.assertEqual("required", baseline["evidence"]["synthetic_contracts"])
-        self.assertEqual("pending", baseline["evidence"]["canonical_templates"])
+        expected_template_state = (
+            "complete"
+            if len(baseline["scope"]["completed_templates"]) == 52
+            else "partial"
+            if baseline["scope"]["completed_templates"]
+            else "pending"
+        )
+        self.assertEqual(
+            expected_template_state, baseline["evidence"]["canonical_templates"]
+        )
         self.assertEqual("unverified", baseline["evidence"]["client_runtime"])
 
     def test_shared_runtime_assets_do_not_encode_template_families(self) -> None:
