@@ -28,7 +28,8 @@ REFERENCE_NAMES = (
     "technical-design.md",
 )
 RUNTIME_WORKFLOW_NAME = "runtime-workflow.md"
-ALL_REFERENCE_NAMES = (*REFERENCE_NAMES, RUNTIME_WORKFLOW_NAME)
+ADAPTIVE_REFERENCE_NAME = "adaptive-readability.md"
+ALL_REFERENCE_NAMES = (*REFERENCE_NAMES, ADAPTIVE_REFERENCE_NAME, RUNTIME_WORKFLOW_NAME)
 SEQUENCE_REFERENCE_NAMES = {
     "code-sequence.md",
     "fault-debugging.md",
@@ -175,6 +176,18 @@ class SkillContractTests(unittest.TestCase):
         self.assertEqual(set(REFERENCE_NAMES), set(baseline["references"]))
         for digest in baseline["references"].values():
             self.assertRegex(digest, r"^[0-9a-f]{64}$")
+
+    def test_adaptive_reference_keeps_runtime_and_semantics_separate(self) -> None:
+        text = (REFERENCE_ROOT / ADAPTIVE_REFERENCE_NAME).read_text(encoding="utf-8")
+        for token in (
+            "adaptive-viewport@1",
+            "semantic-relations@1",
+            "progressive disclosure",
+            "family-policies.json",
+            "must not infer families",
+            "data-fallback-for",
+        ):
+            self.assertIn(token, text.lower())
 
     def test_artifact_contract_is_html_first(self) -> None:
         text = _read_runtime_workflow()

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "contracts": {
+    "adaptive_viewport": "1",
+    "semantic_relations": "1",
+    "progressive_disclosure": "1"
+  },
+  "scope": {
+    "generic_template_count": 52,
+    "sequence_template_count": 6,
+    "completed_batches": ["B00"],
+    "completed_templates": []
+  },
+  "evidence": {
+    "synthetic_contracts": "required",
+    "canonical_templates": "pending",
+    "browser_runtime": "pending",
+    "client_runtime": "unverified"
+  }
+}

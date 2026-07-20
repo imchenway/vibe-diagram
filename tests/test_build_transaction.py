@@ -1220,7 +1220,7 @@ class BuildTransactionTests(unittest.TestCase):
             self.assertEqual("passed", first_report["static_validation"])
             self.assertEqual("unverified", first_report["runtime_validation"])
             self.assertEqual(set(CLIENTS), set(first_report["clients"]))
-            self.assertEqual(75, first_report["canonical"]["file_count"])
+            self.assertEqual(81, first_report["canonical"]["file_count"])
             canonical_paths = [record["path"] for record in first_report["canonical"]["files"]]
             self.assertEqual(sorted(canonical_paths, key=lambda value: value.encode("utf-8")), canonical_paths)
             for client in CLIENTS:
