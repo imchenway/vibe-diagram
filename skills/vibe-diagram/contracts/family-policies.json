@@ -53,6 +53,12 @@
       "decision-communication/decision-tree.html",
       "decision-communication/recommended-path.html",
       "decision-communication/tradeoff-quadrant.html"
+    ],
+    "B09": [
+      "delivery-acceptance/acceptance-ledger.html",
+      "delivery-acceptance/delivery-timeline.html",
+      "delivery-acceptance/evidence-swimlane.html",
+      "delivery-acceptance/risk-action-board.html"
     ]
   },
   "families": {

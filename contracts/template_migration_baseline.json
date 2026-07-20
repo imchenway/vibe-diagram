@@ -54,6 +54,12 @@
       "decision-communication/decision-tree.html",
       "decision-communication/recommended-path.html",
       "decision-communication/tradeoff-quadrant.html"
+    ],
+    "B09": [
+      "delivery-acceptance/acceptance-ledger.html",
+      "delivery-acceptance/delivery-timeline.html",
+      "delivery-acceptance/evidence-swimlane.html",
+      "delivery-acceptance/risk-action-board.html"
     ]
   },
   "templates": {
@@ -2804,8 +2810,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "08322ab3374735cfa64fd0fb45ca45314b6819fb27bdbf25d3eb0c5bf3ca8d1a",
-        "structure_sha256": "d9a2d8737cd4c2b300a961a8712fba902f403b897d3001bd22959faea09347d0",
+        "file_sha256": "102a2103437ecf4319985e608ba9821fb28e3976c7853acad6ca386af08ead79",
+        "structure_sha256": "fc0a55ce596a768afd98c790e253670bc264f7a52e9d534625b350849cb6ba0a",
         "data_slots": [
           "title",
           "summary",
@@ -2956,7 +2962,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "delivery-acceptance/delivery-timeline.html": {
       "source": {
@@ -3023,8 +3029,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "16afec9dfc231a7cbf52cfa8445acd2a2cf17064bce645de668af32aa806f7f7",
-        "structure_sha256": "f6f4f618f0f49781d4c4c540f611a2b8ea557dd92e3a83cc7957b72e30a653b2",
+        "file_sha256": "e5f73712990302940dacc4090321328e40ec1eea53b77c307b4591c8d183e007",
+        "structure_sha256": "44807a71d3b0e32d0f2499afa233e6f3a86b1c6b9c586922d1c0925f36c4e8a7",
         "data_slots": [
           "title",
           "summary",
@@ -3085,7 +3091,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "delivery-acceptance/evidence-swimlane.html": {
       "source": {
@@ -3194,8 +3200,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "b6bc6b4599ba5830497fcd0041effdeda4ebe9f6908000da3213b0fdfe733b63",
-        "structure_sha256": "96422f35ab1bf3f34d0037994ced337b370a6415fc3757e393272e0cbd5cc1d1",
+        "file_sha256": "54118add773a522d6cf49c73a0dc411922bf660fcb9db7801a56e253db5b64a5",
+        "structure_sha256": "a1cf8fa364ab8a37b45de60503fb1cc8a451c1c271b0dd8f73ea784a231d6e28",
         "data_slots": [
           "title",
           "summary",
@@ -3298,7 +3304,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "delivery-acceptance/risk-action-board.html": {
       "source": {
@@ -3407,8 +3413,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "77fe026f215c1ff99dccb23d4835dd44cce1313dc4547c2afe172acc1d490cfb",
-        "structure_sha256": "870319456fe9d76c1c4e66e13bd83388c0b6fa6f76a8246366b12c39bb14c0ac",
+        "file_sha256": "739746dc3152cd0ed7b6a891798c5e70846ca7a69fe9a0da709d55f31cabbf45",
+        "structure_sha256": "80414c750f57f0b4e793f908b53d9aec383f76391d02b8b74a97eddf0fe68982",
         "data_slots": [
           "title",
           "summary",
@@ -3511,7 +3517,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "fault-debugging/before-after-flow.html": {
       "source": {

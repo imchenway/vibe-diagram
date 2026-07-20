@@ -62,6 +62,12 @@ B08_TEMPLATES = (
     "decision-communication/recommended-path.html",
     "decision-communication/tradeoff-quadrant.html",
 )
+B09_TEMPLATES = (
+    "delivery-acceptance/acceptance-ledger.html",
+    "delivery-acceptance/delivery-timeline.html",
+    "delivery-acceptance/evidence-swimlane.html",
+    "delivery-acceptance/risk-action-board.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -81,7 +87,7 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08"],
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
@@ -95,6 +101,7 @@ class GenericTemplateTests(unittest.TestCase):
                     *B06_TEMPLATES,
                     *B07_TEMPLATES,
                     *B08_TEMPLATES,
+                    *B09_TEMPLATES,
                 )
             ),
             interaction["scope"]["completed_templates"],
@@ -321,6 +328,10 @@ class GenericTemplateTests(unittest.TestCase):
     def test_b08_closes_remaining_decision_communication_templates(self) -> None:
         policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B08_TEMPLATES),policy_data["migration_batches"]["B08"])
         self._assert_completed_generic_batch(B08_TEMPLATES,{B08_TEMPLATES[0]:(8,7,"graph"),B08_TEMPLATES[1]:(7,6,"graph"),B08_TEMPLATES[2]:(4,3,"matrix")})
+
+    def test_b09_closes_delivery_acceptance_templates(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B09_TEMPLATES),policy_data["migration_batches"]["B09"])
+        self._assert_completed_generic_batch(B09_TEMPLATES,{B09_TEMPLATES[0]:(20,19,"ledger"),B09_TEMPLATES[1]:(5,4,"timeline"),B09_TEMPLATES[2]:(12,11,"graph"),B09_TEMPLATES[3]:(12,11,"ledger")})
 
     def _assert_completed_generic_batch(self, templates, minimums) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
