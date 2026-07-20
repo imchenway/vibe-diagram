@@ -13,6 +13,11 @@
     "B01": [
       "business-flow/swimlane-flow.html",
       "decision-communication/option-matrix-path.html"
+    ],
+    "B02": [
+      "business-flow/bpmn-light-flow.html",
+      "business-flow/exception-branch-flow.html",
+      "business-flow/stage-track.html"
     ]
   },
   "families": {

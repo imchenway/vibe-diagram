@@ -22,6 +22,11 @@ B01_TEMPLATES = (
     "business-flow/swimlane-flow.html",
     "decision-communication/option-matrix-path.html",
 )
+B02_TEMPLATES = (
+    "business-flow/bpmn-light-flow.html",
+    "business-flow/exception-branch-flow.html",
+    "business-flow/stage-track.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -40,10 +45,71 @@ class GenericTemplateTests(unittest.TestCase):
         interaction = json.loads(INTERACTION_PATH.read_text(encoding="utf-8"))
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
-        self.assertEqual(["B00", "B01"], interaction["scope"]["completed_batches"])
-        self.assertEqual(list(B01_TEMPLATES), interaction["scope"]["completed_templates"])
+        self.assertEqual(["B00", "B01", "B02"], interaction["scope"]["completed_batches"])
+        self.assertEqual(
+            sorted((*B01_TEMPLATES, *B02_TEMPLATES)),
+            interaction["scope"]["completed_templates"],
+        )
         self.assertEqual(list(B01_TEMPLATES), policy["migration_batches"]["B01"])
         self.assertEqual(policy["migration_batches"], migration["interaction_migration_batches"])
+
+    def test_b02_is_the_exact_business_flow_family_closure(self) -> None:
+        policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B02_TEMPLATES), policy["migration_batches"]["B02"])
+        completed = {
+            relative
+            for batch in policy["migration_batches"].values()
+            for relative in batch
+            if relative.startswith("business-flow/")
+        }
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "business-flow").glob("*.html")
+        }
+        self.assertEqual(expected, completed)
+
+    def test_b02_templates_pass_parsers_and_embed_the_exact_kernel(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B02_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+
+    def test_b02_preserves_slots_and_declares_meaningful_flow_semantics(self) -> None:
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        minimums = {
+            B02_TEMPLATES[0]: (5, 4, "graph"),
+            B02_TEMPLATES[1]: (8, 7, "graph"),
+            B02_TEMPLATES[2]: (9, 8, "timeline"),
+        }
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
 
     def test_b01_templates_pass_independent_generic_contract_parsers(self) -> None:
         linter = _load_linter()

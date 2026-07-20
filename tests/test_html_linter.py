@@ -390,7 +390,18 @@ class HtmlLinterTests(unittest.TestCase):
     def test_cli_returns_zero_for_valid_non_system_artifact(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "valid.html"
-            path.write_text(_artifact(), encoding="utf-8")
+            path.write_text(
+                (
+                    ROOT
+                    / "skills"
+                    / "vibe-diagram"
+                    / "assets"
+                    / "templates"
+                    / "business-flow"
+                    / "bpmn-light-flow.html"
+                ).read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
             result = subprocess.run(
                 [sys.executable, str(SCRIPT_PATH), "--type", "business-flow", str(path)],
                 text=True,

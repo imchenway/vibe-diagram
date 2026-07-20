@@ -8,8 +8,11 @@
   "scope": {
     "generic_template_count": 52,
     "sequence_template_count": 6,
-    "completed_batches": ["B00", "B01"],
+    "completed_batches": ["B00", "B01", "B02"],
     "completed_templates": [
+      "business-flow/bpmn-light-flow.html",
+      "business-flow/exception-branch-flow.html",
+      "business-flow/stage-track.html",
       "business-flow/swimlane-flow.html",
       "decision-communication/option-matrix-path.html"
     ]

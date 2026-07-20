@@ -14,6 +14,11 @@
     "B01": [
       "business-flow/swimlane-flow.html",
       "decision-communication/option-matrix-path.html"
+    ],
+    "B02": [
+      "business-flow/bpmn-light-flow.html",
+      "business-flow/exception-branch-flow.html",
+      "business-flow/stage-track.html"
     ]
   },
   "templates": {
@@ -814,8 +819,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "03e0b7acf17b0dd97fe40dae1af6f1468ce5b0116e24901f609bb5ca5e03f746",
-        "structure_sha256": "75a4a878bd7d44a57a1e1b8f3af528f0dd2da1aa253cbe60f6acdbc0ed91eaa7",
+        "file_sha256": "674ad27bbdefd5beb4954f45b8b6b23ecbbd5ce338e4227de75949a72505a176",
+        "structure_sha256": "d22418a919836c14a3992a8ff355646d750b204b88a91c3aea3b00836a479591",
         "data_slots": [
           "title",
           "summary",
@@ -876,7 +881,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-flow/exception-branch-flow.html": {
       "source": {
@@ -961,8 +966,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "3041ac000d3a8edd71f2874ee030b7a57c5369b4ec0d97eed30a24287f677177",
-        "structure_sha256": "0c35f287edea5b86512e9bf366f5e6e60c2997fc902a54d3e1c8d3dc3149e18c",
+        "file_sha256": "1546ccafaa22d79bee6e9d6ce8cb2ddafc37f4048a2ede1f48600f237b2e34f3",
+        "structure_sha256": "fbcb7a4f5017908d8fdbb3dd3282c79bc1c3c90665f934e31ec21633b2fc2ef8",
         "data_slots": [
           "title",
           "summary",
@@ -1041,7 +1046,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-flow/stage-track.html": {
       "source": {
@@ -1132,8 +1137,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "95f6a5f9db391d81b1d24519b259e4a06e78d62f4afed27f73e5a017c0b75814",
-        "structure_sha256": "4a0293418d4d1c4ca5a7d61dc133f6257a7397c8815600d75af71d9a337543e4",
+        "file_sha256": "0234615ea74a5dca0f4271eae6b3bb246c6f38fa3a18d3bc8d0ad779b5e4cbce",
+        "structure_sha256": "a20434e391cc505336f815f7fb84a16f9aac25d3e6c463bb566051f5f02f32f6",
         "data_slots": [
           "title",
           "summary",
@@ -1218,7 +1223,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "business-flow/swimlane-flow.html": {
       "source": {

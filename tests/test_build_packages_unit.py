@@ -356,7 +356,15 @@ class BuildPackagesUnitTests(unittest.TestCase):
             for path, entry in template["templates"].items()
             if entry["source"] != entry["canonical"]
         ]
-        self.assertEqual(8, len(changed))
+        migrated = {
+            path
+            for paths in template["interaction_migration_batches"].values()
+            for path in paths
+        }
+        self.assertEqual(
+            set(template["sequence_redesign_allowlist"]) | migrated,
+            set(changed),
+        )
         self.assertEqual(1, reference["schema_version"])
         self.assertEqual(11, len(reference["references"]))
 
