@@ -80,6 +80,13 @@
       "system-architecture/data-flow.html",
       "system-architecture/event-driven.html",
       "system-architecture/router-v6.html"
+    ],
+    "B13": [
+      "system-architecture/delivery-pipeline.html",
+      "system-architecture/identity-access.html",
+      "system-architecture/observability-view.html",
+      "system-architecture/resilience-view.html",
+      "system-architecture/security-view.html"
     ]
   },
   "families": {

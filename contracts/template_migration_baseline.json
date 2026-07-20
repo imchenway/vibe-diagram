@@ -81,6 +81,13 @@
       "system-architecture/data-flow.html",
       "system-architecture/event-driven.html",
       "system-architecture/router-v6.html"
+    ],
+    "B13": [
+      "system-architecture/delivery-pipeline.html",
+      "system-architecture/identity-access.html",
+      "system-architecture/observability-view.html",
+      "system-architecture/resilience-view.html",
+      "system-architecture/security-view.html"
     ]
   },
   "templates": {
@@ -7253,8 +7260,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "f9762dab97e327abb35b0045c46283ddbc583e6390284dbcb702f89031736155",
-        "structure_sha256": "2ad32350fef32c02c65110b9546be85828d342ec4af63a4bef9e23191d0c5896",
+        "file_sha256": "befeddb188b7a271c65342c13245f113bb87f35f41a27631c1e9758a0c2c826c",
+        "structure_sha256": "a6a04570d890e0c2e6e22be9cf8dc384c2bf5a727ce194be1a77ac80ebf9f128",
         "data_slots": [
           "title",
           "summary",
@@ -7321,7 +7328,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/deployment-topology.html": {
       "source": {
@@ -7684,8 +7691,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "af95333a681656d4f88a9967ef86fccd9d3c62d0e725928163b040a062f190fe",
-        "structure_sha256": "3fa8d0a31dbb16d8607578166da746ab1caa32a6475e2834c67032c6c52e9988",
+        "file_sha256": "ca9fd768188f13486a8fad53c29ee6f61016b243d52c9d727052761516b1769f",
+        "structure_sha256": "f57712c8c2101ee54a10f673d6dd11f2bc92122a80b6b08b5b4fb8688561b775",
         "data_slots": [
           "title",
           "summary",
@@ -7746,7 +7753,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/logical-layering.html": {
       "source": {
@@ -8155,8 +8162,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "bf84b5691b89b73aa74fbff494e2bbc964140e122f6db7b7021954025b90d432",
-        "structure_sha256": "c5094068007a5b17f2a47b987ffbb5091677fac6f750e074e4955a2dd64969bc",
+        "file_sha256": "03f1239df01acdec1ab161dc597631ce4684a293f00f044f4fd4801726deeaf1",
+        "structure_sha256": "c1a1a06d471b283f15fb59246ad0eb2a3920b83ff5e9d7a00b56c8dd0b1b9e6a",
         "data_slots": [
           "title",
           "summary",
@@ -8217,7 +8224,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/resilience-view.html": {
       "source": {
@@ -8290,8 +8297,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "fdf62e8c4d80d7874f49b82eb66d8e0a66aae8f89a267d3ae4786deae1ff5534",
-        "structure_sha256": "6a3e79f333044a472c0dd19ccc96905ba108ed97efdd09bb4802a88311380470",
+        "file_sha256": "6c567f2cfd242a88fc17f3d6b5aa3467ee3bb7193d64ca9f3652ecfc486c52fc",
+        "structure_sha256": "466f4b1dd333038e3a6d311f9243add4f004ab4240ab26ca3ca97ef62a756225",
         "data_slots": [
           "title",
           "summary",
@@ -8358,7 +8365,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/router-v6.html": {
       "source": {
@@ -8602,8 +8609,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "5f2416909bab75e52f1bbf107e4fc52bb616cfa824319cf64f0d23a9a8b777f6",
-        "structure_sha256": "e9edb717a630140b6c85cc502522ac3989f1cc780085789e0b6b2c467358c0f1",
+        "file_sha256": "25c87c007e802bf5b6d19e408ae63d4ab25e7fde126524f00fd412745ef6d3ed",
+        "structure_sha256": "cb2bc4b6dbcbe7cd8c3a6ec57f109502bc018de43b4087532479a8e432f59f59",
         "data_slots": [
           "title",
           "summary",
@@ -8676,7 +8683,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "system-architecture/system-context.html": {
       "source": {

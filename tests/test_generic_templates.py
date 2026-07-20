@@ -89,6 +89,13 @@ B12_TEMPLATES = (
     "system-architecture/event-driven.html",
     "system-architecture/router-v6.html",
 )
+B13_TEMPLATES = (
+    "system-architecture/delivery-pipeline.html",
+    "system-architecture/identity-access.html",
+    "system-architecture/observability-view.html",
+    "system-architecture/resilience-view.html",
+    "system-architecture/security-view.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -108,7 +115,7 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12"],
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
@@ -126,6 +133,7 @@ class GenericTemplateTests(unittest.TestCase):
                     *B10_TEMPLATES,
                     *B11_TEMPLATES,
                     *B12_TEMPLATES,
+                    *B13_TEMPLATES,
                 )
             ),
             interaction["scope"]["completed_templates"],
@@ -368,6 +376,27 @@ class GenericTemplateTests(unittest.TestCase):
     def test_b12_closes_system_data_integration_slice(self) -> None:
         policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B12_TEMPLATES),policy_data["migration_batches"]["B12"])
         counts=(7,8,8,7,8);self._assert_completed_generic_batch(B12_TEMPLATES,{p:(n,n-1,"graph") for p,n in zip(B12_TEMPLATES,counts)})
+
+    def test_b13_closes_system_assurance_and_all_generic_templates(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(
+            list(B13_TEMPLATES), policy_data["migration_batches"]["B13"]
+        )
+        counts = (6, 5, 5, 6, 7)
+        profiles = ("timeline", "graph", "graph", "graph", "graph")
+        self._assert_completed_generic_batch(
+            B13_TEMPLATES,
+            {
+                path: (nodes, nodes - 1, profile)
+                for path, nodes, profile in zip(B13_TEMPLATES, counts, profiles)
+            },
+        )
+        completed = {
+            path
+            for paths in policy_data["migration_batches"].values()
+            for path in paths
+        }
+        self.assertEqual(52, len(completed))
 
     def _assert_completed_generic_batch(self, templates, minimums) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
