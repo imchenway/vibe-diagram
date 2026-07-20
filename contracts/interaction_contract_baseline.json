@@ -8,7 +8,7 @@
   "scope": {
     "generic_template_count": 52,
     "sequence_template_count": 6,
-    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06"],
+    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07"],
     "completed_templates": [
       "business-architecture/capability-domain-map.html",
       "business-architecture/participant-boundary.html",
@@ -23,6 +23,9 @@
       "fault-debugging/bpmn-debug-flow.html",
       "fault-debugging/causal-chain.html",
       "fault-debugging/state-data-breakpoint.html",
+      "feature-iteration/current-target-flow.html",
+      "feature-iteration/diff-heatmap.html",
+      "feature-iteration/release-rollback-track.html",
       "state-data-model/data-flow-model.html",
       "state-data-model/er-lite.html",
       "state-data-model/lifecycle-track.html",

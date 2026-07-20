@@ -44,6 +44,11 @@
       "fault-debugging/bpmn-debug-flow.html",
       "fault-debugging/causal-chain.html",
       "fault-debugging/state-data-breakpoint.html"
+    ],
+    "B07": [
+      "feature-iteration/current-target-flow.html",
+      "feature-iteration/diff-heatmap.html",
+      "feature-iteration/release-rollback-track.html"
     ]
   },
   "templates": {
@@ -4339,8 +4344,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "5272a3b010ae3e29cb432552c76ea6bfff850e700da0ea1ef1ee25165f6ed797",
-        "structure_sha256": "6b6816784e39ed571b6b4a92a8a54585b9ea78adf8e1d0b46136229a331f6180",
+        "file_sha256": "66ac9313ac7ad2b03ba81cd4821a95f64913c4f1f35c791952f98fa02a277718",
+        "structure_sha256": "aad7a4e8579488deda0b4308655a5e6cf535253bcbf0492e2c8df10fcd93cb7f",
         "data_slots": [
           "title",
           "summary",
@@ -4419,7 +4424,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "feature-iteration/current-target-sequence.html": {
       "source": {
@@ -4651,8 +4656,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0bf53adb021a96653dc3bada102da855b16ac6d694b2c2ef7769cddb6dcd7746",
-        "structure_sha256": "d4aa564f418043ee52a9d593b7611f8c0082e74ed6c1f3180ad7467862818002",
+        "file_sha256": "4b2763ad5003b6249574d58c0e8da7f1e4986ce3875b441dc739c849bfb76c06",
+        "structure_sha256": "726aa8819cddd6dd75a23e25f4042365c93b66668da75a0cc003ebf60cf5cb0b",
         "data_slots": [
           "title",
           "summary",
@@ -4737,7 +4742,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "feature-iteration/release-rollback-track.html": {
       "source": {
@@ -4822,8 +4827,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "f93f04b9b0000df54c1c252435975600fb794b82fd3c8c56a23a26056518305b",
-        "structure_sha256": "4720c79d8c17c140bfe471093f68e5916a9e93509983d2c7c5e53a7dd77330a8",
+        "file_sha256": "c6fed1bb938c452b4efa15216c73ff2fa708d88736fb840018ab1f714c297457",
+        "structure_sha256": "bcd28ac3d35691b084dd8c0ab3f3828bb3b637e8d3f469e644a4bde1031ab926",
         "data_slots": [
           "title",
           "summary",
@@ -4902,7 +4907,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "page-mockup/artboard-filmstrip.html": {
       "source": {

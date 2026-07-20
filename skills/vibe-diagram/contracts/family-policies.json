@@ -43,6 +43,11 @@
       "fault-debugging/bpmn-debug-flow.html",
       "fault-debugging/causal-chain.html",
       "fault-debugging/state-data-breakpoint.html"
+    ],
+    "B07": [
+      "feature-iteration/current-target-flow.html",
+      "feature-iteration/diff-heatmap.html",
+      "feature-iteration/release-rollback-track.html"
     ]
   },
   "families": {

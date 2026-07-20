@@ -52,6 +52,11 @@ B06_TEMPLATES = (
     "fault-debugging/causal-chain.html",
     "fault-debugging/state-data-breakpoint.html",
 )
+B07_TEMPLATES = (
+    "feature-iteration/current-target-flow.html",
+    "feature-iteration/diff-heatmap.html",
+    "feature-iteration/release-rollback-track.html",
+)
 
 
 def _block(html: str, tag: str) -> str:
@@ -71,7 +76,7 @@ class GenericTemplateTests(unittest.TestCase):
         policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
-            ["B00", "B01", "B02", "B03", "B04", "B05", "B06"],
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07"],
             interaction["scope"]["completed_batches"],
         )
         self.assertEqual(
@@ -83,6 +88,7 @@ class GenericTemplateTests(unittest.TestCase):
                     *B04_TEMPLATES,
                     *B05_TEMPLATES,
                     *B06_TEMPLATES,
+                    *B07_TEMPLATES,
                 )
             ),
             interaction["scope"]["completed_templates"],
@@ -301,6 +307,10 @@ class GenericTemplateTests(unittest.TestCase):
         self.assertNotIn("fault-debugging/debugging-sequence.html", B06_TEMPLATES)
         minimums = {B06_TEMPLATES[0]:(8,7,"graph"),B06_TEMPLATES[1]:(5,4,"graph"),B06_TEMPLATES[2]:(5,4,"graph"),B06_TEMPLATES[3]:(7,6,"matrix")}
         self._assert_completed_generic_batch(B06_TEMPLATES, minimums)
+
+    def test_b07_closes_only_non_sequence_feature_iteration_templates(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8")); self.assertEqual(list(B07_TEMPLATES),policy_data["migration_batches"]["B07"]); self.assertNotIn("feature-iteration/current-target-sequence.html",B07_TEMPLATES)
+        self._assert_completed_generic_batch(B07_TEMPLATES,{B07_TEMPLATES[0]:(8,7,"graph"),B07_TEMPLATES[1]:(9,8,"matrix"),B07_TEMPLATES[2]:(8,7,"timeline")})
 
     def _assert_completed_generic_batch(self, templates, minimums) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
