@@ -21,6 +21,7 @@ After the update gate finishes, read [the runtime workflow](references/runtime-w
 ## Reference index
 
 - [Runtime workflow](references/runtime-workflow.md)
+- [Adaptive readability and semantic relations](references/adaptive-readability.md)
 - [Business architecture](references/business-architecture.md)
 - [Business flow](references/business-flow.md)
 - [Code sequence](references/code-sequence.md)
