@@ -32,6 +32,12 @@
       "business-architecture/participant-boundary.html",
       "business-architecture/rule-constraint-heatmap.html",
       "business-architecture/value-chain-map.html"
+    ],
+    "B05": [
+      "technical-design/api-contract-swimlane.html",
+      "technical-design/data-consistency-boundary.html",
+      "technical-design/module-contract-data-topology.html",
+      "technical-design/release-switch-track.html"
     ]
   },
   "templates": {
@@ -9068,8 +9074,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "342513f575e2bf41e5e4f5992a71da30065954376a233dfb608d64ff2077aced",
-        "structure_sha256": "317b06323598188983a9bef9ecb403ec3d23a0e9c3344f8b57227226a6551eab",
+        "file_sha256": "637d34bbefd4ad41db718374a53c8a19081dca2e3d690234c77291c1a2f86973",
+        "structure_sha256": "5a6b36030838f7ff8de6669cab68ff767745bcbb30dfb8be471fe8c579c6cd31",
         "data_slots": [
           "title",
           "summary",
@@ -9196,7 +9202,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "technical-design/data-consistency-boundary.html": {
       "source": {
@@ -9281,8 +9287,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "bf8fcbe2dd93b010d452e48c375cd4aff7f9b2865b842e7ab325a29506762824",
-        "structure_sha256": "199c82679045eec55b083bae7e048ac3060a37c3547771449a160297acf09f65",
+        "file_sha256": "2ad5ccea51e5012af152c411d306a13bf2b9799370850370ac76828f549ca49b",
+        "structure_sha256": "66ca24b720ae5ceeff9c42b74f52261e486cf4611ec7cac40e0c66e9fe1ec0c9",
         "data_slots": [
           "title",
           "summary",
@@ -9361,7 +9367,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "technical-design/module-contract-data-topology.html": {
       "source": {
@@ -9440,8 +9446,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "d2154938ddf429cfdad3830798f10b35021bb014cb22ea866f09d2b58b4d1d3f",
-        "structure_sha256": "6cf1710313425774cc7f776e191eee92584caaa35bfd78ce92c63b4f62b593be",
+        "file_sha256": "23bce88c8001ba61ff51fcf9464d65745b08160878bf3b3b81a8ec3697289400",
+        "structure_sha256": "6ce7e5308360f86648351625f7af007bd3aef05e7b350ec9d5bae04d65503f14",
         "data_slots": [
           "title",
           "summary",
@@ -9514,7 +9520,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "technical-design/release-switch-track.html": {
       "source": {
@@ -9593,8 +9599,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "c7e9b6d29d0200119693b5f4cac477a3027608717fb0d681d91eb1eb7b1fb049",
-        "structure_sha256": "9ba20c2065981193d971515672086c62b79de41aa361e34df9034f6d48513e39",
+        "file_sha256": "2ca8727c57598b73981c438936d5141718177298d98f5773c74e7b734468e17e",
+        "structure_sha256": "24a0236bafdd96f1be9968e7424bcb8bda69c161dd527b8cfb3d0327bd287ac6",
         "data_slots": [
           "title",
           "summary",
@@ -9667,7 +9673,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     }
   }
 }

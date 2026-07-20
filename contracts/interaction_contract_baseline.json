@@ -8,7 +8,7 @@
   "scope": {
     "generic_template_count": 52,
     "sequence_template_count": 6,
-    "completed_batches": ["B00", "B01", "B02", "B03", "B04"],
+    "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05"],
     "completed_templates": [
       "business-architecture/capability-domain-map.html",
       "business-architecture/participant-boundary.html",
@@ -23,7 +23,11 @@
       "state-data-model/er-lite.html",
       "state-data-model/lifecycle-track.html",
       "state-data-model/state-event-matrix.html",
-      "state-data-model/state-machine.html"
+      "state-data-model/state-machine.html",
+      "technical-design/api-contract-swimlane.html",
+      "technical-design/data-consistency-boundary.html",
+      "technical-design/module-contract-data-topology.html",
+      "technical-design/release-switch-track.html"
     ]
   },
   "evidence": {
