@@ -48,6 +48,11 @@
       "feature-iteration/current-target-flow.html",
       "feature-iteration/diff-heatmap.html",
       "feature-iteration/release-rollback-track.html"
+    ],
+    "B08": [
+      "decision-communication/decision-tree.html",
+      "decision-communication/recommended-path.html",
+      "decision-communication/tradeoff-quadrant.html"
     ]
   },
   "families": {

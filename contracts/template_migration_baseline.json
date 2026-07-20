@@ -49,6 +49,11 @@
       "feature-iteration/current-target-flow.html",
       "feature-iteration/diff-heatmap.html",
       "feature-iteration/release-rollback-track.html"
+    ],
+    "B08": [
+      "decision-communication/decision-tree.html",
+      "decision-communication/recommended-path.html",
+      "decision-communication/tradeoff-quadrant.html"
     ]
   },
   "templates": {
@@ -2103,8 +2108,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "6e438e14652785d5a6aa65a6e04f992d4239a87eea7a248caa463d0beef38cc1",
-        "structure_sha256": "4fed7d90ece18bcbae6e174d52c287e9258a94976c508d35b67fdacc5ba3c17b",
+        "file_sha256": "8b2bd4a4bbeb8817a3dab0c917a6bcb2c1c5e0bb3a8ded1148c3d3e9a2075cdb",
+        "structure_sha256": "5682f6b16c64341989aa64dc7baf9f16a23df8a886ff30baa5f826412558820b",
         "data_slots": [
           "title",
           "summary",
@@ -2183,7 +2188,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "decision-communication/option-matrix-path.html": {
       "source": {
@@ -2451,8 +2456,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "68a259275447f314fe5153ec36021090543b52d61b79cbbaa4829961f619e140",
-        "structure_sha256": "52cc010999e9daad2c92d40bebc83b6c43d5507ffe16decb8e48f0ffb72773c4",
+        "file_sha256": "a1ec0e1a2fc07df022e6792144dc62e4d31060f2f7a631d35f5eb790756cf0a7",
+        "structure_sha256": "035c47c270d89e8db22e32cb25e876194a55dbb2e3e1facc034d5bb721f24e2a",
         "data_slots": [
           "title",
           "summary",
@@ -2525,7 +2530,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "decision-communication/tradeoff-quadrant.html": {
       "source": {
@@ -2586,8 +2591,8 @@
         ]
       },
       "canonical": {
-        "file_sha256": "4e4635082d4e933f2c194644794a10ddb694e50986b907bbf4cc48695adc36b2",
-        "structure_sha256": "634054287471bcd43fbbd0caee27132a15f9611748d83d21b8a5fdfd597551d2",
+        "file_sha256": "c4a98818165727ea46f315ad6ffad9e9ef97a291e85572512cec6c44cd29f80b",
+        "structure_sha256": "1d962d15d15196075acb967f631fbc22d289376f229111994f21146e2be878c7",
         "data_slots": [
           "title",
           "summary",
@@ -2642,7 +2647,7 @@
           }
         ]
       },
-      "change_reason": null
+      "change_reason": "approved adaptive viewport and semantic relation migration"
     },
     "delivery-acceptance/acceptance-ledger.html": {
       "source": {
