@@ -58,7 +58,8 @@ class DocumentationContractTests(unittest.TestCase):
         chinese = README_ZH.read_text(encoding="utf-8")
 
         english_required = (
-            f"`v{version}` is the stable GitHub tag",
+            "`v0.1.0` remains the latest runtime-verified public GitHub tag",
+            f"repository version is the update-capable `{version}` candidate",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -80,7 +81,8 @@ class DocumentationContractTests(unittest.TestCase):
                 self.assertIn(value, english)
 
         chinese_required = (
-            f"`v{version}` 是稳定 GitHub 标签",
+            "`v0.1.0` 仍是最近一个完成运行时验证的公开 GitHub 标签",
+            f"`{version}` 候选",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -93,7 +95,7 @@ class DocumentationContractTests(unittest.TestCase):
             "不能证明完整 unit suite",
             "证据保留在命令或 CI 输出中",
             "GitHub-path Codex CLI lane 已针对 `v0.1.0` 完成运行时验证",
-            "不代表聚合兼容性",
+            "不代表四类生成包的聚合兼容性",
             "curated `$skill-installer` 索引",
             "公共 Plugins Directory",
         )
@@ -106,12 +108,15 @@ class DocumentationContractTests(unittest.TestCase):
         chinese = README_ZH.read_text(encoding="utf-8")
         shared = (
             "https://github.com/imchenway/vibe-diagram",
-            "https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram",
+            "https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram",
             "$skill-installer",
             "skill-installer/scripts/install-skill-from-github.py",
             "--repo imchenway/vibe-diagram",
             "--path skills/vibe-diagram",
-            "--ref v0.1.0",
+            "--ref stable",
+            "--ref v0.1.1",
+            "update_skill.py",
+            "--force-check",
             "backups/skills",
         )
         for value in shared:
@@ -127,7 +132,10 @@ class DocumentationContractTests(unittest.TestCase):
     def test_changelog_records_the_stable_github_skill_lane(self) -> None:
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertEqual(1, text.count("## [Unreleased]"))
-        self.assertIn(f"## [{_version()}] - 2026-07-18", text)
+        self.assertIn("## [0.1.0] - 2026-07-18", text)
+        self.assertNotIn(f"## [{_version()}] -", text)
+        self.assertIn("0.1.1", text)
+        self.assertIn("automatic update", text)
         self.assertIn("GitHub-path Codex CLI lane", text)
         self.assertIn("curated `$skill-installer` index", text)
         self.assertNotIn("v0.1.0-rc.2", text)
