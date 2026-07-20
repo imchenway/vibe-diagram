@@ -2,9 +2,17 @@
 
 ## [Unreleased]
 
-- Prepared the `0.1.1` candidate with a stable bootstrap that checks for an automatic update before every direct-installed invocation.
+## [0.1.2] - 2026-07-20
+
+- Kept current-version and offline update checks read-only so normal Skill invocation does not need to create a lock file.
+- Deferred locking and write permission until the stable manifest actually declares a newer release.
+- Verified the public stable install, fresh Codex CLI discovery and invocation, HTML delivery, bundled-linter repair, offline fail-open, and online current-version paths.
+
+## [0.1.1] - 2026-07-20
+
+- Published the stable bootstrap that checks for an automatic update before every direct-installed invocation.
 - Added a standard-library updater with strict version comparison, immutable-tag downloads, tree-integrity validation, locking, recoverable backups, rollback, and offline fail-open behavior.
-- Added the future moving `stable` installation channel and public manual update command while retaining `v0.1.0` as the latest runtime-verified public lane.
+- Added the moving `stable` installation channel and public manual update command.
 - Kept generated package copies under package-manager ownership so they do not self-update outside their distribution lifecycle.
 
 ## [0.1.0] - 2026-07-18
