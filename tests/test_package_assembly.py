@@ -20,6 +20,7 @@ from scripts.build_packages import (
     read_version,
     render_template,
     tree_record,
+    update_tree_sha256,
     validate_canonical,
     validate_manifest,
     validate_package,
@@ -65,6 +66,10 @@ def _refresh_template_contract(root: Path, relative: str, *, source: bool) -> No
     if source:
         contract["templates"][relative]["source"] = snapshot
     contract_path.write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")
+    manifest_path = root / "skills" / "vibe-diagram" / "update.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["tree_sha256"] = update_tree_sha256(root)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
 
 def _inject_before_body(path: Path, fragment: str) -> None:
@@ -81,10 +86,10 @@ def _rendered_manifest(root: Path, client: str) -> dict:
 
 
 class PackageAssemblyTests(unittest.TestCase):
-    def test_validate_canonical_accepts_the_frozen_71_file_core(self) -> None:
+    def test_validate_canonical_accepts_the_update_capable_75_file_core(self) -> None:
         self.assertIsNone(validate_canonical(ROOT))
-        self.assertEqual(71, len(canonical_file_map(ROOT)))
-        self.assertEqual(71, tree_record(CANONICAL_ROOT).file_count)
+        self.assertEqual(75, len(canonical_file_map(ROOT)))
+        self.assertEqual(75, tree_record(CANONICAL_ROOT).file_count)
 
     def test_four_clients_build_exact_self_contained_packages(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -118,7 +123,7 @@ class PackageAssemblyTests(unittest.TestCase):
                         report["manifest_sha256"],
                     )
                     self.assertEqual(canonical_hash, report["canonical_sha256"])
-                    self.assertEqual(74 if client == "codex" else 73, report["package"]["file_count"])
+                    self.assertEqual(78 if client == "codex" else 77, report["package"]["file_count"])
                     self.assertEqual((ROOT / "LICENSE").read_bytes(), (package / "LICENSE").read_bytes())
                     self.assertEqual(
                         package_record.tree_sha256,

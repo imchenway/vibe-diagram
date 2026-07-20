@@ -4,11 +4,11 @@ Chinese overview: [README.zh-CN.md](README.zh-CN.md).
 
 ## What it is
 
-`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. `v0.1.0` is the stable GitHub tag. Its verified GitHub skill lane does not claim aggregate compatibility across every generated client package.
+`vibe-diagram` is a portable agent skill for producing self-contained HTML diagrams. The repository holds one host-neutral canonical skill and deterministic package definitions for four client families. `v0.1.0` remains the latest runtime-verified public GitHub tag; the repository version is the update-capable `0.1.1` candidate. Its verified GitHub skill lane does not claim aggregate compatibility across every generated client package.
 
 ## Repository model
 
-`skills/vibe-diagram/` is the only editable source for skill behavior. That directory contains `SKILL.md`, 11 references, 58 HTML templates, and one standard-library linter. It has zero third-party runtime dependencies.
+`skills/vibe-diagram/` is the only editable source for skill behavior. That directory contains the bootstrap `SKILL.md`, 12 references, 58 HTML templates, a standard-library updater, and a standard-library linter. It has zero third-party runtime dependencies.
 
 Client manifests and overlays live under `adapters/`. Generated outputs are disposable artifacts and must not be edited by hand:
 
@@ -23,17 +23,19 @@ The repository-root `plugins/vibe-diagram/` tree is the builder-only generated p
 
 ## Codex Skill installation
 
-The public repository is <https://github.com/imchenway/vibe-diagram>. The stable standalone Skill source is:
+The public repository is <https://github.com/imchenway/vibe-diagram>. After the `0.1.1` release promotion creates the moving `stable` ref, the permanent standalone Skill source is:
 
-<https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram>
+<https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram>
 
-The GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`: clean installation, fresh-process discovery and invocation, HTML delivery, replacement from the release-candidate baseline, and uninstall isolation passed. This lane-scoped result does not claim aggregate compatibility for the other client packages.
+The permanent URL is a moving install channel for new direct installations. Every direct-installed `0.1.1+` invocation fetches the small stable manifest, compares strict versions, and upgrades from an immutable version tag before loading the runtime workflow. Network failure or an invalid release keeps the installed version available. Package-managed generated copies skip self-update.
+
+The GitHub-path Codex CLI lane is runtime-verified only for `v0.1.0`: clean installation, fresh-process discovery and invocation, HTML delivery, replacement from the release-candidate baseline, and uninstall isolation passed. The new `0.1.1` automatic-update lifecycle remains unverified until the stable ref, tag, and real-client lifecycle are completed.
 
 ### Install from a Codex task
 
 Ask Codex:
 
-> Use `$skill-installer` to install `https://github.com/imchenway/vibe-diagram/tree/v0.1.0/skills/vibe-diagram`.
+> Use `$skill-installer` to install `https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram`.
 
 Start a new Codex task after installation so the new Skill catalog is loaded. A simple first invocation is:
 
@@ -48,14 +50,14 @@ CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
 python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
   --repo imchenway/vibe-diagram \
   --path skills/vibe-diagram \
-  --ref v0.1.0
+  --ref stable
 ```
 
 The helper stops when `$CODEX_ROOT/skills/vibe-diagram` already exists. Use the recoverable replacement flow below instead of overwriting an installed copy.
 
-### Upgrade or reinstall
+### One-time bridge from `v0.1.0`
 
-Move the installed Skill outside the discovery directory, then install the pinned stable tag again:
+`v0.1.0` does not contain the updater. After `v0.1.1` is published, move the installed Skill outside the discovery directory once, then install the pinned bridge release:
 
 ```bash
 CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
@@ -66,10 +68,34 @@ mv "$CODEX_ROOT/skills/vibe-diagram" "$BACKUP_PATH"
 python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-github.py" \
   --repo imchenway/vibe-diagram \
   --path skills/vibe-diagram \
-  --ref v0.1.0
+  --ref v0.1.1
 ```
 
-Keep the backup until the replacement has passed a new-task invocation and its bundled linter.
+Keep the backup until the replacement has passed a new-task invocation and its bundled linter. Do not move or rewrite the immutable `v0.1.0` tag.
+
+### Automatic and manual updates
+
+For a direct-installed `v0.1.1+` copy, the bootstrap runs the update gate on every invocation. It silently continues when current, installs a verified newer stable tag before loading the runtime workflow, and continues with the local version when the stable source is unavailable. The host may still require network or filesystem approval.
+
+Ask the installed Skill to update explicitly:
+
+> Use `$vibe-diagram` to update itself to the latest stable version.
+
+Or run the public manual command:
+
+```bash
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+python3 "$CODEX_ROOT/skills/vibe-diagram/scripts/update_skill.py" \
+  --force-check \
+  --json
+```
+
+The updater downloads to a sibling staging directory, validates the release manifest and tree digest, retains a recoverable backup, and activates the new tree only after validation. Roll back to the newest retained backup with:
+
+```bash
+CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
+python3 "$CODEX_ROOT/skills/vibe-diagram/scripts/update_skill.py" --rollback --json
+```
 
 ### Recoverable uninstall
 
@@ -136,7 +162,7 @@ These layouts are static package definitions. They do not constitute installatio
 
 A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. It does not prove the complete unit suite, deterministic process checks, or the second complete suite. Static-valid status requires those commands to pass together; the evidence remains in command or CI output and is not committed as repository documentation.
 
-The GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`. That conclusion is limited to the standalone Skill installed from the pinned GitHub tag; it does not claim aggregate compatibility for Codex plugins, Claude Code, Gemini CLI, or GitHub Copilot CLI.
+The GitHub-path Codex CLI lane is runtime-verified for `v0.1.0`. That conclusion is limited to the standalone Skill installed from the pinned GitHub tag; `v0.1.1`, the moving `stable` ref, and the new automatic-update path remain unverified until their declared real-client lifecycle passes. No result here claims aggregate compatibility for Codex plugins, Claude Code, Gemini CLI, or GitHub Copilot CLI.
 
 ## License
 

@@ -35,8 +35,7 @@
   "readiness": {
     "state": "blocked",
     "blockers": [
-      "apps-management-write-access",
-      "upgrade-runtime-verification"
+      "apps-management-write-access"
     ]
   }
 }
