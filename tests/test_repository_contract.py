@@ -123,7 +123,7 @@ class RepositoryContractTests(unittest.TestCase):
                 self.assertIsNone(STRICT_SEMVER.fullmatch(invalid))
 
     def test_stable_candidate_version_bytes_are_exact(self) -> None:
-        self.assertEqual(b"0.1.1\n", (ROOT / "VERSION").read_bytes())
+        self.assertEqual(b"0.1.2\n", (ROOT / "VERSION").read_bytes())
 
     def test_license_is_exact_apache_2_0_text(self) -> None:
         raw = (ROOT / "LICENSE").read_bytes()
