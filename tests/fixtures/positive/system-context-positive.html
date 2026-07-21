@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order operations system context</title>
+  <style>
+    :root {
+      --ink: #102033;
+      --muted: #587087;
+      --blue: #1f6fb2;
+      --green: #17785a;
+      --amber: #986506;
+      --line: #9ab9d6;
+      --paper: #f8fbff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(150deg, #f4f9ff, #fbfffd);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { width: min(76rem, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 48px; }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); letter-spacing: -.035em; }
+    .lede { max-width: 72ch; color: var(--muted); line-height: 1.65; }
+    [data-diagram-canvas] {
+      border: 1px solid #b8d2e8;
+      border-radius: 24px;
+      padding: 18px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 20px 48px rgba(35, 76, 112, .1);
+    }
+    .architecture-map { display: block; width: 100%; height: auto; }
+    .boundary { fill: #edf6ff; stroke: #5c98ca; stroke-width: 2; stroke-dasharray: 9 6; }
+    .actor { fill: #f5f1ff; stroke: #7867b8; }
+    .system { fill: #e8f6ff; stroke: #1f6fb2; }
+    .external { fill: #eef9f4; stroke: #3c9579; }
+    .store { fill: #fff6df; stroke: #b78625; }
+    .shape { stroke-width: 2; }
+    .edge { fill: none; stroke-width: 3; vector-effect: non-scaling-stroke; }
+    .edge.request { stroke: var(--blue); }
+    .edge.identity { stroke: #7867b8; stroke-dasharray: 8 5; }
+    .edge.event { stroke: var(--green); stroke-dasharray: 2 5; }
+    .edge.data { stroke: var(--amber); }
+    text { fill: var(--ink); font-size: 18px; font-weight: 760; text-anchor: middle; }
+    .small { fill: var(--muted); font-size: 13px; font-weight: 650; }
+    [data-architecture-legend] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    [data-architecture-legend] span::before { content: ""; display: inline-block; width: 28px; margin-right: 7px; border-top: 3px solid var(--blue); vertical-align: middle; }
+    [data-architecture-legend] .identity::before { border-top-style: dashed; border-color: #7867b8; }
+    [data-architecture-legend] .event::before { border-top-style: dotted; border-color: var(--green); }
+    [data-fallback-for] { display: none; }
+    @media (max-width: 700px) {
+      [data-diagram-canvas] { display: none; }
+      [data-fallback-for] { display: grid; gap: 10px; }
+      [data-fallback-for] article { border-left: 4px solid var(--blue); border-radius: 10px; padding: 12px 14px; background: white; line-height: 1.5; }
+    }
+    @media print {
+      [data-diagram-canvas], [data-fallback-for] { display: block; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+<main data-diagram-type="system-architecture" data-template-family="system-architecture"
+  data-template-id="system-context" data-template-layout="system-context">
+  <h1>Order operations system context</h1>
+  <p class="lede">A warehouse analyst enters through the operations portal. Identity remains external, while orders, inventory events, notifications, and the operational store stay inside explicit system relationships.</p>
+
+  <section data-diagram-canvas data-diagram-contract="1" data-diagram-id="order-context"
+    data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="auto"
+    data-diagram-mobile="summary" data-architecture-topology="context-boundary">
+    <svg class="architecture-map" viewBox="0 0 1120 650" role="img"
+      aria-labelledby="context-title context-description">
+      <title id="context-title">Order operations system context map</title>
+      <desc id="context-description">An analyst calls the portal, which uses identity, order, inventory, notification, and data services.</desc>
+      <defs>
+        <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f6fb2" /></marker>
+        <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7867b8" /></marker>
+        <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#17785a" /></marker>
+        <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#986506" /></marker>
+      </defs>
+
+      <g data-diagram-landmark="system-boundary" data-diagram-group-id="order-platform" data-semantic-role="system-boundary">
+        <rect class="boundary" x="300" y="90" width="520" height="480" rx="34" />
+        <text x="560" y="128">Order operations platform</text>
+        <text class="small" x="560" y="151">Owned runtime and data boundary</text>
+      </g>
+      <g data-diagram-landmark="primary-actor" data-diagram-node-id="analyst" data-semantic-role="actor">
+        <rect class="shape actor" x="35" y="250" width="190" height="100" rx="22" />
+        <text x="130" y="293">Warehouse analyst</text>
+        <text class="small" x="130" y="319">Reviews order exceptions</text>
+      </g>
+      <g data-diagram-landmark="entry" data-diagram-node-id="portal" data-semantic-role="system">
+        <rect class="shape system" x="360" y="210" width="190" height="100" rx="22" />
+        <text x="455" y="253">Operations portal</text>
+        <text class="small" x="455" y="279">Entry and orchestration</text>
+      </g>
+      <g data-diagram-landmark="core" data-diagram-node-id="order-service" data-semantic-role="system">
+        <rect class="shape system" x="610" y="210" width="160" height="100" rx="22" />
+        <text x="690" y="253">Order service</text>
+        <text class="small" x="690" y="279">Command owner</text>
+      </g>
+      <g data-diagram-landmark="identity" data-diagram-node-id="identity-provider" data-semantic-role="external-system">
+        <rect class="shape external" x="900" y="70" width="185" height="96" rx="22" />
+        <text x="992" y="111">Identity provider</text>
+        <text class="small" x="992" y="137">External trust source</text>
+      </g>
+      <g data-diagram-landmark="notification" data-diagram-node-id="notification-service" data-semantic-role="external-system">
+        <rect class="shape external" x="900" y="265" width="185" height="96" rx="22" />
+        <text x="992" y="306">Notification service</text>
+        <text class="small" x="992" y="332">External delivery</text>
+      </g>
+      <g data-diagram-landmark="data" data-diagram-node-id="operations-store" data-semantic-role="data-store">
+        <rect class="shape store" x="465" y="430" width="190" height="96" rx="22" />
+        <text x="560" y="471">Operations store</text>
+        <text class="small" x="560" y="497">Orders and inventory state</text>
+      </g>
+
+      <path class="edge request" d="M225 300 C275 300 310 260 360 260" marker-end="url(#arrow-blue)"
+        data-diagram-visible-relation-id="analyst-portal" data-from="analyst" data-to="portal" data-relation-kind="request" />
+      <path class="edge request" d="M550 260 L610 260" marker-end="url(#arrow-blue)"
+        data-diagram-visible-relation-id="portal-order" data-from="portal" data-to="order-service" data-relation-kind="request" />
+      <path class="edge identity" d="M550 220 C680 110 790 115 900 118" marker-end="url(#arrow-violet)"
+        data-diagram-visible-relation-id="portal-identity" data-from="portal" data-to="identity-provider" data-relation-kind="identity" />
+      <path class="edge event" d="M770 280 C820 300 850 313 900 313" marker-end="url(#arrow-green)"
+        data-diagram-visible-relation-id="order-notification" data-from="order-service" data-to="notification-service" data-relation-kind="event" />
+      <path class="edge data" d="M690 310 C690 375 630 405 600 430" marker-end="url(#arrow-amber)"
+        data-diagram-visible-relation-id="order-store" data-from="order-service" data-to="operations-store" data-relation-kind="data" />
+    </svg>
+
+    <span hidden data-diagram-relation-id="analyst-portal" data-from="analyst" data-to="portal" data-relation-kind="request" data-semantic="analyst opens exception workflow"></span>
+    <span hidden data-diagram-relation-id="portal-order" data-from="portal" data-to="order-service" data-relation-kind="request" data-semantic="portal submits order command"></span>
+    <span hidden data-diagram-relation-id="portal-identity" data-from="portal" data-to="identity-provider" data-relation-kind="identity" data-semantic="portal validates session"></span>
+    <span hidden data-diagram-relation-id="order-notification" data-from="order-service" data-to="notification-service" data-relation-kind="event" data-semantic="order service emits completion event"></span>
+    <span hidden data-diagram-relation-id="order-store" data-from="order-service" data-to="operations-store" data-relation-kind="data" data-semantic="order service persists state"></span>
+
+    <div data-architecture-legend aria-label="Relation legend">
+      <span>Request</span><span class="identity">Identity</span><span class="event">Event</span><span>Data write</span>
+    </div>
+  </section>
+
+  <section data-fallback-for="order-context" aria-label="Mobile semantic fallback">
+    <article><strong>01 · Actor to entry</strong><br />Warehouse analyst → Operations portal · request.</article>
+    <article><strong>02 · Entry to core</strong><br />Operations portal → Order service · request.</article>
+    <article><strong>03 · Trust boundary</strong><br />Operations portal → Identity provider · identity validation.</article>
+    <article><strong>04 · External event</strong><br />Order service → Notification service · completion event.</article>
+    <article><strong>05 · Owned data</strong><br />Order service → Operations store · state write.</article>
+  </section>
+</main>
+</body>
+</html>

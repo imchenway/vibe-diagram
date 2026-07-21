@@ -24,13 +24,69 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
-[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
-[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .diagram-fallback { display: none; }
 
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
 }
 
@@ -42,6 +98,85 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
 }
 </style>
   <style data-template-contract="1">
@@ -69,7 +204,21 @@
       data-diagram-mobile="summary">
     <section data-diagram-stage class="template-layout state-event-matrix" aria-label="State event matrix template canvas">
       <div class="line-label" data-reading-guide="matrix axes">State / event</div><div id="event-a" class="slot core" data-diagram-node-id="event-a" data-semantic-role="event" data-matrix-col-id="event-a" data-slot="event-a"><b>Event a</b><span>{{event-a}}</span></div><div id="event-b" class="slot support" data-diagram-node-id="event-b" data-semantic-role="event" data-matrix-col-id="event-b" data-slot="event-b"><b>Event b</b><span>{{event-b}}</span></div><div id="event-c" class="slot data" data-diagram-node-id="event-c" data-semantic-role="event" data-matrix-col-id="event-c" data-slot="event-c"><b>Event c</b><span>{{event-c}}</span></div><div id="state-a" class="slot core" data-diagram-node-id="state-a" data-semantic-role="state" data-matrix-row-id="state-a" data-slot="state-a"><b>State a</b><span>{{state-a}}</span></div><div id="allow-a" class="slot data" data-diagram-node-id="allow-a" data-semantic-role="outcome" data-matrix-row="state-a" data-matrix-col="event-a" data-slot="allow-a"><b>Allow a</b><span>{{allow-a}}</span></div><div id="deny-a" class="slot risk" data-diagram-node-id="deny-a" data-semantic-role="outcome" data-matrix-row="state-a" data-matrix-col="event-b" data-slot="deny-a"><b>Deny a</b><span>{{deny-a}}</span></div><div id="warn-a" class="slot ops" data-diagram-node-id="warn-a" data-semantic-role="outcome" data-matrix-row="state-a" data-matrix-col="event-c" data-slot="warn-a"><b>Warn a</b><span>{{warn-a}}</span></div><div id="state-b" class="slot support" data-diagram-node-id="state-b" data-semantic-role="state" data-matrix-row-id="state-b" data-slot="state-b"><b>State b</b><span>{{state-b}}</span></div><div id="deny-b" class="slot risk" data-diagram-node-id="deny-b" data-semantic-role="outcome" data-matrix-row="state-b" data-matrix-col="event-a" data-slot="deny-b"><b>Deny b</b><span>{{deny-b}}</span></div><div id="allow-b" class="slot data" data-diagram-node-id="allow-b" data-semantic-role="outcome" data-matrix-row="state-b" data-matrix-col="event-b" data-slot="allow-b"><b>Allow b</b><span>{{allow-b}}</span></div><div id="unknown-b" class="slot ops" data-diagram-node-id="unknown-b" data-semantic-role="outcome" data-matrix-row="state-b" data-matrix-col="event-c" data-slot="unknown-b"><b>Unknown b</b><span>{{unknown-b}}</span></div><div id="state-c" class="slot data" data-diagram-node-id="state-c" data-semantic-role="state" data-matrix-row-id="state-c" data-slot="state-c"><b>State c</b><span>{{state-c}}</span></div><div id="warn-c" class="slot ops" data-diagram-node-id="warn-c" data-semantic-role="outcome" data-matrix-row="state-c" data-matrix-col="event-a" data-slot="warn-c"><b>Warn c</b><span>{{warn-c}}</span></div><div id="allow-c" class="slot data" data-diagram-node-id="allow-c" data-semantic-role="outcome" data-matrix-row="state-c" data-matrix-col="event-b" data-slot="allow-c"><b>Allow c</b><span>{{allow-c}}</span></div><div id="deny-c" class="slot risk" data-diagram-node-id="deny-c" data-semantic-role="outcome" data-matrix-row="state-c" data-matrix-col="event-c" data-slot="deny-c"><b>Deny c</b><span>{{deny-c}}</span></div>
-      <span class="semantic-relation" data-diagram-relation-id="state-a-event-a-outcome" data-from="state-a" data-to="allow-a" data-relation-kind="lookup" data-semantic="state-a with event-a resolves to allow-a">state-a with event-a resolves to allow-a</span><span class="semantic-relation" data-diagram-relation-id="state-a-event-b-outcome" data-from="state-a" data-to="deny-a" data-relation-kind="lookup" data-semantic="state-a with event-b resolves to deny-a">state-a with event-b resolves to deny-a</span><span class="semantic-relation" data-diagram-relation-id="state-a-event-c-outcome" data-from="state-a" data-to="warn-a" data-relation-kind="lookup" data-semantic="state-a with event-c resolves to warn-a">state-a with event-c resolves to warn-a</span><span class="semantic-relation" data-diagram-relation-id="state-b-event-a-outcome" data-from="state-b" data-to="deny-b" data-relation-kind="lookup" data-semantic="state-b with event-a resolves to deny-b">state-b with event-a resolves to deny-b</span><span class="semantic-relation" data-diagram-relation-id="state-b-event-b-outcome" data-from="state-b" data-to="allow-b" data-relation-kind="lookup" data-semantic="state-b with event-b resolves to allow-b">state-b with event-b resolves to allow-b</span><span class="semantic-relation" data-diagram-relation-id="state-b-event-c-outcome" data-from="state-b" data-to="unknown-b" data-relation-kind="lookup" data-semantic="state-b with event-c resolves to unknown-b">state-b with event-c resolves to unknown-b</span><span class="semantic-relation" data-diagram-relation-id="state-c-event-a-outcome" data-from="state-c" data-to="warn-c" data-relation-kind="lookup" data-semantic="state-c with event-a resolves to warn-c">state-c with event-a resolves to warn-c</span><span class="semantic-relation" data-diagram-relation-id="state-c-event-b-outcome" data-from="state-c" data-to="allow-c" data-relation-kind="lookup" data-semantic="state-c with event-b resolves to allow-c">state-c with event-b resolves to allow-c</span><span class="semantic-relation" data-diagram-relation-id="state-c-event-c-outcome" data-from="state-c" data-to="deny-c" data-relation-kind="lookup" data-semantic="state-c with event-c resolves to deny-c">state-c with event-c resolves to deny-c</span>
+        <section data-semantic-edge-ledger aria-label="Visible relationship paths">
+    <h2>Relationship paths</h2>
+    <div data-semantic-edge-grid>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-a-event-a-outcome" data-visible-relation-kind="edge" data-from="state-a" data-to="allow-a" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-a</b><i aria-hidden="true"></i><b>allow-a</b></span><span data-semantic-edge-label>state-a with event-a resolves to allow-a</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-a-event-b-outcome" data-visible-relation-kind="edge" data-from="state-a" data-to="deny-a" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-a</b><i aria-hidden="true"></i><b>deny-a</b></span><span data-semantic-edge-label>state-a with event-b resolves to deny-a</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-a-event-c-outcome" data-visible-relation-kind="edge" data-from="state-a" data-to="warn-a" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-a</b><i aria-hidden="true"></i><b>warn-a</b></span><span data-semantic-edge-label>state-a with event-c resolves to warn-a</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-b-event-a-outcome" data-visible-relation-kind="edge" data-from="state-b" data-to="deny-b" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-b</b><i aria-hidden="true"></i><b>deny-b</b></span><span data-semantic-edge-label>state-b with event-a resolves to deny-b</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-b-event-b-outcome" data-visible-relation-kind="edge" data-from="state-b" data-to="allow-b" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-b</b><i aria-hidden="true"></i><b>allow-b</b></span><span data-semantic-edge-label>state-b with event-b resolves to allow-b</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-b-event-c-outcome" data-visible-relation-kind="edge" data-from="state-b" data-to="unknown-b" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-b</b><i aria-hidden="true"></i><b>unknown-b</b></span><span data-semantic-edge-label>state-b with event-c resolves to unknown-b</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-c-event-a-outcome" data-visible-relation-kind="edge" data-from="state-c" data-to="warn-c" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-c</b><i aria-hidden="true"></i><b>warn-c</b></span><span data-semantic-edge-label>state-c with event-a resolves to warn-c</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-c-event-b-outcome" data-visible-relation-kind="edge" data-from="state-c" data-to="allow-c" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-c</b><i aria-hidden="true"></i><b>allow-c</b></span><span data-semantic-edge-label>state-c with event-b resolves to allow-c</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="state-c-event-c-outcome" data-visible-relation-kind="edge" data-from="state-c" data-to="deny-c" data-relation-kind="lookup"><span data-semantic-edge-route><b>state-c</b><i aria-hidden="true"></i><b>deny-c</b></span><span data-semantic-edge-label>state-c with event-c resolves to deny-c</span></article>
+    </div>
+  </section>
+<span class="semantic-relation" data-diagram-relation-id="state-a-event-a-outcome" data-from="state-a" data-to="allow-a" data-relation-kind="lookup" data-semantic="state-a with event-a resolves to allow-a">state-a with event-a resolves to allow-a</span><span class="semantic-relation" data-diagram-relation-id="state-a-event-b-outcome" data-from="state-a" data-to="deny-a" data-relation-kind="lookup" data-semantic="state-a with event-b resolves to deny-a">state-a with event-b resolves to deny-a</span><span class="semantic-relation" data-diagram-relation-id="state-a-event-c-outcome" data-from="state-a" data-to="warn-a" data-relation-kind="lookup" data-semantic="state-a with event-c resolves to warn-a">state-a with event-c resolves to warn-a</span><span class="semantic-relation" data-diagram-relation-id="state-b-event-a-outcome" data-from="state-b" data-to="deny-b" data-relation-kind="lookup" data-semantic="state-b with event-a resolves to deny-b">state-b with event-a resolves to deny-b</span><span class="semantic-relation" data-diagram-relation-id="state-b-event-b-outcome" data-from="state-b" data-to="allow-b" data-relation-kind="lookup" data-semantic="state-b with event-b resolves to allow-b">state-b with event-b resolves to allow-b</span><span class="semantic-relation" data-diagram-relation-id="state-b-event-c-outcome" data-from="state-b" data-to="unknown-b" data-relation-kind="lookup" data-semantic="state-b with event-c resolves to unknown-b">state-b with event-c resolves to unknown-b</span><span class="semantic-relation" data-diagram-relation-id="state-c-event-a-outcome" data-from="state-c" data-to="warn-c" data-relation-kind="lookup" data-semantic="state-c with event-a resolves to warn-c">state-c with event-a resolves to warn-c</span><span class="semantic-relation" data-diagram-relation-id="state-c-event-b-outcome" data-from="state-c" data-to="allow-c" data-relation-kind="lookup" data-semantic="state-c with event-b resolves to allow-c">state-c with event-b resolves to allow-c</span><span class="semantic-relation" data-diagram-relation-id="state-c-event-c-outcome" data-from="state-c" data-to="deny-c" data-relation-kind="lookup" data-semantic="state-c with event-c resolves to deny-c">state-c with event-c resolves to deny-c</span>
     </section>
   </div>
   <details class="diagram-fallback" data-fallback-for="state-event-matrix"><summary>State Event Matrix semantic fallback</summary><table><thead><tr><th>State / event</th><th>Event A</th><th>Event B</th><th>Event C</th></tr></thead><tbody><tr><th>State A</th><td>Allow A</td><td>Deny A</td><td>Warn A</td></tr><tr><th>State B</th><td>Deny B</td><td>Allow B</td><td>Unknown B</td></tr><tr><th>State C</th><td>Warn C</td><td>Allow C</td><td>Deny C</td></tr></tbody></table></details>

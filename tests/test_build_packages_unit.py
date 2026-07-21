@@ -462,12 +462,15 @@ class BuildPackagesUnitTests(unittest.TestCase):
 
     def test_canonical_file_map_is_relative_complete_and_rejects_symlinks(self) -> None:
         files = canonical_file_map(ROOT)
-        self.assertEqual(81, len(files))
+        self.assertEqual(82, len(files))
         self.assertIn(PurePosixPath("SKILL.md"), files)
         self.assertIn(PurePosixPath("VERSION"), files)
         self.assertIn(PurePosixPath("update.json"), files)
         self.assertIn(PurePosixPath("scripts/update_skill.py"), files)
         self.assertIn(PurePosixPath("references/runtime-workflow.md"), files)
+        self.assertIn(
+            PurePosixPath("assets/contracts/semantic-relations/v1.css"), files
+        )
         self.assertIn(PurePosixPath("references/adaptive-readability.md"), files)
         self.assertIn(PurePosixPath("contracts/family-policies.json"), files)
         self.assertIn(

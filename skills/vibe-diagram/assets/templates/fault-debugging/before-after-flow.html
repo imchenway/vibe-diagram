@@ -24,13 +24,69 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
-[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
-[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .diagram-fallback { display: none; }
 
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
 }
 
@@ -42,6 +98,85 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
 }
 </style>
   <style data-template-contract="1">[data-diagram-id="before-after-flow"]>[data-diagram-stage]{min-inline-size:60rem}.semantic-relation{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:48rem){[data-diagram-id="before-after-flow"]>[data-diagram-stage]{min-inline-size:0}}</style>
@@ -56,7 +191,19 @@
   <div data-diagram-controls="before-after-flow" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="before-after-flow" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack"><section data-diagram-stage data-reading-guide="debugging order" class="template-layout before-after-flow" aria-label="Before after flow template canvas">
     <div class="before boundary"><div id="current-1" class="slot risk" data-diagram-node-id="current-1" data-semantic-role="debug-object" data-slot="current-1"><b>Current 1</b><span>{{current-1}}</span></div><div id="breakpoint" class="slot risk" data-diagram-node-id="breakpoint" data-semantic-role="debug-object" data-slot="breakpoint"><b>Breakpoint</b><span>{{breakpoint}}</span></div><div id="current-risk" class="slot ops" data-diagram-node-id="current-risk" data-semantic-role="debug-object" data-slot="current-risk"><b>Current risk</b><span>{{current-risk}}</span></div><div id="current-result" class="slot risk" data-diagram-node-id="current-result" data-semantic-role="debug-object" data-slot="current-result"><b>Current result</b><span>{{current-result}}</span></div></div><div class="line-label">Comparison</div><div class="after boundary"><div id="target-1" class="slot core" data-diagram-node-id="target-1" data-semantic-role="debug-object" data-slot="target-1"><b>Target 1</b><span>{{target-1}}</span></div><div id="fix-point" class="slot support" data-diagram-node-id="fix-point" data-semantic-role="debug-object" data-slot="fix-point"><b>Fix point</b><span>{{fix-point}}</span></div><div id="target-risk" class="slot ops" data-diagram-node-id="target-risk" data-semantic-role="debug-object" data-slot="target-risk"><b>Target risk</b><span>{{target-risk}}</span></div><div id="rollback" class="slot data" data-diagram-node-id="rollback" data-semantic-role="debug-object" data-slot="rollback"><b>Rollback</b><span>{{rollback}}</span></div></div>
-  <span class="semantic-relation" data-diagram-relation-id="current-1-breakpoint" data-from="current-1" data-to="breakpoint" data-relation-kind="evidence-flow" data-semantic="current-1 leads to breakpoint">current-1 leads to breakpoint</span><span class="semantic-relation" data-diagram-relation-id="breakpoint-current-risk" data-from="breakpoint" data-to="current-risk" data-relation-kind="evidence-flow" data-semantic="breakpoint leads to current-risk">breakpoint leads to current-risk</span><span class="semantic-relation" data-diagram-relation-id="current-risk-current-result" data-from="current-risk" data-to="current-result" data-relation-kind="evidence-flow" data-semantic="current-risk leads to current-result">current-risk leads to current-result</span><span class="semantic-relation" data-diagram-relation-id="current-result-target-1" data-from="current-result" data-to="target-1" data-relation-kind="evidence-flow" data-semantic="current-result leads to target-1">current-result leads to target-1</span><span class="semantic-relation" data-diagram-relation-id="target-1-fix-point" data-from="target-1" data-to="fix-point" data-relation-kind="evidence-flow" data-semantic="target-1 leads to fix-point">target-1 leads to fix-point</span><span class="semantic-relation" data-diagram-relation-id="fix-point-target-risk" data-from="fix-point" data-to="target-risk" data-relation-kind="evidence-flow" data-semantic="fix-point leads to target-risk">fix-point leads to target-risk</span><span class="semantic-relation" data-diagram-relation-id="target-risk-rollback" data-from="target-risk" data-to="rollback" data-relation-kind="evidence-flow" data-semantic="target-risk leads to rollback">target-risk leads to rollback</span></section></div>
+    <section data-semantic-edge-ledger aria-label="Visible relationship paths">
+    <h2>Relationship paths</h2>
+    <div data-semantic-edge-grid>
+      <article data-semantic-edge data-diagram-visible-relation-id="current-1-breakpoint" data-visible-relation-kind="edge" data-from="current-1" data-to="breakpoint" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>current-1</b><i aria-hidden="true"></i><b>breakpoint</b></span><span data-semantic-edge-label>current-1 leads to breakpoint</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="breakpoint-current-risk" data-visible-relation-kind="edge" data-from="breakpoint" data-to="current-risk" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>breakpoint</b><i aria-hidden="true"></i><b>current-risk</b></span><span data-semantic-edge-label>breakpoint leads to current-risk</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="current-risk-current-result" data-visible-relation-kind="edge" data-from="current-risk" data-to="current-result" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>current-risk</b><i aria-hidden="true"></i><b>current-result</b></span><span data-semantic-edge-label>current-risk leads to current-result</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="current-result-target-1" data-visible-relation-kind="edge" data-from="current-result" data-to="target-1" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>current-result</b><i aria-hidden="true"></i><b>target-1</b></span><span data-semantic-edge-label>current-result leads to target-1</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="target-1-fix-point" data-visible-relation-kind="edge" data-from="target-1" data-to="fix-point" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>target-1</b><i aria-hidden="true"></i><b>fix-point</b></span><span data-semantic-edge-label>target-1 leads to fix-point</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="fix-point-target-risk" data-visible-relation-kind="edge" data-from="fix-point" data-to="target-risk" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>fix-point</b><i aria-hidden="true"></i><b>target-risk</b></span><span data-semantic-edge-label>fix-point leads to target-risk</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="target-risk-rollback" data-visible-relation-kind="edge" data-from="target-risk" data-to="rollback" data-relation-kind="evidence-flow"><span data-semantic-edge-route><b>target-risk</b><i aria-hidden="true"></i><b>rollback</b></span><span data-semantic-edge-label>target-risk leads to rollback</span></article>
+    </div>
+  </section>
+<span class="semantic-relation" data-diagram-relation-id="current-1-breakpoint" data-from="current-1" data-to="breakpoint" data-relation-kind="evidence-flow" data-semantic="current-1 leads to breakpoint">current-1 leads to breakpoint</span><span class="semantic-relation" data-diagram-relation-id="breakpoint-current-risk" data-from="breakpoint" data-to="current-risk" data-relation-kind="evidence-flow" data-semantic="breakpoint leads to current-risk">breakpoint leads to current-risk</span><span class="semantic-relation" data-diagram-relation-id="current-risk-current-result" data-from="current-risk" data-to="current-result" data-relation-kind="evidence-flow" data-semantic="current-risk leads to current-result">current-risk leads to current-result</span><span class="semantic-relation" data-diagram-relation-id="current-result-target-1" data-from="current-result" data-to="target-1" data-relation-kind="evidence-flow" data-semantic="current-result leads to target-1">current-result leads to target-1</span><span class="semantic-relation" data-diagram-relation-id="target-1-fix-point" data-from="target-1" data-to="fix-point" data-relation-kind="evidence-flow" data-semantic="target-1 leads to fix-point">target-1 leads to fix-point</span><span class="semantic-relation" data-diagram-relation-id="fix-point-target-risk" data-from="fix-point" data-to="target-risk" data-relation-kind="evidence-flow" data-semantic="fix-point leads to target-risk">fix-point leads to target-risk</span><span class="semantic-relation" data-diagram-relation-id="target-risk-rollback" data-from="target-risk" data-to="rollback" data-relation-kind="evidence-flow" data-semantic="target-risk leads to rollback">target-risk leads to rollback</span></section></div>
   <details class="diagram-fallback" data-fallback-for="before-after-flow"><summary>Before After Flow evidence order</summary><ol><li>current-1</li><li>breakpoint</li><li>current-risk</li><li>current-result</li><li>target-1</li><li>fix-point</li><li>target-risk</li><li>rollback</li></ol></details>
   <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
 </main>

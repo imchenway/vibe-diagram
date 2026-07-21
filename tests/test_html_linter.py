@@ -172,6 +172,41 @@ class HtmlLinterTests(unittest.TestCase):
         self.assertTrue(any("svg" in error.lower() for error in errors))
         self.assertTrue(any("evidence" in error.lower() for error in errors))
 
+    def test_system_architecture_relations_require_visible_svg_path_bindings(self) -> None:
+        relation = (
+            '<span data-diagram-relation-id="caller-service" data-from="caller" '
+            'data-to="service" data-relation-kind="architecture-flow" '
+            'data-semantic="caller invokes service"></span>'
+        )
+        unbound = _artifact(
+            family="system-architecture",
+            template_id="system-context",
+            layout="boundary-hub",
+            body=(
+                '<svg viewBox="0 0 100 40"><path d="M 0 20 H 100"></path></svg>'
+                + relation
+            ),
+        )
+        bound = unbound.replace(
+            '<path d="M 0 20 H 100">',
+            '<path d="M 0 20 H 100" data-diagram-visible-relation-id="caller-service" '
+            'data-from="caller" data-to="service" data-relation-kind="architecture-flow">',
+        )
+        mismatched = bound.replace('data-to="service"', 'data-to="other"', 1)
+        linter = _load_linter()
+        self.assertTrue(
+            any("visible" in error.lower() for error in linter.lint_system_architecture(unbound))
+        )
+        self.assertFalse(
+            any("visible" in error.lower() for error in linter.lint_system_architecture(bound))
+        )
+        self.assertTrue(
+            any(
+                "endpoint" in error.lower()
+                for error in linter.lint_system_architecture(mismatched)
+            )
+        )
+
     def test_system_architecture_evidence_limit_counts_each_visible_marker_once(self) -> None:
         linter = _load_linter()
         six = _artifact(
@@ -294,6 +329,31 @@ class HtmlLinterTests(unittest.TestCase):
         html = _sequence_canvas(messages=(("caller", "service", "broadcast", "request"),))
         errors = _load_linter().lint_sequence_contract(html)
         self.assertTrue(any("message kind" in error.lower() for error in errors))
+
+    def test_sequence_optional_composition_primitives_fail_closed(self) -> None:
+        html = _sequence_canvas(
+            messages=(
+                ("caller", "service", "sync", "request"),
+                ("service", "caller", "return", "response"),
+            )
+        )
+        html = html.replace(
+            "<article data-sequence-message",
+            '<article data-sequence-message data-sequence-step-index="01"',
+            1,
+        )
+        html = html.replace(
+            "<div data-sequence-stage>",
+            '<div data-sequence-stage><div data-participant-group-id=""></div>'
+            '<section data-sequence-fragment-id="bad" data-sequence-fragment-kind="modal"></section>'
+            '<div data-sequence-outcome="unknown"></div>'
+            '<a data-sequence-evidence-for="missing">Evidence</a>',
+            1,
+        )
+        errors = _load_linter().lint_sequence_contract(html)
+        for expected in ("step", "participant group", "fragment", "outcome", "evidence"):
+            with self.subTest(expected=expected):
+                self.assertTrue(any(expected in error.lower() for error in errors), errors)
 
     def test_sequence_self_message_requires_same_endpoint(self) -> None:
         html = _sequence_canvas(messages=(("caller", "service", "self", "reenter"),))

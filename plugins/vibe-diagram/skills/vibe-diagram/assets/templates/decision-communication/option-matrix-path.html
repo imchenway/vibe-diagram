@@ -24,13 +24,69 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
-[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
-[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .diagram-fallback { display: none; }
 
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
 }
 
@@ -42,6 +98,85 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
 }
 </style>
   <style data-template-contract="1">
@@ -74,7 +209,18 @@
       <div id="goal" class="slot core" data-diagram-node-id="goal" data-semantic-role="decision-input" data-slot="goal"><b>Goal</b><span>{{goal}}</span></div><div id="constraint" class="slot ops" data-diagram-node-id="constraint" data-semantic-role="decision-input" data-slot="constraint"><b>Constraint</b><span>{{constraint}}</span></div><div id="acceptance" class="slot data" data-diagram-node-id="acceptance" data-semantic-role="decision-input" data-slot="acceptance"><b>Acceptance</b><span>{{acceptance}}</span></div>
       <div class="matrix" data-diagram-group-id="comparison" data-semantic-role="matrix"><div id="option-a" class="slot support" data-diagram-node-id="option-a" data-semantic-role="option" data-matrix-col-id="option-a" data-slot="option-a"><b>Option a</b><span>{{option-a}}</span></div><div id="option-b" class="slot ops" data-diagram-node-id="option-b" data-semantic-role="option" data-matrix-col-id="option-b" data-slot="option-b"><b>Option b</b><span>{{option-b}}</span></div><div id="option-c" class="slot risk" data-diagram-node-id="option-c" data-semantic-role="option" data-matrix-col-id="option-c" data-slot="option-c"><b>Option c</b><span>{{option-c}}</span></div><div id="cost" class="slot ops" data-diagram-node-id="cost" data-semantic-role="criterion" data-matrix-row-id="cost" data-matrix-row="cost" data-matrix-col="option-a" data-slot="cost"><b>Cost</b><span>{{cost}}</span></div><div id="risk" class="slot risk" data-diagram-node-id="risk" data-semantic-role="criterion" data-matrix-row-id="risk" data-matrix-row="risk" data-matrix-col="option-b" data-slot="risk"><b>Risk</b><span>{{risk}}</span></div><div id="fit" class="slot data" data-diagram-node-id="fit" data-semantic-role="criterion" data-matrix-row-id="fit" data-matrix-row="fit" data-matrix-col="option-c" data-slot="fit"><b>Fit</b><span>{{fit}}</span></div></div>
       <div class="boundary" data-diagram-group-id="recommendation" data-semantic-role="recommendation"><div id="main-path" class="slot core" data-diagram-node-id="main-path" data-semantic-role="recommended-path" data-slot="main-path"><b>Main path</b><span>{{main-path}}</span></div></div>
-      <span class="semantic-relation" data-diagram-relation-id="goal-options" data-from="goal" data-to="comparison" data-relation-kind="frames" data-semantic="goal frames the compared options">Goal frames options</span>
+        <section data-semantic-edge-ledger aria-label="Visible relationship paths">
+    <h2>Relationship paths</h2>
+    <div data-semantic-edge-grid>
+      <article data-semantic-edge data-diagram-visible-relation-id="goal-options" data-visible-relation-kind="edge" data-from="goal" data-to="comparison" data-relation-kind="frames"><span data-semantic-edge-route><b>goal</b><i aria-hidden="true"></i><b>comparison</b></span><span data-semantic-edge-label>goal frames the compared options</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="constraint-options" data-visible-relation-kind="edge" data-from="constraint" data-to="comparison" data-relation-kind="constrains"><span data-semantic-edge-route><b>constraint</b><i aria-hidden="true"></i><b>comparison</b></span><span data-semantic-edge-label>constraint narrows the compared options</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="acceptance-options" data-visible-relation-kind="edge" data-from="acceptance" data-to="comparison" data-relation-kind="evaluates"><span data-semantic-edge-route><b>acceptance</b><i aria-hidden="true"></i><b>comparison</b></span><span data-semantic-edge-label>acceptance evaluates the compared options</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="option-a-path" data-visible-relation-kind="edge" data-from="option-a" data-to="main-path" data-relation-kind="candidate"><span data-semantic-edge-route><b>option-a</b><i aria-hidden="true"></i><b>main-path</b></span><span data-semantic-edge-label>option a may become the main path</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="option-b-path" data-visible-relation-kind="edge" data-from="option-b" data-to="main-path" data-relation-kind="candidate"><span data-semantic-edge-route><b>option-b</b><i aria-hidden="true"></i><b>main-path</b></span><span data-semantic-edge-label>option b may become the main path</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="option-c-path" data-visible-relation-kind="edge" data-from="option-c" data-to="main-path" data-relation-kind="candidate"><span data-semantic-edge-route><b>option-c</b><i aria-hidden="true"></i><b>main-path</b></span><span data-semantic-edge-label>option c may become the main path</span></article>
+    </div>
+  </section>
+<span class="semantic-relation" data-diagram-relation-id="goal-options" data-from="goal" data-to="comparison" data-relation-kind="frames" data-semantic="goal frames the compared options">Goal frames options</span>
       <span class="semantic-relation" data-diagram-relation-id="constraint-options" data-from="constraint" data-to="comparison" data-relation-kind="constrains" data-semantic="constraint narrows the compared options">Constraint narrows options</span>
       <span class="semantic-relation" data-diagram-relation-id="acceptance-options" data-from="acceptance" data-to="comparison" data-relation-kind="evaluates" data-semantic="acceptance evaluates the compared options">Acceptance evaluates options</span>
       <span class="semantic-relation" data-diagram-relation-id="option-a-path" data-from="option-a" data-to="main-path" data-relation-kind="candidate" data-semantic="option a may become the main path">Option A to main path</span>

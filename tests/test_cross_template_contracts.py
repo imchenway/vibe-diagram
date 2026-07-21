@@ -16,6 +16,7 @@ SKILL_ROOT = ROOT / "skills" / "vibe-diagram"
 POLICY_PATH = SKILL_ROOT / "contracts" / "family-policies.json"
 INTERACTION_PATH = ROOT / "contracts" / "interaction_contract_baseline.json"
 FIXTURE_ROOT = ROOT / "tests" / "fixtures" / "contracts"
+POSITIVE_FIXTURE_ROOT = ROOT / "tests" / "fixtures" / "positive"
 SEQUENCE_PATHS = {
     "code-sequence/async-callback-sequence.html",
     "code-sequence/participant-timeline.html",
@@ -162,6 +163,22 @@ class CrossTemplateContractTests(unittest.TestCase):
                 self.assertNotIn("textContent", text)
                 self.assertNotIn("innerText", text)
 
+    def test_progressive_disclosure_preserves_native_details_baseline(self) -> None:
+        asset_root = SKILL_ROOT / "assets" / "contracts" / "progressive-disclosure"
+        css = (asset_root / "v1.css").read_text(encoding="utf-8")
+        javascript = (asset_root / "v1.js").read_text(encoding="utf-8")
+
+        self.assertIn("details[data-diagram-detail]", css)
+        self.assertIn("details[data-diagram-detail] > :not(summary)", css)
+        self.assertIn("@media print", css)
+        self.assertIn('detail.matches("details")', javascript)
+        self.assertIn("detail.open = true", javascript)
+        self.assertIn('data-runtime-was-open', javascript)
+        self.assertIn('data-runtime-was-hidden', javascript)
+        self.assertIn("detail.open = wasOpen", javascript)
+        self.assertIn("detail.hidden = wasHidden", javascript)
+        self.assertNotIn("innerHTML", javascript)
+
     def test_positive_and_negative_contract_fixtures_have_linter_builder_parity(self) -> None:
         linter = _load_linter()
         policy = build_packages.load_family_policies(POLICY_PATH)
@@ -180,6 +197,56 @@ class CrossTemplateContractTests(unittest.TestCase):
                 self.assertEqual(lint_errors, build_errors)
                 self.assertEqual(valid, not lint_errors)
 
+    def test_positive_visual_fixtures_cover_system_and_complex_sequence(self) -> None:
+        linter = _load_linter()
+        system = (POSITIVE_FIXTURE_ROOT / "system-context-positive.html").read_text(
+            encoding="utf-8"
+        )
+        sequence = (
+            POSITIVE_FIXTURE_ROOT / "complex-sequence-positive.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertNotIn("{{", system + sequence)
+        self.assertEqual(
+            [], linter.lint_generic_contract(system, "system-architecture", "system-context")
+        )
+        self.assertEqual([], linter.lint_system_architecture(system))
+        self.assertIn('data-architecture-topology="context-boundary"', system)
+        for token in (
+            "data-diagram-visible-relation-id",
+            "data-diagram-landmark",
+            "data-architecture-legend",
+            "data-fallback-for",
+        ):
+            self.assertIn(token, system)
+
+        self.assertEqual([], linter.lint_sequence_contract(sequence))
+        for token in (
+            "data-participant-group-id",
+            "data-sequence-step-index",
+            "data-sequence-fragment-kind",
+            "data-sequence-outcome",
+            "data-sequence-risk-id",
+            "data-sequence-evidence-for",
+            "data-sequence-evidence-id",
+        ):
+            self.assertIn(token, sequence)
+
+    def test_generic_relation_requires_one_visible_edge_binding(self) -> None:
+        html = (FIXTURE_ROOT / "generic-contract-valid.html").read_text(encoding="utf-8")
+        missing = html.replace(
+            ' data-diagram-visible-relation-id="request-service"', "", 1
+        )
+        linter = _load_linter()
+        self.assertTrue(
+            any(
+                "visible" in error.lower()
+                for error in linter.lint_generic_contract(
+                    missing, "business-flow", "swimlane-flow"
+                )
+            )
+        )
+
     def test_sequence_contract_is_not_double_parsed_as_generic(self) -> None:
         html = (
             SKILL_ROOT
@@ -194,6 +261,55 @@ class CrossTemplateContractTests(unittest.TestCase):
                 html, "code-sequence", "participant-timeline"
             ),
         )
+
+    def test_sequence_optional_primitives_have_linter_builder_validity_parity(self) -> None:
+        html = (
+            SKILL_ROOT
+            / "assets"
+            / "templates"
+            / "code-sequence"
+            / "participant-timeline.html"
+        ).read_text(encoding="utf-8")
+        cases = {
+            "valid": (html, True),
+            "duplicate participant group": (
+                html.replace(
+                    'data-participant-group-id="execution-state"',
+                    'data-participant-group-id="entry-coordination"',
+                    1,
+                ),
+                False,
+            ),
+            "partial step index": (
+                html.replace(' data-sequence-step-index="01"', "", 1),
+                False,
+            ),
+            "invalid fragment kind": (
+                html.replace(
+                    'data-sequence-fragment-id="state-transaction"\n'
+                    '                   data-sequence-fragment-kind="tx"',
+                    'data-sequence-fragment-id="state-transaction"\n'
+                    '                   data-sequence-fragment-kind="unknown"',
+                    1,
+                ),
+                False,
+            ),
+            "missing evidence target": (
+                html.replace(
+                    'data-sequence-evidence-for="participant-timeline-evidence"',
+                    'data-sequence-evidence-for="missing-evidence"',
+                    1,
+                ),
+                False,
+            ),
+        }
+        linter = _load_linter()
+        for name, (candidate, expected_valid) in cases.items():
+            with self.subTest(name=name):
+                lint_valid = not linter.lint_sequence_contract(candidate)
+                builder_valid = not build_packages._sequence_errors(candidate)
+                self.assertEqual(expected_valid, lint_valid)
+                self.assertEqual(lint_valid, builder_valid)
 
 
 if __name__ == "__main__":

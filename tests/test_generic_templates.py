@@ -109,6 +109,19 @@ def _block(html: str, tag: str) -> str:
     return matches[0].rstrip("\n")
 
 
+def _semantic_relation_block(html: str) -> str:
+    matches = re.findall(
+        r'<style data-semantic-relations-kernel="1">\n?(.*?)</style>',
+        html,
+        flags=re.DOTALL,
+    )
+    if len(matches) != 1:
+        raise AssertionError(
+            f"expected one semantic relation style kernel, found {len(matches)}"
+        )
+    return matches[0].rstrip("\n")
+
+
 class GenericTemplateTests(unittest.TestCase):
     def test_b01_is_the_exact_first_generic_migration_batch(self) -> None:
         interaction = json.loads(INTERACTION_PATH.read_text(encoding="utf-8"))
@@ -398,6 +411,39 @@ class GenericTemplateTests(unittest.TestCase):
         }
         self.assertEqual(52, len(completed))
 
+    def test_all_system_architecture_templates_pass_the_presentation_linter(self) -> None:
+        linter = _load_linter()
+        for relative in (*B11_TEMPLATES, *B12_TEMPLATES, *B13_TEMPLATES):
+            family, name = relative.split("/", 1)
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_template_identity(html, family))
+                self.assertEqual([], linter.lint_system_architecture(html))
+
+    def test_system_flagships_use_distinct_topologies_and_mobile_landmarks(self) -> None:
+        context = (TEMPLATE_ROOT / "system-architecture/system-context.html").read_text(
+            encoding="utf-8"
+        )
+        workload = (
+            TEMPLATE_ROOT / "system-architecture/workload-overview.html"
+        ).read_text(encoding="utf-8")
+        self.assertIn('data-architecture-topology="context-boundary"', context)
+        self.assertIn('data-architecture-boundary="system"', context)
+        self.assertIn('data-architecture-topology="entry-core-foundation"', workload)
+        for boundary in ("entry", "core", "operations", "data", "foundation"):
+            self.assertIn(f'data-architecture-boundary="{boundary}"', workload)
+        for html in (context, workload):
+            self.assertIn('data-diagram-mobile="summary"', html)
+            self.assertRegex(html, r"<details\b[^>]*\bopen\b[^>]*\bdata-fallback-for=")
+            self.assertGreaterEqual(html.count("data-architecture-legend-item="), 3)
+            relation_kinds = set(
+                re.findall(
+                    r'data-diagram-visible-relation-id="[^"]+"[^>]*data-relation-kind="([^"]+)"',
+                    html,
+                )
+            )
+            self.assertGreaterEqual(len(relation_kinds), 3)
+
     def _assert_completed_generic_batch(self, templates, minimums) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
         linter = _load_linter(); policy = build_packages.load_family_policies(POLICY_PATH)
@@ -439,6 +485,54 @@ class GenericTemplateTests(unittest.TestCase):
             with self.subTest(relative=relative):
                 self.assertEqual(css, _block(html, "style"))
                 self.assertEqual(script, _block(html, "script"))
+
+    def test_adaptive_toolbar_has_complete_visual_and_keyboard_states(self) -> None:
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8")
+        for selector in (
+            "[data-diagram-controls] button:hover",
+            "[data-diagram-controls] button[aria-pressed=\"true\"]",
+            "[data-diagram-controls] button:focus-visible",
+            "[data-diagram-controls] button:disabled",
+            "[data-diagram-zoom-status]",
+        ):
+            with self.subTest(selector=selector):
+                self.assertIn(selector, css)
+        self.assertRegex(css, r"\[data-diagram-controls\]\s*\{[^}]*border:")
+        self.assertRegex(css, r"\[data-diagram-controls\] button\s*\{[^}]*border-radius:")
+        self.assertRegex(css, r"\[data-diagram-zoom-status\]\s*\{[^}]*clip-path:")
+        self.assertIn(
+            '[data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }',
+            css,
+        )
+
+    def test_all_generic_templates_embed_the_visible_relation_kernel(self) -> None:
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "semantic-relations" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        self.assertIn("[data-semantic-edge-ledger]", css)
+        self.assertIn("[data-diagram-visible-relation-id]", css)
+        templates = (
+            *B01_TEMPLATES,
+            *B02_TEMPLATES,
+            *B03_TEMPLATES,
+            *B04_TEMPLATES,
+            *B05_TEMPLATES,
+            *B06_TEMPLATES,
+            *B07_TEMPLATES,
+            *B08_TEMPLATES,
+            *B09_TEMPLATES,
+            *B10_TEMPLATES,
+            *B11_TEMPLATES,
+            *B12_TEMPLATES,
+            *B13_TEMPLATES,
+        )
+        self.assertEqual(52, len(templates))
+        for relative in templates:
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual(css, _semantic_relation_block(html))
 
     def test_b01_migration_preserves_the_source_slot_macro_contract(self) -> None:
         migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))

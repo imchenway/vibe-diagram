@@ -1,6 +1,20 @@
 [data-diagram-detail][hidden] { display: none; }
 [data-diagram-detail]:target { display: block; }
 
+details[data-diagram-detail] {
+  display: block;
+}
+
+details[data-diagram-detail] > summary {
+  cursor: pointer;
+}
+
+details[data-diagram-detail] > summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, currentColor 58%, transparent);
+  outline-offset: 4px;
+}
+
 @media print {
   [data-diagram-detail][hidden] { display: block !important; }
+  details[data-diagram-detail] > :not(summary) { display: block !important; }
 }

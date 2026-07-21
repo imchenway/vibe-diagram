@@ -327,6 +327,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {

@@ -358,6 +358,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {
@@ -458,23 +473,27 @@
             Target-only participant: {{seq-party-4}}
           </p>
           <div class="sequence-messages">
-            <section data-sequence-phase-id="current-request">
+            <section data-sequence-phase-id="current-request" data-sequence-fragment-id="current-path-group"
+                     data-sequence-fragment-kind="group">
               <span data-sequence-phase-label>Current path</span>
               <article data-sequence-message data-from="current-user" data-to="current-api"
                        data-message-kind="sync" data-semantic="current-request"
-                       style="--sequence-start:1;--sequence-span:2" data-slot="current-call">
+                       style="--sequence-start:1;--sequence-span:2" data-slot="current-call" data-sequence-step-index="01">
+              <span data-sequence-step-index-label>01</span>
                 <span data-sequence-route>User → API</span><span data-sequence-kind>sync</span>
                 <span data-sequence-description>{{current-call}}</span>
               </article>
               <article data-sequence-message data-from="current-api" data-to="current-service"
                        data-message-kind="sync" data-semantic="current-dispatch"
-                       style="--sequence-start:2;--sequence-span:2">
+                       style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="02">
+              <span data-sequence-step-index-label>02</span>
                 <span data-sequence-route>API → Legacy service</span><span data-sequence-kind>sync</span>
                 <span data-sequence-description>Forward through the existing coupling.</span>
               </article>
               <article data-sequence-message data-from="current-service" data-to="current-user"
                        data-message-kind="error" data-semantic="current-failure"
-                       data-direction="reverse" style="--sequence-start:1;--sequence-span:3">
+                       data-direction="reverse" style="--sequence-start:1;--sequence-span:3" data-sequence-step-index="03">
+              <span data-sequence-step-index-label>03</span>
                 <span data-sequence-route>Legacy service → User</span><span data-sequence-kind>error</span>
                 <span data-sequence-description>Expose the current failure path.</span>
               </article>
@@ -503,23 +522,27 @@
             <div data-participant-id="target-service"><strong>Focused service</strong><span>Owns one clear responsibility.</span></div>
           </header>
           <div class="sequence-messages">
-            <section data-sequence-phase-id="target-request">
+            <section data-sequence-phase-id="target-request" data-sequence-fragment-id="target-path-group"
+                     data-sequence-fragment-kind="group">
               <span data-sequence-phase-label>Target path</span>
               <article data-sequence-message data-from="target-user" data-to="target-orchestrator"
                        data-message-kind="sync" data-semantic="target-request"
-                       style="--sequence-start:1;--sequence-span:2" data-slot="target-call">
+                       style="--sequence-start:1;--sequence-span:2" data-slot="target-call" data-sequence-step-index="04">
+              <span data-sequence-step-index-label>04</span>
                 <span data-sequence-route>User → Orchestrator</span><span data-sequence-kind>sync</span>
                 <span data-sequence-description>{{target-call}}</span>
               </article>
               <article data-sequence-message data-from="target-orchestrator" data-to="target-service"
                        data-message-kind="async" data-semantic="target-dispatch"
-                       style="--sequence-start:2;--sequence-span:2">
+                       style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="05">
+              <span data-sequence-step-index-label>05</span>
                 <span data-sequence-route>Orchestrator → Focused service</span><span data-sequence-kind>async</span>
                 <span data-sequence-description>Dispatch through the target contract.</span>
               </article>
               <article data-sequence-message data-from="target-service" data-to="target-user"
                        data-message-kind="return" data-semantic="target-result"
-                       data-direction="reverse" style="--sequence-start:1;--sequence-span:3">
+                       data-direction="reverse" style="--sequence-start:1;--sequence-span:3" data-sequence-step-index="06">
+              <span data-sequence-step-index-label>06</span>
                 <span data-sequence-route>Focused service → User</span><span data-sequence-kind>return</span>
                 <span data-sequence-description>Return an explicit target result.</span>
               </article>

@@ -89,6 +89,8 @@ SOURCE_PATH_RE = re.compile(
 )
 SEQUENCE_CONTRACT_VERSION = "1"
 SEQUENCE_MESSAGE_KINDS = frozenset({"sync", "return", "async", "self", "error"})
+SEQUENCE_FRAGMENT_KINDS = frozenset({"tx", "opt", "loop", "alt", "group"})
+SEQUENCE_OUTCOMES = frozenset({"success", "failure", "partial", "empty"})
 SEQUENCE_PARTICIPANT_LIMIT = 12
 SEQUENCE_MESSAGE_LIMIT = 40
 SEQUENCE_PHASE_LIMIT = 4
@@ -144,6 +146,12 @@ class _SequenceRecord:
     participant_ids: List[str]
     messages: List[Tuple[str, str, str, str]]
     phase_ids: List[str]
+    participant_group_ids: List[str]
+    message_steps: List[str]
+    fragments: List[Tuple[str, str]]
+    outcomes: List[str]
+    risk_ids: List[str]
+    evidence_links: List[str]
 
 
 def _duplicates(attrs: Sequence[Tuple[str, Optional[str]]]) -> List[str]:
@@ -278,6 +286,7 @@ class _GenericCanvasRecord:
     col_ids: List[str]
     cells: List[Tuple[str, str]]
     detail_ids: List[str]
+    visible_relation_ids: List[str]
 
 
 class _GenericContractParser(HTMLParser):
@@ -299,7 +308,7 @@ class _GenericContractParser(HTMLParser):
             if self._canvas is not None:
                 self.errors.append("Diagram canvases must not be nested.")
             else:
-                self._canvas = _GenericCanvasRecord(values, [], [], [], [], [], [], [])
+                self._canvas = _GenericCanvasRecord(values, [], [], [], [], [], [], [], [])
                 self.canvases.append(self._canvas)
         if "data-fallback-for" in values:
             self.fallback_ids.append(values["data-fallback-for"].strip())
@@ -313,6 +322,7 @@ class _GenericContractParser(HTMLParser):
                     "data-matrix-row-id",
                     "data-matrix-col-id",
                     "data-diagram-detail-id",
+                    "data-diagram-visible-relation-id",
                 )
             )
             duplicates = _duplicates(attrs) if semantic or starts_canvas else []
@@ -351,6 +361,16 @@ class _GenericContractParser(HTMLParser):
                 )
             if "data-diagram-detail-id" in values:
                 self._canvas.detail_ids.append(values["data-diagram-detail-id"].strip())
+            if "data-diagram-visible-relation-id" in values:
+                is_svg_edge = tag in {"line", "path", "polygon", "polyline"}
+                is_html_edge = values.get("data-visible-relation-kind") == "edge"
+                if not (is_svg_edge or is_html_edge):
+                    self.errors.append(
+                        "Visible relation bindings must use an SVG edge or an explicit HTML edge carrier."
+                    )
+                self._canvas.visible_relation_ids.append(
+                    values["data-diagram-visible-relation-id"].strip()
+                )
         if tag not in VOID_ELEMENTS:
             self._stack.append((tag, starts_canvas))
 
@@ -426,6 +446,25 @@ def generic_contract_errors(
                 errors.append("Diagram relation endpoints must reference authored nodes or groups.")
         if len(relation_ids) != len(set(relation_ids)):
             errors.append("Diagram relation ids must be unique within a canvas.")
+        visible_relation_ids = canvas.visible_relation_ids
+        if any(not relation_id for relation_id in visible_relation_ids):
+            errors.append("Visible relation bindings must use non-empty relation ids.")
+        if len(visible_relation_ids) != len(set(visible_relation_ids)):
+            errors.append("Visible relation bindings must be unique within a canvas.")
+        missing_visible = sorted(set(relation_ids) - set(visible_relation_ids))
+        extra_visible = sorted(set(visible_relation_ids) - set(relation_ids))
+        if missing_visible:
+            errors.append(
+                "Every diagram relation requires one visible edge binding: "
+                + ", ".join(missing_visible)
+                + "."
+            )
+        if extra_visible:
+            errors.append(
+                "Visible edge bindings must reference authored diagram relations: "
+                + ", ".join(extra_visible)
+                + "."
+            )
         if definition["profile"] == "matrix":
             rows, columns = set(canvas.row_ids), set(canvas.col_ids)
             if not rows or not columns or not canvas.cells:
@@ -489,6 +528,7 @@ class HtmlSignals(HTMLParser):
         self.attrs: Dict[str, List[str]] = {}
         self.main_attrs: List[Dict[str, str]] = []
         self.attribute_events: List[Tuple[str, str, str]] = []
+        self.elements: List[Tuple[str, Dict[str, str]]] = []
         self.styles: List[str] = []
         self.scripts: List[str] = []
         self.errors: List[str] = []
@@ -506,6 +546,7 @@ class HtmlSignals(HTMLParser):
         if duplicates:
             self.errors.append(f"Duplicate attributes on {tag}: {', '.join(duplicates)}")
         attrs_map = {name.lower(): value or "" for name, value in attrs}
+        self.elements.append((tag, attrs_map))
         if tag == "main":
             self.main_attrs.append(attrs_map)
         if tag == "meta" and attrs_map.get("http-equiv", "").strip().casefold() == "refresh":
@@ -569,6 +610,7 @@ class _SequenceParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.records: List[_SequenceRecord] = []
         self.errors: List[str] = []
+        self.document_evidence_ids: List[str] = []
         self._active: List[_SequenceRecord] = []
         self._stack: List[Tuple[str, bool]] = []
 
@@ -581,6 +623,11 @@ class _SequenceParser(HTMLParser):
         tag = tag.lower()
         duplicates = _duplicates(attrs)
         attrs_map = {name.lower(): value or "" for name, value in attrs}
+        if "data-sequence-evidence-id" in attrs_map:
+            evidence_id = attrs_map["data-sequence-evidence-id"].strip()
+            self.document_evidence_ids.append(evidence_id)
+            if tag != "details":
+                self.errors.append("Sequence evidence ids must use native details elements.")
         is_canvas = "data-sequence-canvas" in attrs_map
         sequence_endpoint_attributes = {
             "data-from",
@@ -599,13 +646,17 @@ class _SequenceParser(HTMLParser):
         if is_canvas:
             if self._active:
                 self.errors.append("Sequence canvases must not be nested.")
-            record = _SequenceRecord(attrs_map, [], [], [])
+            record = _SequenceRecord(attrs_map, [], [], [], [], [], [], [], [], [])
             self.records.append(record)
             self._active.append(record)
         if self._active:
             record = self._active[-1]
             if "data-participant-id" in attrs_map:
                 record.participant_ids.append(attrs_map["data-participant-id"].strip())
+            if "data-participant-group-id" in attrs_map:
+                record.participant_group_ids.append(
+                    attrs_map["data-participant-group-id"].strip()
+                )
             if "data-sequence-message" in attrs_map:
                 record.messages.append(
                     (
@@ -615,8 +666,29 @@ class _SequenceParser(HTMLParser):
                         attrs_map.get("data-semantic", "").strip(),
                     )
                 )
+                record.message_steps.append(
+                    attrs_map.get("data-sequence-step-index", "").strip()
+                )
             if "data-sequence-phase-id" in attrs_map:
                 record.phase_ids.append(attrs_map["data-sequence-phase-id"].strip())
+            if (
+                "data-sequence-fragment-id" in attrs_map
+                or "data-sequence-fragment-kind" in attrs_map
+            ):
+                record.fragments.append(
+                    (
+                        attrs_map.get("data-sequence-fragment-id", "").strip(),
+                        attrs_map.get("data-sequence-fragment-kind", "").strip(),
+                    )
+                )
+            if "data-sequence-outcome" in attrs_map:
+                record.outcomes.append(attrs_map["data-sequence-outcome"].strip())
+            if "data-sequence-risk-id" in attrs_map:
+                record.risk_ids.append(attrs_map["data-sequence-risk-id"].strip())
+            if "data-sequence-evidence-for" in attrs_map:
+                record.evidence_links.append(
+                    attrs_map["data-sequence-evidence-for"].strip()
+                )
         if push and tag not in VOID_ELEMENTS:
             self._stack.append((tag, is_canvas))
         elif is_canvas:
@@ -765,6 +837,62 @@ def lint_title_description_stacking(html: str) -> List[str]:
     ]
 
 
+def lint_visible_svg_relation_bindings(html: str) -> List[str]:
+    """Require every authored architecture relation to bind to one SVG edge."""
+
+    parser = _parse(html)
+    declared = {
+        attrs["data-diagram-relation-id"].strip(): (
+            attrs.get("data-from", "").strip(),
+            attrs.get("data-to", "").strip(),
+            attrs.get("data-relation-kind", "").strip(),
+        )
+        for _tag, attrs in parser.elements
+        if "data-diagram-relation-id" in attrs
+    }
+    visible_records = [
+        (
+            attrs["data-diagram-visible-relation-id"].strip(),
+            attrs.get("data-from", "").strip(),
+            attrs.get("data-to", "").strip(),
+            attrs.get("data-relation-kind", "").strip(),
+        )
+        for tag, attrs in parser.elements
+        if tag in {"line", "path", "polygon", "polyline"}
+        and "data-diagram-visible-relation-id" in attrs
+    ]
+    visible = [record[0] for record in visible_records]
+    errors = []
+    if any(not value for value in visible):
+        errors.append("Visible SVG relation bindings must use non-empty relation ids.")
+    if len(visible) != len(set(visible)):
+        errors.append("Visible SVG relation bindings must be unique.")
+    missing = sorted(set(declared) - set(visible))
+    extra = sorted(set(visible) - set(declared))
+    if missing:
+        errors.append("Every architecture relation requires a visible SVG path binding: " + ", ".join(missing) + ".")
+    if extra:
+        errors.append("Visible SVG path bindings must reference authored architecture relations: " + ", ".join(extra) + ".")
+    for relation_id, source, target, kind in visible_records:
+        if relation_id not in declared:
+            continue
+        if not all((source, target, kind)):
+            errors.append(
+                f"Visible SVG relation path requires structured endpoints and kind: {relation_id}."
+            )
+            continue
+        expected_source, expected_target, expected_kind = declared[relation_id]
+        if (source, target) != (expected_source, expected_target):
+            errors.append(
+                f"Visible SVG relation path endpoints must match the authored architecture relation: {relation_id}."
+            )
+        if kind != expected_kind:
+            errors.append(
+                f"Visible SVG relation path kind must match the authored architecture relation: {relation_id}."
+            )
+    return errors
+
+
 def lint_system_architecture(
     html: str,
     allow_candidates: bool = False,
@@ -773,6 +901,7 @@ def lint_system_architecture(
 
     parser = _parse(html)
     errors = lint_title_description_stacking(html)
+    errors.extend(lint_visible_svg_relation_bindings(html))
     if parser.tag_counts.get("svg", 0) == 0:
         errors.append("The primary system architecture canvas must contain an SVG diagram.")
     if not allow_candidates and "tablist" in parser.roles:
@@ -841,6 +970,12 @@ def lint_sequence_contract(html: str) -> List[str]:
     ]
     if not canvases:
         errors.append("A sequence artifact must contain at least one data-sequence-canvas.")
+    evidence_ids = parser.document_evidence_ids
+    if any(not evidence_id for evidence_id in evidence_ids):
+        errors.append("Sequence evidence ids must be non-empty.")
+    if len(evidence_ids) != len(set(evidence_ids)):
+        errors.append("Sequence evidence ids must be unique within a document.")
+    evidence_targets = set(evidence_ids)
     canvas_ids = [canvas.canvas_id for canvas in canvases]
     for index, (record, canvas) in enumerate(zip(parser.records, canvases), start=1):
         label = canvas.canvas_id or f"canvas-{index}"
@@ -893,6 +1028,46 @@ def lint_sequence_contract(html: str) -> List[str]:
             errors.append(
                 f"Sequence {label} has duplicate phase ids: " + ", ".join(duplicate_phases) + "."
             )
+        participant_group_ids = record.participant_group_ids
+        if any(not group_id for group_id in participant_group_ids):
+            errors.append(f"Sequence {label} participant group ids must be non-empty.")
+        if len(participant_group_ids) != len(set(participant_group_ids)):
+            errors.append(f"Sequence {label} participant group ids must be unique.")
+        message_steps = record.message_steps
+        if any(message_steps):
+            if any(not step for step in message_steps):
+                errors.append(
+                    f"Sequence {label} must give every message a step index when step indexing is used."
+                )
+            non_empty_steps = [step for step in message_steps if step]
+            if len(non_empty_steps) != len(set(non_empty_steps)):
+                errors.append(f"Sequence {label} message step indices must be unique.")
+            if any(re.fullmatch(r"\d{1,3}", step) is None for step in non_empty_steps):
+                errors.append(
+                    f"Sequence {label} message step indices must use one to three digits."
+                )
+        fragment_ids = [fragment_id for fragment_id, _kind in record.fragments]
+        for fragment_id, kind in record.fragments:
+            if not fragment_id or not kind:
+                errors.append(
+                    f"Sequence {label} fragments require both stable ids and kinds."
+                )
+            elif kind not in SEQUENCE_FRAGMENT_KINDS:
+                errors.append(f"Sequence {label} fragment kind is not supported: {kind}.")
+        if len(fragment_ids) != len(set(fragment_ids)):
+            errors.append(f"Sequence {label} fragment ids must be unique.")
+        for outcome in record.outcomes:
+            if outcome not in SEQUENCE_OUTCOMES:
+                errors.append(f"Sequence {label} outcome is not supported: {outcome or '<missing>'}.")
+        if any(not risk_id for risk_id in record.risk_ids):
+            errors.append(f"Sequence {label} risk ids must be non-empty.")
+        if len(record.risk_ids) != len(set(record.risk_ids)):
+            errors.append(f"Sequence {label} risk ids must be unique.")
+        for evidence_for in record.evidence_links:
+            if not evidence_for or evidence_for not in evidence_targets:
+                errors.append(
+                    f"Sequence {label} evidence link must reference a native document evidence detail."
+                )
         participants = set(canvas.participant_ids)
         for message_index, (source, target, kind, semantic) in enumerate(canvas.messages, start=1):
             if not source or not target or source not in participants or target not in participants:

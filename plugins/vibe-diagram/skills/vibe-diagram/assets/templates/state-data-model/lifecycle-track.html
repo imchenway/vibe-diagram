@@ -24,13 +24,69 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
-[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
-[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .diagram-fallback { display: none; }
 
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
 }
 
@@ -42,6 +98,85 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
 }
 </style>
   <style data-template-contract="1">
@@ -70,7 +205,21 @@
     <section data-diagram-stage class="template-layout lifecycle-track" aria-label="Lifecycle track template canvas">
       <div class="milestones boundary" data-diagram-group-id="lifecycle-states" data-semantic-role="state-track" data-reading-guide="lifecycle order"><div id="created" class="slot core" data-diagram-node-id="created" data-semantic-role="state" data-slot="created"><b>Created</b><span>{{created}}</span></div><div id="active" class="slot support" data-diagram-node-id="active" data-semantic-role="state" data-slot="active"><b>Active</b><span>{{active}}</span></div><div id="processing" class="slot data" data-diagram-node-id="processing" data-semantic-role="state" data-slot="processing"><b>Processing</b><span>{{processing}}</span></div><div id="closed" class="slot risk" data-diagram-node-id="closed" data-semantic-role="state" data-slot="closed"><b>Closed</b><span>{{closed}}</span></div><div id="archived" class="slot ops" data-diagram-node-id="archived" data-semantic-role="state" data-slot="archived"><b>Archived</b><span>{{archived}}</span></div></div>
       <div class="phase" data-diagram-group-id="phase-1" data-semantic-role="phase-rule" data-reading-guide="phase 1"><div id="phase-rule-1" class="slot support" data-diagram-node-id="phase-rule-1" data-semantic-role="rule" data-slot="phase-rule-1"><b>Phase rule 1</b><span>{{phase-rule-1}}</span></div></div><div class="phase" data-diagram-group-id="phase-2" data-semantic-role="phase-rule" data-reading-guide="phase 2"><div id="phase-rule-2" class="slot data" data-diagram-node-id="phase-rule-2" data-semantic-role="rule" data-slot="phase-rule-2"><b>Phase rule 2</b><span>{{phase-rule-2}}</span></div></div><div class="phase" data-diagram-group-id="phase-3" data-semantic-role="phase-rule" data-reading-guide="phase 3"><div id="phase-rule-3" class="slot risk" data-diagram-node-id="phase-rule-3" data-semantic-role="rule" data-slot="phase-rule-3"><b>Phase rule 3</b><span>{{phase-rule-3}}</span></div></div><div class="phase" data-diagram-group-id="phase-4" data-semantic-role="phase-rule" data-reading-guide="phase 4"><div id="phase-rule-4" class="slot ops" data-diagram-node-id="phase-rule-4" data-semantic-role="rule" data-slot="phase-rule-4"><b>Phase rule 4</b><span>{{phase-rule-4}}</span></div></div><div class="phase" data-diagram-group-id="phase-5" data-semantic-role="phase-rule" data-reading-guide="phase 5"><div id="phase-rule-5" class="slot " data-diagram-node-id="phase-rule-5" data-semantic-role="rule" data-slot="phase-rule-5"><b>Phase rule 5</b><span>{{phase-rule-5}}</span></div></div>
-      <span class="semantic-relation" data-diagram-relation-id="created-to-active" data-from="created" data-to="active" data-relation-kind="transition" data-semantic="Created transitions to Active">Created transitions to Active</span><span class="semantic-relation" data-diagram-relation-id="active-to-processing" data-from="active" data-to="processing" data-relation-kind="transition" data-semantic="Active transitions to Processing">Active transitions to Processing</span><span class="semantic-relation" data-diagram-relation-id="processing-to-closed" data-from="processing" data-to="closed" data-relation-kind="transition" data-semantic="Processing transitions to Closed">Processing transitions to Closed</span><span class="semantic-relation" data-diagram-relation-id="closed-to-archived" data-from="closed" data-to="archived" data-relation-kind="transition" data-semantic="Closed transitions to Archived">Closed transitions to Archived</span><span class="semantic-relation" data-diagram-relation-id="created-phase-rule-1" data-from="created" data-to="phase-rule-1" data-relation-kind="governed-by" data-semantic="Created is governed by Phase rule 1">Created is governed by Phase rule 1</span><span class="semantic-relation" data-diagram-relation-id="active-phase-rule-2" data-from="active" data-to="phase-rule-2" data-relation-kind="governed-by" data-semantic="Active is governed by Phase rule 2">Active is governed by Phase rule 2</span><span class="semantic-relation" data-diagram-relation-id="processing-phase-rule-3" data-from="processing" data-to="phase-rule-3" data-relation-kind="governed-by" data-semantic="Processing is governed by Phase rule 3">Processing is governed by Phase rule 3</span><span class="semantic-relation" data-diagram-relation-id="closed-phase-rule-4" data-from="closed" data-to="phase-rule-4" data-relation-kind="governed-by" data-semantic="Closed is governed by Phase rule 4">Closed is governed by Phase rule 4</span><span class="semantic-relation" data-diagram-relation-id="archived-phase-rule-5" data-from="archived" data-to="phase-rule-5" data-relation-kind="governed-by" data-semantic="Archived is governed by Phase rule 5">Archived is governed by Phase rule 5</span>
+        <section data-semantic-edge-ledger aria-label="Visible relationship paths">
+    <h2>Relationship paths</h2>
+    <div data-semantic-edge-grid>
+      <article data-semantic-edge data-diagram-visible-relation-id="created-to-active" data-visible-relation-kind="edge" data-from="created" data-to="active" data-relation-kind="transition"><span data-semantic-edge-route><b>created</b><i aria-hidden="true"></i><b>active</b></span><span data-semantic-edge-label>Created transitions to Active</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="active-to-processing" data-visible-relation-kind="edge" data-from="active" data-to="processing" data-relation-kind="transition"><span data-semantic-edge-route><b>active</b><i aria-hidden="true"></i><b>processing</b></span><span data-semantic-edge-label>Active transitions to Processing</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="processing-to-closed" data-visible-relation-kind="edge" data-from="processing" data-to="closed" data-relation-kind="transition"><span data-semantic-edge-route><b>processing</b><i aria-hidden="true"></i><b>closed</b></span><span data-semantic-edge-label>Processing transitions to Closed</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="closed-to-archived" data-visible-relation-kind="edge" data-from="closed" data-to="archived" data-relation-kind="transition"><span data-semantic-edge-route><b>closed</b><i aria-hidden="true"></i><b>archived</b></span><span data-semantic-edge-label>Closed transitions to Archived</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="created-phase-rule-1" data-visible-relation-kind="edge" data-from="created" data-to="phase-rule-1" data-relation-kind="governed-by"><span data-semantic-edge-route><b>created</b><i aria-hidden="true"></i><b>phase-rule-1</b></span><span data-semantic-edge-label>Created is governed by Phase rule 1</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="active-phase-rule-2" data-visible-relation-kind="edge" data-from="active" data-to="phase-rule-2" data-relation-kind="governed-by"><span data-semantic-edge-route><b>active</b><i aria-hidden="true"></i><b>phase-rule-2</b></span><span data-semantic-edge-label>Active is governed by Phase rule 2</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="processing-phase-rule-3" data-visible-relation-kind="edge" data-from="processing" data-to="phase-rule-3" data-relation-kind="governed-by"><span data-semantic-edge-route><b>processing</b><i aria-hidden="true"></i><b>phase-rule-3</b></span><span data-semantic-edge-label>Processing is governed by Phase rule 3</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="closed-phase-rule-4" data-visible-relation-kind="edge" data-from="closed" data-to="phase-rule-4" data-relation-kind="governed-by"><span data-semantic-edge-route><b>closed</b><i aria-hidden="true"></i><b>phase-rule-4</b></span><span data-semantic-edge-label>Closed is governed by Phase rule 4</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="archived-phase-rule-5" data-visible-relation-kind="edge" data-from="archived" data-to="phase-rule-5" data-relation-kind="governed-by"><span data-semantic-edge-route><b>archived</b><i aria-hidden="true"></i><b>phase-rule-5</b></span><span data-semantic-edge-label>Archived is governed by Phase rule 5</span></article>
+    </div>
+  </section>
+<span class="semantic-relation" data-diagram-relation-id="created-to-active" data-from="created" data-to="active" data-relation-kind="transition" data-semantic="Created transitions to Active">Created transitions to Active</span><span class="semantic-relation" data-diagram-relation-id="active-to-processing" data-from="active" data-to="processing" data-relation-kind="transition" data-semantic="Active transitions to Processing">Active transitions to Processing</span><span class="semantic-relation" data-diagram-relation-id="processing-to-closed" data-from="processing" data-to="closed" data-relation-kind="transition" data-semantic="Processing transitions to Closed">Processing transitions to Closed</span><span class="semantic-relation" data-diagram-relation-id="closed-to-archived" data-from="closed" data-to="archived" data-relation-kind="transition" data-semantic="Closed transitions to Archived">Closed transitions to Archived</span><span class="semantic-relation" data-diagram-relation-id="created-phase-rule-1" data-from="created" data-to="phase-rule-1" data-relation-kind="governed-by" data-semantic="Created is governed by Phase rule 1">Created is governed by Phase rule 1</span><span class="semantic-relation" data-diagram-relation-id="active-phase-rule-2" data-from="active" data-to="phase-rule-2" data-relation-kind="governed-by" data-semantic="Active is governed by Phase rule 2">Active is governed by Phase rule 2</span><span class="semantic-relation" data-diagram-relation-id="processing-phase-rule-3" data-from="processing" data-to="phase-rule-3" data-relation-kind="governed-by" data-semantic="Processing is governed by Phase rule 3">Processing is governed by Phase rule 3</span><span class="semantic-relation" data-diagram-relation-id="closed-phase-rule-4" data-from="closed" data-to="phase-rule-4" data-relation-kind="governed-by" data-semantic="Closed is governed by Phase rule 4">Closed is governed by Phase rule 4</span><span class="semantic-relation" data-diagram-relation-id="archived-phase-rule-5" data-from="archived" data-to="phase-rule-5" data-relation-kind="governed-by" data-semantic="Archived is governed by Phase rule 5">Archived is governed by Phase rule 5</span>
     </section>
   </div>
   <details class="diagram-fallback" data-fallback-for="lifecycle-track"><summary>Lifecycle Track semantic fallback</summary><ol><li>Created</li><li>Active</li><li>Processing</li><li>Closed</li><li>Archived</li></ol></details>

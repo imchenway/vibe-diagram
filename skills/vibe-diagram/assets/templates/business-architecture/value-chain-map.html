@@ -24,13 +24,69 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
-[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
-[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .diagram-fallback { display: none; }
 
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
 }
 
@@ -44,6 +100,85 @@
   [data-diagram-canvas] { scroll-behavior: auto; }
 }
 </style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
+}
+</style>
   <style data-template-contract="1">[data-diagram-id="value-chain-map"]>[data-diagram-stage]{min-inline-size:60rem}.semantic-relation{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:48rem){[data-diagram-id="value-chain-map"]>[data-diagram-stage]{min-inline-size:0}}</style>
 </head>
 <body>
@@ -55,7 +190,20 @@
   <p class="summary" data-slot="summary">{{summary}}</p>
   <div data-diagram-controls="value-chain-map" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="value-chain-map" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack">
-    <section data-diagram-stage class="template-layout value-chain-map" aria-label="Value chain map template canvas"><ol data-diagram-group-id="value-chain" data-semantic-role="value-chain" data-reading-guide="value order"><li class="phase"><div id="value-1" class="slot support" data-diagram-node-id="value-1" data-semantic-role="value-stage" data-slot="value-1"><b>Value 1</b><span>{{value-1}}</span></div></li><li class="phase"><div id="value-2" class="slot data" data-diagram-node-id="value-2" data-semantic-role="value-stage" data-slot="value-2"><b>Value 2</b><span>{{value-2}}</span></div></li><li class="phase"><div id="value-3" class="slot risk" data-diagram-node-id="value-3" data-semantic-role="value-stage" data-slot="value-3"><b>Value 3</b><span>{{value-3}}</span></div></li><li class="phase"><div id="value-4" class="slot ops" data-diagram-node-id="value-4" data-semantic-role="value-stage" data-slot="value-4"><b>Value 4</b><span>{{value-4}}</span></div></li><li class="phase"><div id="value-5" class="slot " data-diagram-node-id="value-5" data-semantic-role="value-stage" data-slot="value-5"><b>Value 5</b><span>{{value-5}}</span></div></li></ol><div class="feedback-loop" data-diagram-group-id="learning-feedback" data-semantic-role="feedback-loop" data-reading-guide="learning feedback"><div id="input-signal" class="slot core" data-diagram-node-id="input-signal" data-semantic-role="signal" data-slot="input-signal"><b>Input signal</b><span>{{input-signal}}</span></div><div id="learning-loop" class="slot support" data-diagram-node-id="learning-loop" data-semantic-role="feedback" data-slot="learning-loop"><b>Learning loop</b><span>{{learning-loop}}</span></div><div id="output-value" class="slot data" data-diagram-node-id="output-value" data-semantic-role="value" data-slot="output-value"><b>Output value</b><span>{{output-value}}</span></div></div><span class="semantic-relation" data-diagram-relation-id="value-1-value-2" data-from="value-1" data-to="value-2" data-relation-kind="precedes" data-semantic="Value 1 precedes Value 2">Value 1 precedes Value 2</span><span class="semantic-relation" data-diagram-relation-id="value-2-value-3" data-from="value-2" data-to="value-3" data-relation-kind="precedes" data-semantic="Value 2 precedes Value 3">Value 2 precedes Value 3</span><span class="semantic-relation" data-diagram-relation-id="value-3-value-4" data-from="value-3" data-to="value-4" data-relation-kind="precedes" data-semantic="Value 3 precedes Value 4">Value 3 precedes Value 4</span><span class="semantic-relation" data-diagram-relation-id="value-4-value-5" data-from="value-4" data-to="value-5" data-relation-kind="precedes" data-semantic="Value 4 precedes Value 5">Value 4 precedes Value 5</span><span class="semantic-relation" data-diagram-relation-id="input-learning" data-from="input-signal" data-to="learning-loop" data-relation-kind="feeds" data-semantic="Input signal feeds learning">Input signal feeds learning</span><span class="semantic-relation" data-diagram-relation-id="learning-output" data-from="learning-loop" data-to="output-value" data-relation-kind="improves" data-semantic="Learning improves output value">Learning improves output value</span><span class="semantic-relation" data-diagram-relation-id="value-output" data-from="value-5" data-to="output-value" data-relation-kind="produces" data-semantic="Value 5 produces output value">Value 5 produces output value</span><span class="semantic-relation" data-diagram-relation-id="output-feedback" data-from="output-value" data-to="value-1" data-relation-kind="feedback" data-semantic="Output value feeds back to value 1">Output value feeds back to value 1</span></section>
+    <section data-diagram-stage class="template-layout value-chain-map" aria-label="Value chain map template canvas"><ol data-diagram-group-id="value-chain" data-semantic-role="value-chain" data-reading-guide="value order"><li class="phase"><div id="value-1" class="slot support" data-diagram-node-id="value-1" data-semantic-role="value-stage" data-slot="value-1"><b>Value 1</b><span>{{value-1}}</span></div></li><li class="phase"><div id="value-2" class="slot data" data-diagram-node-id="value-2" data-semantic-role="value-stage" data-slot="value-2"><b>Value 2</b><span>{{value-2}}</span></div></li><li class="phase"><div id="value-3" class="slot risk" data-diagram-node-id="value-3" data-semantic-role="value-stage" data-slot="value-3"><b>Value 3</b><span>{{value-3}}</span></div></li><li class="phase"><div id="value-4" class="slot ops" data-diagram-node-id="value-4" data-semantic-role="value-stage" data-slot="value-4"><b>Value 4</b><span>{{value-4}}</span></div></li><li class="phase"><div id="value-5" class="slot " data-diagram-node-id="value-5" data-semantic-role="value-stage" data-slot="value-5"><b>Value 5</b><span>{{value-5}}</span></div></li></ol><div class="feedback-loop" data-diagram-group-id="learning-feedback" data-semantic-role="feedback-loop" data-reading-guide="learning feedback"><div id="input-signal" class="slot core" data-diagram-node-id="input-signal" data-semantic-role="signal" data-slot="input-signal"><b>Input signal</b><span>{{input-signal}}</span></div><div id="learning-loop" class="slot support" data-diagram-node-id="learning-loop" data-semantic-role="feedback" data-slot="learning-loop"><b>Learning loop</b><span>{{learning-loop}}</span></div><div id="output-value" class="slot data" data-diagram-node-id="output-value" data-semantic-role="value" data-slot="output-value"><b>Output value</b><span>{{output-value}}</span></div></div>  <section data-semantic-edge-ledger aria-label="Visible relationship paths">
+    <h2>Relationship paths</h2>
+    <div data-semantic-edge-grid>
+      <article data-semantic-edge data-diagram-visible-relation-id="value-1-value-2" data-visible-relation-kind="edge" data-from="value-1" data-to="value-2" data-relation-kind="precedes"><span data-semantic-edge-route><b>value-1</b><i aria-hidden="true"></i><b>value-2</b></span><span data-semantic-edge-label>Value 1 precedes Value 2</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="value-2-value-3" data-visible-relation-kind="edge" data-from="value-2" data-to="value-3" data-relation-kind="precedes"><span data-semantic-edge-route><b>value-2</b><i aria-hidden="true"></i><b>value-3</b></span><span data-semantic-edge-label>Value 2 precedes Value 3</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="value-3-value-4" data-visible-relation-kind="edge" data-from="value-3" data-to="value-4" data-relation-kind="precedes"><span data-semantic-edge-route><b>value-3</b><i aria-hidden="true"></i><b>value-4</b></span><span data-semantic-edge-label>Value 3 precedes Value 4</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="value-4-value-5" data-visible-relation-kind="edge" data-from="value-4" data-to="value-5" data-relation-kind="precedes"><span data-semantic-edge-route><b>value-4</b><i aria-hidden="true"></i><b>value-5</b></span><span data-semantic-edge-label>Value 4 precedes Value 5</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="input-learning" data-visible-relation-kind="edge" data-from="input-signal" data-to="learning-loop" data-relation-kind="feeds"><span data-semantic-edge-route><b>input-signal</b><i aria-hidden="true"></i><b>learning-loop</b></span><span data-semantic-edge-label>Input signal feeds learning</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="learning-output" data-visible-relation-kind="edge" data-from="learning-loop" data-to="output-value" data-relation-kind="improves"><span data-semantic-edge-route><b>learning-loop</b><i aria-hidden="true"></i><b>output-value</b></span><span data-semantic-edge-label>Learning improves output value</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="value-output" data-visible-relation-kind="edge" data-from="value-5" data-to="output-value" data-relation-kind="produces"><span data-semantic-edge-route><b>value-5</b><i aria-hidden="true"></i><b>output-value</b></span><span data-semantic-edge-label>Value 5 produces output value</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="output-feedback" data-visible-relation-kind="edge" data-from="output-value" data-to="value-1" data-relation-kind="feedback"><span data-semantic-edge-route><b>output-value</b><i aria-hidden="true"></i><b>value-1</b></span><span data-semantic-edge-label>Output value feeds back to value 1</span></article>
+    </div>
+  </section>
+<span class="semantic-relation" data-diagram-relation-id="value-1-value-2" data-from="value-1" data-to="value-2" data-relation-kind="precedes" data-semantic="Value 1 precedes Value 2">Value 1 precedes Value 2</span><span class="semantic-relation" data-diagram-relation-id="value-2-value-3" data-from="value-2" data-to="value-3" data-relation-kind="precedes" data-semantic="Value 2 precedes Value 3">Value 2 precedes Value 3</span><span class="semantic-relation" data-diagram-relation-id="value-3-value-4" data-from="value-3" data-to="value-4" data-relation-kind="precedes" data-semantic="Value 3 precedes Value 4">Value 3 precedes Value 4</span><span class="semantic-relation" data-diagram-relation-id="value-4-value-5" data-from="value-4" data-to="value-5" data-relation-kind="precedes" data-semantic="Value 4 precedes Value 5">Value 4 precedes Value 5</span><span class="semantic-relation" data-diagram-relation-id="input-learning" data-from="input-signal" data-to="learning-loop" data-relation-kind="feeds" data-semantic="Input signal feeds learning">Input signal feeds learning</span><span class="semantic-relation" data-diagram-relation-id="learning-output" data-from="learning-loop" data-to="output-value" data-relation-kind="improves" data-semantic="Learning improves output value">Learning improves output value</span><span class="semantic-relation" data-diagram-relation-id="value-output" data-from="value-5" data-to="output-value" data-relation-kind="produces" data-semantic="Value 5 produces output value">Value 5 produces output value</span><span class="semantic-relation" data-diagram-relation-id="output-feedback" data-from="output-value" data-to="value-1" data-relation-kind="feedback" data-semantic="Output value feeds back to value 1">Output value feeds back to value 1</span></section>
   </div>
   <details class="diagram-fallback" data-fallback-for="value-chain-map"><summary>Value Chain Map semantic fallback</summary><ol><li>Value 1 through value 5</li><li>Output feeds the learning loop back to value 1</li></ol></details>
   <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>

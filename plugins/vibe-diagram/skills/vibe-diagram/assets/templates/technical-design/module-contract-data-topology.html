@@ -24,13 +24,69 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-controls] { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 0 1rem; }
-[data-diagram-controls] button { min-block-size: 2.75rem; padding-inline: .8rem; }
-[data-diagram-controls] button[aria-pressed="true"] { outline: 2px solid currentColor; }
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .diagram-fallback { display: none; }
 
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
 }
 
@@ -42,6 +98,85 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
 }
 </style>
   <style data-template-contract="1">[data-diagram-id="module-contract-data-topology"]>[data-diagram-stage]{min-inline-size:60rem}.semantic-relation{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:48rem){[data-diagram-id="module-contract-data-topology"]>[data-diagram-stage]{min-inline-size:0}}</style>
@@ -57,7 +192,19 @@
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="module-contract-data-topology" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack">
     <section data-diagram-stage class="template-layout module-contract-data-topology" aria-label="Module contract data topology template canvas">
     <div id="module-boundary" class="slot core" data-diagram-node-id="module-boundary" data-semantic-role="technical-object" data-slot="module-boundary"><b>Module boundary</b><span>{{module-boundary}}</span></div><div id="api-contract" class="slot support" data-diagram-node-id="api-contract" data-semantic-role="technical-object" data-slot="api-contract"><b>API contract</b><span>{{api-contract}}</span></div><div id="data-structure" class="slot data" data-diagram-node-id="data-structure" data-semantic-role="technical-object" data-slot="data-structure"><b>Data structure</b><span>{{data-structure}}</span></div><div class="ops-row boundary" data-diagram-group-id="delivery-controls" data-semantic-role="delivery-controls" data-reading-guide="delivery controls"><div id="observability" class="slot ops" data-diagram-node-id="observability" data-semantic-role="technical-object" data-slot="observability"><b>Observability</b><span>{{observability}}</span></div><div id="test-matrix" class="slot data" data-diagram-node-id="test-matrix" data-semantic-role="technical-object" data-slot="test-matrix"><b>Test matrix</b><span>{{test-matrix}}</span></div><div id="release" class="slot support" data-diagram-node-id="release" data-semantic-role="technical-object" data-slot="release"><b>Release</b><span>{{release}}</span></div><div id="rollback" class="slot risk" data-diagram-node-id="rollback" data-semantic-role="technical-object" data-slot="rollback"><b>Rollback</b><span>{{rollback}}</span></div></div>
-  <span class="semantic-relation" data-diagram-relation-id="module-boundary-api-contract" data-from="module-boundary" data-to="api-contract" data-relation-kind="depends-on" data-semantic="module-boundary depends-on api-contract">module-boundary depends-on api-contract</span><span class="semantic-relation" data-diagram-relation-id="api-contract-data-structure" data-from="api-contract" data-to="data-structure" data-relation-kind="depends-on" data-semantic="api-contract depends-on data-structure">api-contract depends-on data-structure</span><span class="semantic-relation" data-diagram-relation-id="data-structure-observability" data-from="data-structure" data-to="observability" data-relation-kind="depends-on" data-semantic="data-structure depends-on observability">data-structure depends-on observability</span><span class="semantic-relation" data-diagram-relation-id="observability-test-matrix" data-from="observability" data-to="test-matrix" data-relation-kind="depends-on" data-semantic="observability depends-on test-matrix">observability depends-on test-matrix</span><span class="semantic-relation" data-diagram-relation-id="test-matrix-release" data-from="test-matrix" data-to="release" data-relation-kind="depends-on" data-semantic="test-matrix depends-on release">test-matrix depends-on release</span><span class="semantic-relation" data-diagram-relation-id="release-rollback" data-from="release" data-to="rollback" data-relation-kind="depends-on" data-semantic="release depends-on rollback">release depends-on rollback</span><span class="semantic-relation" data-diagram-relation-id="rollback-module" data-from="rollback" data-to="module-boundary" data-relation-kind="restores" data-semantic="rollback restores module-boundary">rollback restores module-boundary</span></section>
+    <section data-semantic-edge-ledger aria-label="Visible relationship paths">
+    <h2>Relationship paths</h2>
+    <div data-semantic-edge-grid>
+      <article data-semantic-edge data-diagram-visible-relation-id="module-boundary-api-contract" data-visible-relation-kind="edge" data-from="module-boundary" data-to="api-contract" data-relation-kind="depends-on"><span data-semantic-edge-route><b>module-boundary</b><i aria-hidden="true"></i><b>api-contract</b></span><span data-semantic-edge-label>module-boundary depends-on api-contract</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="api-contract-data-structure" data-visible-relation-kind="edge" data-from="api-contract" data-to="data-structure" data-relation-kind="depends-on"><span data-semantic-edge-route><b>api-contract</b><i aria-hidden="true"></i><b>data-structure</b></span><span data-semantic-edge-label>api-contract depends-on data-structure</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="data-structure-observability" data-visible-relation-kind="edge" data-from="data-structure" data-to="observability" data-relation-kind="depends-on"><span data-semantic-edge-route><b>data-structure</b><i aria-hidden="true"></i><b>observability</b></span><span data-semantic-edge-label>data-structure depends-on observability</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="observability-test-matrix" data-visible-relation-kind="edge" data-from="observability" data-to="test-matrix" data-relation-kind="depends-on"><span data-semantic-edge-route><b>observability</b><i aria-hidden="true"></i><b>test-matrix</b></span><span data-semantic-edge-label>observability depends-on test-matrix</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="test-matrix-release" data-visible-relation-kind="edge" data-from="test-matrix" data-to="release" data-relation-kind="depends-on"><span data-semantic-edge-route><b>test-matrix</b><i aria-hidden="true"></i><b>release</b></span><span data-semantic-edge-label>test-matrix depends-on release</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="release-rollback" data-visible-relation-kind="edge" data-from="release" data-to="rollback" data-relation-kind="depends-on"><span data-semantic-edge-route><b>release</b><i aria-hidden="true"></i><b>rollback</b></span><span data-semantic-edge-label>release depends-on rollback</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="rollback-module" data-visible-relation-kind="edge" data-from="rollback" data-to="module-boundary" data-relation-kind="restores"><span data-semantic-edge-route><b>rollback</b><i aria-hidden="true"></i><b>module-boundary</b></span><span data-semantic-edge-label>rollback restores module-boundary</span></article>
+    </div>
+  </section>
+<span class="semantic-relation" data-diagram-relation-id="module-boundary-api-contract" data-from="module-boundary" data-to="api-contract" data-relation-kind="depends-on" data-semantic="module-boundary depends-on api-contract">module-boundary depends-on api-contract</span><span class="semantic-relation" data-diagram-relation-id="api-contract-data-structure" data-from="api-contract" data-to="data-structure" data-relation-kind="depends-on" data-semantic="api-contract depends-on data-structure">api-contract depends-on data-structure</span><span class="semantic-relation" data-diagram-relation-id="data-structure-observability" data-from="data-structure" data-to="observability" data-relation-kind="depends-on" data-semantic="data-structure depends-on observability">data-structure depends-on observability</span><span class="semantic-relation" data-diagram-relation-id="observability-test-matrix" data-from="observability" data-to="test-matrix" data-relation-kind="depends-on" data-semantic="observability depends-on test-matrix">observability depends-on test-matrix</span><span class="semantic-relation" data-diagram-relation-id="test-matrix-release" data-from="test-matrix" data-to="release" data-relation-kind="depends-on" data-semantic="test-matrix depends-on release">test-matrix depends-on release</span><span class="semantic-relation" data-diagram-relation-id="release-rollback" data-from="release" data-to="rollback" data-relation-kind="depends-on" data-semantic="release depends-on rollback">release depends-on rollback</span><span class="semantic-relation" data-diagram-relation-id="rollback-module" data-from="rollback" data-to="module-boundary" data-relation-kind="restores" data-semantic="rollback restores module-boundary">rollback restores module-boundary</span></section>
   </div>
   <details class="diagram-fallback" data-fallback-for="module-contract-data-topology"><summary>Module Contract Data Topology reading order</summary><ol><li>module-boundary</li><li>api-contract</li><li>data-structure</li><li>observability</li><li>test-matrix</li><li>release</li><li>rollback</li></ol></details>
   <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>

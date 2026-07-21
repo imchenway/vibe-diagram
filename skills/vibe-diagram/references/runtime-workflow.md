@@ -51,6 +51,42 @@ Give every major node one role, every connector one direction, and every visual 
 
 Copy the selected HTML template, preserve `data-diagram-type`, `data-template-family`, `data-template-id`, `data-template-layout`, responsive structure, and slot/macro bindings, then replace visible content. Add local structure only when existing slots cannot express the verified model.
 
+## Global generation requirements
+
+These requirements apply to every diagram family. They define generation discipline, not one universal drawing grammar. A family reference or policy owns family-specific fields and budgets; each template owns its topology, coordinates, slots, and permitted visual primitives.
+
+### G1 — Evidence status and uncertainty
+
+Separate observed facts, supported inferences, proposed design, and unresolved questions. Never complete missing modules, endpoints, permissions, timing, or root causes merely to make a diagram look complete.
+
+### G2 — Structured and visible relationships
+
+Give every important object, relationship, direction, and boundary a stable identity, and bind each authored relationship to a visible encoding in the primary artifact. Hidden metadata alone is not a diagram.
+
+### G3 — Primary path and layered evidence
+
+Expose the conclusion and primary reading path first. Place concise evidence beside the object or transition it supports, then place the complete evidence ledger later. Interactive disclosure may enhance access but must not be the only carrier of a fact.
+
+### G4 — Stable, collision-free visual encoding
+
+Use each shape, line style, and color for one stable meaning. Color must never be the only signal. Keep connectors out of labels, anchor arrows to object edges, and use deliberate whitespace or a label mask where a route crosses text.
+
+### G5 — Readability without unlimited shrinking
+
+Keep essential text readable. When the viewport or complexity budget is exceeded, prefer reflow, scoped scrolling, or mapped overview/detail views. Show controls only when useful, but keep their size, pressed state, focus state, and status treatment consistent whenever they appear.
+
+### G6 — Equivalent fallback across environments
+
+Preserve the same core identities, directions, boundaries, ordering, and evidence on mobile, keyboard, touch, reduced-motion, no-JavaScript, print, and enhancement-failure paths. Avoid page-level horizontal overflow and do not replace the primary model with an unrelated summary.
+
+### G7 — Complexity requires mapped decomposition
+
+Apply the trusted family budget. When it is exceeded, produce explicitly mapped overview and detail artifacts. Do not conceal overload by hiding content, merging distinct identities, or reducing essential text below the reading floor.
+
+### G8 — Self-evidencing single-file delivery
+
+Keep the artifact self-contained, free of remote runtime dependencies, and traceable to its template identity. Validate a minimal fixture, the formal linter, representative desktop and mobile rendering when client execution is authorized, and exact collection coverage. State static and runtime evidence separately.
+
 ## Layout, arrows, and collision control
 
 Lay out the main path before secondary evidence. Keep arrows outside label boxes, route branches through explicit junctions, and avoid crossings through nodes. Prefer vertical scrolling on narrow screens; never solve density by shrinking essential text below readable size.

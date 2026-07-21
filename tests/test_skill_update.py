@@ -66,11 +66,11 @@ def _write_archive(path: Path, skill: Path, version: str) -> None:
 
 
 class SkillUpdateTests(unittest.TestCase):
-    def test_repository_and_installed_versions_are_v013(self) -> None:
-        self.assertEqual("0.1.3", (ROOT / "VERSION").read_text(encoding="ascii").strip())
-        self.assertEqual("0.1.3", (SKILL_ROOT / "VERSION").read_text(encoding="ascii").strip())
+    def test_repository_skill_and_manifest_versions_are_consistent(self) -> None:
+        version = (ROOT / "VERSION").read_text(encoding="ascii").strip()
+        self.assertEqual(version, (SKILL_ROOT / "VERSION").read_text(encoding="ascii").strip())
         manifest = json.loads((SKILL_ROOT / "update.json").read_text(encoding="utf-8"))
-        self.assertEqual(_manifest_for(SKILL_ROOT, "0.1.3"), manifest)
+        self.assertEqual(_manifest_for(SKILL_ROOT, version), manifest)
 
     def test_strict_version_comparison(self) -> None:
         self.assertLess(UPDATE.parse_version("0.1.1"), UPDATE.parse_version("0.1.2"))
