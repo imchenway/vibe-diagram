@@ -29,4 +29,9 @@ Sequence contract version: `1`.
 - In auto width, use the viewport only when horizontal overflow exists; then expose `Fit width`, `75%`, `90%`, and `100%`. Keep essential text at or above `12 CSS px` after scaling.
 - In auto height, create internal vertical scrolling and a `sticky participant header` only beyond `clamp(520px, 75vh, 900px)`.
 - When a canvas exceeds `12 semantic participants`, `40 primary sequence messages`, or `4 major sequence phases`, provide an `overview sequence` and mapped `detail sequence` diagrams. The renderer must not merge semantically different participants.
+- Optionally group related participants with stable `data-participant-group-id` values without merging their individual identities.
+- Give every primary message a unique, ordered `data-sequence-step-index` when the sequence uses explicit step numbering.
+- Wrap transaction, optional, retry, alternative, or explanatory regions with both `data-sequence-fragment-id` and `data-sequence-fragment-kind`. Allowed kinds are `tx`, `opt`, `loop`, `alt`, and `group`; the author chooses the kind from verified behavior.
+- Encode terminal or branch results with `data-sequence-outcome="success|failure|partial|empty"`, and bind local risk annotations through stable `data-sequence-risk-id` values.
+- Use `data-sequence-evidence-for` to link a local claim to a matching `data-sequence-evidence-id` on native `details`. JavaScript may open and focus the evidence, but the evidence must remain readable without it and must expand for print.
 - Provide a sequential mobile ledger, a readable no-JavaScript baseline, and print expansion that removes sticky positioning, transforms, fixed heights, and clipping.

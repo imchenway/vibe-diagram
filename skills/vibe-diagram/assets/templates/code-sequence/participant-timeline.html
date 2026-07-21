@@ -69,6 +69,27 @@
     .participant-timeline [data-participant-id="coordinator"] { --participant-accent: var(--blue); }
     .participant-timeline [data-participant-id="service"] { --participant-accent: var(--green); }
     .participant-timeline [data-participant-id="store"] { --participant-accent: var(--amber); }
+    .participant-timeline [data-participant-group-id] {
+      min-width: 0;
+      border: 1px dashed rgba(98, 84, 173, .34);
+      border-radius: 17px;
+      padding: 8px;
+      background: rgba(241, 239, 255, .38);
+    }
+    .participant-timeline [data-participant-group-label] {
+      display: block;
+      margin: 0 0 7px;
+      color: var(--violet);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .participant-timeline [data-participant-group-members] {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
     .participant-timeline [data-participant-id] {
       position: relative;
       min-height: 68px;
@@ -105,8 +126,8 @@
       grid-column: var(--sequence-start, 1) / span var(--sequence-span, 2);
       min-height: 86px;
       display: grid;
-      grid-template-columns: auto 1fr;
-      grid-template-areas: "kind route" "description description";
+      grid-template-columns: 2rem auto 1fr;
+      grid-template-areas: "step kind route" "description description description";
       align-content: start;
       gap: 4px 8px;
       padding: 8px 18px 26px;
@@ -162,6 +183,19 @@
       font-weight: 800;
       line-height: 1.35;
     }
+    .participant-timeline [data-sequence-message] [data-sequence-step-index-label] {
+      grid-area: step;
+      display: grid;
+      place-items: center;
+      inline-size: 1.8rem;
+      block-size: 1.8rem;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--message-color);
+      font-size: 11px;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+    }
     .participant-timeline [data-sequence-description] {
       grid-area: description;
       color: var(--muted);
@@ -169,12 +203,88 @@
       line-height: 1.45;
       overflow-wrap: anywhere;
     }
+    .participant-timeline [data-sequence-fragment-id] {
+      position: relative;
+      margin-block: 10px;
+      border: 1px dashed rgba(141, 179, 216, .78);
+      border-radius: 16px;
+      padding-inline: 10px;
+      background: rgba(255, 255, 255, .46);
+    }
+    .participant-timeline [data-sequence-fragment-kind="tx"] {
+      border-color: rgba(152, 101, 6, .56);
+      background: rgba(255, 246, 222, .38);
+    }
+    .participant-timeline [data-sequence-fragment-kind="alt"] {
+      border-color: rgba(166, 58, 58, .42);
+      background: rgba(255, 240, 240, .34);
+    }
+    .participant-timeline [data-sequence-fragment-label] {
+      grid-column: 1 / -1;
+      width: max-content;
+      margin: -10px 0 6px;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      padding: 2px 8px;
+      color: var(--violet);
+      background: var(--paper);
+      font-size: 11px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+    .participant-timeline [data-sequence-risk-id] {
+      grid-column: 1 / -1;
+      margin: 4px 8px 12px;
+      border-inline-start: 4px solid var(--amber);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #62460b;
+      background: var(--amber-soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .participant-timeline [data-sequence-evidence-for] {
+      color: inherit;
+      font-weight: 800;
+      text-underline-offset: 3px;
+    }
+    .participant-timeline [data-sequence-outcome-strip] {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 6px 8px 12px;
+    }
+    .participant-timeline [data-sequence-outcome] {
+      border: 1px solid rgba(141, 179, 216, .54);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .participant-timeline [data-sequence-outcome="success"] {
+      border-color: rgba(23, 120, 90, .42);
+      background: var(--green-soft);
+    }
+    .participant-timeline [data-sequence-outcome="failure"] {
+      border-color: rgba(166, 58, 58, .42);
+      background: var(--red-soft);
+    }
+    [data-sequence-evidence-id] {
+      margin-block-start: 14px;
+      border: 1px solid rgba(141, 179, 216, .5);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, .86);
+    }
+    [data-sequence-evidence-id] summary { cursor: pointer; font-weight: 800; }
     @media (max-width: 780px) {
       .participant-timeline [data-participant-id]::after { display: none; }
       .participant-timeline [data-sequence-message] {
         display: grid;
-        grid-template-columns: auto 1fr;
-        grid-template-areas: "kind route" "description description";
+        grid-template-columns: 2rem auto 1fr;
+        grid-template-areas: "step kind route" "description description description";
         min-height: 0;
         margin: 0 0 10px;
         border: 1px solid rgba(141, 179, 216, .5);
@@ -184,6 +294,8 @@
       }
       .participant-timeline [data-sequence-message]::before,
       .participant-timeline [data-sequence-message]::after { display: none; }
+      .participant-timeline [data-participant-group-members],
+      .participant-timeline [data-sequence-outcome-strip] { grid-template-columns: 1fr; }
     }
     .notes {
       max-width: 70ch;
@@ -327,6 +439,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {
@@ -421,44 +548,62 @@
          aria-label="Scrollable participant timeline">
       <div class="sequence-stage" data-sequence-stage>
         <header class="sequence-participants" data-sequence-participants>
-          <div data-participant-id="caller" data-slot="actor-1">
-            <strong>Caller</strong><span>{{actor-1}}</span>
+          <div data-participant-group-id="entry-coordination" style="grid-column:1 / span 2">
+            <span data-participant-group-label>Entry and coordination</span>
+            <div data-participant-group-members>
+              <div data-participant-id="caller" data-slot="actor-1">
+                <strong>Caller</strong><span>{{actor-1}}</span>
+              </div>
+              <div data-participant-id="coordinator" data-slot="actor-2">
+                <strong>Coordinator</strong><span>{{actor-2}}</span>
+              </div>
+            </div>
           </div>
-          <div data-participant-id="coordinator" data-slot="actor-2">
-            <strong>Coordinator</strong><span>{{actor-2}}</span>
-          </div>
-          <div data-participant-id="service" data-slot="actor-3">
-            <strong>Service</strong><span>{{actor-3}}</span>
-          </div>
-          <div data-participant-id="store" data-slot="actor-4">
-            <strong>Store</strong><span>{{actor-4}}</span>
+          <div data-participant-group-id="execution-state" style="grid-column:3 / span 2">
+            <span data-participant-group-label>Execution and state</span>
+            <div data-participant-group-members>
+              <div data-participant-id="service" data-slot="actor-3">
+                <strong>Service</strong><span>{{actor-3}}</span>
+              </div>
+              <div data-participant-id="store" data-slot="actor-4">
+                <strong>Store</strong><span>{{actor-4}}</span>
+              </div>
+            </div>
           </div>
         </header>
 
         <div class="sequence-messages">
-          <section data-sequence-phase-id="request">
+          <section data-sequence-phase-id="request" data-sequence-fragment-id="request-group"
+                   data-sequence-fragment-kind="group">
+            <span data-sequence-fragment-label>group</span>
             <span data-sequence-phase-label>Request</span>
             <article data-sequence-message data-from="caller" data-to="coordinator"
                      data-message-kind="sync" data-semantic="submit-request"
+                     data-sequence-step-index="01"
                      style="--sequence-start:1;--sequence-span:2" data-slot="call-1">
+              <span data-sequence-step-index-label>01</span>
               <span data-sequence-route>Caller → Coordinator</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{call-1}}</span>
             </article>
             <article data-sequence-message data-from="coordinator" data-to="service"
                      data-message-kind="sync" data-semantic="dispatch-request"
-                     style="--sequence-start:2;--sequence-span:2">
+                     data-sequence-step-index="02" style="--sequence-start:2;--sequence-span:2">
+              <span data-sequence-step-index-label>02</span>
               <span data-sequence-route>Coordinator → Service</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>Dispatch the validated operation.</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="processing">
+          <section data-sequence-phase-id="processing" data-sequence-fragment-id="state-transaction"
+                   data-sequence-fragment-kind="tx">
+            <span data-sequence-fragment-label>tx</span>
             <span data-sequence-phase-label>Processing</span>
             <article data-sequence-message data-from="service" data-to="store"
                      data-message-kind="sync" data-semantic="persist-state"
-                     style="--sequence-start:3;--sequence-span:2">
+                     data-sequence-step-index="03" style="--sequence-start:3;--sequence-span:2">
+              <span data-sequence-step-index-label>03</span>
               <span data-sequence-route>Service → Store</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>Persist the operation state.</span>
@@ -466,18 +611,27 @@
             <article data-sequence-message data-from="store" data-to="service"
                      data-message-kind="return" data-semantic="state-confirmed"
                      data-direction="reverse" style="--sequence-start:3;--sequence-span:2"
-                     data-slot="return-1">
+                     data-sequence-step-index="04" data-slot="return-1">
+              <span data-sequence-step-index-label>04</span>
               <span data-sequence-route>Store → Service</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>{{return-1}}</span>
             </article>
+            <aside data-sequence-risk-id="transaction-side-effects">
+              Transaction side effects and failure boundaries must stay explicit.
+              <a href="#participant-timeline-evidence" data-sequence-evidence-for="participant-timeline-evidence">Evidence contract</a>
+            </aside>
           </section>
 
-          <section data-sequence-phase-id="outcome">
+          <section data-sequence-phase-id="outcome" data-sequence-fragment-id="result-alternatives"
+                   data-sequence-fragment-kind="alt">
+            <span data-sequence-fragment-label>alt</span>
             <span data-sequence-phase-label>Outcome</span>
             <article data-sequence-message data-from="service" data-to="coordinator"
                      data-message-kind="return" data-semantic="operation-complete"
-                     data-direction="reverse" style="--sequence-start:2;--sequence-span:2">
+                     data-direction="reverse" data-sequence-step-index="05"
+                     style="--sequence-start:2;--sequence-span:2">
+              <span data-sequence-step-index-label>05</span>
               <span data-sequence-route>Service → Coordinator</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>Return the final operation result.</span>
@@ -485,18 +639,28 @@
             <article data-sequence-message data-from="coordinator" data-to="caller"
                      data-message-kind="error" data-semantic="failure-response"
                      data-direction="reverse" style="--sequence-start:1;--sequence-span:2"
-                     data-slot="exception-1">
+                     data-sequence-step-index="06" data-slot="exception-1">
+              <span data-sequence-step-index-label>06</span>
               <span data-sequence-route>Coordinator → Caller</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>{{exception-1}}</span>
             </article>
+            <div data-sequence-outcome-strip aria-label="Sequence outcomes">
+              <article data-sequence-outcome="success"><strong>Success</strong><br />The confirmed result returns through the coordinator.</article>
+              <article data-sequence-outcome="failure"><strong>Failure</strong><br />The caller receives an explicit error result.</article>
+            </div>
           </section>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="notes" data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
+  <section class="notes" data-slot="evidence-and-notes">{{evidence_and_notes}}
+    <details id="participant-timeline-evidence" data-sequence-evidence-id="participant-timeline-evidence">
+      <summary>Evidence and uncertainty contract</summary>
+      <p>Keep verified anchors, unresolved questions, and future design claims readable without JavaScript. Runtime dialogs may enhance this native detail but must not replace it.</p>
+    </details>
+  </section>
 </main>
 
 <script data-sequence-kernel="1">

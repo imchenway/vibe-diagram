@@ -12,31 +12,28 @@ permissions:
   contents: read
 
 jobs:
-  tests:
+  release-verify:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - "3.9"
-          - "3.14"
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - id: python39
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
-
-  static:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+          python-version: "3.9"
+      - id: python314
+        uses: actions/setup-python@v5
         with:
           python-version: "3.14"
-      - name: Verify static state
+      - name: Run read-only release verification
+        env:
+          RELEASE_STATE_DIR: ${{ runner.temp }}/vibe-diagram-release
         run: |
-          PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --check
+          PYTHONDONTWRITEBYTECODE=1 "${{ steps.python314.outputs.python-path }}" \
+            scripts/release_github_skill.py verify \
+            --version "$(tr -d '\n' < VERSION)" \
+            --current-python "${{ steps.python314.outputs.python-path }}" \
+            --state-dir "$RELEASE_STATE_DIR" \
+            --json
           git diff --exit-code
           test -z "$(git status --porcelain)"
           test -z "$(git ls-files --others --ignored --exclude-standard)"

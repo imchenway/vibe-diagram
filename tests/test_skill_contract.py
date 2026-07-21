@@ -28,7 +28,8 @@ REFERENCE_NAMES = (
     "technical-design.md",
 )
 RUNTIME_WORKFLOW_NAME = "runtime-workflow.md"
-ALL_REFERENCE_NAMES = (*REFERENCE_NAMES, RUNTIME_WORKFLOW_NAME)
+ADAPTIVE_REFERENCE_NAME = "adaptive-readability.md"
+ALL_REFERENCE_NAMES = (*REFERENCE_NAMES, ADAPTIVE_REFERENCE_NAME, RUNTIME_WORKFLOW_NAME)
 SEQUENCE_REFERENCE_NAMES = {
     "code-sequence.md",
     "fault-debugging.md",
@@ -176,11 +177,38 @@ class SkillContractTests(unittest.TestCase):
         for digest in baseline["references"].values():
             self.assertRegex(digest, r"^[0-9a-f]{64}$")
 
+    def test_adaptive_reference_keeps_runtime_and_semantics_separate(self) -> None:
+        text = (REFERENCE_ROOT / ADAPTIVE_REFERENCE_NAME).read_text(encoding="utf-8")
+        for token in (
+            "adaptive-viewport@1",
+            "semantic-relations@1",
+            "progressive disclosure",
+            "family-policies.json",
+            "must not infer families",
+            "data-fallback-for",
+        ):
+            self.assertIn(token, text.lower())
+
     def test_artifact_contract_is_html_first(self) -> None:
         text = _read_runtime_workflow()
         self.assertIn("self-contained single-file HTML", text)
         self.assertRegex(text, r"PNG.*SVG.*explicitly requests")
         self.assertIn("must not replace the HTML artifact", text)
+
+    def test_runtime_workflow_separates_eight_global_rules_from_family_fields(self) -> None:
+        section = _read_runtime_workflow().split(
+            "## Global generation requirements", 1
+        )[1].split("\n## ", 1)[0]
+        for rule in range(1, 9):
+            self.assertIn(f"### G{rule}", section)
+        for family_field in (
+            "data-participant-id",
+            "data-message-kind",
+            "data-diagram-visible-relation-id",
+        ):
+            self.assertNotIn(family_field, section)
+        self.assertIn("family reference or policy", section)
+        self.assertIn("template", section)
 
     def test_delivery_branches_only_on_capabilities(self) -> None:
         section = _read_runtime_workflow().split("## Capability-based delivery", 1)[1].split("\n## ", 1)[0]
@@ -258,6 +286,42 @@ class SkillContractTests(unittest.TestCase):
             for token in ("12 semantic participants", "40 primary sequence messages", "4 major sequence phases", "overview sequence", "detail sequence"):
                 self.assertIn(token, text)
             self.assertIn("must not merge semantically different participants", text)
+
+    def test_sequence_references_define_optional_composition_primitives(self) -> None:
+        for name in SEQUENCE_REFERENCE_NAMES:
+            text = (REFERENCE_ROOT / name).read_text(encoding="utf-8")
+            for token in (
+                "data-participant-group-id",
+                "data-sequence-step-index",
+                "data-sequence-fragment-id",
+                "data-sequence-fragment-kind",
+                "tx",
+                "opt",
+                "loop",
+                "alt",
+                "group",
+                "data-sequence-outcome",
+                "data-sequence-risk-id",
+                "data-sequence-evidence-for",
+                "data-sequence-evidence-id",
+                "native `details`",
+            ):
+                with self.subTest(name=name, token=token):
+                    self.assertIn(token, text)
+
+    def test_system_reference_requires_real_visible_topology(self) -> None:
+        text = (REFERENCE_ROOT / "system-architecture.md").read_text(encoding="utf-8")
+        for token in (
+            "real SVG architecture canvas",
+            "data-diagram-visible-relation-id",
+            "system boundary",
+            "landmark",
+            "legend",
+            "label mask",
+            "semantic mobile fallback",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, text)
 
     def test_sequence_references_forbid_visible_text_route_parsing(self) -> None:
         for name in SEQUENCE_REFERENCE_NAMES:

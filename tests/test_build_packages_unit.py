@@ -250,6 +250,7 @@ class BuildPackagesUnitTests(unittest.TestCase):
             "scripts/build_packages.py",
             "contracts/template_migration_baseline.json",
             "contracts/reference_migration_baseline.json",
+            "contracts/interaction_contract_baseline.json",
         )
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)
@@ -348,14 +349,22 @@ class BuildPackagesUnitTests(unittest.TestCase):
     def test_contract_loaders_validate_current_frozen_contracts(self) -> None:
         template = load_template_contract(ROOT)
         reference = load_reference_contract(ROOT)
-        self.assertEqual(2, template["schema_version"])
+        self.assertEqual(3, template["schema_version"])
         self.assertEqual(58, len(template["templates"]))
         changed = [
             path
             for path, entry in template["templates"].items()
             if entry["source"] != entry["canonical"]
         ]
-        self.assertEqual(6, len(changed))
+        migrated = {
+            path
+            for paths in template["interaction_migration_batches"].values()
+            for path in paths
+        }
+        self.assertEqual(
+            set(template["sequence_redesign_allowlist"]) | migrated,
+            set(changed),
+        )
         self.assertEqual(1, reference["schema_version"])
         self.assertEqual(11, len(reference["references"]))
 
@@ -378,12 +387,8 @@ class BuildPackagesUnitTests(unittest.TestCase):
             _copy_valid_repository(bad_change)
             path = bad_change / "contracts" / "template_migration_baseline.json"
             contract = json.loads(path.read_text(encoding="utf-8"))
-            unchanged_path = next(
-                name
-                for name, entry in contract["templates"].items()
-                if entry["source"] == entry["canonical"]
-            )
-            contract["templates"][unchanged_path]["canonical"]["file_sha256"] = "0" * 64
+            migrated_path = contract["interaction_migration_batches"]["B01"][0]
+            contract["templates"][migrated_path]["change_reason"] = None
             _write_json(path, contract)
             with self.assertRaises(ValidationError):
                 load_template_contract(bad_change)
@@ -449,25 +454,25 @@ class BuildPackagesUnitTests(unittest.TestCase):
                 source_snapshot_drift / "contracts" / "template_migration_baseline.json"
             )
             contract = json.loads(contract_path.read_text(encoding="utf-8"))
-            relative = next(
-                name
-                for name, entry in contract["templates"].items()
-                if entry["source"] == entry["canonical"]
-            )
+            relative = next(iter(contract["templates"]))
             contract["templates"][relative]["source"]["file_sha256"] = "0" * 64
-            contract["templates"][relative]["canonical"]["file_sha256"] = "0" * 64
             _write_json(contract_path, contract)
             with self.assertRaises(ValidationError):
                 load_template_contract(source_snapshot_drift)
 
     def test_canonical_file_map_is_relative_complete_and_rejects_symlinks(self) -> None:
         files = canonical_file_map(ROOT)
-        self.assertEqual(75, len(files))
+        self.assertEqual(82, len(files))
         self.assertIn(PurePosixPath("SKILL.md"), files)
         self.assertIn(PurePosixPath("VERSION"), files)
         self.assertIn(PurePosixPath("update.json"), files)
         self.assertIn(PurePosixPath("scripts/update_skill.py"), files)
         self.assertIn(PurePosixPath("references/runtime-workflow.md"), files)
+        self.assertIn(
+            PurePosixPath("assets/contracts/semantic-relations/v1.css"), files
+        )
+        self.assertIn(PurePosixPath("references/adaptive-readability.md"), files)
+        self.assertIn(PurePosixPath("contracts/family-policies.json"), files)
         self.assertIn(
             PurePosixPath("assets/templates/code-sequence/participant-timeline.html"), files
         )

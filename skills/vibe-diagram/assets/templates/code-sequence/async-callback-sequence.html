@@ -336,6 +336,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {
@@ -445,18 +460,21 @@
         </header>
 
         <div class="sequence-messages">
-          <section data-sequence-phase-id="publish">
+          <section data-sequence-phase-id="publish" data-sequence-fragment-id="publish-group"
+                   data-sequence-fragment-kind="group">
             <span data-sequence-phase-label>Publish</span>
             <article data-sequence-message data-from="producer" data-to="broker"
                      data-message-kind="async" data-semantic="publish"
-                     style="--sequence-start:1;--sequence-span:2" data-slot="topic">
+                     style="--sequence-start:1;--sequence-span:2" data-slot="topic" data-sequence-step-index="01">
+              <span data-sequence-step-index-label>01</span>
               <span data-sequence-route>Producer → Broker</span>
               <span data-sequence-kind>async</span>
               <span data-sequence-description>{{topic}}</span>
             </article>
             <article data-sequence-message data-from="broker" data-to="producer"
                      data-message-kind="return" data-semantic="publish-acknowledged"
-                     data-direction="reverse" style="--sequence-start:1;--sequence-span:2">
+                     data-direction="reverse" style="--sequence-start:1;--sequence-span:2" data-sequence-step-index="02">
+              <span data-sequence-step-index-label>02</span>
               <span data-sequence-route>Broker → Producer</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>Confirm durable publication.</span>
@@ -467,7 +485,8 @@
             <span data-sequence-phase-label>Delivery</span>
             <article data-sequence-message data-from="broker" data-to="consumer"
                      data-message-kind="async" data-semantic="delivery"
-                     style="--sequence-start:2;--sequence-span:2" data-slot="delivery">
+                     style="--sequence-start:2;--sequence-span:2" data-slot="delivery" data-sequence-step-index="03">
+              <span data-sequence-step-index-label>03</span>
               <span data-sequence-route>Broker → Consumer</span>
               <span data-sequence-kind>async</span>
               <span data-sequence-description>{{delivery}}</span>
@@ -475,25 +494,29 @@
             <article data-sequence-message data-from="consumer" data-to="broker"
                      data-message-kind="return" data-semantic="delivery-acknowledged"
                      data-direction="reverse" style="--sequence-start:2;--sequence-span:2"
-                     data-slot="consumer">
+                     data-slot="consumer" data-sequence-step-index="04">
+              <span data-sequence-step-index-label>04</span>
               <span data-sequence-route>Consumer → Broker</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>{{consumer}}</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="callback" data-callback-band>
+          <section data-sequence-phase-id="callback" data-callback-band
+                   data-sequence-fragment-id="callback-group" data-sequence-fragment-kind="group">
             <span data-sequence-phase-label>Callback</span>
             <article data-sequence-message data-from="consumer" data-to="receiver"
                      data-message-kind="async" data-semantic="callback"
-                     style="--sequence-start:3;--sequence-span:2" data-slot="callback">
+                     style="--sequence-start:3;--sequence-span:2" data-slot="callback" data-sequence-step-index="05">
+              <span data-sequence-step-index-label>05</span>
               <span data-sequence-route>Consumer → Callback receiver</span>
               <span data-sequence-kind>async</span>
               <span data-sequence-description>{{callback}}</span>
             </article>
             <article data-sequence-message data-from="broker" data-to="producer"
                      data-message-kind="error" data-semantic="callback-timeout"
-                     data-direction="reverse" style="--sequence-start:1;--sequence-span:2">
+                     data-direction="reverse" style="--sequence-start:1;--sequence-span:2" data-sequence-step-index="06">
+              <span data-sequence-step-index-label>06</span>
               <span data-sequence-route>Broker → Producer</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>Report a callback timeout.</span>

@@ -26,6 +26,7 @@ ROOT_KEYS = frozenset(
         "signature_algorithm",
         "source_contract_sha256",
         "sequence_redesign_allowlist",
+        "interaction_migration_batches",
         "templates",
     }
 )
@@ -165,7 +166,7 @@ class CanonicalInventoryTests(unittest.TestCase):
         self.assertTrue(CONTRACT_PATH.is_file())
         contract = _contract()
         self.assertEqual(ROOT_KEYS, frozenset(contract))
-        self.assertEqual(2, contract["schema_version"])
+        self.assertEqual(3, contract["schema_version"])
         self.assertEqual("htmlparser-events-v1", contract["signature_algorithm"])
         self.assertEqual(SOURCE_CONTRACT_SHA256, contract["source_contract_sha256"])
         self.assertEqual(list(SEQUENCE_REDESIGN_PATHS), contract["sequence_redesign_allowlist"])
@@ -207,8 +208,13 @@ class CanonicalInventoryTests(unittest.TestCase):
     def test_migration_and_sequence_allowlist_rules(self) -> None:
         contract = _contract()
         allowlist = set(SEQUENCE_REDESIGN_PATHS)
+        migrated = {
+            relative
+            for paths in contract["interaction_migration_batches"].values()
+            for relative in paths
+        }
         for relative, entry in contract["templates"].items():
-            if relative not in allowlist:
+            if relative not in allowlist | migrated:
                 self.assertEqual(entry["source"], entry["canonical"], relative)
                 self.assertIsNone(entry["change_reason"], relative)
             elif entry["source"] == entry["canonical"]:
@@ -217,19 +223,24 @@ class CanonicalInventoryTests(unittest.TestCase):
                 self.assertIsInstance(entry["change_reason"], str, relative)
                 self.assertTrue(entry["change_reason"].strip(), relative)
 
-    def test_exactly_six_sequence_templates_have_approved_structure_changes(self) -> None:
+    def test_only_approved_sequence_and_interaction_templates_change(self) -> None:
         contract = _contract()
         changed = {
             relative
             for relative, entry in contract["templates"].items()
             if entry["source"] != entry["canonical"]
         }
-        self.assertEqual(set(SEQUENCE_REDESIGN_PATHS), changed)
+        migrated = {
+            relative
+            for paths in contract["interaction_migration_batches"].values()
+            for relative in paths
+        }
+        self.assertEqual(set(SEQUENCE_REDESIGN_PATHS) | migrated, changed)
         self.assertTrue(
             all(
                 contract["templates"][relative]["change_reason"]
                 == "approved sequence interaction kernel and structured endpoint redesign"
-                for relative in changed
+                for relative in SEQUENCE_REDESIGN_PATHS
             )
         )
 

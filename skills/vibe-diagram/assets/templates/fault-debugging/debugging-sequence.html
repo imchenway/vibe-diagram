@@ -340,6 +340,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {
@@ -453,63 +468,73 @@
             <span data-sequence-phase-label>Observed symptom</span>
             <article data-sequence-message data-from="client" data-to="gateway"
                      data-message-kind="sync" data-semantic="symptom"
-                     style="--sequence-start:1;--sequence-span:2" data-slot="symptom">
+                     style="--sequence-start:1;--sequence-span:2" data-slot="symptom" data-sequence-step-index="01">
+              <span data-sequence-step-index-label>01</span>
               <span data-sequence-route>Client → Gateway</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{symptom}}</span>
             </article>
             <article data-sequence-message data-from="gateway" data-to="model"
                      data-message-kind="sync" data-semantic="request-model"
-                     style="--sequence-start:2;--sequence-span:2">
+                     style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="02">
+              <span data-sequence-step-index-label>02</span>
               <span data-sequence-route>Gateway → Remote model</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>Send the classified request.</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="evidence">
+          <section data-sequence-phase-id="evidence" data-sequence-fragment-id="evidence-group"
+                   data-sequence-fragment-kind="group">
             <span data-sequence-phase-label>Evidence</span>
             <aside data-sequence-evidence>Runtime evidence is attached to this phase, not modeled as a participant.</aside>
             <article data-sequence-message data-from="model" data-to="gateway"
                      data-message-kind="error" data-semantic="evidence"
                      data-direction="reverse" style="--sequence-start:2;--sequence-span:2"
-                     data-slot="evidence">
+                     data-slot="evidence" data-sequence-step-index="03">
+              <span data-sequence-step-index-label>03</span>
               <span data-sequence-route>Remote model → Gateway</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>{{evidence}}</span>
             </article>
             <article data-sequence-message data-from="gateway" data-to="gateway"
                      data-message-kind="self" data-semantic="hypothesis"
-                     style="--sequence-start:2;--sequence-span:1" data-slot="hypothesis">
+                     style="--sequence-start:2;--sequence-span:1" data-slot="hypothesis" data-sequence-step-index="04">
+              <span data-sequence-step-index-label>04</span>
               <span data-sequence-route>Gateway → itself</span>
               <span data-sequence-kind>self</span>
               <span data-sequence-description>{{hypothesis}}</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="failure" data-failure-band>
+          <section data-sequence-phase-id="failure" data-failure-band
+                   data-sequence-fragment-id="failure-alternative" data-sequence-fragment-kind="alt">
             <span data-sequence-phase-label>Failure</span>
             <article data-sequence-message data-from="model" data-to="gateway"
                      data-message-kind="error" data-semantic="failure"
-                     data-direction="reverse" style="--sequence-start:2;--sequence-span:2">
+                     data-direction="reverse" style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="05">
+              <span data-sequence-step-index-label>05</span>
               <span data-sequence-route>Remote model → Gateway</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>Return a timeout or remote failure.</span>
             </article>
             <article data-sequence-message data-from="gateway" data-to="fallback"
                      data-message-kind="async" data-semantic="fix"
-                     style="--sequence-start:2;--sequence-span:3" data-slot="fix">
+                     style="--sequence-start:2;--sequence-span:3" data-slot="fix" data-sequence-step-index="06">
+              <span data-sequence-step-index-label>06</span>
               <span data-sequence-route>Gateway → Fallback</span>
               <span data-sequence-kind>async</span>
               <span data-sequence-description>{{fix}}</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="fallback" data-fallback-band>
+          <section data-sequence-phase-id="fallback" data-fallback-band
+                   data-sequence-fragment-id="fallback-alternative" data-sequence-fragment-kind="alt">
             <span data-sequence-phase-label>Fallback and verify</span>
             <article data-sequence-message data-from="fallback" data-to="gateway"
                      data-message-kind="return" data-semantic="fallback"
-                     data-direction="reverse" style="--sequence-start:2;--sequence-span:3">
+                     data-direction="reverse" style="--sequence-start:2;--sequence-span:3" data-sequence-step-index="07">
+              <span data-sequence-step-index-label>07</span>
               <span data-sequence-route>Fallback → Gateway</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>Return a deterministic fallback result.</span>
@@ -517,7 +542,8 @@
             <article data-sequence-message data-from="gateway" data-to="client"
                      data-message-kind="return" data-semantic="verify"
                      data-direction="reverse" style="--sequence-start:1;--sequence-span:2"
-                     data-slot="verify">
+                     data-slot="verify" data-sequence-step-index="08">
+              <span data-sequence-step-index-label>08</span>
               <span data-sequence-route>Gateway → Client</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>{{verify}}</span>

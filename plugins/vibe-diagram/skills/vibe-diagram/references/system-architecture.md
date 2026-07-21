@@ -23,6 +23,16 @@ Use this family for system boundaries, containers, components, deployment, data,
 
 Copy one primary template and replace its slots. Do not combine all views into one canvas or reduce them to the same generic grid.
 
+## Topology contract
+
+- Use a real SVG architecture canvas for the primary topology. HTML may provide controls, annotations, evidence, and fallback reading, but it must not substitute a card list for the architecture map.
+- Bind every authored relation to exactly one visible SVG path or line with `data-diagram-visible-relation-id`. The visible carrier must preserve the declared endpoints and relation kind; metadata-only relations are invalid.
+- Draw each system boundary explicitly and give every major region or actor a named landmark. Use boundaries for ownership, trust, runtime, network, and data scope rather than decorative grouping.
+- Provide a legend whenever line style, marker, color, or shape carries more than one meaning. Keep color supplementary and preserve direction through arrowheads or equivalent marks.
+- Route connectors around nodes, anchor them at object edges, and add a label mask or deliberate gap when a relation label overlays a path.
+- Provide a semantic mobile fallback that preserves landmarks, boundaries, endpoints, direction, and reading order. It may reflow into an ordered relation ledger, but it must not become an unrelated summary or micro-scaled desktop canvas.
+- Keep topology template-specific: context diagrams center a system boundary among people and external systems; workload overviews distinguish entry, core runtime, operations, data, and foundation. Other architecture templates retain their own deployment, network, integration, data, security, resilience, observability, or delivery grammar.
+
 ## Routing rules
 
 - Start from the question: context, runtime, data, integration, deployment, security, resilience, observability, or delivery.
@@ -35,4 +45,3 @@ Copy one primary template and replace its slots. Do not combine all views into o
 ## Evidence and scale
 
 Prefer verified component and interface names. If the source only supports a logical role, use that role and mark the missing implementation mapping. Use overview plus drill-down when a single view would require tiny labels, excessive crossings, or unrelated planes.
-

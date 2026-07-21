@@ -144,6 +144,33 @@ class SequenceTemplateTests(unittest.TestCase):
         self.assertEqual(1, len(canvases))
         self.assertNotIn("data-enhanced", canvases[0][1])
 
+    def test_participant_timeline_exposes_complex_composition_primitives(self) -> None:
+        parser = _SurfaceParser()
+        parser.feed(self.html)
+        parser.close()
+        messages = parser.with_attribute("data-sequence-message")
+        steps = parser.with_attribute("data-sequence-step-index")
+        self.assertEqual(len(messages), len(steps))
+        self.assertEqual(
+            len(messages), len(parser.with_attribute("data-sequence-step-index-label"))
+        )
+        self.assertGreaterEqual(len(parser.with_attribute("data-participant-group-id")), 2)
+        fragment_kinds = {
+            attrs.get("data-sequence-fragment-kind")
+            for _, attrs in parser.with_attribute("data-sequence-fragment-kind")
+        }
+        self.assertTrue({"group", "tx", "alt"}.issubset(fragment_kinds))
+        outcomes = {
+            attrs.get("data-sequence-outcome")
+            for _, attrs in parser.with_attribute("data-sequence-outcome")
+        }
+        self.assertTrue({"success", "failure"}.issubset(outcomes))
+        self.assertTrue(parser.with_attribute("data-sequence-outcome-strip"))
+        self.assertTrue(parser.with_attribute("data-sequence-risk-id"))
+        self.assertTrue(parser.with_attribute("data-sequence-evidence-id"))
+        self.assertTrue(parser.with_attribute("data-sequence-evidence-for"))
+        self.assertNotRegex(self.html, r"<dialog\b|role=\"dialog\"")
+
     def test_participant_timeline_has_adaptive_width_height_and_print_contract(self) -> None:
         self.assertEqual(1, len(re.findall(r'<style\s+data-sequence-kernel="1">', self.html)))
         self.assertEqual(1, len(re.findall(r'<script\s+data-sequence-kernel="1">', self.html)))
@@ -295,6 +322,41 @@ class SequenceTemplateTests(unittest.TestCase):
                         self.assertIn(kind, self.linter.SEQUENCE_MESSAGE_KINDS)
                         self.assertTrue(semantic)
 
+    def test_all_sequence_messages_have_visible_unique_step_indices(self) -> None:
+        for relative in SEQUENCE_TEMPLATE_PATHS:
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            parser = _SurfaceParser()
+            parser.feed(html)
+            parser.close()
+            messages = [attrs for _, attrs in parser.with_attribute("data-sequence-message")]
+            steps = [attrs.get("data-sequence-step-index", "") for attrs in messages]
+            with self.subTest(relative=relative):
+                self.assertTrue(messages)
+                self.assertTrue(all(re.fullmatch(r"\d{2,3}", step) for step in steps))
+                self.assertEqual(len(steps), len(parser.with_attribute("data-sequence-step-index-label")))
+
+    def test_sequence_templates_translate_fragments_to_their_own_grammar(self) -> None:
+        expected = {
+            "code-sequence/async-callback-sequence.html": {"group"},
+            "code-sequence/participant-timeline.html": {"group", "tx", "alt"},
+            "code-sequence/retry-exception-sequence.html": {"loop", "alt"},
+            "code-sequence/transaction-boundary-sequence.html": {"tx", "alt"},
+            "fault-debugging/debugging-sequence.html": {"group", "alt"},
+            "feature-iteration/current-target-sequence.html": {"group"},
+        }
+        for relative, required in expected.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            parser = _SurfaceParser()
+            parser.feed(html)
+            parser.close()
+            actual = {
+                attrs.get("data-sequence-fragment-kind")
+                for _, attrs in parser.with_attribute("data-sequence-fragment-kind")
+            }
+            with self.subTest(relative=relative):
+                self.assertTrue(required.issubset(actual), actual)
+                self.assertEqual([], self.linter.lint_sequence_contract(html))
+
     def test_all_sequence_templates_keep_mobile_no_js_and_print_fallbacks(self) -> None:
         for relative in SEQUENCE_TEMPLATE_PATHS:
             with self.subTest(relative=relative):
@@ -320,16 +382,21 @@ class SequenceTemplateTests(unittest.TestCase):
             for relative, entry in contract["templates"].items()
             if entry["source"] != entry["canonical"]
         }
-        self.assertEqual(set(SEQUENCE_TEMPLATE_PATHS), changed)
+        self.assertTrue(set(SEQUENCE_TEMPLATE_PATHS) <= changed)
         self.assertTrue(
             all(contract["templates"][relative]["change_reason"] == CHANGE_REASON
-                for relative in changed)
+                for relative in SEQUENCE_TEMPLATE_PATHS)
         )
 
     def test_non_sequence_contract_entries_remain_source_equal_canonical(self) -> None:
         contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+        generic_migrated = {
+            relative
+            for paths in contract["interaction_migration_batches"].values()
+            for relative in paths
+        }
         for relative, entry in contract["templates"].items():
-            if relative not in SEQUENCE_TEMPLATE_PATHS:
+            if relative not in SEQUENCE_TEMPLATE_PATHS and relative not in generic_migrated:
                 with self.subTest(relative=relative):
                     self.assertEqual(entry["source"], entry["canonical"])
                     self.assertIsNone(entry["change_reason"])

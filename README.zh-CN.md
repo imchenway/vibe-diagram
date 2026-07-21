@@ -4,7 +4,7 @@
 
 ## 项目定位
 
-`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。`v0.1.1` 建立了已发布、具备更新能力的独立 Skill lane；仓库版本 `0.1.3` 让 current 与 offline 检查保持只读，并消除发行归档中生成插件投影造成的歧义。GitHub Skill 证据不代表四类生成包的聚合兼容性。
+`vibe-diagram` 是一个生成自包含 HTML 图的可移植 agent skill。本仓只维护一份宿主中立的 canonical skill，并为四类客户端生成确定性静态包。当前仓库版本以 `VERSION` 为准；`v0.1.1` 建立了已发布、具备更新能力的独立 Skill lane，`v0.1.3` 则让 current 与 offline 检查保持只读，并消除了发行归档中生成插件投影造成的歧义。GitHub Skill 证据不代表四类生成包的聚合兼容性。
 
 ## 单一事实源
 
@@ -146,6 +146,45 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --sync-publication
 ```
 
 `--sync-publication` 是唯一 publication 写入口。`--check` 是只读检查：它会发现 publication 漂移，但不会修复 publication 文件。
+
+## GitHub Skill 发布编排
+
+标准库发布入口当前已实现 R00–R07，以及 R08 中的本地贡献者与只读 CI 切片。贡献者可以准备候选、执行完整本地门禁、刷新只读远端证据，并演练隔离 updater 生命周期；具备仓库写权限的维护者或 fork 所有者可以先调用受控的 `publish` 阶段，再分别授权 stable 推进和已安装客户端验证。角色化 fork 流程和维护者 checklist 见 [CONTRIBUTING.md](CONTRIBUTING.md)：
+
+```bash
+python3 scripts/release_github_skill.py prepare --version 0.1.4 --dry-run --json
+python3 scripts/release_github_skill.py prepare --version 0.1.4 --json
+python3 scripts/release_github_skill.py verify --version 0.1.4 --json
+python3 scripts/release_github_skill.py status --version 0.1.4 --refresh --json
+python3 scripts/release_github_skill.py publish --version 0.1.4 \
+  --commit <main-merge-sha> \
+  --notes-file /absolute/path/to/release-notes.md \
+  --confirm-remote-actions \
+  --json
+python3 scripts/release_github_skill.py promote-stable --version 0.1.4 \
+  --confirm-stable-promotion \
+  --json
+python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
+  --mode isolated \
+  --json
+python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
+  --mode installed-client \
+  --artifact /absolute/path/to/runtime-smoke.html \
+  --confirm-installed-skill-mutation \
+  --json
+```
+
+`prepare` 更新发布元数据，并把 tracked publication 投影委托给仓库 builder；`verify` 在每一轮内并行执行 Python 3.9 与当前 Python，两轮之间仍保留 builder 与投影门禁：先执行只读 builder 检查，再通过 `python3 scripts/build_packages.py --output build` 生成被忽略的本地 build 树，将其中的 Codex 包与 tracked plugin 投影比对，同时始终把运行时验证标记为未验证；`status --refresh` 只读取 GitHub main、stable、tag、Release、workflow、manifest 和 tag ZIP 证据，不执行远端写入。
+
+`publish` 要求已有持久化的 `LOCAL_VERIFIED` 证据、干净的工作树与 index、本地 HEAD 和远端 main 与目标提交一致、main workflow 成功、`origin` 与目标仓库一致、当前 GitHub 身份具备 push 权限、release notes 是不含凭据特征的普通 UTF-8 文件，并且显式提供 `--confirm-remote-actions`。它创建 annotated tag，仅执行非强制的 tag push，创建或复用同 tag 的 GitHub Release，在有限超时内等待 tag workflow，并通过真实 updater 归档路径校验远端 tag ZIP。同提交 tag/Release 会幂等复用；冲突 tag 失败关闭；可恢复的部分成功记录为 `PARTIAL_REMOTE`。
+
+`promote-stable` 要求已有持久化的 `TAG_VERIFIED` 证据，并单独提供 `--confirm-stable-promotion` 授权。写入前，它会重新读取 main、tag、Release、workflow、不可变 tag ZIP、stable 祖先关系和 stable manifest；只接受把已验证 release commit 以普通、非强制方式快进到 stable。push 后必须再次确认 stable commit、raw manifest 与不可变归档一致；对 raw/CDN 的短暂延迟使用有上限的指数退避。成功或已完成的推进记录为 `STABLE_PROMOTED`；如果 push 后最终一致性超时，会保留已推进但待确认的状态，不自动倒退，也不伪造验证成功。
+
+`verify-runtime --mode isolated` 在临时目录安装前一个不可变 tag，通过已发布 stable manifest 完成升级，验证 current 与 offline fail-open，执行回滚、重升级、全新归档安装，并移除两份隔离安装。它不会触碰已安装 Skill，也不能证明 Codex 客户端发现。isolated 通过后只记录为前置证据，发行状态仍是 `STABLE_PROMOTED`。
+
+`verify-runtime --mode installed-client` 要求 matching isolated 证据、已安装的前一稳定版本、一个尚不存在的绝对 artifact 路径，以及独立的 `--confirm-installed-skill-mutation`。它通过真实已安装 updater 完成升级、回滚和重升级；在全新的 ephemeral `codex exec` 进程中调用 `$vibe-diagram`；用升级后自带 linter 验证 HTML 工件；再临时隔离并恢复 Skill，由第二个全新进程确认不可发现。只有两种模式都通过，状态才成为限定于 Codex CLI lane 的 `RUNTIME_VERIFIED`。修改安装后若失败，脚本恢复本轮精确的前一版本备份并记录 `PROMOTED_RUNTIME_FAILED`，不会改写发行 tag，也不会倒退 stable。
+
+脚本不会 commit、merge、修改 remote URL、force push、删除 tag、重写历史或把 `stable` 倒退；`publish`、stable 推进和已安装客户端修改分别使用独立确认。当前代码变更尚未执行真实运行时生命周期，因此实现 R07 能力本身不构成 runtime 证据。贡献者可以通过 `--repo owner/name` 使用 fork 范围的证据能力；只有具备自己 fork 写权限并提供相应显式确认时，才可执行 fork 范围发布或 stable 推进。
 
 ## 状态边界
 

@@ -8,7 +8,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_ROOT_FILES = frozenset(
-    {".gitattributes", ".gitignore", "AGENTS.md", "CONTEXT.md", "LICENSE", "VERSION"}
+    {
+        ".gitattributes",
+        ".gitignore",
+        "AGENTS.md",
+        "CONTRIBUTING.md",
+        "CONTEXT.md",
+        "LICENSE",
+        "VERSION",
+        "release/github-skill.json",
+        "scripts/release_github_skill.py",
+    }
 )
 EXPECTED_GITATTRIBUTES = (
     b"plugins/vibe-diagram/skills/vibe-diagram/VERSION export-ignore\n"
@@ -56,31 +66,28 @@ permissions:
   contents: read
 
 jobs:
-  tests:
+  release-verify:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version:
-          - "3.9"
-          - "3.14"
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - id: python39
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
-
-  static:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+          python-version: "3.9"
+      - id: python314
+        uses: actions/setup-python@v5
         with:
           python-version: "3.14"
-      - name: Verify static state
+      - name: Run read-only release verification
+        env:
+          RELEASE_STATE_DIR: ${{ runner.temp }}/vibe-diagram-release
         run: |
-          PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --check
+          PYTHONDONTWRITEBYTECODE=1 "${{ steps.python314.outputs.python-path }}" \\
+            scripts/release_github_skill.py verify \\
+            --version "$(tr -d '\\n' < VERSION)" \\
+            --current-python "${{ steps.python314.outputs.python-path }}" \\
+            --state-dir "$RELEASE_STATE_DIR" \\
+            --json
           git diff --exit-code
           test -z "$(git status --porcelain)"
           test -z "$(git ls-files --others --ignored --exclude-standard)"
@@ -125,8 +132,11 @@ class RepositoryContractTests(unittest.TestCase):
             with self.subTest(invalid=invalid):
                 self.assertIsNone(STRICT_SEMVER.fullmatch(invalid))
 
-    def test_stable_candidate_version_bytes_are_exact(self) -> None:
-        self.assertEqual(b"0.1.3\n", (ROOT / "VERSION").read_bytes())
+    def test_canonical_version_matches_repository_version(self) -> None:
+        self.assertEqual(
+            (ROOT / "VERSION").read_bytes(),
+            (ROOT / "skills" / "vibe-diagram" / "VERSION").read_bytes(),
+        )
 
     def test_license_is_exact_apache_2_0_text(self) -> None:
         raw = (ROOT / "LICENSE").read_bytes()
@@ -182,14 +192,17 @@ class RepositoryContractTests(unittest.TestCase):
         self.assertRegex(text, r'(?m)^    tags:\s*\n      - ["\']v\*["\']\s*$')
         self.assertRegex(text, r"(?m)^permissions:\s*\n  contents: read\s*$")
 
-        versions = set(re.findall(r'(?m)^          - ["\'](3\.(?:9|14))["\']\s*$', text))
+        versions = set(re.findall(r'(?m)^          python-version: ["\'](3\.(?:9|14))["\']\s*$', text))
         self.assertEqual({"3.9", "3.14"}, versions)
         self.assertIn(
-            "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v",
+            "scripts/release_github_skill.py verify",
             text,
         )
+        self.assertIn("--current-python", text)
+        self.assertIn("--state-dir \"$RELEASE_STATE_DIR\"", text)
+        self.assertIn("${{ runner.temp }}/vibe-diagram-release", text)
 
-        check = "PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --check"
+        check = "scripts/release_github_skill.py verify"
         diff = "git diff --exit-code"
         porcelain = 'test -z "$(git status --porcelain)"'
         ignored = 'test -z "$(git ls-files --others --ignored --exclude-standard)"'
@@ -205,6 +218,8 @@ class RepositoryContractTests(unittest.TestCase):
         for forbidden in (
             "sync-publication",
             "codex",
+            "gh api",
+            "git push",
             "gh release",
             "create-release",
             "marketplace publish",

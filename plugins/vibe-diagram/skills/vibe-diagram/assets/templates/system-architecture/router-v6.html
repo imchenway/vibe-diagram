@@ -10,6 +10,181 @@
 
 .router-pipeline{display:grid;grid-template-columns:1fr 28px 1.2fr 28px 1.2fr 28px 1fr;gap:12px;align-items:center}.router-group{display:grid;gap:10px}.boundary-hub{display:grid;grid-template-columns:1fr 1.25fr 1fr;grid-template-rows:auto auto;gap:16px}.boundary-box{grid-row:1/3;border:2px dashed rgba(31,111,178,.46);border-radius:28px;padding:18px;display:grid;gap:12px}.entry-core-foundation{display:grid;grid-template-columns:170px 1fr 210px;grid-template-rows:auto auto auto;gap:14px}.entry-core-foundation .foundation{grid-column:1/4}.whitebox-cluster{display:grid;grid-template-columns:170px 1fr 170px;gap:16px}.component-box{border:2px solid rgba(31,111,178,.42);border-radius:22px;padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.environment-zones{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.env-zone{border:1.5px solid rgba(141,179,216,.58);border-radius:22px;padding:14px;display:grid;gap:12px}.north-south-layers{display:grid;gap:12px}.north-south-layers .layer{display:grid;grid-template-columns:180px 1fr 1fr;gap:12px}.data-domain-map{display:grid;grid-template-columns:180px 1fr 180px;grid-template-rows:auto auto;gap:14px}.domain-center{grid-row:1/3;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;border:1.5px solid rgba(23,120,90,.4);border-radius:22px;padding:14px}.dfd-trust-boundary{display:grid;grid-template-columns:180px 1fr 180px;gap:16px}.trust-box{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.contract-mesh{display:grid;grid-template-columns:1fr 220px 1fr;gap:16px}.contract-center{display:grid;gap:12px;border:1.6px solid rgba(31,111,178,.44);border-radius:22px;padding:14px}.event-bus{display:grid;grid-template-rows:auto 68px auto;gap:14px}.bus-line{display:grid;place-items:center;border-radius:18px;background:linear-gradient(90deg,var(--blue-soft),var(--violet-soft));border:1.5px solid rgba(98,84,173,.38);font-weight:900}.event-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.network-zones{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.security-threat-controls{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:16px}.security-center{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;gap:12px}.identity-access-path{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:center}.failure-domain-recovery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.failure-domain{border:1.5px dashed rgba(166,58,58,.34);border-radius:22px;padding:14px;display:grid;gap:12px}.telemetry-pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.delivery-rail{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.rail-stage{min-height:128px}.stack{display:grid;gap:12px}.wide{grid-column:1/-1}
 </style>
+  <style data-adaptive-viewport-kernel="1">
+[data-diagram-canvas][data-diagram-contract="1"] {
+  --diagram-scale: 1;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  transform-origin: top left;
+}
+
+[data-diagram-width="contained"] { inline-size: min(100%, 72rem); margin-inline: auto; }
+[data-diagram-width="auto"] { inline-size: 100%; }
+[data-diagram-width="wide"] { inline-size: max-content; min-inline-size: 100%; }
+[data-diagram-height="flow"] { block-size: auto; }
+[data-diagram-height="auto"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
+[data-diagram-height="scroll"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
+[data-diagram-scaled="true"] > [data-diagram-stage] {
+  transform: scale(var(--diagram-scale));
+  transform-origin: top left;
+}
+[data-diagram-controls] {
+  position: relative;
+  display: inline-flex;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.diagram-fallback { display: none; }
+
+@media (max-width: 48rem) {
+  [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
+  [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
+}
+
+@media print {
+  [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
+  [data-diagram-controls] { display: none !important; }
+  .diagram-fallback { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
+}
+</style>
+  <style data-template-contract="1">[data-diagram-id="router-v6"]>[data-diagram-stage]{min-inline-size:60rem}.semantic-relation{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:48rem){[data-diagram-id="router-v6"]>[data-diagram-stage]{min-inline-size:0}}</style>
 </head>
 <body>
 <main data-diagram-type="system-architecture"
@@ -21,16 +196,108 @@
       data-routing-confidence="{{routing_confidence}}">
   <h1 data-slot="title">{{title}}</h1>
   <p class="summary" data-slot="summary">{{summary}}</p>
-  <section class="template-layout router-pipeline" aria-label="Router v6 template canvas">
-    <div class="router-group">    <div class="slot core" data-slot="intent"><b>Intent</b><span>{{intent}}</span></div>    <div class="slot " data-slot="material"><b>Material</b><span>{{material}}</span></div></div>
+  <div data-diagram-controls="router-v6" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="router-v6" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack"><section data-diagram-stage data-reading-guide="data integration landmarks" class="template-layout router-pipeline" aria-label="Router v6 template canvas">
+    <svg class="architecture-map" data-architecture-canvas="1" viewBox="0 0 1200 184" role="img" aria-labelledby="router-v6-map-title router-v6-map-description" style="grid-column:1/-1;display:block;inline-size:100%;block-size:auto;border:1px solid rgba(141,179,216,.44);border-radius:18px;background:#fbfdff">
+      <title id="router-v6-map-title">Router V6 architecture landmarks</title>
+      <desc id="router-v6-map-description">Primary architecture relations are bound to visible directional paths. Detailed slots follow in the same semantic order.</desc>
+      <defs><marker id="router-v6-architecture-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f6fb2"></path></marker></defs>
+      <g aria-label="Primary relation legend"><line x1="42" y1="24" x2="82" y2="24" stroke="#1f6fb2" stroke-width="2.4"></line><text x="92" y="28" fill="#5a6c80" font-size="12" font-weight="700">Primary flow</text></g>
+    <g data-architecture-relations="1">
+      <path d="M 165.8 117 H 183.8" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="intent-material" data-from="intent" data-to="material" data-relation-kind="data-flow"></path>
+      <path d="M 307.5 117 H 325.5" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="material-primary-view" data-from="material" data-to="primary-view" data-relation-kind="data-flow"></path>
+      <path d="M 449.2 117 H 467.2" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="primary-view-confidence" data-from="primary-view" data-to="confidence" data-relation-kind="data-flow"></path>
+      <path d="M 591.0 117 H 609.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="confidence-companion-views" data-from="confidence" data-to="companion-views" data-relation-kind="data-flow"></path>
+      <path d="M 732.8 117 H 750.8" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="companion-views-handoff-target" data-from="companion-views" data-to="handoff-target" data-relation-kind="data-flow"></path>
+      <path d="M 874.5 117 H 892.5" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="handoff-target-quality-gate" data-from="handoff-target" data-to="quality-gate" data-relation-kind="data-flow"></path>
+      <path d="M 1016.2 117 H 1034.2" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#router-v6-architecture-arrow)" data-diagram-visible-relation-id="quality-gate-template-id" data-from="quality-gate" data-to="template-id" data-relation-kind="data-flow"></path>
+    </g>
+    <g data-architecture-landmarks="1">
+      <g data-architecture-landmark-for="intent"><rect x="42.0" y="84" width="123.8" height="66" rx="14" fill="#e8f3ff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="103.9" y="119" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="103.9" dy="0">Intent</tspan></text></g>
+      <g data-architecture-landmark-for="material"><rect x="183.8" y="84" width="123.8" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="245.6" y="119" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="245.6" dy="0">Material</tspan></text></g>
+      <g data-architecture-landmark-for="primary-view"><rect x="325.5" y="84" width="123.8" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="387.4" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="387.4" dy="0">Primary</tspan><tspan x="387.4" dy="15">View</tspan></text></g>
+      <g data-architecture-landmark-for="confidence"><rect x="467.2" y="84" width="123.8" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="529.1" y="119" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="529.1" dy="0">Confidence</tspan></text></g>
+      <g data-architecture-landmark-for="companion-views"><rect x="609.0" y="84" width="123.8" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="670.9" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="670.9" dy="0">Companion</tspan><tspan x="670.9" dy="15">Views</tspan></text></g>
+      <g data-architecture-landmark-for="handoff-target"><rect x="750.8" y="84" width="123.8" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="812.6" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="812.6" dy="0">Handoff</tspan><tspan x="812.6" dy="15">Target</tspan></text></g>
+      <g data-architecture-landmark-for="quality-gate"><rect x="892.5" y="84" width="123.8" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="954.4" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="954.4" dy="0">Quality</tspan><tspan x="954.4" dy="15">Gate</tspan></text></g>
+      <g data-architecture-landmark-for="template-id"><rect x="1034.2" y="84" width="123.8" height="66" rx="14" fill="#e8f3ff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="1096.1" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="1096.1" dy="0">Template</tspan><tspan x="1096.1" dy="15">Id</tspan></text></g>
+    </g>
+    </svg>
+    <div class="router-group">    <div id="intent" class="slot core" data-diagram-node-id="intent" data-semantic-role="integration-object" data-slot="intent"><b>Intent</b><span>{{intent}}</span></div>    <div id="material" class="slot " data-diagram-node-id="material" data-semantic-role="integration-object" data-slot="material"><b>Material</b><span>{{material}}</span></div></div>
     <div class="arrow"></div>
-    <div class="router-group">    <div class="slot core" data-slot="primary-view"><b>Primary view</b><span>{{primary-view}}</span></div>    <div class="slot " data-slot="confidence"><b>Confidence</b><span>{{confidence}}</span></div></div>
+    <div class="router-group">    <div id="primary-view" class="slot core" data-diagram-node-id="primary-view" data-semantic-role="integration-object" data-slot="primary-view"><b>Primary view</b><span>{{primary-view}}</span></div>    <div id="confidence" class="slot " data-diagram-node-id="confidence" data-semantic-role="integration-object" data-slot="confidence"><b>Confidence</b><span>{{confidence}}</span></div></div>
     <div class="arrow"></div>
-    <div class="router-group">    <div class="slot support" data-slot="companion-views"><b>Companion views</b><span>{{companion-views}}</span></div>    <div class="slot ops" data-slot="handoff-target"><b>Handoff target</b><span>{{handoff-target}}</span></div></div>
+    <div class="router-group">    <div id="companion-views" class="slot support" data-diagram-node-id="companion-views" data-semantic-role="integration-object" data-slot="companion-views"><b>Companion views</b><span>{{companion-views}}</span></div>    <div id="handoff-target" class="slot ops" data-diagram-node-id="handoff-target" data-semantic-role="integration-object" data-slot="handoff-target"><b>Handoff target</b><span>{{handoff-target}}</span></div></div>
     <div class="arrow"></div>
-    <div class="router-group">    <div class="slot risk" data-slot="quality-gate"><b>Quality gate</b><span>{{quality-gate}}</span></div>    <div class="slot " data-slot="template-id"><b>Template id</b><span>{{template-id}}</span></div></div>
-  </section>
+    <div class="router-group">    <div id="quality-gate" class="slot risk" data-diagram-node-id="quality-gate" data-semantic-role="integration-object" data-slot="quality-gate"><b>Quality gate</b><span>{{quality-gate}}</span></div>    <div id="template-id" class="slot " data-diagram-node-id="template-id" data-semantic-role="integration-object" data-slot="template-id"><b>Template id</b><span>{{template-id}}</span></div></div>
+  <span class="semantic-relation" data-diagram-relation-id="intent-material" data-from="intent" data-to="material" data-relation-kind="data-flow" data-semantic="intent feeds material">intent feeds material</span><span class="semantic-relation" data-diagram-relation-id="material-primary-view" data-from="material" data-to="primary-view" data-relation-kind="data-flow" data-semantic="material feeds primary-view">material feeds primary-view</span><span class="semantic-relation" data-diagram-relation-id="primary-view-confidence" data-from="primary-view" data-to="confidence" data-relation-kind="data-flow" data-semantic="primary-view feeds confidence">primary-view feeds confidence</span><span class="semantic-relation" data-diagram-relation-id="confidence-companion-views" data-from="confidence" data-to="companion-views" data-relation-kind="data-flow" data-semantic="confidence feeds companion-views">confidence feeds companion-views</span><span class="semantic-relation" data-diagram-relation-id="companion-views-handoff-target" data-from="companion-views" data-to="handoff-target" data-relation-kind="data-flow" data-semantic="companion-views feeds handoff-target">companion-views feeds handoff-target</span><span class="semantic-relation" data-diagram-relation-id="handoff-target-quality-gate" data-from="handoff-target" data-to="quality-gate" data-relation-kind="data-flow" data-semantic="handoff-target feeds quality-gate">handoff-target feeds quality-gate</span><span class="semantic-relation" data-diagram-relation-id="quality-gate-template-id" data-from="quality-gate" data-to="template-id" data-relation-kind="data-flow" data-semantic="quality-gate feeds template-id">quality-gate feeds template-id</span></section></div>
+  <details class="diagram-fallback" data-fallback-for="router-v6"><summary>Data integration landmarks</summary><ol><li>intent</li><li>material</li><li>primary-view</li><li>confidence</li><li>companion-views</li><li>handoff-target</li><li>quality-gate</li><li>template-id</li></ol></details>
   <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
 </main>
+<script data-adaptive-viewport-kernel="1">
+(() => {
+  "use strict";
+  const allowed = new Set(["fit", "0.75", "0.9", "1"]);
+  const reset = (canvas) => {
+    canvas.style.removeProperty("--diagram-scale");
+    canvas.removeAttribute("data-diagram-scaled");
+  };
+  const apply = (canvas, requested = "fit") => {
+    reset(canvas);
+    if (!allowed.has(requested)) return false;
+    const stage = canvas.querySelector(":scope > [data-diagram-stage]");
+    if (!stage || !canvas.clientWidth || !stage.scrollWidth) return false;
+    const scale = requested === "fit"
+      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
+      : Number(requested);
+    if (!Number.isFinite(scale) || scale < 0.75 || scale > 1) return false;
+    canvas.style.setProperty("--diagram-scale", String(scale));
+    canvas.setAttribute("data-diagram-scaled", "true");
+    return true;
+  };
+  const reflect = (controls, requested, applied) => {
+    controls.querySelectorAll("[data-diagram-zoom-control]").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.diagramZoomControl === requested && applied)
+      );
+    });
+    const status = controls.querySelector("[data-diagram-zoom-status]");
+    if (status) status.value = applied ? (requested === "fit" ? "Fit width" : `${Number(requested) * 100}%`) : "Scroll";
+  };
+  const bind = (root = document) => {
+    root.querySelectorAll("[data-diagram-controls]").forEach((controls) => {
+      const id = controls.dataset.diagramControls;
+      const canvas = id ? root.querySelector(`[data-diagram-id="${CSS.escape(id)}"]`) : null;
+      if (!canvas || controls.dataset.diagramBound === "true") return;
+      controls.dataset.diagramBound = "true";
+      controls.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-diagram-zoom-control]");
+        if (!button || !controls.contains(button)) return;
+        const requested = button.dataset.diagramZoomControl;
+        const applied = apply(canvas, requested);
+        reflect(controls, requested, applied);
+      });
+    });
+  };
+  const enhance = (root = document) => {
+    bind(root);
+    root.querySelectorAll('[data-diagram-canvas][data-diagram-contract="1"]')
+      .forEach((canvas) => {
+        try {
+          apply(canvas, canvas.dataset.diagramZoom || "fit");
+        } catch (_error) {
+          reset(canvas);
+        }
+      });
+  };
+  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
 </body>
 </html>

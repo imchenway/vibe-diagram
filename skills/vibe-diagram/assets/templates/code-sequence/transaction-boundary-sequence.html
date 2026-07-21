@@ -338,6 +338,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {
@@ -447,36 +462,42 @@
         </header>
 
         <div class="sequence-messages">
-          <section data-sequence-phase-id="begin" data-transaction-boundary data-transaction-state="begin">
+          <section data-sequence-phase-id="begin" data-transaction-boundary data-transaction-state="begin"
+                   data-sequence-fragment-id="transaction-begin" data-sequence-fragment-kind="tx">
             <span data-sequence-phase-label>Begin</span>
             <article data-sequence-message data-from="caller" data-to="service"
                      data-message-kind="sync" data-semantic="request"
-                     style="--sequence-start:1;--sequence-span:2">
+                     style="--sequence-start:1;--sequence-span:2" data-sequence-step-index="01">
+              <span data-sequence-step-index-label>01</span>
               <span data-sequence-route>Caller → Transactional service</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>Request an atomic operation.</span>
             </article>
             <article data-sequence-message data-from="service" data-to="service"
                      data-message-kind="self" data-semantic="begin"
-                     style="--sequence-start:2;--sequence-span:1" data-slot="begin">
+                     style="--sequence-start:2;--sequence-span:1" data-slot="begin" data-sequence-step-index="02">
+              <span data-sequence-step-index-label>02</span>
               <span data-sequence-route>Transactional service → itself</span>
               <span data-sequence-kind>self</span>
               <span data-sequence-description>{{begin}}</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="writes" data-transaction-boundary data-transaction-state="active">
+          <section data-sequence-phase-id="writes" data-transaction-boundary data-transaction-state="active"
+                   data-sequence-fragment-id="transaction-writes" data-sequence-fragment-kind="tx">
             <span data-sequence-phase-label>Atomic writes</span>
             <article data-sequence-message data-from="service" data-to="primary-db"
                      data-message-kind="sync" data-semantic="write-a"
-                     style="--sequence-start:2;--sequence-span:2" data-slot="write-a">
+                     style="--sequence-start:2;--sequence-span:2" data-slot="write-a" data-sequence-step-index="03">
+              <span data-sequence-step-index-label>03</span>
               <span data-sequence-route>Transactional service → Primary database</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{write-a}}</span>
             </article>
             <article data-sequence-message data-from="service" data-to="primary-db"
                      data-message-kind="sync" data-semantic="write-b"
-                     style="--sequence-start:2;--sequence-span:2" data-slot="write-b">
+                     style="--sequence-start:2;--sequence-span:2" data-slot="write-b" data-sequence-step-index="04">
+              <span data-sequence-step-index-label>04</span>
               <span data-sequence-route>Transactional service → Primary database</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{write-b}}</span>
@@ -484,26 +505,30 @@
           </section>
 
           <section data-sequence-phase-id="commit-or-rollback" data-transaction-boundary
+                   data-sequence-fragment-id="commit-rollback-alternative" data-sequence-fragment-kind="alt"
                    data-transaction-state="rollback" data-slot="commit-rollback">
             <span data-sequence-phase-label>Commit or rollback</span>
             <span class="transaction-note">{{commit-rollback}}</span>
             <article data-sequence-message data-from="service" data-to="primary-db"
                      data-message-kind="sync" data-semantic="commit"
-                     style="--sequence-start:2;--sequence-span:2">
+                     style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="05">
+              <span data-sequence-step-index-label>05</span>
               <span data-sequence-route>Transactional service → Primary database</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>Commit the successful unit of work.</span>
             </article>
             <article data-sequence-message data-from="service" data-to="primary-db"
                      data-message-kind="error" data-semantic="rollback"
-                     style="--sequence-start:2;--sequence-span:2">
+                     style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="06">
+              <span data-sequence-step-index-label>06</span>
               <span data-sequence-route>Transactional service → Primary database</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>Rollback all writes after failure.</span>
             </article>
             <article data-sequence-message data-from="service" data-to="observer"
                      data-message-kind="async" data-semantic="transaction-observed"
-                     style="--sequence-start:2;--sequence-span:3" data-slot="observer">
+                     style="--sequence-start:2;--sequence-span:3" data-slot="observer" data-sequence-step-index="07">
+              <span data-sequence-step-index-label>07</span>
               <span data-sequence-route>Transactional service → Observer</span>
               <span data-sequence-kind>async</span>
               <span data-sequence-description>{{observer}}</span>

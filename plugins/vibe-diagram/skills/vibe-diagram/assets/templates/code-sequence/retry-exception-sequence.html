@@ -337,6 +337,21 @@
       letter-spacing: .04em;
       text-transform: uppercase;
     }
+    [data-sequence-step-index-label] {
+      display: inline-grid;
+      place-items: center;
+      min-inline-size: 1.75rem;
+      block-size: 1.75rem;
+      border: 1px solid rgba(31, 111, 178, .36);
+      border-radius: 999px;
+      padding-inline: .3rem;
+      color: var(--blue, #1f6fb2);
+      background: var(--paper, #fbfdff);
+      font-size: .75rem;
+      font-weight: 850;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
     @media (max-width: 780px) {
       [data-sequence-canvas],
       [data-sequence-canvas][data-sequence-wide="true"] {
@@ -447,14 +462,16 @@
             <span data-sequence-phase-label>First attempt</span>
             <article data-sequence-message data-from="caller" data-to="service"
                      data-message-kind="sync" data-semantic="request"
-                     style="--sequence-start:1;--sequence-span:2" data-slot="first-call">
+                     style="--sequence-start:1;--sequence-span:2" data-slot="first-call" data-sequence-step-index="01">
+              <span data-sequence-step-index-label>01</span>
               <span data-sequence-route>Caller → Retrying service</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{first-call}}</span>
             </article>
             <article data-sequence-message data-from="service" data-to="dependency"
                      data-message-kind="sync" data-semantic="attempt" data-attempt="1"
-                     style="--sequence-start:2;--sequence-span:2">
+                     style="--sequence-start:2;--sequence-span:2" data-sequence-step-index="02">
+              <span data-sequence-step-index-label>02</span>
               <span data-sequence-route>Retrying service → Dependency</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>Execute attempt 1.</span>
@@ -462,7 +479,8 @@
             <article data-sequence-message data-from="dependency" data-to="service"
                      data-message-kind="error" data-semantic="failure"
                      data-direction="reverse" style="--sequence-start:2;--sequence-span:2"
-                     data-slot="failure">
+                     data-slot="failure" data-sequence-step-index="03">
+              <span data-sequence-step-index-label>03</span>
               <span data-sequence-route>Dependency → Retrying service</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>{{failure}}</span>
@@ -470,43 +488,50 @@
             <article data-sequence-message data-from="service" data-to="caller"
                      data-message-kind="return" data-semantic="final-result"
                      data-direction="reverse" style="--sequence-start:1;--sequence-span:2"
-                     data-slot="final-result">
+                     data-slot="final-result" data-sequence-step-index="04">
+              <span data-sequence-step-index-label>04</span>
               <span data-sequence-route>Retrying service → Caller</span>
               <span data-sequence-kind>return</span>
               <span data-sequence-description>{{final-result}}</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="retry-loop" data-retry-loop>
+          <section data-sequence-phase-id="retry-loop" data-retry-loop
+                   data-sequence-fragment-id="retry-loop-fragment" data-sequence-fragment-kind="loop">
             <span data-sequence-phase-label>Retry loop</span>
             <article data-sequence-message data-from="service" data-to="service"
                      data-message-kind="self" data-semantic="backoff"
-                     style="--sequence-start:2;--sequence-span:1">
+                     style="--sequence-start:2;--sequence-span:1" data-sequence-step-index="05">
+              <span data-sequence-step-index-label>05</span>
               <span data-sequence-route>Retrying service → itself</span>
               <span data-sequence-kind>self</span>
               <span data-sequence-description>Wait for the configured backoff.</span>
             </article>
             <article data-sequence-message data-from="service" data-to="dependency"
                      data-message-kind="sync" data-semantic="attempt" data-attempt="2"
-                     style="--sequence-start:2;--sequence-span:2" data-slot="retry-one">
+                     style="--sequence-start:2;--sequence-span:2" data-slot="retry-one" data-sequence-step-index="06">
+              <span data-sequence-step-index-label>06</span>
               <span data-sequence-route>Retrying service → Dependency</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{retry-one}}</span>
             </article>
             <article data-sequence-message data-from="service" data-to="dependency"
                      data-message-kind="sync" data-semantic="attempt" data-attempt="3"
-                     style="--sequence-start:2;--sequence-span:2" data-slot="retry-two">
+                     style="--sequence-start:2;--sequence-span:2" data-slot="retry-two" data-sequence-step-index="07">
+              <span data-sequence-step-index-label>07</span>
               <span data-sequence-route>Retrying service → Dependency</span>
               <span data-sequence-kind>sync</span>
               <span data-sequence-description>{{retry-two}}</span>
             </article>
           </section>
 
-          <section data-sequence-phase-id="fallback" data-error-branch>
+          <section data-sequence-phase-id="fallback" data-error-branch
+                   data-sequence-fragment-id="retry-fallback" data-sequence-fragment-kind="alt">
             <span data-sequence-phase-label>Fallback or exhaust</span>
             <article data-sequence-message data-from="service" data-to="service"
                      data-message-kind="self" data-semantic="fallback"
-                     style="--sequence-start:2;--sequence-span:1" data-slot="fallback">
+                     style="--sequence-start:2;--sequence-span:1" data-slot="fallback" data-sequence-step-index="08">
+              <span data-sequence-step-index-label>08</span>
               <span data-sequence-route>Retrying service → itself</span>
               <span data-sequence-kind>self</span>
               <span data-sequence-description>{{fallback}}</span>
@@ -514,7 +539,8 @@
             <article data-sequence-message data-from="service" data-to="caller"
                      data-message-kind="error" data-semantic="retry-exhausted"
                      data-direction="reverse" style="--sequence-start:1;--sequence-span:2"
-                     data-slot="give-up">
+                     data-slot="give-up" data-sequence-step-index="09">
+              <span data-sequence-step-index-label>09</span>
               <span data-sequence-route>Retrying service → Caller</span>
               <span data-sequence-kind>error</span>
               <span data-sequence-description>{{give-up}}</span>

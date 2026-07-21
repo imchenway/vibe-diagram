@@ -1,0 +1,589 @@
+from __future__ import annotations
+
+import contextlib
+import io
+import json
+import re
+import tempfile
+import unittest
+from pathlib import Path
+
+from scripts import build_packages
+from tests.test_cross_template_contracts import _load_linter
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SKILL_ROOT = ROOT / "skills" / "vibe-diagram"
+TEMPLATE_ROOT = SKILL_ROOT / "assets" / "templates"
+INTERACTION_PATH = ROOT / "contracts" / "interaction_contract_baseline.json"
+MIGRATION_PATH = ROOT / "contracts" / "template_migration_baseline.json"
+POLICY_PATH = SKILL_ROOT / "contracts" / "family-policies.json"
+B01_TEMPLATES = (
+    "business-flow/swimlane-flow.html",
+    "decision-communication/option-matrix-path.html",
+)
+B02_TEMPLATES = (
+    "business-flow/bpmn-light-flow.html",
+    "business-flow/exception-branch-flow.html",
+    "business-flow/stage-track.html",
+)
+B03_TEMPLATES = (
+    "state-data-model/data-flow-model.html",
+    "state-data-model/er-lite.html",
+    "state-data-model/lifecycle-track.html",
+    "state-data-model/state-event-matrix.html",
+    "state-data-model/state-machine.html",
+)
+B04_TEMPLATES = (
+    "business-architecture/capability-domain-map.html",
+    "business-architecture/participant-boundary.html",
+    "business-architecture/rule-constraint-heatmap.html",
+    "business-architecture/value-chain-map.html",
+)
+B05_TEMPLATES = (
+    "technical-design/api-contract-swimlane.html",
+    "technical-design/data-consistency-boundary.html",
+    "technical-design/module-contract-data-topology.html",
+    "technical-design/release-switch-track.html",
+)
+B06_TEMPLATES = (
+    "fault-debugging/before-after-flow.html",
+    "fault-debugging/bpmn-debug-flow.html",
+    "fault-debugging/causal-chain.html",
+    "fault-debugging/state-data-breakpoint.html",
+)
+B07_TEMPLATES = (
+    "feature-iteration/current-target-flow.html",
+    "feature-iteration/diff-heatmap.html",
+    "feature-iteration/release-rollback-track.html",
+)
+B08_TEMPLATES = (
+    "decision-communication/decision-tree.html",
+    "decision-communication/recommended-path.html",
+    "decision-communication/tradeoff-quadrant.html",
+)
+B09_TEMPLATES = (
+    "delivery-acceptance/acceptance-ledger.html",
+    "delivery-acceptance/delivery-timeline.html",
+    "delivery-acceptance/evidence-swimlane.html",
+    "delivery-acceptance/risk-action-board.html",
+)
+B10_TEMPLATES = (
+    "page-mockup/artboard-filmstrip.html",
+    "page-mockup/artboard-wireframe.html",
+    "page-mockup/primary-path-page-flow.html",
+    "page-mockup/responsive-state-board.html",
+)
+B11_TEMPLATES = (
+    "system-architecture/component-breakdown.html",
+    "system-architecture/deployment-topology.html",
+    "system-architecture/logical-layering.html",
+    "system-architecture/network-topology.html",
+    "system-architecture/system-context.html",
+    "system-architecture/workload-overview.html",
+)
+B12_TEMPLATES = (
+    "system-architecture/api-integration.html",
+    "system-architecture/data-architecture.html",
+    "system-architecture/data-flow.html",
+    "system-architecture/event-driven.html",
+    "system-architecture/router-v6.html",
+)
+B13_TEMPLATES = (
+    "system-architecture/delivery-pipeline.html",
+    "system-architecture/identity-access.html",
+    "system-architecture/observability-view.html",
+    "system-architecture/resilience-view.html",
+    "system-architecture/security-view.html",
+)
+
+
+def _block(html: str, tag: str) -> str:
+    matches = re.findall(
+        rf'<{tag} data-adaptive-viewport-kernel="1">\n?(.*?)</{tag}>',
+        html,
+        flags=re.DOTALL,
+    )
+    if len(matches) != 1:
+        raise AssertionError(f"expected one {tag} adaptive kernel, found {len(matches)}")
+    return matches[0].rstrip("\n")
+
+
+def _semantic_relation_block(html: str) -> str:
+    matches = re.findall(
+        r'<style data-semantic-relations-kernel="1">\n?(.*?)</style>',
+        html,
+        flags=re.DOTALL,
+    )
+    if len(matches) != 1:
+        raise AssertionError(
+            f"expected one semantic relation style kernel, found {len(matches)}"
+        )
+    return matches[0].rstrip("\n")
+
+
+class GenericTemplateTests(unittest.TestCase):
+    def test_b01_is_the_exact_first_generic_migration_batch(self) -> None:
+        interaction = json.loads(INTERACTION_PATH.read_text(encoding="utf-8"))
+        policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(
+            ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13"],
+            interaction["scope"]["completed_batches"],
+        )
+        self.assertEqual(
+            sorted(
+                (
+                    *B01_TEMPLATES,
+                    *B02_TEMPLATES,
+                    *B03_TEMPLATES,
+                    *B04_TEMPLATES,
+                    *B05_TEMPLATES,
+                    *B06_TEMPLATES,
+                    *B07_TEMPLATES,
+                    *B08_TEMPLATES,
+                    *B09_TEMPLATES,
+                    *B10_TEMPLATES,
+                    *B11_TEMPLATES,
+                    *B12_TEMPLATES,
+                    *B13_TEMPLATES,
+                )
+            ),
+            interaction["scope"]["completed_templates"],
+        )
+        self.assertEqual(list(B01_TEMPLATES), policy["migration_batches"]["B01"])
+        self.assertEqual(policy["migration_batches"], migration["interaction_migration_batches"])
+
+    def test_b02_is_the_exact_business_flow_family_closure(self) -> None:
+        policy = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B02_TEMPLATES), policy["migration_batches"]["B02"])
+        completed = {
+            relative
+            for batch in policy["migration_batches"].values()
+            for relative in batch
+            if relative.startswith("business-flow/")
+        }
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "business-flow").glob("*.html")
+        }
+        self.assertEqual(expected, completed)
+
+    def test_b02_templates_pass_parsers_and_embed_the_exact_kernel(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B02_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+
+    def test_b02_preserves_slots_and_declares_meaningful_flow_semantics(self) -> None:
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        minimums = {
+            B02_TEMPLATES[0]: (5, 4, "graph"),
+            B02_TEMPLATES[1]: (8, 7, "graph"),
+            B02_TEMPLATES[2]: (9, 8, "timeline"),
+        }
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+
+    def test_b03_closes_state_data_model_with_profile_specific_semantics(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B03_TEMPLATES), policy_data["migration_batches"]["B03"])
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "state-data-model").glob("*.html")
+        }
+        self.assertEqual(expected, set(B03_TEMPLATES))
+        minimums = {
+            B03_TEMPLATES[0]: (8, 7, "graph"),
+            B03_TEMPLATES[1]: (12, 9, "graph"),
+            B03_TEMPLATES[2]: (10, 9, "timeline"),
+            B03_TEMPLATES[3]: (15, 9, "matrix"),
+            B03_TEMPLATES[4]: (5, 4, "graph"),
+        }
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+        matrix = (TEMPLATE_ROOT / B03_TEMPLATES[3]).read_text(encoding="utf-8")
+        self.assertEqual(3, matrix.count("data-matrix-row-id="))
+        self.assertEqual(3, matrix.count("data-matrix-col-id="))
+        self.assertEqual(9, matrix.count("data-matrix-row="))
+
+    def test_b03_templates_pass_both_parsers_and_embed_shared_kernel(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B03_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+
+    def test_b04_closes_business_architecture_without_flattening_its_grammars(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B04_TEMPLATES), policy_data["migration_batches"]["B04"])
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "business-architecture").glob("*.html")
+        }
+        self.assertEqual(expected, set(B04_TEMPLATES))
+        minimums = {
+            B04_TEMPLATES[0]: (11, 10, "graph"),
+            B04_TEMPLATES[1]: (7, 6, "graph"),
+            B04_TEMPLATES[2]: (12, 9, "matrix"),
+            B04_TEMPLATES[3]: (8, 8, "graph"),
+        }
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+        heatmap = (TEMPLATE_ROOT / B04_TEMPLATES[2]).read_text(encoding="utf-8")
+        self.assertEqual(3, heatmap.count("data-matrix-row-id="))
+        self.assertEqual(3, heatmap.count("data-matrix-col-id="))
+        self.assertEqual(9, heatmap.count("data-matrix-row="))
+
+    def test_b04_templates_pass_both_parsers_and_embed_shared_kernel(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B04_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+
+    def test_b05_closes_technical_design_with_endpoints_and_exact_kernel(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B05_TEMPLATES), policy_data["migration_batches"]["B05"])
+        expected = {
+            path.relative_to(TEMPLATE_ROOT).as_posix()
+            for path in (TEMPLATE_ROOT / "technical-design").glob("*.html")
+        }
+        self.assertEqual(expected, set(B05_TEMPLATES))
+        minimums = {
+            B05_TEMPLATES[0]: (16, 15, "graph"),
+            B05_TEMPLATES[1]: (8, 8, "graph"),
+            B05_TEMPLATES[2]: (7, 7, "graph"),
+            B05_TEMPLATES[3]: (7, 7, "timeline"),
+        }
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (SKILL_ROOT / "assets/contracts/adaptive-viewport/v1.css").read_text(encoding="utf-8").rstrip("\n")
+        script = (SKILL_ROOT / "assets/contracts/adaptive-viewport/v1.js").read_text(encoding="utf-8").rstrip("\n")
+        for relative, (nodes, relations, profile) in minimums.items():
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            entry = migration["templates"][relative]
+            family, name = relative.split("/", 1)
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, Path(name).stem))
+                self.assertEqual([], build_packages.generic_contract_errors(html, family, Path(name).stem, policy))
+                self.assertEqual(nodes, html.count("data-diagram-node-id="))
+                self.assertGreaterEqual(html.count("data-diagram-relation-id="), relations)
+                self.assertIn(f'data-diagram-profile="{profile}"', html)
+                self.assertIn("data-reading-guide", html)
+                self.assertIn("data-fallback-for=", html)
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+
+    def test_b06_closes_only_non_sequence_fault_debugging_templates(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(list(B06_TEMPLATES), policy_data["migration_batches"]["B06"])
+        self.assertNotIn("fault-debugging/debugging-sequence.html", B06_TEMPLATES)
+        minimums = {B06_TEMPLATES[0]:(8,7,"graph"),B06_TEMPLATES[1]:(5,4,"graph"),B06_TEMPLATES[2]:(5,4,"graph"),B06_TEMPLATES[3]:(7,6,"matrix")}
+        self._assert_completed_generic_batch(B06_TEMPLATES, minimums)
+
+    def test_b07_closes_only_non_sequence_feature_iteration_templates(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8")); self.assertEqual(list(B07_TEMPLATES),policy_data["migration_batches"]["B07"]); self.assertNotIn("feature-iteration/current-target-sequence.html",B07_TEMPLATES)
+        self._assert_completed_generic_batch(B07_TEMPLATES,{B07_TEMPLATES[0]:(8,7,"graph"),B07_TEMPLATES[1]:(9,8,"matrix"),B07_TEMPLATES[2]:(8,7,"timeline")})
+
+    def test_b08_closes_remaining_decision_communication_templates(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B08_TEMPLATES),policy_data["migration_batches"]["B08"])
+        self._assert_completed_generic_batch(B08_TEMPLATES,{B08_TEMPLATES[0]:(8,7,"graph"),B08_TEMPLATES[1]:(7,6,"graph"),B08_TEMPLATES[2]:(4,3,"matrix")})
+
+    def test_b09_closes_delivery_acceptance_templates(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B09_TEMPLATES),policy_data["migration_batches"]["B09"])
+        self._assert_completed_generic_batch(B09_TEMPLATES,{B09_TEMPLATES[0]:(20,19,"ledger"),B09_TEMPLATES[1]:(5,4,"timeline"),B09_TEMPLATES[2]:(12,11,"graph"),B09_TEMPLATES[3]:(12,11,"ledger")})
+
+    def test_b10_closes_page_mockup_templates(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B10_TEMPLATES),policy_data["migration_batches"]["B10"])
+        self._assert_completed_generic_batch(B10_TEMPLATES,{B10_TEMPLATES[0]:(11,10,"artboard"),B10_TEMPLATES[1]:(7,6,"artboard"),B10_TEMPLATES[2]:(5,4,"graph"),B10_TEMPLATES[3]:(8,7,"artboard")})
+
+    def test_b11_closes_system_topology_slice(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B11_TEMPLATES),policy_data["migration_batches"]["B11"])
+        counts=(8,7,9,8,7,8);self._assert_completed_generic_batch(B11_TEMPLATES,{p:(n,n-1,"graph") for p,n in zip(B11_TEMPLATES,counts)})
+
+    def test_b12_closes_system_data_integration_slice(self) -> None:
+        policy_data=json.loads(POLICY_PATH.read_text(encoding="utf-8"));self.assertEqual(list(B12_TEMPLATES),policy_data["migration_batches"]["B12"])
+        counts=(7,8,8,7,8);self._assert_completed_generic_batch(B12_TEMPLATES,{p:(n,n-1,"graph") for p,n in zip(B12_TEMPLATES,counts)})
+
+    def test_b13_closes_system_assurance_and_all_generic_templates(self) -> None:
+        policy_data = json.loads(POLICY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(
+            list(B13_TEMPLATES), policy_data["migration_batches"]["B13"]
+        )
+        counts = (6, 5, 5, 6, 7)
+        profiles = ("timeline", "graph", "graph", "graph", "graph")
+        self._assert_completed_generic_batch(
+            B13_TEMPLATES,
+            {
+                path: (nodes, nodes - 1, profile)
+                for path, nodes, profile in zip(B13_TEMPLATES, counts, profiles)
+            },
+        )
+        completed = {
+            path
+            for paths in policy_data["migration_batches"].values()
+            for path in paths
+        }
+        self.assertEqual(52, len(completed))
+
+    def test_all_system_architecture_templates_pass_the_presentation_linter(self) -> None:
+        linter = _load_linter()
+        for relative in (*B11_TEMPLATES, *B12_TEMPLATES, *B13_TEMPLATES):
+            family, name = relative.split("/", 1)
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_template_identity(html, family))
+                self.assertEqual([], linter.lint_system_architecture(html))
+
+    def test_system_flagships_use_distinct_topologies_and_mobile_landmarks(self) -> None:
+        context = (TEMPLATE_ROOT / "system-architecture/system-context.html").read_text(
+            encoding="utf-8"
+        )
+        workload = (
+            TEMPLATE_ROOT / "system-architecture/workload-overview.html"
+        ).read_text(encoding="utf-8")
+        self.assertIn('data-architecture-topology="context-boundary"', context)
+        self.assertIn('data-architecture-boundary="system"', context)
+        self.assertIn('data-architecture-topology="entry-core-foundation"', workload)
+        for boundary in ("entry", "core", "operations", "data", "foundation"):
+            self.assertIn(f'data-architecture-boundary="{boundary}"', workload)
+        for html in (context, workload):
+            self.assertIn('data-diagram-mobile="summary"', html)
+            self.assertRegex(html, r"<details\b[^>]*\bopen\b[^>]*\bdata-fallback-for=")
+            self.assertGreaterEqual(html.count("data-architecture-legend-item="), 3)
+            relation_kinds = set(
+                re.findall(
+                    r'data-diagram-visible-relation-id="[^"]+"[^>]*data-relation-kind="([^"]+)"',
+                    html,
+                )
+            )
+            self.assertGreaterEqual(len(relation_kinds), 3)
+
+    def _assert_completed_generic_batch(self, templates, minimums) -> None:
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        linter = _load_linter(); policy = build_packages.load_family_policies(POLICY_PATH)
+        css = (SKILL_ROOT / "assets/contracts/adaptive-viewport/v1.css").read_text(encoding="utf-8").rstrip("\n")
+        script = (SKILL_ROOT / "assets/contracts/adaptive-viewport/v1.js").read_text(encoding="utf-8").rstrip("\n")
+        for relative in templates:
+            nodes, relations, profile = minimums[relative]; html=(TEMPLATE_ROOT/relative).read_text(encoding="utf-8"); family,name=relative.split("/",1); entry=migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertEqual([],linter.lint_generic_contract(html,family,Path(name).stem)); self.assertEqual([],build_packages.generic_contract_errors(html,family,Path(name).stem,policy))
+                self.assertEqual(nodes,html.count("data-diagram-node-id=")); self.assertGreaterEqual(html.count("data-diagram-relation-id="),relations); self.assertIn(f'data-diagram-profile="{profile}"',html)
+                self.assertIn("data-reading-guide",html); self.assertIn("data-fallback-for=",html); self.assertEqual(css,_block(html,"style")); self.assertEqual(script,_block(html,"script"))
+                for key in ("data_slots","macros","slot_macro_pairs"): self.assertEqual(entry["source"][key],entry["canonical"][key])
+
+    def test_b01_templates_pass_independent_generic_contract_parsers(self) -> None:
+        linter = _load_linter()
+        policy = build_packages.load_family_policies(POLICY_PATH)
+        for relative in B01_TEMPLATES:
+            family, name = relative.split("/", 1)
+            template_id = Path(name).stem
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual([], linter.lint_generic_contract(html, family, template_id))
+                self.assertEqual(
+                    [],
+                    build_packages.generic_contract_errors(
+                        html, family, template_id, policy
+                    ),
+                )
+
+    def test_b01_templates_embed_the_exact_adaptive_kernel(self) -> None:
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        script = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        for relative in B01_TEMPLATES:
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual(css, _block(html, "style"))
+                self.assertEqual(script, _block(html, "script"))
+
+    def test_adaptive_toolbar_has_complete_visual_and_keyboard_states(self) -> None:
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.css"
+        ).read_text(encoding="utf-8")
+        for selector in (
+            "[data-diagram-controls] button:hover",
+            "[data-diagram-controls] button[aria-pressed=\"true\"]",
+            "[data-diagram-controls] button:focus-visible",
+            "[data-diagram-controls] button:disabled",
+            "[data-diagram-zoom-status]",
+        ):
+            with self.subTest(selector=selector):
+                self.assertIn(selector, css)
+        self.assertRegex(css, r"\[data-diagram-controls\]\s*\{[^}]*border:")
+        self.assertRegex(css, r"\[data-diagram-controls\] button\s*\{[^}]*border-radius:")
+        self.assertRegex(css, r"\[data-diagram-zoom-status\]\s*\{[^}]*clip-path:")
+        self.assertIn(
+            '[data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }',
+            css,
+        )
+
+    def test_all_generic_templates_embed_the_visible_relation_kernel(self) -> None:
+        css = (
+            SKILL_ROOT / "assets" / "contracts" / "semantic-relations" / "v1.css"
+        ).read_text(encoding="utf-8").rstrip("\n")
+        self.assertIn("[data-semantic-edge-ledger]", css)
+        self.assertIn("[data-diagram-visible-relation-id]", css)
+        templates = (
+            *B01_TEMPLATES,
+            *B02_TEMPLATES,
+            *B03_TEMPLATES,
+            *B04_TEMPLATES,
+            *B05_TEMPLATES,
+            *B06_TEMPLATES,
+            *B07_TEMPLATES,
+            *B08_TEMPLATES,
+            *B09_TEMPLATES,
+            *B10_TEMPLATES,
+            *B11_TEMPLATES,
+            *B12_TEMPLATES,
+            *B13_TEMPLATES,
+        )
+        self.assertEqual(52, len(templates))
+        for relative in templates:
+            html = (TEMPLATE_ROOT / relative).read_text(encoding="utf-8")
+            with self.subTest(relative=relative):
+                self.assertEqual(css, _semantic_relation_block(html))
+
+    def test_b01_migration_preserves_the_source_slot_macro_contract(self) -> None:
+        migration = json.loads(MIGRATION_PATH.read_text(encoding="utf-8"))
+        for relative in B01_TEMPLATES:
+            entry = migration["templates"][relative]
+            with self.subTest(relative=relative):
+                self.assertNotEqual(entry["source"], entry["canonical"])
+                for key in ("data_slots", "macros", "slot_macro_pairs"):
+                    self.assertEqual(entry["source"][key], entry["canonical"][key])
+                self.assertEqual(
+                    "approved adaptive viewport and semantic relation migration",
+                    entry["change_reason"],
+                )
+
+    def test_swimlane_poc_declares_sticky_lanes_relations_zoom_and_stack_fallback(self) -> None:
+        html = (TEMPLATE_ROOT / B01_TEMPLATES[0]).read_text(encoding="utf-8")
+        self.assertIn('data-diagram-mobile="stack"', html)
+        self.assertEqual(3, html.count('data-semantic-role="lane"'))
+        self.assertEqual(9, html.count('data-semantic-role="activity"'))
+        self.assertEqual(8, html.count("data-diagram-relation-id="))
+        self.assertRegex(html, r"position:\s*sticky")
+        for value in ("fit", "0.75", "0.9", "1"):
+            self.assertIn(f'data-diagram-zoom-control="{value}"', html)
+
+    def test_matrix_poc_declares_axes_cells_relations_and_summary_fallback(self) -> None:
+        html = (TEMPLATE_ROOT / B01_TEMPLATES[1]).read_text(encoding="utf-8")
+        self.assertIn('data-diagram-profile="matrix"', html)
+        self.assertIn('data-diagram-mobile="summary"', html)
+        self.assertEqual(3, html.count("data-matrix-row-id="))
+        self.assertEqual(3, html.count("data-matrix-col-id="))
+        self.assertEqual(3, html.count("data-matrix-row="))
+        self.assertIn('<table', html)
+        self.assertIn('data-fallback-for="option-matrix"', html)
+
+    def test_cli_fails_closed_for_a_migrated_generic_contract(self) -> None:
+        linter = _load_linter()
+        html = (TEMPLATE_ROOT / B01_TEMPLATES[0]).read_text(encoding="utf-8")
+        html = html.replace(
+            'data-diagram-canvas data-diagram-contract="1"',
+            'data-diagram-canvas data-diagram-contract="2"',
+            1,
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "swimlane-flow.html"
+            path.write_text(html, encoding="utf-8")
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                result = linter.main([str(path), "--type", "business-flow"])
+        self.assertEqual(1, result, output.getvalue())
+        self.assertIn("contract", output.getvalue().lower())
+
+
+if __name__ == "__main__":
+    unittest.main()

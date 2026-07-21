@@ -65,6 +65,7 @@ TEMPLATE_CONTRACT_KEYS = {
     "signature_algorithm",
     "source_contract_sha256",
     "sequence_redesign_allowlist",
+    "interaction_migration_batches",
     "templates",
 }
 TEMPLATE_ENTRY_KEYS = {"source", "canonical", "change_reason"}
@@ -157,8 +158,17 @@ REFERENCE_PATHS: Tuple[str, ...] = (
     "technical-design.md",
 )
 RUNTIME_WORKFLOW_PATH = "runtime-workflow.md"
+ADAPTIVE_REFERENCE_PATH = "adaptive-readability.md"
+CONTRACT_ASSET_PATHS: Tuple[str, ...] = (
+    "assets/contracts/adaptive-viewport/v1.css",
+    "assets/contracts/adaptive-viewport/v1.js",
+    "assets/contracts/progressive-disclosure/v1.css",
+    "assets/contracts/progressive-disclosure/v1.js",
+    "assets/contracts/semantic-relations/v1.css",
+    "contracts/family-policies.json",
+)
 UPDATE_MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
-CANONICAL_FILE_COUNT = 75
+CANONICAL_FILE_COUNT = 82
 ADAPTER_IDENTITIES = {
     "codex": (
         "README.md",
@@ -251,12 +261,31 @@ RESOURCE_ATTRIBUTES = {"src", "srcset", "poster", "action", "formaction"}
 LINK_ATTRIBUTES = {"href", "xlink:href"}
 SEQUENCE_CONTRACT_VERSION = "1"
 SEQUENCE_MESSAGE_KINDS = frozenset({"sync", "return", "async", "self", "error"})
+SEQUENCE_FRAGMENT_KINDS = frozenset({"tx", "opt", "loop", "alt", "group"})
+SEQUENCE_OUTCOMES = frozenset({"success", "failure", "partial", "empty"})
 SEQUENCE_ROLES = frozenset({"standalone", "overview", "detail"})
 SEQUENCE_WIDTH_MODES = frozenset({"auto", "contained", "wide"})
 SEQUENCE_HEIGHT_MODES = frozenset({"auto", "flow", "scroll"})
 SEQUENCE_PARTICIPANT_LIMIT = 12
 SEQUENCE_MESSAGE_LIMIT = 40
 SEQUENCE_PHASE_LIMIT = 4
+GENERIC_CONTRACT_VERSION = "1"
+GENERIC_PROFILES = frozenset({"graph", "matrix", "timeline", "artboard", "ledger"})
+GENERIC_WIDTH_MODES = frozenset({"contained", "auto", "wide"})
+GENERIC_HEIGHT_MODES = frozenset({"flow", "auto", "scroll"})
+GENERIC_MOBILE_MODES = frozenset({"stack", "scroll", "summary"})
+GENERIC_LIMIT_KEYS = frozenset({"nodes", "relations", "groups", "details"})
+FAMILY_POLICY_KEYS = frozenset(
+    {
+        "schema_version",
+        "contract_version",
+        "sequence_exclusions",
+        "migration_batches",
+        "families",
+    }
+)
+FAMILY_POLICY_FAMILY_KEYS = frozenset({"limits", "templates"})
+FAMILY_POLICY_TEMPLATE_KEYS = frozenset({"profile", "limits"})
 REFERENCE_CONTRACT_KEYS = {"schema_version", "source_skill_content_sha256", "references"}
 CONTENT_ATTRIBUTES = {
     "aria-label",
@@ -480,6 +509,7 @@ def validate_repository_root(root: Path) -> None:
         PurePosixPath("LICENSE"),
         PurePosixPath("contracts/template_migration_baseline.json"),
         PurePosixPath("contracts/reference_migration_baseline.json"),
+        PurePosixPath("contracts/interaction_contract_baseline.json"),
     )
     for relative in required:
         _ensure_path(root, relative, "file")
@@ -705,8 +735,8 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
     contract = read_json_unique(path)
     if set(contract) != TEMPLATE_CONTRACT_KEYS:
         raise _fail("template contract has an invalid root schema")
-    if type(contract["schema_version"]) is not int or contract["schema_version"] != 2:
-        raise _fail("template contract schema_version must be integer 2")
+    if type(contract["schema_version"]) is not int or contract["schema_version"] != 3:
+        raise _fail("template contract schema_version must be integer 3")
     if contract["signature_algorithm"] != "htmlparser-events-v1":
         raise _fail("template contract signature_algorithm is invalid")
     _validate_sha256(contract["source_contract_sha256"], "source_contract_sha256")
@@ -715,6 +745,15 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
     allowlist = contract["sequence_redesign_allowlist"]
     if allowlist != list(SEQUENCE_REDESIGN_PATHS):
         raise _fail("template contract sequence redesign allowlist is invalid")
+    migration_batches = contract["interaction_migration_batches"]
+    policy_path = _ensure_path(
+        root,
+        PurePosixPath("skills/vibe-diagram/contracts/family-policies.json"),
+        "file",
+    )
+    policy = load_family_policies(policy_path)
+    if migration_batches != policy["migration_batches"]:
+        raise _fail("template contract migration batches differ from the family policy")
     templates = contract["templates"]
     if not isinstance(templates, dict):
         raise _fail("template contract templates must be an object")
@@ -747,8 +786,13 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
     ).encode("utf-8")
     if hashlib.sha256(source_payload).hexdigest() != SOURCE_TEMPLATE_SNAPSHOTS_SHA256:
         raise _fail("template contract frozen source snapshots have drifted")
-    if changed != set(SEQUENCE_REDESIGN_PATHS):
-        raise _fail("exactly the six approved sequence templates must differ")
+    completed = {
+        relative
+        for entries in migration_batches.values()
+        for relative in entries
+    }
+    if changed != set(SEQUENCE_REDESIGN_PATHS) | completed:
+        raise _fail("changed templates differ from the approved sequence and interaction migrations")
     return contract
 
 
@@ -772,13 +816,69 @@ def load_reference_contract(root: Path) -> Dict[str, Any]:
         for relative in canonical_file_map(root)
         if relative.parent == PurePosixPath("references")
         and relative.suffix == ".md"
-        and relative.name != RUNTIME_WORKFLOW_PATH
+        and relative.name not in {RUNTIME_WORKFLOW_PATH, ADAPTIVE_REFERENCE_PATH}
     }
     if set(references) != set(REFERENCE_PATHS) or expected != set(REFERENCE_PATHS):
         raise _fail("reference contract must contain the exact 11 canonical references")
     for relative, digest in references.items():
         safe_relative_path(relative)
         _validate_sha256(digest, f"references.{relative}")
+    return contract
+
+
+def load_interaction_contract(root: Path) -> Dict[str, Any]:
+    path = _ensure_path(
+        root, PurePosixPath("contracts/interaction_contract_baseline.json"), "file"
+    )
+    contract = read_json_unique(path)
+    if set(contract) != {"schema_version", "contracts", "scope", "evidence"}:
+        raise _fail("interaction contract has an invalid root schema")
+    if type(contract["schema_version"]) is not int or contract["schema_version"] != 1:
+        raise _fail("interaction contract schema_version must be integer 1")
+    if contract["contracts"] != {
+        "adaptive_viewport": "1",
+        "semantic_relations": "1",
+        "progressive_disclosure": "1",
+    }:
+        raise _fail("interaction contract versions are invalid")
+    scope = contract["scope"]
+    if not isinstance(scope, dict) or set(scope) != {
+        "generic_template_count",
+        "sequence_template_count",
+        "completed_batches",
+        "completed_templates",
+    }:
+        raise _fail("interaction contract scope is invalid")
+    if type(scope["generic_template_count"]) is not int or scope["generic_template_count"] != 52:
+        raise _fail("interaction contract generic template count is invalid")
+    if type(scope["sequence_template_count"]) is not int or scope["sequence_template_count"] != 6:
+        raise _fail("interaction contract sequence template count is invalid")
+    completed_batches = scope["completed_batches"]
+    if (
+        not isinstance(completed_batches, list)
+        or not completed_batches
+        or completed_batches[0] != "B00"
+        or len(completed_batches) != len(set(completed_batches))
+        or any(re.fullmatch(r"B(?:0[0-9]|1[0-5])", batch) is None for batch in completed_batches)
+    ):
+        raise _fail("interaction contract completed batches are invalid")
+    completed_templates = scope["completed_templates"]
+    generic_templates = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
+    if (
+        not isinstance(completed_templates, list)
+        or completed_templates != sorted(completed_templates)
+        or len(completed_templates) != len(set(completed_templates))
+        or not set(completed_templates) <= generic_templates
+    ):
+        raise _fail("interaction contract completed templates are invalid")
+    evidence = contract["evidence"]
+    if not isinstance(evidence, dict) or set(evidence) != {
+        "synthetic_contracts",
+        "canonical_templates",
+        "browser_runtime",
+        "client_runtime",
+    }:
+        raise _fail("interaction contract evidence scope is invalid")
     return contract
 
 
@@ -906,6 +1006,314 @@ def _tree_record_dict(record: TreeRecord) -> Dict[str, Any]:
 def _duplicates(attrs: Sequence[Tuple[str, Optional[str]]]) -> List[str]:
     names = [name.lower() for name, _ in attrs]
     return sorted({name for name in names if names.count(name) > 1})
+
+
+def _validated_limits(value: Any, label: str, *, partial: bool) -> Dict[str, int]:
+    if not isinstance(value, dict):
+        raise _fail(f"{label} must be an object")
+    keys = set(value)
+    if (not partial and keys != GENERIC_LIMIT_KEYS) or (partial and not keys <= GENERIC_LIMIT_KEYS):
+        raise _fail(f"{label} has an invalid key set")
+    result: Dict[str, int] = {}
+    for key, limit in value.items():
+        if type(limit) is not int or limit < 1:
+            raise _fail(f"{label}.{key} must be a positive integer")
+        result[key] = limit
+    return result
+
+
+def _validated_migration_batches(value: Any) -> Dict[str, List[str]]:
+    if not isinstance(value, dict) or list(value) != sorted(value):
+        raise _fail("family policy migration batches must be an ordered object")
+    generic_templates = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
+    seen = set()
+    result: Dict[str, List[str]] = {}
+    for batch, paths in value.items():
+        if re.fullmatch(r"B(?:0[1-9]|1[0-3])", batch) is None:
+            raise _fail(f"family policy migration batch id is invalid: {batch}")
+        if (
+            not isinstance(paths, list)
+            or not paths
+            or paths != sorted(paths)
+            or len(paths) != len(set(paths))
+            or not set(paths) <= generic_templates
+            or seen & set(paths)
+        ):
+            raise _fail(f"family policy migration batch paths are invalid: {batch}")
+        seen.update(paths)
+        result[batch] = paths
+    return result
+
+
+def load_family_policies(path: Path) -> Dict[str, Any]:
+    policy = read_json_unique(path)
+    if set(policy) != FAMILY_POLICY_KEYS:
+        raise _fail("family policy has an invalid root schema")
+    if type(policy["schema_version"]) is not int or policy["schema_version"] != 1:
+        raise _fail("family policy schema_version must be integer 1")
+    if policy["contract_version"] != GENERIC_CONTRACT_VERSION:
+        raise _fail("family policy contract_version is invalid")
+    exclusions = policy["sequence_exclusions"]
+    if exclusions != sorted(SEQUENCE_REDESIGN_PATHS):
+        raise _fail("family policy sequence exclusions are invalid")
+    _validated_migration_batches(policy["migration_batches"])
+    families = policy["families"]
+    if not isinstance(families, dict) or len(families) != 10:
+        raise _fail("family policy must define exactly ten generic families")
+    covered = set()
+    for family, definition in families.items():
+        if not isinstance(definition, dict) or set(definition) != FAMILY_POLICY_FAMILY_KEYS:
+            raise _fail(f"family policy definition is invalid: {family}")
+        family_limits = _validated_limits(
+            definition["limits"], f"families.{family}.limits", partial=False
+        )
+        templates = definition["templates"]
+        if not isinstance(templates, dict) or not templates:
+            raise _fail(f"family policy templates must be a non-empty object: {family}")
+        for template_id, template in templates.items():
+            if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", template_id):
+                raise _fail(f"family policy template id is invalid: {family}/{template_id}")
+            if not isinstance(template, dict) or set(template) != FAMILY_POLICY_TEMPLATE_KEYS:
+                raise _fail(f"family policy template definition is invalid: {family}/{template_id}")
+            if template["profile"] not in GENERIC_PROFILES:
+                raise _fail(f"family policy profile is invalid: {family}/{template_id}")
+            overrides = _validated_limits(
+                template["limits"],
+                f"families.{family}.templates.{template_id}.limits",
+                partial=True,
+            )
+            if any(limit > family_limits[key] for key, limit in overrides.items()):
+                raise _fail(f"family policy template limit widens its family: {family}/{template_id}")
+            covered.add(f"{family}/{template_id}.html")
+    expected = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
+    if covered != expected:
+        raise _fail("family policy must cover the exact 52 non-sequence templates")
+    return policy
+
+
+@dataclass
+class _GenericCanvasRecord:
+    attrs: Dict[str, str]
+    node_ids: List[str]
+    group_ids: List[str]
+    relations: List[Tuple[str, str, str, str, str]]
+    row_ids: List[str]
+    col_ids: List[str]
+    cells: List[Tuple[str, str]]
+    detail_ids: List[str]
+    visible_relation_ids: List[str]
+
+
+class _GenericContractParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.canvases: List[_GenericCanvasRecord] = []
+        self.fallback_ids: List[str] = []
+        self.errors: List[str] = []
+        self._canvas: Optional[_GenericCanvasRecord] = None
+        self._stack: List[Tuple[str, bool]] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        normalized = [(name.lower(), value or "") for name, value in attrs]
+        values = dict(normalized)
+        starts_canvas = "data-diagram-canvas" in values
+        if starts_canvas:
+            if self._canvas is not None:
+                self.errors.append("Diagram canvases must not be nested.")
+            else:
+                self._canvas = _GenericCanvasRecord(values, [], [], [], [], [], [], [], [])
+                self.canvases.append(self._canvas)
+        if "data-fallback-for" in values:
+            self.fallback_ids.append(values["data-fallback-for"].strip())
+        if self._canvas is not None:
+            semantic = any(
+                key in values
+                for key in (
+                    "data-diagram-node-id",
+                    "data-diagram-group-id",
+                    "data-diagram-relation-id",
+                    "data-matrix-row-id",
+                    "data-matrix-col-id",
+                    "data-diagram-detail-id",
+                    "data-diagram-visible-relation-id",
+                )
+            )
+            duplicates = _duplicates(attrs) if semantic or starts_canvas else []
+            if duplicates:
+                self.errors.append(
+                    "Duplicate generic contract attributes: " + ", ".join(duplicates) + "."
+                )
+            if "data-diagram-node-id" in values:
+                self._canvas.node_ids.append(values["data-diagram-node-id"].strip())
+                if not values.get("data-semantic-role", "").strip():
+                    self.errors.append("Every diagram node must declare data-semantic-role.")
+            if "data-diagram-group-id" in values:
+                self._canvas.group_ids.append(values["data-diagram-group-id"].strip())
+                if not values.get("data-semantic-role", "").strip():
+                    self.errors.append("Every diagram group must declare data-semantic-role.")
+            if "data-diagram-relation-id" in values:
+                self._canvas.relations.append(
+                    (
+                        values["data-diagram-relation-id"].strip(),
+                        values.get("data-from", "").strip(),
+                        values.get("data-to", "").strip(),
+                        values.get("data-relation-kind", "").strip(),
+                        values.get("data-semantic", "").strip(),
+                    )
+                )
+            if "data-matrix-row-id" in values:
+                self._canvas.row_ids.append(values["data-matrix-row-id"].strip())
+            if "data-matrix-col-id" in values:
+                self._canvas.col_ids.append(values["data-matrix-col-id"].strip())
+            if "data-matrix-row" in values or "data-matrix-col" in values:
+                self._canvas.cells.append(
+                    (
+                        values.get("data-matrix-row", "").strip(),
+                        values.get("data-matrix-col", "").strip(),
+                    )
+                )
+            if "data-diagram-detail-id" in values:
+                self._canvas.detail_ids.append(values["data-diagram-detail-id"].strip())
+            if "data-diagram-visible-relation-id" in values:
+                is_svg_edge = tag in {"line", "path", "polygon", "polyline"}
+                is_html_edge = values.get("data-visible-relation-kind") == "edge"
+                if not (is_svg_edge or is_html_edge):
+                    self.errors.append(
+                        "Visible relation bindings must use an SVG edge or an explicit HTML edge carrier."
+                    )
+                self._canvas.visible_relation_ids.append(
+                    values["data-diagram-visible-relation-id"].strip()
+                )
+        if tag not in VOID_ELEMENTS:
+            self._stack.append((tag, starts_canvas))
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self.handle_starttag(tag, attrs)
+        if tag not in VOID_ELEMENTS:
+            self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if not self._stack:
+            return
+        _open_tag, closes_canvas = self._stack.pop()
+        if closes_canvas:
+            self._canvas = None
+
+
+def generic_contract_errors(
+    html: str,
+    family: str,
+    template_id: str,
+    policy: Mapping[str, Any],
+) -> List[str]:
+    relative = f"{family}/{template_id}.html"
+    if relative in set(policy["sequence_exclusions"]):
+        return []
+    definition = policy["families"].get(family, {}).get("templates", {}).get(template_id)
+    if definition is None:
+        return [f"No generic contract policy exists for {family}/{template_id}."]
+    parser = _GenericContractParser()
+    try:
+        parser.feed(html)
+        parser.close()
+    except Exception as exc:
+        return [f"Could not parse generic diagram contract: {exc}."]
+    errors = list(parser.errors)
+    if not parser.canvases:
+        errors.append("Generic diagram contract requires at least one canvas.")
+        return errors
+    family_limits = policy["families"][family]["limits"]
+    limits = {**family_limits, **definition["limits"]}
+    canvas_ids = [canvas.attrs.get("data-diagram-id", "").strip() for canvas in parser.canvases]
+    if "" in canvas_ids:
+        errors.append("Every diagram canvas requires a non-empty data-diagram-id.")
+    if len(canvas_ids) != len(set(canvas_ids)):
+        errors.append("Diagram canvas ids must be unique.")
+    for canvas in parser.canvases:
+        attrs = canvas.attrs
+        canvas_id = attrs.get("data-diagram-id", "").strip()
+        if attrs.get("data-diagram-contract") != GENERIC_CONTRACT_VERSION:
+            errors.append("Diagram canvas contract must be version 1.")
+        if attrs.get("data-diagram-profile") != definition["profile"]:
+            errors.append("Diagram canvas profile must match its trusted family policy.")
+        if attrs.get("data-diagram-width") not in GENERIC_WIDTH_MODES:
+            errors.append("Diagram canvas width mode is invalid.")
+        if attrs.get("data-diagram-height") not in GENERIC_HEIGHT_MODES:
+            errors.append("Diagram canvas height mode is invalid.")
+        if attrs.get("data-diagram-mobile") not in GENERIC_MOBILE_MODES:
+            errors.append("Diagram canvas mobile fallback mode is invalid.")
+        semantic_ids = canvas.node_ids + canvas.group_ids
+        if any(not value for value in semantic_ids):
+            errors.append("Diagram node and group ids must be non-empty.")
+        if len(semantic_ids) != len(set(semantic_ids)):
+            errors.append("Diagram node and group ids must be unique within a canvas.")
+        endpoints = set(semantic_ids)
+        relation_ids = []
+        for relation_id, source, target, kind, semantic in canvas.relations:
+            relation_ids.append(relation_id)
+            if not all((relation_id, source, target, kind, semantic)):
+                errors.append("Every diagram relation requires id, endpoints, kind, and semantic.")
+            elif source not in endpoints or target not in endpoints:
+                errors.append("Diagram relation endpoints must reference authored nodes or groups.")
+        if len(relation_ids) != len(set(relation_ids)):
+            errors.append("Diagram relation ids must be unique within a canvas.")
+        visible_relation_ids = canvas.visible_relation_ids
+        if any(not relation_id for relation_id in visible_relation_ids):
+            errors.append("Visible relation bindings must use non-empty relation ids.")
+        if len(visible_relation_ids) != len(set(visible_relation_ids)):
+            errors.append("Visible relation bindings must be unique within a canvas.")
+        missing_visible = sorted(set(relation_ids) - set(visible_relation_ids))
+        extra_visible = sorted(set(visible_relation_ids) - set(relation_ids))
+        if missing_visible:
+            errors.append(
+                "Every diagram relation requires one visible edge binding: "
+                + ", ".join(missing_visible)
+                + "."
+            )
+        if extra_visible:
+            errors.append(
+                "Visible edge bindings must reference authored diagram relations: "
+                + ", ".join(extra_visible)
+                + "."
+            )
+        if definition["profile"] == "matrix":
+            rows, columns = set(canvas.row_ids), set(canvas.col_ids)
+            if not rows or not columns or not canvas.cells:
+                errors.append("Matrix profile requires authored row axes, column axes, and cells.")
+            for row, column in canvas.cells:
+                if row not in rows or column not in columns:
+                    errors.append("Matrix cells must reference authored row and column axes.")
+        counts = {
+            "nodes": len(canvas.node_ids),
+            "relations": len(canvas.relations),
+            "groups": len(canvas.group_ids),
+            "details": len(canvas.detail_ids),
+        }
+        for key, count in counts.items():
+            if count > limits[key]:
+                errors.append(f"Diagram canvas exceeds the {key} complexity budget.")
+        if canvas_id and canvas_id not in parser.fallback_ids:
+            errors.append("Every diagram canvas requires a matching data-fallback-for baseline.")
+    return list(dict.fromkeys(errors))
+
+
+def adaptive_kernel_errors(html: str, css: str, script: str) -> List[str]:
+    errors = []
+    for tag, expected in (("style", css), ("script", script)):
+        matches = re.findall(
+            rf'<{tag} data-adaptive-viewport-kernel="1">\n(.*?)\n</{tag}>',
+            html,
+            flags=re.DOTALL,
+        )
+        if len(matches) != 1:
+            errors.append(f"Migrated generic template requires exactly one adaptive {tag} kernel.")
+        elif matches[0] != expected.rstrip("\n"):
+            errors.append(f"Migrated generic template adaptive {tag} kernel has drifted.")
+    return errors
 
 
 def _allowed_embedded_reference(value: str) -> bool:
@@ -1098,6 +1506,12 @@ class _SequenceRecord:
     participants: List[str]
     messages: List[Tuple[str, str, str, str]]
     phases: List[str]
+    participant_group_ids: List[str]
+    message_steps: List[str]
+    fragments: List[Tuple[str, str]]
+    outcomes: List[str]
+    risk_ids: List[str]
+    evidence_links: List[str]
 
 
 class _SequenceParser(HTMLParser):
@@ -1105,6 +1519,7 @@ class _SequenceParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.records: List[_SequenceRecord] = []
         self.errors: List[str] = []
+        self.document_evidence_ids: List[str] = []
         self._active: List[_SequenceRecord] = []
         self._stack: List[Tuple[str, bool]] = []
 
@@ -1114,6 +1529,11 @@ class _SequenceParser(HTMLParser):
         tag = tag.lower()
         duplicates = _duplicates(attrs)
         attrs_map = {name.lower(): value or "" for name, value in attrs}
+        if "data-sequence-evidence-id" in attrs_map:
+            evidence_id = attrs_map["data-sequence-evidence-id"].strip()
+            self.document_evidence_ids.append(evidence_id)
+            if tag != "details":
+                self.errors.append("sequence evidence ids must use native details elements")
         is_canvas = "data-sequence-canvas" in attrs_map
         endpoint_attrs = {
             "data-from",
@@ -1121,6 +1541,7 @@ class _SequenceParser(HTMLParser):
             "data-message-kind",
             "data-semantic",
             "data-participant-id",
+            "data-participant-group-id",
         }
         if duplicates and any(
             name.startswith("data-sequence") or name in endpoint_attrs for name in duplicates
@@ -1129,13 +1550,17 @@ class _SequenceParser(HTMLParser):
         if is_canvas:
             if self._active:
                 self.errors.append("sequence canvases must not be nested")
-            record = _SequenceRecord(attrs_map, [], [], [])
+            record = _SequenceRecord(attrs_map, [], [], [], [], [], [], [], [], [])
             self.records.append(record)
             self._active.append(record)
         if self._active:
             record = self._active[-1]
             if "data-participant-id" in attrs_map:
                 record.participants.append(attrs_map["data-participant-id"].strip())
+            if "data-participant-group-id" in attrs_map:
+                record.participant_group_ids.append(
+                    attrs_map["data-participant-group-id"].strip()
+                )
             if "data-sequence-message" in attrs_map:
                 record.messages.append(
                     (
@@ -1145,8 +1570,29 @@ class _SequenceParser(HTMLParser):
                         attrs_map.get("data-semantic", "").strip(),
                     )
                 )
+                record.message_steps.append(
+                    attrs_map.get("data-sequence-step-index", "").strip()
+                )
             if "data-sequence-phase-id" in attrs_map:
                 record.phases.append(attrs_map["data-sequence-phase-id"].strip())
+            if (
+                "data-sequence-fragment-id" in attrs_map
+                or "data-sequence-fragment-kind" in attrs_map
+            ):
+                record.fragments.append(
+                    (
+                        attrs_map.get("data-sequence-fragment-id", "").strip(),
+                        attrs_map.get("data-sequence-fragment-kind", "").strip(),
+                    )
+                )
+            if "data-sequence-outcome" in attrs_map:
+                record.outcomes.append(attrs_map["data-sequence-outcome"].strip())
+            if "data-sequence-risk-id" in attrs_map:
+                record.risk_ids.append(attrs_map["data-sequence-risk-id"].strip())
+            if "data-sequence-evidence-for" in attrs_map:
+                record.evidence_links.append(
+                    attrs_map["data-sequence-evidence-for"].strip()
+                )
         if push and tag not in VOID_ELEMENTS:
             self._stack.append((tag, is_canvas))
         elif is_canvas:
@@ -1174,7 +1620,7 @@ class _SequenceParser(HTMLParser):
             self.errors.append("sequence canvas is not closed")
 
 
-def _sequence_canvases(html: str) -> Tuple[Tuple[_SequenceCanvas, ...], List[str]]:
+def _sequence_canvases(html: str) -> Tuple[Tuple[_SequenceCanvas, ...], _SequenceParser]:
     parser = _SequenceParser()
     parser.feed(html)
     parser.close()
@@ -1193,16 +1639,22 @@ def _sequence_canvases(html: str) -> Tuple[Tuple[_SequenceCanvas, ...], List[str
         )
         for record in parser.records
     )
-    return canvases, parser.errors
+    return canvases, parser
 
 
 def _sequence_errors(html: str) -> List[str]:
-    canvases, errors = _sequence_canvases(html)
-    errors = list(errors)
+    canvases, parser = _sequence_canvases(html)
+    errors = list(parser.errors)
     if not canvases:
         errors.append("sequence template must contain at least one canvas")
+    evidence_ids = parser.document_evidence_ids
+    if any(not evidence_id for evidence_id in evidence_ids):
+        errors.append("sequence evidence ids must be non-empty")
+    if len(evidence_ids) != len(set(evidence_ids)):
+        errors.append("sequence evidence ids must be unique within a document")
+    evidence_targets = set(evidence_ids)
     ids = [canvas.canvas_id for canvas in canvases]
-    for index, canvas in enumerate(canvases, start=1):
+    for index, (record, canvas) in enumerate(zip(parser.records, canvases), start=1):
         label = canvas.canvas_id or f"canvas-{index}"
         if not canvas.canvas_id or ids.count(canvas.canvas_id) != 1:
             errors.append(f"invalid sequence canvas id: {label}")
@@ -1226,6 +1678,38 @@ def _sequence_errors(html: str) -> List[str]:
             errors.append(f"sequence requires at least one message: {label}")
         if any(not value for value in canvas.phases) or len(set(canvas.phases)) != len(canvas.phases):
             errors.append(f"invalid sequence phases: {label}")
+        participant_group_ids = record.participant_group_ids
+        if any(not group_id for group_id in participant_group_ids):
+            errors.append(f"invalid sequence participant group ids: {label}")
+        if len(participant_group_ids) != len(set(participant_group_ids)):
+            errors.append(f"duplicate sequence participant group ids: {label}")
+        if any(record.message_steps):
+            if any(not step for step in record.message_steps):
+                errors.append(f"partial sequence message step indices: {label}")
+            non_empty_steps = [step for step in record.message_steps if step]
+            if len(non_empty_steps) != len(set(non_empty_steps)):
+                errors.append(f"duplicate sequence message step indices: {label}")
+            if any(re.fullmatch(r"\d{1,3}", step) is None for step in non_empty_steps):
+                errors.append(f"invalid sequence message step indices: {label}")
+        fragment_ids = [fragment_id for fragment_id, _kind in record.fragments]
+        for fragment_id, kind in record.fragments:
+            if not fragment_id or not kind:
+                errors.append(f"incomplete sequence fragment: {label}")
+            elif kind not in SEQUENCE_FRAGMENT_KINDS:
+                errors.append(f"invalid sequence fragment kind: {label}")
+        if len(fragment_ids) != len(set(fragment_ids)):
+            errors.append(f"duplicate sequence fragment ids: {label}")
+        if any(outcome not in SEQUENCE_OUTCOMES for outcome in record.outcomes):
+            errors.append(f"invalid sequence outcome: {label}")
+        if any(not risk_id for risk_id in record.risk_ids):
+            errors.append(f"invalid sequence risk ids: {label}")
+        if len(record.risk_ids) != len(set(record.risk_ids)):
+            errors.append(f"duplicate sequence risk ids: {label}")
+        if any(
+            not evidence_for or evidence_for not in evidence_targets
+            for evidence_for in record.evidence_links
+        ):
+            errors.append(f"invalid sequence evidence link: {label}")
         participants = set(canvas.participants)
         for source, target, kind, semantic in canvas.messages:
             if not source or not target or source not in participants or target not in participants:
@@ -1357,7 +1841,9 @@ def validate_canonical(root: Path) -> None:
         PurePosixPath("scripts/update_skill.py"),
         PurePosixPath("scripts/vibe_diagram_lint.py"),
         PurePosixPath("references") / RUNTIME_WORKFLOW_PATH,
+        PurePosixPath("references") / ADAPTIVE_REFERENCE_PATH,
         *(PurePosixPath("references") / name for name in REFERENCE_PATHS),
+        *(PurePosixPath(name) for name in CONTRACT_ASSET_PATHS),
         *(PurePosixPath("assets/templates") / name for name in TEMPLATE_PATHS),
     }
     if set(files) != expected or len(files) != CANONICAL_FILE_COUNT:
@@ -1412,6 +1898,33 @@ def validate_canonical(root: Path) -> None:
     if update_manifest["tree_sha256"] != update_tree_sha256(root):
         raise _fail("canonical update manifest tree digest drifted")
 
+    policy = load_family_policies(files[PurePosixPath("contracts/family-policies.json")])
+    interaction_contract = load_interaction_contract(root)
+    completed_templates = set(interaction_contract["scope"]["completed_templates"])
+    migration_batches = policy["migration_batches"]
+    policy_completed = {
+        relative for paths in migration_batches.values() for relative in paths
+    }
+    if completed_templates != policy_completed or interaction_contract["scope"][
+        "completed_batches"
+    ] != ["B00", *migration_batches]:
+        raise _fail("interaction baseline differs from the trusted migration batches")
+
+    asset_requirements = {
+        "assets/contracts/adaptive-viewport/v1.css": ("data-diagram-canvas", "--diagram-scale"),
+        "assets/contracts/adaptive-viewport/v1.js": ("VibeDiagramViewport", "0.75", "reset"),
+        "assets/contracts/progressive-disclosure/v1.css": ("data-diagram-detail", "@media print"),
+        "assets/contracts/progressive-disclosure/v1.js": ("VibeDiagramDisclosure", "reset"),
+        "assets/contracts/semantic-relations/v1.css": (
+            "data-diagram-visible-relation-id",
+            "vector-effect",
+        ),
+    }
+    for relative, required_tokens in asset_requirements.items():
+        text = files[PurePosixPath(relative)].read_text(encoding="utf-8")
+        if any(token not in text for token in required_tokens):
+            raise _fail(f"canonical interaction asset is incomplete: {relative}")
+
     reference_contract = load_reference_contract(root)
     reference_texts = []
     for name in REFERENCE_PATHS:
@@ -1420,10 +1933,15 @@ def validate_canonical(root: Path) -> None:
         if sha256_file(path) != reference_contract["references"][name]:
             raise _fail(f"canonical reference hash drifted: {name}")
         reference_texts.append(path.read_text(encoding="utf-8"))
+    adaptive_reference = files[
+        PurePosixPath("references") / ADAPTIVE_REFERENCE_PATH
+    ].read_text(encoding="utf-8")
     runtime_workflow = files[
         PurePosixPath("references") / RUNTIME_WORKFLOW_PATH
     ].read_text(encoding="utf-8")
-    canonical_prose = "\n".join([skill_text, runtime_workflow] + reference_texts)
+    canonical_prose = "\n".join(
+        [skill_text, runtime_workflow, adaptive_reference] + reference_texts
+    )
     referenced_templates = set(
         re.findall(r"\.\./assets/templates/([a-z0-9-]+/[a-z0-9-]+\.html)", canonical_prose)
     )
@@ -1459,6 +1977,25 @@ def validate_canonical(root: Path) -> None:
                 r"match\(.+→|seq-route.+match|route.+match", html, re.IGNORECASE | re.DOTALL
             ):
                 raise _fail(f"sequence template parses visible route text: {relative}")
+        elif relative in completed_templates:
+            generic_errors = generic_contract_errors(
+                html, family, Path(relative).stem, policy
+            )
+            generic_errors.extend(
+                adaptive_kernel_errors(
+                    html,
+                    files[
+                        PurePosixPath("assets/contracts/adaptive-viewport/v1.css")
+                    ].read_text(encoding="utf-8"),
+                    files[
+                        PurePosixPath("assets/contracts/adaptive-viewport/v1.js")
+                    ].read_text(encoding="utf-8"),
+                )
+            )
+            if generic_errors:
+                raise _fail(
+                    f"invalid generic template {relative}: {'; '.join(generic_errors)}"
+                )
     if len(sequence_digests) != 1:
         raise _fail("the six sequence templates must embed one identical interaction kernel")
 
@@ -1529,7 +2066,9 @@ def _canonical_relative_paths() -> Tuple[PurePosixPath, ...]:
         PurePosixPath("scripts/update_skill.py"),
         PurePosixPath("scripts/vibe_diagram_lint.py"),
         PurePosixPath("references") / RUNTIME_WORKFLOW_PATH,
+        PurePosixPath("references") / ADAPTIVE_REFERENCE_PATH,
         *(PurePosixPath("references") / name for name in REFERENCE_PATHS),
+        *(PurePosixPath(name) for name in CONTRACT_ASSET_PATHS),
         *(PurePosixPath("assets/templates") / name for name in TEMPLATE_PATHS),
     )
 
@@ -1856,7 +2395,7 @@ def assemble_client_package(
     if package_root.exists() or package_root.is_symlink():
         raise _fail(f"package staging output already exists: {package_root}")
     expected_outputs = _expected_package_paths(spec)
-    expected_count = 78 if spec.client == "codex" else 77
+    expected_count = CANONICAL_FILE_COUNT + (3 if spec.client == "codex" else 2)
     if len(expected_outputs) != expected_count:
         raise _fail(f"client output whitelist has an invalid size: {spec.client}")
     for output in expected_outputs:

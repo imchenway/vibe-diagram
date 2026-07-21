@@ -1,0 +1,26 @@
+{
+  "check_command": [
+    "python3",
+    "scripts/build_packages.py",
+    "--check"
+  ],
+  "main_branch": "main",
+  "publication_command": [
+    "python3",
+    "scripts/build_packages.py",
+    "--sync-publication"
+  ],
+  "build_command": [
+    "python3",
+    "scripts/build_packages.py",
+    "--output",
+    "build"
+  ],
+  "repository": "imchenway/vibe-diagram",
+  "schema_version": 1,
+  "skill_root": "skills/vibe-diagram",
+  "stable_branch": "stable",
+  "update_manifest": "skills/vibe-diagram/update.json",
+  "version_file": "VERSION",
+  "workflow_file": "static-validation.yml"
+}

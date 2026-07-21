@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import unittest
+from datetime import date
 from pathlib import Path
 
 
@@ -9,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
 README_ZH = ROOT / "README.zh-CN.md"
 CHANGELOG = ROOT / "CHANGELOG.md"
+CONTRIBUTING = ROOT / "CONTRIBUTING.md"
 PUBLIC_DOCS = ROOT / "docs" / "public"
 PUBLIC_OVERCLAIM_PATTERNS = (
     r"production.ready",
@@ -53,13 +55,13 @@ class DocumentationContractTests(unittest.TestCase):
         self.assertIn("README.zh-CN.md", english)
 
     def test_readmes_state_static_and_lane_scoped_runtime_boundaries(self) -> None:
-        version = _version()
         english = README.read_text(encoding="utf-8")
         chinese = README_ZH.read_text(encoding="utf-8")
 
         english_required = (
             "`v0.1.1` established the released update-capable standalone Skill lane",
-            f"repository version `{version}` keeps current and offline checks read-only",
+            "The current repository version is declared by `VERSION`",
+            "`v0.1.3` made current and offline checks read-only",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -67,6 +69,7 @@ class DocumentationContractTests(unittest.TestCase):
             "python3.9 -m unittest discover -s tests -v",
             "python3 -m unittest discover -s tests -v",
             "python3 scripts/build_packages.py --check",
+            "python3 scripts/build_packages.py --output build",
             "python3 scripts/build_packages.py --sync-publication",
             "package-static-valid",
             "does not prove the complete unit suite",
@@ -82,7 +85,8 @@ class DocumentationContractTests(unittest.TestCase):
 
         chinese_required = (
             "`v0.1.1` 建立了已发布、具备更新能力的独立 Skill lane",
-            f"仓库版本 `{version}` 让 current 与 offline 检查保持只读",
+            "当前仓库版本以 `VERSION` 为准",
+            "`v0.1.3` 则让 current 与 offline 检查保持只读",
             "skills/vibe-diagram/",
             "plugins/vibe-diagram/",
             ".agents/plugins/marketplace.json",
@@ -90,6 +94,7 @@ class DocumentationContractTests(unittest.TestCase):
             "python3.9 -m unittest discover -s tests -v",
             "python3 -m unittest discover -s tests -v",
             "python3 scripts/build_packages.py --check",
+            "python3 scripts/build_packages.py --output build",
             "python3 scripts/build_packages.py --sync-publication",
             "package-static-valid",
             "不能证明完整 unit suite",
@@ -124,6 +129,44 @@ class DocumentationContractTests(unittest.TestCase):
                 self.assertIn(value, english)
                 self.assertIn(value, chinese)
 
+    def test_readmes_document_release_orchestration_through_stable_promotion(self) -> None:
+        english = README.read_text(encoding="utf-8")
+        chinese = README_ZH.read_text(encoding="utf-8")
+        shared = (
+            "scripts/release_github_skill.py prepare --version",
+            "scripts/release_github_skill.py verify --version",
+            "scripts/release_github_skill.py status --version",
+            "scripts/release_github_skill.py publish --version",
+            "scripts/release_github_skill.py promote-stable --version",
+            "--confirm-remote-actions",
+            "--confirm-stable-promotion",
+            "PARTIAL_REMOTE",
+            "STABLE_PROMOTED",
+            "verify-runtime --version",
+            "--mode isolated",
+            "--mode installed-client",
+            "--confirm-installed-skill-mutation",
+            "--artifact /absolute/path/to/runtime-smoke.html",
+            "PROMOTED_RUNTIME_FAILED",
+            "RUNTIME_VERIFIED",
+        )
+        for value in shared:
+            with self.subTest(value=value):
+                self.assertIn(value, english)
+                self.assertIn(value, chinese)
+        self.assertIn("annotated tag", english)
+        self.assertIn("non-force", english)
+        self.assertIn("annotated tag", chinese)
+        self.assertIn("非强制", chinese)
+        self.assertIn("bounded exponential backoff", english)
+        self.assertIn("有上限的指数退避", chinese)
+        self.assertIn("does not touch the installed Skill", english)
+        self.assertIn("不会触碰已安装 Skill", chinese)
+        self.assertIn("does not prove Codex client discovery", english)
+        self.assertIn("不能证明 Codex 客户端发现", chinese)
+        self.assertIn("No real runtime lifecycle has been executed", english)
+        self.assertIn("尚未执行真实运行时生命周期", chinese)
+
         self.assertNotIn("v0.1.0-rc.2", english)
         self.assertNotIn("v0.1.0-rc.2", chinese)
         self.assertIn("Start a new Codex task", english)
@@ -133,13 +176,48 @@ class DocumentationContractTests(unittest.TestCase):
         text = CHANGELOG.read_text(encoding="utf-8")
         self.assertEqual(1, text.count("## [Unreleased]"))
         self.assertIn("## [0.1.0] - 2026-07-18", text)
-        self.assertIn(f"## [{_version()}] - 2026-07-20", text)
+        current_headers = re.findall(
+            rf"(?m)^## \[{re.escape(_version())}\] - (\d{{4}}-\d{{2}}-\d{{2}})$",
+            text,
+        )
+        self.assertEqual(1, len(current_headers))
+        self.assertIsInstance(date.fromisoformat(current_headers[0]), date)
         self.assertIn("0.1.1", text)
         self.assertIn("automatic update", text)
         self.assertIn("fresh Codex CLI discovery", text)
         self.assertIn("curated `$skill-installer` index", text)
+        self.assertIn("guarded R06 stable promoter", text)
+        self.assertIn("guarded R07 runtime verifier", text)
+        self.assertIn("R08 contributor release guide", text)
+        self.assertIn("STABLE_PROMOTED", text)
+        self.assertIn("RUNTIME_VERIFIED", text)
         self.assertNotIn("v0.1.0-rc.2", text)
         self.assertNotIn("Release URL", text)
+
+    def test_contributing_documents_open_release_roles_and_real_patch_boundary(self) -> None:
+        text = CONTRIBUTING.read_text(encoding="utf-8")
+        required = (
+            "普通贡献者",
+            "Fork 维护者",
+            "官方维护者",
+            "prepare --version",
+            "prepare --version <next-version> --dry-run",
+            "verify --version",
+            "status --version",
+            "--repo <owner>/<repository>",
+            "--confirm-remote-actions",
+            "--confirm-stable-promotion",
+            "--confirm-installed-skill-mutation",
+            "contents: read",
+            "RELEASE_STATE_DIR",
+            "真实 patch 发布验收尚未执行",
+            "runtime-verified",
+            "公共 Plugins Directory",
+        )
+        for value in required:
+            with self.subTest(value=value):
+                self.assertIn(value, text)
+        self.assertNotIn(str(Path.home()), text)
 
     def test_public_documents_do_not_overclaim_release_or_compatibility(self) -> None:
         documents = [README, README_ZH, CHANGELOG, *sorted(PUBLIC_DOCS.iterdir())]
