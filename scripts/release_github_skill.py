@@ -753,7 +753,12 @@ class GitHubReader:
         return value
 
     def commit_sha(self, ref: str) -> Optional[str]:
-        value = self.optional_json(f"repos/{self.repository}/commits/{ref}")
+        try:
+            value = self.optional_json(f"repos/{self.repository}/commits/{ref}")
+        except ReleaseError as exc:
+            if "No commit found for SHA" in str(exc):
+                return None
+            raise
         if value is None:
             return None
         sha = value.get("sha")
