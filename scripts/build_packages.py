@@ -165,10 +165,11 @@ CONTRACT_ASSET_PATHS: Tuple[str, ...] = (
     "assets/contracts/progressive-disclosure/v1.css",
     "assets/contracts/progressive-disclosure/v1.js",
     "assets/contracts/semantic-relations/v1.css",
+    "assets/contracts/sequence-visual/v1.css",
     "contracts/family-policies.json",
 )
 UPDATE_MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
-CANONICAL_FILE_COUNT = 82
+CANONICAL_FILE_COUNT = 84
 ADAPTER_IDENTITIES = {
     "codex": (
         "README.md",
@@ -1840,6 +1841,7 @@ def validate_canonical(root: Path) -> None:
         PurePosixPath("update.json"),
         PurePosixPath("scripts/update_skill.py"),
         PurePosixPath("scripts/vibe_diagram_lint.py"),
+        PurePosixPath("scripts/vibe_diagram_scaffold.py"),
         PurePosixPath("references") / RUNTIME_WORKFLOW_PATH,
         PurePosixPath("references") / ADAPTIVE_REFERENCE_PATH,
         *(PurePosixPath("references") / name for name in REFERENCE_PATHS),
@@ -1855,8 +1857,14 @@ def validate_canonical(root: Path) -> None:
         for relative, path in files.items()
         if relative.suffix in {".md", ".html", ".py"}
     )
-    if _contains_han(canonical_text):
-        raise _fail("canonical skill tree must remain English")
+    english_only_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for relative, path in files.items()
+        if relative.suffix in {".md", ".html", ".py"}
+        and relative != PurePosixPath("SKILL.md")
+    )
+    if _contains_han(english_only_text):
+        raise _fail("canonical templates, references, and scripts must remain English")
     canonical_casefold = canonical_text.casefold()
     for term in FORBIDDEN_HOST_TERMS:
         if term.casefold() in canonical_casefold:
@@ -1918,6 +1926,11 @@ def validate_canonical(root: Path) -> None:
         "assets/contracts/semantic-relations/v1.css": (
             "data-diagram-visible-relation-id",
             "vector-effect",
+        ),
+        "assets/contracts/sequence-visual/v1.css": (
+            "seq-step",
+            "width: min(330px, 46vw)",
+            "border-top: 2px dashed",
         ),
     }
     for relative, required_tokens in asset_requirements.items():
@@ -2065,6 +2078,7 @@ def _canonical_relative_paths() -> Tuple[PurePosixPath, ...]:
         PurePosixPath("update.json"),
         PurePosixPath("scripts/update_skill.py"),
         PurePosixPath("scripts/vibe_diagram_lint.py"),
+        PurePosixPath("scripts/vibe_diagram_scaffold.py"),
         PurePosixPath("references") / RUNTIME_WORKFLOW_PATH,
         PurePosixPath("references") / ADAPTIVE_REFERENCE_PATH,
         *(PurePosixPath("references") / name for name in REFERENCE_PATHS),

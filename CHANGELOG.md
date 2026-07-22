@@ -2,16 +2,25 @@
 
 ## [Unreleased]
 
+- Removed the automated test suite, runtime evaluation cases, mandatory TDD rule, and unit-test execution gates by explicit project-owner decision; deterministic build, projection, archive, linter, and real-client validation capabilities remain.
+
+## [0.1.5] - 2026-07-22
+
+- Changed the maintainer release path to publish the immutable tag, GitHub Release, and `stable` immediately after local static validation instead of waiting for GitHub Actions; CI remains asynchronous evidence.
+- Added a deterministic canonical-template scaffold and strict artifact-to-template conformance checks for styles, scripts, slots, DOM grammar, and the shared gradient-grid visual shell.
+- Restored the reference sequence caption, arrow, return, and risk-node grammar across all six sequence templates while retaining structured participants, endpoints, evidence, and adaptive behavior.
+- Added primary-canvas presentation budgets, explicit natural-language visual triggers, implicit Codex invocation metadata, and an invocation-complete HTML delivery gate that forbids Mermaid-only completion.
+- Kept real Codex App and CLI execution explicitly unverified.
+
 ## [0.1.4] - 2026-07-21
 
-- Added a standard-library GitHub Skill release orchestrator for deterministic candidate preparation, double-suite local verification, resumable local state, and read-only remote evidence collection.
+- Added a standard-library GitHub Skill release orchestrator for deterministic candidate preparation, resumable local state, and read-only remote evidence collection.
 - Added the guarded R05 publisher for an already-merged main commit: explicit confirmation, immutable annotated tags, non-force tag-only pushes, idempotent GitHub Releases, bounded workflow waits, real-updater ZIP validation, and resumable partial-remote state.
 - Added the guarded R06 stable promoter: separate confirmation, complete remote revalidation, fast-forward-only stable pushes, bounded exponential raw/CDN consistency checks, idempotent resume, and durable `STABLE_PROMOTED` state after an accepted push.
 - Added the guarded R07 runtime verifier: isolated public-updater lifecycle coverage plus separately confirmed installed Codex CLI invocation, bundled-linter artifact validation, uninstall isolation, exact-backup recovery, and lane-scoped `RUNTIME_VERIFIED` evidence.
 - Added the R08 contributor release guide and read-only CI integration around the standard `verify` entry point, including fork boundaries and an official-maintainer checklist.
 - Made release verification generate the ignored local package tree before comparing Codex output with the tracked plugin projection, so clean checkouts cannot inherit stale build state.
-- Parallelized the two supported Python interpreters within each verification round while retaining the builder and projection gates between both complete rounds.
-- Kept runtime evidence fail-closed: R07 code and fake-runner tests do not claim that a real network, installed Skill, or Codex client lifecycle was executed by these local changes.
+- Kept runtime evidence fail-closed: R07 code does not claim that a real network, installed Skill, or Codex client lifecycle was executed by these local changes.
 
 ## [0.1.3] - 2026-07-20
 

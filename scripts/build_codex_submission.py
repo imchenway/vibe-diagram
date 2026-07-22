@@ -11,7 +11,7 @@ import sys
 import tempfile
 import zipfile
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping
 from urllib.parse import urlparse
 
 if __package__ in (None, ""):
@@ -32,21 +32,12 @@ from scripts.build_packages import (
 
 SUBMISSION_RELATIVE = Path("submission/codex")
 LISTING_RELATIVE = SUBMISSION_RELATIVE / "listing.json"
-TEST_CASES_RELATIVE = SUBMISSION_RELATIVE / "test-cases.json"
 LOGO_RELATIVE = Path("submission/codex/assets/vibe-diagram-logo.svg")
 PUBLIC_DOCS = {
     "PRIVACY.md": ("隐私政策", "不会运营后端服务"),
     "TERMS.md": ("使用条款", "Apache-2.0"),
     "SUPPORT.md": ("支持", "GitHub Issues"),
 }
-POSITIVE_FIELDS = {
-    "id",
-    "prompt",
-    "expected_behavior",
-    "expected_result_shape",
-    "fixture",
-}
-NEGATIVE_FIELDS = POSITIVE_FIELDS | {"why_not_complete"}
 REQUIRED_BLOCKERS = {
     "apps-management-write-access",
 }
@@ -85,21 +76,6 @@ def _require_string_list(value: Any, label: str, *, count: int | None = None) ->
     return value
 
 
-def _validate_cases(cases: Any, expected_ids: Sequence[str], fields: set[str], label: str) -> None:
-    if not isinstance(cases, list) or len(cases) != len(expected_ids):
-        raise _fail(f"{label} must contain exactly {len(expected_ids)} cases")
-    ids = []
-    for index, case in enumerate(cases):
-        if not isinstance(case, Mapping):
-            raise _fail(f"{label}[{index}] must be an object")
-        _require_exact_keys(case, fields, f"{label}[{index}]")
-        for field in fields:
-            _require_non_empty_string(case[field], f"{label}[{index}].{field}")
-        ids.append(case["id"])
-    if ids != list(expected_ids):
-        raise _fail(f"{label} ids must be ordered as {', '.join(expected_ids)}")
-
-
 def validate_submission_source(root: Path) -> dict[str, Any]:
     """Validate repository-side submission material without claiming public readiness."""
 
@@ -113,7 +89,6 @@ def validate_submission_source(root: Path) -> dict[str, Any]:
             "listing",
             "publisher",
             "availability",
-            "test_cases",
             "bundle",
             "readiness",
         },
@@ -182,8 +157,6 @@ def validate_submission_source(root: Path) -> dict[str, Any]:
     if availability["status"] != "all-portal-supported-regions":
         raise _fail("availability must cover all regions supported by the submission portal")
 
-    if listing["test_cases"] != "test-cases.json":
-        raise _fail("submission test_cases must point to test-cases.json")
     bundle = listing["bundle"]
     if bundle != {
         "source": "build/codex/skills/vibe-diagram",
@@ -198,13 +171,6 @@ def validate_submission_source(root: Path) -> dict[str, Any]:
     blockers = _require_string_list(readiness["blockers"], "readiness.blockers")
     if readiness["state"] != "blocked" or set(blockers) != REQUIRED_BLOCKERS:
         raise _fail("submission readiness must fail closed on all unresolved user/runtime actions")
-
-    cases = read_json_unique(root / TEST_CASES_RELATIVE)
-    _require_exact_keys(cases, {"schema_version", "positive", "negative"}, "test cases")
-    if cases["schema_version"] != 1:
-        raise _fail("test case schema_version must be 1")
-    _validate_cases(cases["positive"], ("P1", "P2", "P3", "P4", "P5"), POSITIVE_FIELDS, "positive")
-    _validate_cases(cases["negative"], ("N1", "N2", "N3"), NEGATIVE_FIELDS, "negative")
 
     logo = root / LOGO_RELATIVE
     if not logo.is_file() or logo.is_symlink() or "<svg" not in logo.read_text(encoding="utf-8"):
@@ -230,8 +196,6 @@ def validate_submission_source(root: Path) -> dict[str, Any]:
     return {
         "readiness_state": readiness["state"],
         "blockers": sorted(blockers),
-        "positive_test_count": len(cases["positive"]),
-        "negative_test_count": len(cases["negative"]),
     }
 
 
@@ -297,7 +261,6 @@ def build_submission(root: Path, output: Path) -> dict[str, Any]:
                 "submission_readiness": source_record["readiness_state"],
                 "blockers": source_record["blockers"],
                 "listing_sha256": sha256_file(root / LISTING_RELATIVE),
-                "test_cases_sha256": sha256_file(root / TEST_CASES_RELATIVE),
                 "logo_sha256": sha256_file(root / LOGO_RELATIVE),
                 "bundle": {
                     "archive": archive.name,

@@ -123,15 +123,13 @@ All four packages are assembled in one staging tree. Publishing replaces the com
 
 ## Static build
 
-The supported static verification commands are:
+The supported static verification command is:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3.9 -m unittest discover -s tests -v
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --check
 ```
 
-To generate the local package tree after those checks:
+To generate the local package tree after that check:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --output build
@@ -174,11 +172,11 @@ python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
   --json
 ```
 
-`prepare` updates release metadata and delegates the tracked publication projection to the repository builder. `verify` runs Python 3.9 and the current Python in parallel within each of two complete rounds, keeps the builder and projection gates between those rounds, performs the read-only builder check, generates the ignored local `build` tree with `python3 scripts/build_packages.py --output build`, compares its Codex package with the tracked plugin projection, and reports runtime validation as unverified. `status --refresh` reads GitHub main, stable, tag, Release, workflow, manifest, and tag-archive evidence; it performs no remote writes.
+`prepare` updates release metadata and delegates the tracked publication projection to the repository builder. `verify` performs the read-only deterministic builder check, generates the ignored local `build` tree with `python3 scripts/build_packages.py --output build`, compares its Codex package with the tracked plugin projection, checks the diff, validates the canonical archive, and reports runtime validation as unverified. `status --refresh` reads GitHub main, stable, tag, Release, workflow, manifest, and tag-archive evidence; it performs no remote writes.
 
-`publish` requires persisted `LOCAL_VERIFIED` evidence, a clean worktree and index, matching local HEAD and remote main commits, a successful main workflow, a matching `origin`, GitHub push permission, a regular UTF-8 notes file without credential-like values, and the explicit `--confirm-remote-actions` flag. It creates an annotated tag, performs a non-force tag-only push, creates or reuses the matching GitHub Release, waits for the tag workflow with a bounded timeout, and validates the remote tag ZIP through the real updater archive path. A same-commit tag or Release is idempotent; a conflicting tag fails closed; recoverable partial success is stored as `PARTIAL_REMOTE`.
+`publish` requires persisted `LOCAL_VERIFIED` evidence, a clean worktree and index, matching local HEAD and remote main commits, a matching `origin`, GitHub push permission, a regular UTF-8 notes file without credential-like values, and the explicit `--confirm-remote-actions` flag. It creates an annotated tag, performs a non-force tag-only push, creates or reuses the matching GitHub Release, reads the current workflow state once without waiting, and validates the remote tag ZIP through the real updater archive path. A same-commit tag or Release is idempotent; a conflicting tag fails closed; recoverable partial success is stored as `PARTIAL_REMOTE`.
 
-`promote-stable` requires persisted `TAG_VERIFIED` evidence and its own `--confirm-stable-promotion` authorization. It re-reads main, tag, Release, workflow, immutable tag ZIP, stable ancestry, and the stable manifest before writing. It accepts only a normal non-force fast-forward of the verified release commit. After the push it requires the stable commit, raw manifest, and immutable archive to agree, retrying temporary raw/CDN lag with bounded exponential backoff. A successful or already-applied promotion records `STABLE_PROMOTED`; if final consistency times out after the push, that promoted state is retained as pending rather than rolled back or reported as verified.
+`promote-stable` requires persisted `TAG_VERIFIED` evidence and its own `--confirm-stable-promotion` authorization. It re-reads main, tag, Release, the current asynchronous workflow state, immutable tag ZIP, stable ancestry, and the stable manifest before writing. Workflow completion is not a promotion prerequisite. It accepts only a normal non-force fast-forward of the verified release commit. After the push it requires the stable commit, raw manifest, and immutable archive to agree, retrying temporary raw/CDN lag with bounded exponential backoff. A successful or already-applied promotion records `STABLE_PROMOTED`; if final consistency times out after the push, that promoted state is retained as pending rather than rolled back or reported as verified.
 
 `verify-runtime --mode isolated` installs the previous immutable tag under a temporary directory, upgrades through the published stable manifest, verifies current and offline fail-open behavior, rolls back, upgrades again, performs a fresh archive installation, and removes both isolated installations. It does not touch the installed Skill and does not prove Codex client discovery. A passing isolated run is retained as prerequisite evidence while the release remains `STABLE_PROMOTED`.
 
@@ -199,7 +197,7 @@ These layouts are static package definitions. They do not constitute installatio
 
 ## Validation status
 
-A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. It does not prove the complete unit suite, deterministic process checks, or the second complete suite. Static-valid status requires those commands to pass together; the evidence remains in command or CI output and is not committed as repository documentation.
+A build report value of `static_validation: passed` is package-static-valid and only means the builder production preflight passed for that generated tree. Static-valid status additionally requires the deterministic builder check, generated projection comparison, clean diff check, and canonical archive validation; the evidence remains in command or CI output and is not committed as repository documentation.
 
 The GitHub-path Codex CLI evidence is limited to the standalone Skill lane. It covers the public `stable` installation, fresh-process discovery and invocation, HTML delivery and linting, offline fail-open behavior, an online current-version check at `v0.1.1`, and safe preservation after the rejected `v0.1.2` archive. It does not yet cover a successful public newer-version replacement, and no result here claims aggregate compatibility for Codex plugins, Claude Code, Gemini CLI, or GitHub Copilot CLI.
 

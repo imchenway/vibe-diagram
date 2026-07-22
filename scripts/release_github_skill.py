@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""准备并验证失败关闭的 GitHub Skill 发行版。"""
+"""准备、验证并直接发布 GitHub Skill 发行版。"""
 
 from __future__ import annotations
 
 import argparse
-import concurrent.futures
 import dataclasses
 import hashlib
 import importlib.util
@@ -51,8 +50,6 @@ MAX_REMOTE_BYTES = 64 * 1024 * 1024
 MAX_RELEASE_NOTES_BYTES = 1024 * 1024
 MAX_RUNTIME_ARTIFACT_BYTES = 16 * 1024 * 1024
 MAX_RUNTIME_MARKER_BYTES = 64 * 1024
-WORKFLOW_ATTEMPTS = 60
-WORKFLOW_POLL_SECONDS = 5.0
 STABLE_CONSISTENCY_ATTEMPTS = 8
 STABLE_CONSISTENCY_BASE_SECONDS = 1.0
 STABLE_CONSISTENCY_MAX_SECONDS = 30.0
@@ -676,45 +673,13 @@ def _validate_archive_bytes(
         return _validate_archive_path(root, config, version, path)
 
 
-def _verification_commands(config: ReleaseConfig, current_python: str) -> List[Tuple[str, ...]]:
-    suite39 = ("python3.9", "-m", "unittest", "discover", "-s", "tests", "-v")
-    current = (
-        current_python,
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        "tests",
-        "-v",
-    )
+def _verification_commands(config: ReleaseConfig) -> List[Tuple[str, ...]]:
     return [
-        suite39,
-        current,
         config.check_command,
         config.build_command,
         ("diff", "-qr", "build/codex", "plugins/vibe-diagram"),
         ("git", "diff", "--check"),
-        suite39,
-        current,
     ]
-
-
-def _run_verification_round(
-    root: Path,
-    runner: Any,
-    commands: Sequence[Tuple[str, ...]],
-) -> List[CommandResult]:
-    """并行执行同一轮受支持 Python，按声明顺序返回确定性结果。"""
-
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=len(commands),
-        thread_name_prefix="release-verify",
-    ) as executor:
-        futures = [
-            executor.submit(runner.run, command, cwd=root, check=True)
-            for command in commands
-        ]
-        return [future.result() for future in futures]
 
 
 def verify_release(
@@ -722,24 +687,12 @@ def verify_release(
     config: ReleaseConfig,
     version: str,
     runner: Any,
-    *,
-    current_python: str = sys.executable,
 ) -> Dict[str, object]:
     metadata = _validate_metadata(root, config, version)
     checks: List[Dict[str, object]] = []
-    commands = _verification_commands(config, current_python)
-    for command, result in zip(
-        commands[:2],
-        _run_verification_round(root, runner, commands[:2]),
-    ):
-        checks.append({"command": list(command), "returncode": result.returncode})
-    for command in commands[2:-2]:
+    commands = _verification_commands(config)
+    for command in commands:
         result = runner.run(command, cwd=root, check=True)
-        checks.append({"command": list(command), "returncode": result.returncode})
-    for command, result in zip(
-        commands[-2:],
-        _run_verification_round(root, runner, commands[-2:]),
-    ):
         checks.append({"command": list(command), "returncode": result.returncode})
     with tempfile.TemporaryDirectory() as temporary:
         archive = Path(temporary) / f"vibe-diagram-{version}.zip"
@@ -935,7 +888,6 @@ def collect_remote_facts(
     facts["ready_for_promotion"] = bool(
         main_sha == tag_sha
         and release_valid
-        and conclusion == "success"
         and facts["archive_validation"] == "passed"
         and facts["stable_manifest_validation"] in {"passed", "previous"}
         and facts["stable_fast_forward"] is True
@@ -1056,12 +1008,6 @@ def _require_main_publish_preconditions(
     main_sha = reader.commit_sha(config.main_branch)
     if main_sha != commit:
         raise ReleaseError("remote main does not equal --commit")
-    workflow = reader.optional_json(
-        f"repos/{config.repository}/actions/workflows/{config.workflow_file}/runs?"
-        f"head_sha={commit}&per_page=20"
-    )
-    if _workflow_conclusion(workflow, commit) != "success":
-        raise ReleaseError("main workflow for --commit has not succeeded")
     return reader
 
 
@@ -1095,34 +1041,6 @@ def _local_tag_commit(
     return value
 
 
-def _wait_for_workflow(
-    root: Path,
-    config: ReleaseConfig,
-    commit: str,
-    runner: Any,
-    *,
-    attempts: int = WORKFLOW_ATTEMPTS,
-    sleep_fn: Callable[[float], None] = time.sleep,
-) -> str:
-    if attempts < 1:
-        raise ReleaseError("workflow attempts must be positive")
-    reader = GitHubReader(config.repository, root, runner)
-    endpoint = (
-        f"repos/{config.repository}/actions/workflows/{config.workflow_file}/runs?"
-        f"head_sha={commit}&per_page=20"
-    )
-    conclusion = "missing"
-    for index in range(attempts):
-        conclusion = _workflow_conclusion(reader.optional_json(endpoint), commit)
-        if conclusion == "success":
-            return conclusion
-        if conclusion not in {"missing", "pending"}:
-            raise ReleaseError(f"tag workflow failed with conclusion: {conclusion}")
-        if index + 1 < attempts:
-            sleep_fn(WORKFLOW_POLL_SECONDS)
-    raise ReleaseError("tag workflow did not succeed before the bounded timeout")
-
-
 def collect_tag_release_facts(
     root: Path,
     config: ReleaseConfig,
@@ -1131,8 +1049,6 @@ def collect_tag_release_facts(
     runner: Any,
     *,
     fetch_bytes: Callable[[str], bytes] = _default_fetch_bytes,
-    workflow_attempts: int = WORKFLOW_ATTEMPTS,
-    sleep_fn: Callable[[float], None] = time.sleep,
 ) -> Dict[str, object]:
     reader = GitHubReader(config.repository, root, runner)
     main_sha = reader.commit_sha(config.main_branch)
@@ -1140,14 +1056,11 @@ def collect_tag_release_facts(
     release_value = reader.optional_json(
         f"repos/{config.repository}/releases/tags/v{version}"
     )
-    workflow_conclusion = _wait_for_workflow(
-        root,
-        config,
-        commit,
-        runner,
-        attempts=workflow_attempts,
-        sleep_fn=sleep_fn,
+    workflow = reader.optional_json(
+        f"repos/{config.repository}/actions/workflows/{config.workflow_file}/runs?"
+        f"head_sha={commit}&per_page=20"
     )
+    workflow_conclusion = _workflow_conclusion(workflow, commit)
     archive_manifest = _validate_archive_bytes(
         root,
         config,
@@ -1159,7 +1072,6 @@ def collect_tag_release_facts(
         main_sha == commit
         and tag_sha == commit
         and release_valid
-        and workflow_conclusion == "success"
     )
     return {
         "main_sha": main_sha,
@@ -1168,6 +1080,7 @@ def collect_tag_release_facts(
         "release_validation": "passed" if release_valid else "failed",
         "release_url": release_value.get("html_url") if release_value else None,
         "workflow_conclusion": workflow_conclusion,
+        "workflow_validation": "asynchronous",
         "archive_validation": "passed",
         "archive_tree_sha256": archive_manifest["tree_sha256"],
         "tag_release_verified": verified,
@@ -1205,8 +1118,6 @@ def publish_release(
     runner: Any,
     *,
     fetch_bytes: Callable[[str], bytes] = _default_fetch_bytes,
-    workflow_attempts: int = WORKFLOW_ATTEMPTS,
-    sleep_fn: Callable[[float], None] = time.sleep,
 ) -> Dict[str, object]:
     """从已合并的 main 提交发布不可变 tag 与 GitHub Release。"""
 
@@ -1350,11 +1261,9 @@ def publish_release(
             commit,
             runner,
             fetch_bytes=fetch_bytes,
-            workflow_attempts=workflow_attempts,
-            sleep_fn=sleep_fn,
         )
         if facts["tag_release_verified"] is not True:
-            raise ReleaseError("tag, Release, main, or workflow evidence is inconsistent")
+            raise ReleaseError("tag, Release, or main evidence is inconsistent")
         if facts["archive_tree_sha256"] != verified_digest:
             raise ReleaseError("remote tag archive differs from LOCAL_VERIFIED candidate")
     except ReleaseError as exc:
@@ -1376,6 +1285,7 @@ def publish_release(
         "tree_sha256": verified_digest,
         "archive_validation": "passed",
         "workflow_conclusion": facts["workflow_conclusion"],
+        "workflow_validation": "asynchronous",
         "runtime_validation": "unverified",
     }
     if state.release_state in {"RELEASED", "PARTIAL_REMOTE"}:
@@ -1420,8 +1330,6 @@ def _require_stable_promotion_facts(
         raise ReleaseError("remote main or immutable tag differs from the release commit")
     if facts.get("release_validation") != "passed":
         raise ReleaseError("GitHub Release is missing or invalid for the release commit")
-    if facts.get("workflow_conclusion") != "success":
-        raise ReleaseError("release workflow has not succeeded")
     if facts.get("archive_validation") != "passed":
         raise ReleaseError("immutable tag archive validation did not pass")
     if facts.get("archive_tree_sha256") != verified_digest:
@@ -1455,7 +1363,6 @@ def _stable_promotion_consistent(
         and facts.get("tag_sha") == commit
         and facts.get("stable_sha") == commit
         and facts.get("release_validation") == "passed"
-        and facts.get("workflow_conclusion") == "success"
         and facts.get("archive_validation") == "passed"
         and facts.get("archive_tree_sha256") == verified_digest
         and facts.get("stable_manifest_validation") == "passed"
@@ -1633,6 +1540,7 @@ def promote_stable(
         "release_state": "STABLE_PROMOTED",
         "tree_sha256": verified_digest,
         "stable_validation": "passed",
+        "workflow_validation": "asynchronous",
         "runtime_validation": "unverified",
     }
     state = dataclasses.replace(state, last_result=result)
@@ -2362,7 +2270,6 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     prepare = common("prepare")
     prepare.add_argument("--dry-run", action="store_true")
     verify = common("verify")
-    verify.add_argument("--current-python", default=sys.executable)
     status = common("status")
     status.add_argument("--refresh", action="store_true")
     publish = common("publish")
@@ -2462,7 +2369,6 @@ def execute(
             config,
             args.version,
             runner,
-            current_python=args.current_python,
         )
         if state is None:
             state = ReleaseState.new(

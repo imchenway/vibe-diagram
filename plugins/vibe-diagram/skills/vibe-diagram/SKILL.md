@@ -1,6 +1,6 @@
 ---
 name: vibe-diagram
-description: Use when a visual artifact is needed to explain architecture, workflow, sequence behavior, state and data models, debugging evidence, feature iteration, a page mockup, technical design, decision communication, or delivery acceptance.
+description: Use when an agent should create and deliver a self-contained HTML visual artifact for architecture, workflows, sequences, state and data models, debugging evidence, feature iteration, page mockups, technical design, decision communication, or delivery acceptance, including explicit or contextual requests such as “画图”, “画个图”, “画图给我看”, “架构图”, “UML”, “流程图”, and “时序图”; Mermaid alone never satisfies the request.
 ---
 
 # Vibe Diagram

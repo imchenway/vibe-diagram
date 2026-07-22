@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 import sys
+from collections import Counter
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from pathlib import Path
@@ -127,6 +128,60 @@ EXPECTED_SEQUENCE_EXCLUSIONS = (
     "code-sequence/transaction-boundary-sequence.html",
     "fault-debugging/debugging-sequence.html",
     "feature-iteration/current-target-sequence.html",
+)
+TEMPLATE_CONTRACT_VERSION = "2"
+PRIMARY_SEQUENCE_MESSAGE_LIMIT = 12
+PRIMARY_SLOT_TEXT_LIMIT = 36
+STYLE_BLOCK_RE = re.compile(r"<style(?P<attrs>[^>]*)>(?P<body>.*?)</style>", re.IGNORECASE | re.DOTALL)
+SCRIPT_BLOCK_RE = re.compile(r"<script(?P<attrs>[^>]*)>(?P<body>.*?)</script>", re.IGNORECASE | re.DOTALL)
+SEQUENCE_MESSAGE_FRAGMENT_RE = re.compile(
+    r"<article\b(?=[^>]*\bdata-sequence-message\b)[^>]*>.*?</article>",
+    re.IGNORECASE | re.DOTALL,
+)
+SEQUENCE_PARTICIPANT_FRAGMENT_RE = re.compile(
+    r"<div\b(?=[^>]*\bdata-participant-id\s*=)[^>]*>.*?</div>",
+    re.IGNORECASE | re.DOTALL,
+)
+MUTABLE_STRUCTURE_ATTRIBUTES = frozenset(
+    {
+        "id",
+        "title",
+        "alt",
+        "href",
+        "for",
+        "data-diagram-id",
+        "data-diagram-node-id",
+        "data-diagram-group-id",
+        "data-diagram-relation-id",
+        "data-diagram-visible-relation-id",
+        "data-detail-for",
+        "data-fallback-for",
+        "data-from",
+        "data-to",
+        "data-semantic",
+        "data-sequence-id",
+        "data-sequence-detail-for",
+        "data-sequence-step-index",
+        "data-sequence-phase-id",
+        "data-sequence-fragment-id",
+        "data-sequence-risk-id",
+        "data-sequence-evidence-for",
+        "data-sequence-evidence-id",
+        "data-participant-id",
+        "data-participant-group-id",
+        "data-matrix-row-id",
+        "data-matrix-col-id",
+        "data-matrix-row",
+        "data-matrix-col",
+    }
+)
+VISUAL_SHELL_TOKENS = (
+    "radial-gradient(circleat18%3%,rgba(214,233,255,.78),transparent30rem)",
+    "radial-gradient(circleat78%6%,rgba(228,246,239,.8),transparent28rem)",
+    "linear-gradient(rgba(93,133,173,.045)1px,transparent1px)",
+    "linear-gradient(90deg,rgba(93,133,173,.045)1px,transparent1px)",
+    "linear-gradient(180deg,#fff0%,#f7fbff54%,#fbfdff100%)",
+    "background-size:auto,auto,28px28px,28px28px,auto",
 )
 
 
@@ -806,6 +861,240 @@ def load_template_layouts(
     return catalog
 
 
+class _StructureSignatureParser(HTMLParser):
+    """Record DOM structure while ignoring authored text and semantic identifiers."""
+
+    def __init__(self, drop_attributes: Iterable[str] = ()) -> None:
+        super().__init__(convert_charrefs=True)
+        self.events: List[Tuple[Any, ...]] = []
+        self._drop_attributes = frozenset(name.lower() for name in drop_attributes)
+
+    @staticmethod
+    def _controlled_sequence_style(value: str) -> str:
+        declarations = []
+        for declaration in value.split(";"):
+            declaration = declaration.strip()
+            if not declaration:
+                continue
+            if ":" not in declaration:
+                return value
+            name, raw_value = (part.strip().lower() for part in declaration.split(":", 1))
+            if name not in {"--sequence-start", "--sequence-span"}:
+                return value
+            if re.fullmatch(r"(?:[1-9]|1[0-2])", raw_value) is None:
+                return value
+            declarations.append((name, "_"))
+        if not declarations or len(declarations) != len(set(name for name, _value in declarations)):
+            return value
+        return ";".join(f"{name}:{raw_value}" for name, raw_value in sorted(declarations))
+
+    def _attrs(
+        self,
+        attrs: Sequence[Tuple[str, Optional[str]]],
+    ) -> Tuple[Tuple[str, str], ...]:
+        normalized = []
+        names = {name.lower() for name, _value in attrs}
+        is_sequence_message = "data-sequence-message" in names
+        for name, value in attrs:
+            name = name.lower()
+            if name in self._drop_attributes:
+                continue
+            if is_sequence_message and name == "style":
+                normalized.append((name, self._controlled_sequence_style(value or "")))
+            elif name.startswith("aria-") or name in MUTABLE_STRUCTURE_ATTRIBUTES:
+                normalized.append((name, "_"))
+            else:
+                normalized.append((name, value or ""))
+        return tuple(sorted(normalized))
+
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
+        self.events.append(("start", tag.lower(), self._attrs(attrs)))
+
+    def handle_startendtag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
+        self.events.append(("empty", tag.lower(), self._attrs(attrs)))
+
+    def handle_endtag(self, tag: str) -> None:
+        self.events.append(("end", tag.lower()))
+
+    def handle_decl(self, decl: str) -> None:
+        self.events.append(("decl", decl.strip().lower()))
+
+
+class _PrimarySlotTextParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self._stack: List[Tuple[str, bool, bool, str]] = []
+        self.text: Dict[str, List[str]] = {}
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        values = {name.lower(): value or "" for name, value in attrs}
+        classes = set(values.get("class", "").split())
+        parent_primary = self._stack[-1][1] if self._stack else False
+        parent_details = self._stack[-1][2] if self._stack else False
+        parent_slot = self._stack[-1][3] if self._stack else ""
+        primary = parent_primary or "template-layout" in classes
+        in_details = parent_details or tag.lower() == "details"
+        slot = values.get("data-slot", "").strip() or parent_slot
+        self._stack.append((tag.lower(), primary, in_details, slot))
+        if primary and not in_details and slot:
+            self.text.setdefault(slot, [])
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if self._stack:
+            self._stack.pop()
+
+    def handle_data(self, data: str) -> None:
+        if not self._stack:
+            return
+        _tag, primary, in_details, slot = self._stack[-1]
+        if primary and not in_details and slot:
+            self.text.setdefault(slot, []).append(data)
+
+
+def _structure_signature(html: str, drop_attributes: Iterable[str] = ()) -> str:
+    parser = _StructureSignatureParser(drop_attributes)
+    parser.feed(html)
+    parser.close()
+    payload = json.dumps(parser.events, ensure_ascii=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _block_inventory(pattern: re.Pattern[str], html: str) -> List[Tuple[str, str]]:
+    return [
+        (re.sub(r"\s+", " ", match.group("attrs").strip()), match.group("body"))
+        for match in pattern.finditer(html)
+    ]
+
+
+def _prototype_signatures(pattern: re.Pattern[str], html: str) -> List[str]:
+    return [
+        _structure_signature(match.group(0), drop_attributes={"data-slot"})
+        for match in pattern.finditer(html)
+    ]
+
+
+def _collapse_sequence_prototypes(html: str) -> str:
+    html = SEQUENCE_PARTICIPANT_FRAGMENT_RE.sub(
+        "<vibe-sequence-participant></vibe-sequence-participant>", html
+    )
+    html = SEQUENCE_MESSAGE_FRAGMENT_RE.sub(
+        "<vibe-sequence-message></vibe-sequence-message>", html
+    )
+    html = re.sub(
+        r"(?:<vibe-sequence-participant></vibe-sequence-participant>\s*)+",
+        "<vibe-sequence-participant></vibe-sequence-participant>",
+        html,
+    )
+    return re.sub(
+        r"(?:<vibe-sequence-message></vibe-sequence-message>\s*)+",
+        "<vibe-sequence-message></vibe-sequence-message>",
+        html,
+    )
+
+
+def lint_visual_shell(html: str) -> List[str]:
+    """Require the two gradients, 28px grid, and page gradient visual shell."""
+
+    css = "\n".join(body for _attrs, body in _block_inventory(STYLE_BLOCK_RE, html))
+    normalized = re.sub(r"\s+", "", css).lower()
+    missing = [token for token in VISUAL_SHELL_TOKENS if token.lower() not in normalized]
+    if not missing:
+        return []
+    return ["The locked visual shell has drifted or is incomplete: " + ", ".join(missing) + "."]
+
+
+def lint_template_conformance(html: str, diagram_type: str) -> List[str]:
+    """Compare an artifact with its declared canonical template instead of trusting identity."""
+
+    identity_errors = lint_template_identity(html, diagram_type)
+    if identity_errors:
+        return identity_errors
+    parsed = _parse(html)
+    attrs = parsed.main_attrs[0]
+    template_id = attrs.get("data-template-id", "").strip()
+    if attrs.get("data-template-contract-version", "").strip() != TEMPLATE_CONTRACT_VERSION:
+        return [f"Template contract version must be {TEMPLATE_CONTRACT_VERSION}."]
+    template_path = TEMPLATE_ROOT / diagram_type / f"{template_id}.html"
+    canonical = template_path.read_text(encoding="utf-8")
+    errors: List[str] = []
+    if _block_inventory(STYLE_BLOCK_RE, html) != _block_inventory(STYLE_BLOCK_RE, canonical):
+        errors.append("Style blocks must match the declared canonical template exactly.")
+    if _block_inventory(SCRIPT_BLOCK_RE, html) != _block_inventory(SCRIPT_BLOCK_RE, canonical):
+        errors.append("Script blocks must match the declared canonical template exactly.")
+    artifact_slots = Counter(parsed.attr_values("data-slot"))
+    canonical_slots = Counter(_parse(canonical).attr_values("data-slot"))
+    if artifact_slots != canonical_slots:
+        errors.append("The canonical template slot inventory has drifted.")
+    is_sequence = "data-sequence-canvas" in canonical
+    if is_sequence:
+        for label, pattern in (
+            ("participant", SEQUENCE_PARTICIPANT_FRAGMENT_RE),
+            ("message", SEQUENCE_MESSAGE_FRAGMENT_RE),
+        ):
+            allowed = set(_prototype_signatures(pattern, canonical))
+            actual = _prototype_signatures(pattern, html)
+            if any(signature not in allowed for signature in actual):
+                errors.append(f"A sequence {label} does not match a canonical prototype.")
+        artifact_structure = _structure_signature(_collapse_sequence_prototypes(html))
+        canonical_structure = _structure_signature(_collapse_sequence_prototypes(canonical))
+    else:
+        artifact_structure = _structure_signature(html)
+        canonical_structure = _structure_signature(canonical)
+    if artifact_structure != canonical_structure:
+        errors.append("The artifact DOM structure does not match the declared canonical template.")
+    return errors
+
+
+def lint_primary_canvas_budget(html: str) -> List[str]:
+    """Keep the first visible canvas concise while leaving native details unrestricted."""
+
+    errors: List[str] = []
+    if "data-sequence-canvas" in html:
+        sequence = _parse_sequence_records(html)
+        for record in sequence.records:
+            role = record.attrs.get("data-sequence-role", "standalone").strip()
+            if role != "detail" and len(record.messages) > PRIMARY_SEQUENCE_MESSAGE_LIMIT:
+                errors.append(
+                    f"A primary sequence canvas may contain at most {PRIMARY_SEQUENCE_MESSAGE_LIMIT} messages; use mapped overview and detail canvases."
+                )
+    parser = _PrimarySlotTextParser()
+    parser.feed(html)
+    parser.close()
+    baseline_text: Dict[str, str] = {}
+    identity = _parse(html)
+    if len(identity.main_attrs) == 1:
+        attrs = identity.main_attrs[0]
+        family = attrs.get("data-template-family", "").strip()
+        template_id = attrs.get("data-template-id", "").strip()
+        template_path = TEMPLATE_ROOT / family / f"{template_id}.html"
+        if template_path.is_file() and not template_path.is_symlink():
+            baseline_parser = _PrimarySlotTextParser()
+            baseline_parser.feed(template_path.read_text(encoding="utf-8"))
+            baseline_parser.close()
+            for slot, parts in baseline_parser.text.items():
+                value = re.sub(r"\{\{[^{}]+\}\}", "", " ".join(parts))
+                baseline_text[slot] = re.sub(r"\s+", " ", value).strip()
+    for slot, parts in parser.text.items():
+        visible = re.sub(r"\{\{[^{}]+\}\}", "", " ".join(parts))
+        visible = re.sub(r"\s+", " ", visible).strip()
+        allowed = len(baseline_text.get(slot, "")) + PRIMARY_SLOT_TEXT_LIMIT
+        if len(visible) > allowed:
+            errors.append(
+                f'Primary canvas slot "{slot}" exceeds the {PRIMARY_SLOT_TEXT_LIMIT}-character authored presentation budget.'
+            )
+        if SOURCE_PATH_RE.search(visible):
+            errors.append(f'Primary canvas slot "{slot}" must move source paths into mapped details.')
+    return errors
+
+
 def lint_title_description_stacking(html: str) -> List[str]:
     """Require title/body node pairs to use vertical rather than row flex."""
 
@@ -1225,6 +1514,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         html = args.path.read_text(encoding="utf-8")
         errors = lint_self_contained_resources(html)
         errors.extend(lint_template_identity(html, args.diagram_type))
+        errors.extend(lint_visual_shell(html))
+        errors.extend(lint_template_conformance(html, args.diagram_type))
+        errors.extend(lint_primary_canvas_budget(html))
         if args.diagram_type == "system-architecture":
             errors.extend(lint_system_architecture(html, allow_candidates=args.allow_candidates))
         else:

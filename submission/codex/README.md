@@ -1,6 +1,6 @@
 # Codex 官方提交候选包
 
-本目录保存 `vibe-diagram` 的 skills-only plugin 提交字段和审核测试案例。它是仓库侧候选材料，不代表已经提交、通过审核或进入公共 Plugins Directory。
+本目录保存 `vibe-diagram` 的 skills-only plugin 提交字段和审核材料。它是仓库侧候选材料，不代表已经提交、通过审核或进入公共 Plugins Directory。
 
 ## 本地检查
 
@@ -21,9 +21,9 @@ PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_codex_submission.py \
 
 - 固定时间戳、固定权限、无压缩的确定性 skill ZIP；
 - 供平台上传的 SVG logo；
-- 绑定 listing、test cases、logo 和 skill tree hash 的 `submission-report.json`。
+- 绑定 listing、logo 和 skill tree hash 的 `submission-report.json`。
 
-`validation_scope: package-static-valid` 只表示 builder production preflight 通过。它不证明完整测试流程、真实客户端生命周期、OpenAI 身份验证、审核或公共发布。
+`validation_scope: package-static-valid` 只表示 builder production preflight 通过。它不证明真实客户端生命周期、OpenAI 身份验证、审核或公共发布。
 
 ## 仍需发布者完成
 

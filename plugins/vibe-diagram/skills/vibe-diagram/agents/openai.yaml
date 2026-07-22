@@ -1,4 +1,7 @@
 interface:
   display_name: "vibe-diagram"
-  short_description: "Create self-contained HTML diagrams for complex ideas."
-  default_prompt: "Use $vibe-diagram to create a self-contained HTML diagram for this request."
+  short_description: "Create and deliver canonical self-contained HTML diagrams."
+  default_prompt: "Use $vibe-diagram to create, validate, and deliver a canonical self-contained HTML diagram for this request."
+
+policy:
+  allow_implicit_invocation: true

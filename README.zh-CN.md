@@ -123,15 +123,13 @@ GitHub-path 是直装 lane，不会让 `vibe-diagram` 出现在 curated `$skill-
 
 ## 静态验证
 
-三条静态验证命令为：
+静态验证命令为：
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3.9 -m unittest discover -s tests -v
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --check
 ```
 
-在这些检查通过后，可生成本地包：
+在该检查通过后，可生成本地包：
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/build_packages.py --output build
@@ -174,11 +172,11 @@ python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
   --json
 ```
 
-`prepare` 更新发布元数据，并把 tracked publication 投影委托给仓库 builder；`verify` 在每一轮内并行执行 Python 3.9 与当前 Python，两轮之间仍保留 builder 与投影门禁：先执行只读 builder 检查，再通过 `python3 scripts/build_packages.py --output build` 生成被忽略的本地 build 树，将其中的 Codex 包与 tracked plugin 投影比对，同时始终把运行时验证标记为未验证；`status --refresh` 只读取 GitHub main、stable、tag、Release、workflow、manifest 和 tag ZIP 证据，不执行远端写入。
+`prepare` 更新发布元数据，并把 tracked publication 投影委托给仓库 builder；`verify` 执行只读确定性 builder 检查，通过 `python3 scripts/build_packages.py --output build` 生成被忽略的本地 build 树，将其中的 Codex 包与 tracked plugin 投影比对，检查 diff 并验证 canonical archive，同时始终把运行时验证标记为未验证；`status --refresh` 只读取 GitHub main、stable、tag、Release、workflow、manifest 和 tag ZIP 证据，不执行远端写入。
 
-`publish` 要求已有持久化的 `LOCAL_VERIFIED` 证据、干净的工作树与 index、本地 HEAD 和远端 main 与目标提交一致、main workflow 成功、`origin` 与目标仓库一致、当前 GitHub 身份具备 push 权限、release notes 是不含凭据特征的普通 UTF-8 文件，并且显式提供 `--confirm-remote-actions`。它创建 annotated tag，仅执行非强制的 tag push，创建或复用同 tag 的 GitHub Release，在有限超时内等待 tag workflow，并通过真实 updater 归档路径校验远端 tag ZIP。同提交 tag/Release 会幂等复用；冲突 tag 失败关闭；可恢复的部分成功记录为 `PARTIAL_REMOTE`。
+`publish` 要求已有持久化的 `LOCAL_VERIFIED` 证据、干净的工作树与 index、本地 HEAD 和远端 main 与目标提交一致、`origin` 与目标仓库一致、当前 GitHub 身份具备 push 权限、release notes 是不含凭据特征的普通 UTF-8 文件，并且显式提供 `--confirm-remote-actions`。它创建 annotated tag，仅执行非强制的 tag push，创建或复用同 tag 的 GitHub Release，只读取一次当前 workflow 状态而不等待，并通过真实 updater 归档路径校验远端 tag ZIP。同提交 tag/Release 会幂等复用；冲突 tag 失败关闭；可恢复的部分成功记录为 `PARTIAL_REMOTE`。
 
-`promote-stable` 要求已有持久化的 `TAG_VERIFIED` 证据，并单独提供 `--confirm-stable-promotion` 授权。写入前，它会重新读取 main、tag、Release、workflow、不可变 tag ZIP、stable 祖先关系和 stable manifest；只接受把已验证 release commit 以普通、非强制方式快进到 stable。push 后必须再次确认 stable commit、raw manifest 与不可变归档一致；对 raw/CDN 的短暂延迟使用有上限的指数退避。成功或已完成的推进记录为 `STABLE_PROMOTED`；如果 push 后最终一致性超时，会保留已推进但待确认的状态，不自动倒退，也不伪造验证成功。
+`promote-stable` 要求已有持久化的 `TAG_VERIFIED` 证据，并单独提供 `--confirm-stable-promotion` 授权。写入前，它会重新读取 main、tag、Release、当前异步 workflow 状态、不可变 tag ZIP、stable 祖先关系和 stable manifest；workflow 完成不再是推进前置条件。它只接受把已验证 release commit 以普通、非强制方式快进到 stable。push 后必须再次确认 stable commit、raw manifest 与不可变归档一致；对 raw/CDN 的短暂延迟使用有上限的指数退避。成功或已完成的推进记录为 `STABLE_PROMOTED`；如果 push 后最终一致性超时，会保留已推进但待确认的状态，不自动倒退，也不伪造验证成功。
 
 `verify-runtime --mode isolated` 在临时目录安装前一个不可变 tag，通过已发布 stable manifest 完成升级，验证 current 与 offline fail-open，执行回滚、重升级、全新归档安装，并移除两份隔离安装。它不会触碰已安装 Skill，也不能证明 Codex 客户端发现。isolated 通过后只记录为前置证据，发行状态仍是 `STABLE_PROMOTED`。
 
@@ -188,7 +186,7 @@ python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
 
 ## 状态边界
 
-构建报告中的 `static_validation: passed` 属于 package-static-valid，仅表示 builder production preflight 已通过。它不能证明完整 unit suite、确定性流程检查或第二轮完整 suite。static-valid 要求这些命令整体通过；证据保留在命令或 CI 输出中，不作为仓库文档提交。
+构建报告中的 `static_validation: passed` 属于 package-static-valid，仅表示 builder production preflight 已通过。static-valid 还要求确定性 builder 检查、生成投影比对、干净 diff 检查和 canonical archive 校验通过；证据保留在命令或 CI 输出中，不作为仓库文档提交。
 
 GitHub-path Codex CLI 证据仅覆盖独立 Skill lane：公开 `stable` 安装、新进程发现与调用、HTML 交付与 lint、offline fail-open、`v0.1.1` 的在线 current 检查，以及拒绝 `v0.1.2` 歧义归档后保留原安装。成功的公开更高版本替换仍待实际执行；这里不代表 Codex 插件、Claude Code、Gemini CLI 或 GitHub Copilot CLI 的聚合兼容性。
 

@@ -27,7 +27,6 @@
     "countries_or_regions": [],
     "status": "all-portal-supported-regions"
   },
-  "test_cases": "test-cases.json",
   "bundle": {
     "source": "build/codex/skills/vibe-diagram",
     "archive_prefix": "vibe-diagram"

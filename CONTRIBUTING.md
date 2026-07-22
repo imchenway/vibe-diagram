@@ -8,7 +8,7 @@
 |---|---|---|
 | 普通贡献者 | `prepare --dry-run`、`prepare`、`verify`、`status`、isolated runtime 演练 | 不需要官方仓库写权限，不应使用官方发布凭据 |
 | Fork 维护者 | 普通贡献者阶段，以及自己 fork 范围的发布演练 | 仅使用 `--repo <owner>/<repository>` 指向自己的 fork；远端写入仍需自己的写权限和逐阶段确认 |
-| 官方维护者 | tag、GitHub Release、stable 推进和真实客户端验收 | 只能在 PR 已合并、CI 成功、远端事实复核通过后执行，并分别确认每类有副作用的动作 |
+| 官方维护者 | tag、GitHub Release、stable 推进和真实客户端验收 | 本地 `static-valid` 后可直接发布；CI 作为异步证据，仍分别确认每类有副作用的动作 |
 
 静态验证、远端发布、stable 推进和 runtime-verified 是四层不同证据。GitHub-path Codex CLI 的结果不能外推到 Codex App、其他客户端或公共 Plugins Directory。
 
@@ -23,7 +23,7 @@ python3 scripts/release_github_skill.py verify --version <next-version> --json
 python3 scripts/release_github_skill.py status --version <next-version> --json
 ```
 
-`prepare` 会更新版本和发布元数据，并通过 builder 同步 tracked 生成投影；`verify` 会在每轮内并行执行两种 Python、完整保留双轮测试，并在两轮之间执行只读 builder 检查、`--output build` 本地构建、投影一致性和 diff，最后完成 canonical archive 校验。通过只表示 `static-valid`，不表示远端已经发布或客户端已经运行。
+`prepare` 会更新版本和发布元数据，并通过 builder 同步 tracked 生成投影；`verify` 会执行只读 builder 检查、`--output build` 本地构建、投影一致性和 diff，最后完成 canonical archive 校验。通过只表示 `static-valid`，不表示远端已经发布或客户端已经运行。
 
 完成本地验证后，按仓库正常流程提交 PR。脚本不会创建分支、commit、push、PR、审批或 merge。
 
@@ -42,15 +42,15 @@ python3 scripts/release_github_skill.py status --version <next-version> \
 
 ## CI 只读门禁
 
-`.github/workflows/static-validation.yml` 只授予 `contents: read`。CI 直接调用标准入口的 `verify`，使用 Python 3.9 与当前 Python 完成双轮验证，并将状态写到 runner 临时目录中的 `RELEASE_STATE_DIR`。该 job 不执行 `status --refresh`、`publish`、`promote-stable` 或 `verify-runtime --mode installed-client`，也不需要发布密钥。
+`.github/workflows/static-validation.yml` 只授予 `contents: read`。CI 直接调用标准入口的 `verify` 完成确定性构建、投影、diff 和 canonical archive 校验，并将状态写到 runner 临时目录中的 `RELEASE_STATE_DIR`。该 job 不执行 `status --refresh`、`publish`、`promote-stable` 或 `verify-runtime --mode installed-client`，也不需要发布密钥。
 
 ## 官方维护者发布 checklist
 
 1. 选择严格递增的稳定 patch 版本，先执行 `prepare --version <next-version> --dry-run`。
 2. 执行 `prepare --version <next-version>` 与 `verify --version <next-version>`，确认结果为 `static-valid` 且 `runtime_validation` 仍为 `unverified`。
-3. 通过正常 PR、评审和 merge 流程把候选合并到 `main`，等待只读 CI 成功。
-4. 使用 `status --version <next-version> --refresh` 重新读取 main、tag、Release、workflow、stable manifest 与 archive 事实。
-5. 准备普通 UTF-8 release notes，传入已合并的 main commit，并在当前动作得到明确授权后使用 `--confirm-remote-actions` 执行 `publish`。
+3. 将本地已验证候选提交并推送到 `main`；不等待 GitHub Actions。
+4. 准备普通 UTF-8 release notes，传入已推送的 main commit，并在当前动作得到明确授权后使用 `--confirm-remote-actions` 立即执行 `publish`。
+5. `publish` 只读取一次当前 workflow 状态作为异步证据；无论它是 missing、pending、success 还是 failure，都不取代本地门禁，也不阻断 tag/Release。
 6. 确认状态为 `TAG_VERIFIED` 后，再单独取得授权并使用 `--confirm-stable-promotion` 推进 `stable`。
 7. 先执行 `verify-runtime --mode isolated`；它不会触碰已安装 Skill，也不能单独形成客户端发现证据。
 8. 只有在允许修改真实安装时，才提供全新绝对 artifact 路径和 `--confirm-installed-skill-mutation` 执行 installed-client 验证。
@@ -58,4 +58,4 @@ python3 scripts/release_github_skill.py status --version <next-version> \
 
 ## 当前验收边界
 
-真实 patch 发布验收尚未执行。仓库中的 fake runner、注入式归档、临时目录测试和只读 CI 定义只能证明实现与静态契约；它们不证明真实 GitHub 写入、公开升级、真实客户端发现或卸载生命周期已经发生。
+直接稳定发布以本地 `static-valid` 为远端写入门禁，不等待 GitHub Actions；CI 结果仅作为发布后的异步证据。仓库中的确定性构建、投影检查、归档校验和只读 CI 定义不能证明真实客户端发现或卸载生命周期已经发生。

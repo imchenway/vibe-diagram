@@ -12,6 +12,12 @@ Produce a self-contained single-file HTML document as the primary artifact. Inli
 
 PNG or SVG may be added only when the user explicitly requests an image supplement; either must not replace the HTML artifact. Start from a matching asset template and replace its slots instead of rebuilding a generic card page.
 
+Create the artifact with `python3 <skill-root>/scripts/vibe_diagram_scaffold.py --type <family> --template <id> --output <path>`. Do not hand-create the file. Preserve the canonical style and script blocks, slot inventory, template contract, and visual grammar. If the selected template cannot hold the primary model, choose another template or create mapped overview and detail artifacts.
+
+## Invocation completion
+
+Treat a visual request as `invocation-complete` only after the update gate, workflow load, template selection, canonical scaffold, strict linter, and HTML delivery all succeed. Loading this Skill, describing a diagram, or returning Mermaid is incomplete. Mermaid may supplement the HTML only when useful.
+
 ## Capability-based delivery
 
 Choose delivery only from available capabilities:
@@ -85,7 +91,7 @@ Apply the trusted family budget. When it is exceeded, produce explicitly mapped 
 
 ### G8 — Self-evidencing single-file delivery
 
-Keep the artifact self-contained, free of remote runtime dependencies, and traceable to its template identity. Validate a minimal fixture, the formal linter, representative desktop and mobile rendering when client execution is authorized, and exact collection coverage. State static and runtime evidence separately.
+Keep the artifact self-contained, free of remote runtime dependencies, and traceable to its template identity. Run the formal linter before delivery and state static and runtime evidence separately.
 
 ## Layout, arrows, and collision control
 
@@ -113,5 +119,6 @@ Before delivery:
 2. Confirm the primary path, exceptions, evidence, uncertainty, and result are visible.
 3. Confirm the HTML is self-contained, responsive, keyboard readable, and printable.
 4. Confirm template identity and macros remain valid.
-5. Run the bundled linter when available and fix every reported error.
-6. Return the artifact path plus only the brief context needed to use it.
+5. Run `python3 <skill-root>/scripts/vibe_diagram_lint.py <artifact> --type <family>` and fix every reported error.
+6. Confirm the final response contains an HTML artifact path or, in text-only mode, one complete HTML code block; Mermaid-only delivery is forbidden.
+7. Return the artifact path plus only the brief context needed to use it.

@@ -20,6 +20,6 @@ Copy the selected template and preserve the evidence ledger structure.
 - Distinguish implemented, verified, unverified, blocked, and out-of-scope states.
 - Show remaining risk and rollback conditions beside the acceptance result.
 - Use exact commands, paths, screenshots, logs, or test identifiers where available.
-- Do not treat a passing unit test as proof of an untested runtime or client behavior.
+- Do not treat static validation as proof of an unverified runtime or client behavior.
 - Expose what changed, affected entry points, required scripts or restarts, verification steps, and uncovered areas next to the ledger. State explicitly when no script or restart is needed.
 - Use text plus shape or icon for pass, warn, fail, and blocked; never rely on color alone.
