@@ -6,7 +6,7 @@
 
 ## [0.1.5] - 2026-07-22
 
-- Changed the maintainer release path to publish the immutable tag, GitHub Release, and `stable` immediately after local static validation instead of waiting for GitHub Actions; CI remains asynchronous evidence.
+- Changed the maintainer release path to publish the immutable tag, GitHub Release, and `stable` immediately after local static validation instead of waiting for GitHub Actions or raw/CDN propagation; both remain asynchronous evidence.
 - Added a deterministic canonical-template scaffold and strict artifact-to-template conformance checks for styles, scripts, slots, DOM grammar, and the shared gradient-grid visual shell.
 - Restored the reference sequence caption, arrow, return, and risk-node grammar across all six sequence templates while retaining structured participants, endpoints, evidence, and adaptive behavior.
 - Added primary-canvas presentation budgets, explicit natural-language visual triggers, implicit Codex invocation metadata, and an invocation-complete HTML delivery gate that forbids Mermaid-only completion.

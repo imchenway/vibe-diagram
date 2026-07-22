@@ -52,6 +52,7 @@ python3 scripts/release_github_skill.py status --version <next-version> \
 4. 准备普通 UTF-8 release notes，传入已推送的 main commit，并在当前动作得到明确授权后使用 `--confirm-remote-actions` 立即执行 `publish`。
 5. `publish` 只读取一次当前 workflow 状态作为异步证据；无论它是 missing、pending、success 还是 failure，都不取代本地门禁，也不阻断 tag/Release。
 6. 确认状态为 `TAG_VERIFIED` 后，再单独取得授权并使用 `--confirm-stable-promotion` 推进 `stable`。
+   推进后只执行一次 raw/CDN 一致性读取；缓存尚未刷新时记录异步待确认并立即返回，不等待远端传播。
 7. 先执行 `verify-runtime --mode isolated`；它不会触碰已安装 Skill，也不能单独形成客户端发现证据。
 8. 只有在允许修改真实安装时，才提供全新绝对 artifact 路径和 `--confirm-installed-skill-mutation` 执行 installed-client 验证。
 9. installed-client 成功后只把对应版本、GitHub-path 和 Codex CLI lane 记录为 `RUNTIME_VERIFIED`；失败则检查 `PROMOTED_RUNTIME_FAILED` 和精确 previous-version 恢复结果，不删除或改写已发布 tag。

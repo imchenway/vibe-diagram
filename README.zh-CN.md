@@ -176,7 +176,7 @@ python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
 
 `publish` 要求已有持久化的 `LOCAL_VERIFIED` 证据、干净的工作树与 index、本地 HEAD 和远端 main 与目标提交一致、`origin` 与目标仓库一致、当前 GitHub 身份具备 push 权限、release notes 是不含凭据特征的普通 UTF-8 文件，并且显式提供 `--confirm-remote-actions`。它创建 annotated tag，仅执行非强制的 tag push，创建或复用同 tag 的 GitHub Release，只读取一次当前 workflow 状态而不等待，并通过真实 updater 归档路径校验远端 tag ZIP。同提交 tag/Release 会幂等复用；冲突 tag 失败关闭；可恢复的部分成功记录为 `PARTIAL_REMOTE`。
 
-`promote-stable` 要求已有持久化的 `TAG_VERIFIED` 证据，并单独提供 `--confirm-stable-promotion` 授权。写入前，它会重新读取 main、tag、Release、当前异步 workflow 状态、不可变 tag ZIP、stable 祖先关系和 stable manifest；workflow 完成不再是推进前置条件。它只接受把已验证 release commit 以普通、非强制方式快进到 stable。push 后必须再次确认 stable commit、raw manifest 与不可变归档一致；对 raw/CDN 的短暂延迟使用有上限的指数退避。成功或已完成的推进记录为 `STABLE_PROMOTED`；如果 push 后最终一致性超时，会保留已推进但待确认的状态，不自动倒退，也不伪造验证成功。
+`promote-stable` 要求已有持久化的 `TAG_VERIFIED` 证据，并单独提供 `--confirm-stable-promotion` 授权。写入前，它会重新读取 main、tag、Release、当前异步 workflow 状态、不可变 tag ZIP、stable 祖先关系和 stable manifest；workflow 完成不再是推进前置条件。它只接受把已验证 release commit 以普通、非强制方式快进到 stable。push 后只读取一次 stable commit、raw manifest 与不可变归档；若已经同步则记录 `stable_validation: passed`，若 raw/CDN 暂时滞后则记录异步待确认，不等待也不倒退 `stable`。
 
 `verify-runtime --mode isolated` 在临时目录安装前一个不可变 tag，通过已发布 stable manifest 完成升级，验证 current 与 offline fail-open，执行回滚、重升级、全新归档安装，并移除两份隔离安装。它不会触碰已安装 Skill，也不能证明 Codex 客户端发现。isolated 通过后只记录为前置证据，发行状态仍是 `STABLE_PROMOTED`。
 

@@ -50,9 +50,6 @@ MAX_REMOTE_BYTES = 64 * 1024 * 1024
 MAX_RELEASE_NOTES_BYTES = 1024 * 1024
 MAX_RUNTIME_ARTIFACT_BYTES = 16 * 1024 * 1024
 MAX_RUNTIME_MARKER_BYTES = 64 * 1024
-STABLE_CONSISTENCY_ATTEMPTS = 8
-STABLE_CONSISTENCY_BASE_SECONDS = 1.0
-STABLE_CONSISTENCY_MAX_SECONDS = 30.0
 EXPECTED_PUBLICATION_COMMAND = (
     "python3",
     "scripts/build_packages.py",
@@ -1376,42 +1373,6 @@ def _stable_promotion_consistent(
     )
 
 
-def _wait_for_stable_consistency(
-    root: Path,
-    config: ReleaseConfig,
-    version: str,
-    commit: str,
-    verified_digest: str,
-    runner: Any,
-    *,
-    fetch_bytes: Callable[[str], bytes],
-    attempts: int,
-    sleep_fn: Callable[[float], None],
-) -> Dict[str, object]:
-    if attempts < 1:
-        raise ReleaseError("stable consistency attempts must be positive")
-    facts: Dict[str, object] = {}
-    for index in range(attempts):
-        facts = collect_remote_facts(
-            root,
-            config,
-            version,
-            runner,
-            fetch_bytes=fetch_bytes,
-        )
-        if _stable_promotion_consistent(
-            facts, version, commit, verified_digest
-        ):
-            return facts
-        if index + 1 < attempts:
-            delay = min(
-                STABLE_CONSISTENCY_BASE_SECONDS * (2**index),
-                STABLE_CONSISTENCY_MAX_SECONDS,
-            )
-            sleep_fn(delay)
-    return facts
-
-
 def promote_stable(
     root: Path,
     config: ReleaseConfig,
@@ -1421,8 +1382,6 @@ def promote_stable(
     runner: Any,
     *,
     fetch_bytes: Callable[[str], bytes] = _default_fetch_bytes,
-    consistency_attempts: int = STABLE_CONSISTENCY_ATTEMPTS,
-    sleep_fn: Callable[[float], None] = time.sleep,
 ) -> Dict[str, object]:
     """将 stable 非强制快进到已经完整验证的不可变发行提交。"""
 
@@ -1503,40 +1462,20 @@ def promote_stable(
         state = dataclasses.replace(state, last_result=pending_result)
     store.save(state)
 
-    final_facts = _wait_for_stable_consistency(
+    final_facts = collect_remote_facts(
         root,
         config,
         version,
-        commit,
-        verified_digest,
         runner,
         fetch_bytes=fetch_bytes,
-        attempts=consistency_attempts,
-        sleep_fn=sleep_fn,
     )
     state = dataclasses.replace(
         state,
         remote_facts={**dict(state.remote_facts), **final_facts},
     )
-    if not _stable_promotion_consistent(
+    consistent = _stable_promotion_consistent(
         final_facts, version, commit, verified_digest
-    ):
-        state = dataclasses.replace(
-            state,
-            last_result={
-                "status": "stable-consistency-pending",
-                "version": version,
-                "commit": commit,
-                "tree_sha256": verified_digest,
-                "consistency_validation": "pending",
-                "runtime_validation": "unverified",
-            },
-        )
-        store.save(state)
-        raise ReleaseError(
-            "stable consistency confirmation reached the bounded timeout",
-            exit_code=5,
-        )
+    )
 
     result = {
         "status": "promoted",
@@ -1544,7 +1483,8 @@ def promote_stable(
         "commit": commit,
         "release_state": "STABLE_PROMOTED",
         "tree_sha256": verified_digest,
-        "stable_validation": "passed",
+        "stable_validation": "passed" if consistent else "pending",
+        "consistency_validation": "passed" if consistent else "asynchronous",
         "workflow_validation": "asynchronous",
         "runtime_validation": "unverified",
     }
