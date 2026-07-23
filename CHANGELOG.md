@@ -2,11 +2,15 @@
 
 ## [Unreleased]
 
-- Removed the automated test suite, runtime evaluation cases, mandatory TDD rule, and unit-test execution gates by explicit project-owner decision; deterministic build, projection, archive, linter, and real-client validation capabilities remain.
+## [0.1.6] - 2026-07-23
+
+- Removed the repository-wide network-access prohibition so agent tasks may use network access while remote Git, GitHub, marketplace, and client mutations still require explicit authorization.
+- Made post-publication GitHub workflow and raw/CDN consistency reads asynchronous evidence so publishing and stable promotion do not wait for propagation.
 
 ## [0.1.5] - 2026-07-22
 
-- Changed the maintainer release path to publish the immutable tag, GitHub Release, and `stable` immediately after local static validation instead of waiting for GitHub Actions or raw/CDN propagation; both remain asynchronous evidence.
+- Removed the automated test suite, runtime evaluation cases, mandatory TDD rule, and unit-test execution gates by explicit project-owner decision; deterministic build, projection, archive, linter, and real-client validation capabilities remain.
+- Changed the maintainer release path to publish the immutable tag, GitHub Release, and `stable` immediately after local static validation instead of waiting for GitHub Actions; CI remains asynchronous evidence.
 - Added a deterministic canonical-template scaffold and strict artifact-to-template conformance checks for styles, scripts, slots, DOM grammar, and the shared gradient-grid visual shell.
 - Restored the reference sequence caption, arrow, return, and risk-node grammar across all six sequence templates while retaining structured participants, endpoints, evidence, and adaptive behavior.
 - Added primary-canvas presentation budgets, explicit natural-language visual triggers, implicit Codex invocation metadata, and an invocation-complete HTML delivery gate that forbids Mermaid-only completion.

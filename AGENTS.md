@@ -8,7 +8,6 @@
 
 ## Development rules
 
-- Do not access the network or add third-party dependencies.
 - Do not perform Git, GitHub, marketplace, or client installation/execution actions without explicit authorization in the current user turn.
 
 ## Evidence boundary
