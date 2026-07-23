@@ -5,10 +5,74 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Diagram template: Workload overview</title>
   <style>
-:root{--ink:#102033;--muted:#5a6c80;--paper:#fbfdff;--panel:rgba(255,255,255,.9);--line:#8db3d8;--blue:#1f6fb2;--blue-soft:#e8f3ff;--green:#17785a;--green-soft:#e9f8f2;--amber:#986506;--amber-soft:#fff6de;--red:#a63a3a;--red-soft:#fff0f0;--violet:#6254ad;--violet-soft:#f1efff;--shadow:0 16px 42px rgba(20,57,92,.085);--radius:20px}*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transparent 30rem),radial-gradient(circle at 78% 6%,rgba(228,246,239,.8),transparent 28rem),linear-gradient(rgba(93,133,173,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(93,133,173,.045) 1px,transparent 1px),linear-gradient(180deg,#fff 0%,#f7fbff 54%,#fbfdff 100%);background-size:auto,auto,28px 28px,28px 28px,auto;overflow-x:clip}main{width:min(1360px,calc(100vw - 32px));margin:0 auto;padding:20px 0}h1{font-size:clamp(24px,2.8vw,32px);line-height:1.18;letter-spacing:-.025em;margin:0 0 10px}.summary{margin:0 0 14px;color:var(--muted);line-height:1.65}.canvas,.template-layout{border:1px solid rgba(141,179,216,.48);border-radius:24px;background:rgba(255,255,255,.78);box-shadow:var(--shadow);padding:18px}.slot{display:grid;grid-template-rows:auto auto;align-content:center;justify-items:center;gap:4px;text-align:center;min-height:64px;border:1px solid rgba(141,179,216,.58);border-radius:16px;background:rgba(255,255,255,.95);padding:10px 12px;overflow-wrap:anywhere}.slot b{display:block;max-width:100%;font-size:13px;line-height:1.2}.slot span{display:block;max-width:100%;margin-top:0;color:var(--muted);font-size:12px;line-height:1.45}.core{border-color:rgba(31,111,178,.56);background:linear-gradient(180deg,#fff,var(--blue-soft))}.support{border-color:rgba(98,84,173,.45);background:linear-gradient(180deg,#fff,var(--violet-soft))}.data{border-color:rgba(23,120,90,.45);background:linear-gradient(180deg,#fff,var(--green-soft))}.risk{border-color:rgba(166,58,58,.42);background:linear-gradient(180deg,#fff,var(--red-soft))}.ops{border-color:rgba(152,101,6,.42);background:linear-gradient(180deg,#fff,var(--amber-soft))}.arrow{position:relative;min-height:2px;background:var(--blue);align-self:center}.arrow:after{content:"";position:absolute;right:-1px;top:-5px;border-left:10px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}.v-arrow{width:2px;min-height:38px;background:var(--blue);justify-self:center;position:relative}.v-arrow:after{content:"";position:absolute;left:-5px;bottom:-1px;border-top:10px solid var(--blue);border-left:6px solid transparent;border-right:6px solid transparent}@media(max-width:780px){main{width:min(100vw - 20px,760px)}.template-layout{display:grid!important;grid-template-columns:1fr!important}.arrow{height:28px;width:2px;margin:auto}.arrow:after{right:-5px;top:22px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:10px solid var(--blue);border-bottom:0}}
+:root{--ink:#102033;--muted:#5a6c80;--paper:#fbfdff;--panel:rgba(255,255,255,.9);--line:#8db3d8;--blue:#1f6fb2;--blue-soft:#e8f3ff;--green:#17785a;--green-soft:#e9f8f2;--amber:#986506;--amber-soft:#fff6de;--red:#a63a3a;--red-soft:#fff0f0;--violet:#6254ad;--violet-soft:#f1efff;--shadow:0 16px 42px rgba(20,57,92,.085);--radius:20px}*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transparent 30rem),radial-gradient(circle at 78% 6%,rgba(228,246,239,.8),transparent 28rem),linear-gradient(rgba(93,133,173,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(93,133,173,.045) 1px,transparent 1px),linear-gradient(180deg,#fff 0%,#f7fbff 54%,#fbfdff 100%);background-size:auto,auto,28px 28px,28px 28px,auto;overflow-x:clip}main{width:min(1360px,calc(100vw - 32px));margin:0 auto;padding:20px 0}h1{font-size:clamp(24px,2.8vw,32px);line-height:1.18;letter-spacing:-.025em;margin:0 0 10px}.summary{margin:0 0 14px;color:var(--muted);line-height:1.65}.canvas,.template-layout{border:1px solid rgba(141,179,216,.48);border-radius:24px;background:rgba(255,255,255,.78);box-shadow:var(--shadow);padding:18px}.slot{display:grid;grid-template-rows:auto auto;align-content:center;justify-items:center;gap:4px;text-align:center;min-height:64px;border:1px solid rgba(141,179,216,.58);border-radius:16px;background:rgba(255,255,255,.95);padding:10px 12px;overflow-wrap:anywhere}.slot b{display:block;max-width:100%;font-size:13px;line-height:1.2}.slot span{display:block;max-width:100%;margin-top:0;color:var(--muted);font-size:12px;line-height:1.45}.core{border-color:rgba(31,111,178,.56);background:linear-gradient(180deg,#fff,var(--blue-soft))}.support{border-color:rgba(98,84,173,.45);background:linear-gradient(180deg,#fff,var(--violet-soft))}.data{border-color:rgba(23,120,90,.45);background:linear-gradient(180deg,#fff,var(--green-soft))}.risk{border-color:rgba(166,58,58,.42);background:linear-gradient(180deg,#fff,var(--red-soft))}.ops{border-color:rgba(152,101,6,.42);background:linear-gradient(180deg,#fff,var(--amber-soft))}.arrow{position:relative;min-height:2px;background:var(--blue);align-self:center}.arrow:after{content:"";position:absolute;right:-1px;top:-5px;border-left:10px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}.v-arrow{width:2px;min-height:38px;background:var(--blue);justify-self:center;position:relative}.v-arrow:after{content:"";position:absolute;left:-5px;bottom:-1px;border-top:10px solid var(--blue);border-left:6px solid transparent;border-right:6px solid transparent}@media(max-width:48rem){main{width:min(100vw - 20px,760px)}.template-layout{display:grid!important;grid-template-columns:1fr!important}.arrow{height:28px;width:2px;margin:auto}.arrow:after{right:-5px;top:22px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:10px solid var(--blue);border-bottom:0}}
 
 
 .router-pipeline{display:grid;grid-template-columns:1fr 28px 1.2fr 28px 1.2fr 28px 1fr;gap:12px;align-items:center}.router-group{display:grid;gap:10px}.boundary-hub{display:grid;grid-template-columns:1fr 1.25fr 1fr;grid-template-rows:auto auto;gap:16px}.boundary-box{grid-row:1/3;border:2px dashed rgba(31,111,178,.46);border-radius:28px;padding:18px;display:grid;gap:12px}.entry-core-foundation{display:grid;grid-template-columns:170px 1fr 210px;grid-template-rows:auto auto auto;gap:14px}.entry-core-foundation .foundation{grid-column:1/4}.whitebox-cluster{display:grid;grid-template-columns:170px 1fr 170px;gap:16px}.component-box{border:2px solid rgba(31,111,178,.42);border-radius:22px;padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.environment-zones{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.env-zone{border:1.5px solid rgba(141,179,216,.58);border-radius:22px;padding:14px;display:grid;gap:12px}.north-south-layers{display:grid;gap:12px}.north-south-layers .layer{display:grid;grid-template-columns:180px 1fr 1fr;gap:12px}.data-domain-map{display:grid;grid-template-columns:180px 1fr 180px;grid-template-rows:auto auto;gap:14px}.domain-center{grid-row:1/3;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;border:1.5px solid rgba(23,120,90,.4);border-radius:22px;padding:14px}.dfd-trust-boundary{display:grid;grid-template-columns:180px 1fr 180px;gap:16px}.trust-box{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.contract-mesh{display:grid;grid-template-columns:1fr 220px 1fr;gap:16px}.contract-center{display:grid;gap:12px;border:1.6px solid rgba(31,111,178,.44);border-radius:22px;padding:14px}.event-bus{display:grid;grid-template-rows:auto 68px auto;gap:14px}.bus-line{display:grid;place-items:center;border-radius:18px;background:linear-gradient(90deg,var(--blue-soft),var(--violet-soft));border:1.5px solid rgba(98,84,173,.38);font-weight:900}.event-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.network-zones{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.security-threat-controls{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:16px}.security-center{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;gap:12px}.identity-access-path{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:center}.failure-domain-recovery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.failure-domain{border:1.5px dashed rgba(166,58,58,.34);border-radius:22px;padding:14px;display:grid;gap:12px}.telemetry-pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.delivery-rail{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.rail-stage{min-height:128px}.stack{display:grid;gap:12px}.wide{grid-column:1/-1}
+[data-diagram-title-region]{display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.entry-core-foundation{display:block;padding:14px}
+.entry-core-foundation .architecture-map{display:block;inline-size:100%;block-size:auto;border:1px solid rgba(141,179,216,.44);border-radius:22px;background:linear-gradient(rgba(38,102,154,.038) 1px,transparent 1px),linear-gradient(90deg,rgba(38,102,154,.038) 1px,transparent 1px),linear-gradient(180deg,#fff,#f8fbff);background-size:22px 22px,22px 22px,auto}
+.svg-node-card{display:grid;grid-template-columns:2.65rem minmax(0,1fr);align-items:center;gap:.72rem;block-size:100%;padding:.55rem .85rem;text-align:start}
+.svg-node-icon{display:grid;inline-size:2.35rem;block-size:2.35rem;place-items:center;border-radius:.75rem;background:rgba(232,243,255,.9);font-size:1.45rem;line-height:1}
+.svg-node-text{display:grid;gap:.18rem;min-inline-size:0}
+.svg-node-text b{color:#102033;font-size:.9rem;line-height:1.18}
+.svg-node-text small{color:#5a6c80;font-size:.72rem;line-height:1.3;overflow-wrap:anywhere}
+.compound-node{display:flex;block-size:100%;flex-direction:column;align-items:stretch;gap:.62rem;padding:.72rem .82rem;text-align:start}
+.compound-node .node-head{display:flex;align-items:center;justify-content:center;gap:.65rem;min-inline-size:0;text-align:left}
+.compound-node .node-head>span:last-child{min-inline-size:0}
+.compound-node .node-head .svg-node-icon{inline-size:2.3rem;block-size:2.3rem;font-size:1.35rem}
+.compound-node .node-head b{color:#102033;font-size:.88rem;line-height:1.15}
+.compound-node .node-head small{display:block;margin-block-start:.14rem;color:#5a6c80;font-size:.7rem;line-height:1.28}
+.module-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--module-min,8.5rem)),1fr));grid-auto-rows:minmax(2.15rem,auto);align-content:center;gap:.48rem}
+.compound-node.compact-row{display:grid;grid-template-columns:minmax(13rem,17rem) minmax(0,1fr);align-items:center;gap:.7rem;padding:.45rem .75rem}
+.compound-node.module-only{justify-content:center;padding:.38rem .75rem}
+.compound-node.rail-stack .module-grid{flex:1;grid-auto-rows:minmax(2.35rem,1fr)}
+.compound-node.rail-stack .module-chip{padding:.62rem .5rem}
+.module-chip{display:flex;min-inline-size:0;min-block-size:2.15rem;align-items:center;justify-content:center;padding:.46rem .5rem;border:1px solid rgba(141,179,216,.58);border-radius:.68rem;background:rgba(255,255,255,.96);box-shadow:0 .2rem .65rem rgba(20,57,92,.055);color:#294963;font-size:.71rem;font-weight:780;line-height:1.18;text-align:center;overflow-wrap:anywhere}
+.module-chip.checked{border-color:rgba(32,164,118,.58);background:#fff}
+.module-chip.pending{border-color:#d58a00;border-style:dashed;background:#ffe8b3;box-shadow:0 .25rem .8rem rgba(152,101,6,.12);color:#6f4300}
+.architecture-map .arch-node{fill:#fff;stroke-width:1.6;filter:url(#workload-soft-shadow);transition:stroke-width .15s ease,filter .15s ease}
+.architecture-map .node-observed{stroke:#7db0de}
+.architecture-map .node-checked{stroke:#6db89e}
+.architecture-map .node-unverified{stroke:#d4a64c;stroke-dasharray:6 4}
+.architecture-map .layer-access{fill:#fff8e8}
+.architecture-map .layer-runtime{fill:#f2efff}
+.architecture-map .layer-validation{fill:#edfaf4}
+.architecture-map .layer-assets{fill:#eef8ff}
+.architecture-map .module-chip,.architecture-map [data-architecture-supporting-content-for]>g{cursor:pointer}
+.architecture-map .module-chip:hover{border-color:#0877ff;box-shadow:0 .28rem .85rem rgba(8,119,255,.14)}
+.architecture-map [data-architecture-supporting-content-for]>g:hover rect{stroke:#0877ff;stroke-width:2.2}
+.architecture-map [data-module-detail-trigger]:focus-visible{outline:3px solid #0877ff;outline-offset:2px}
+.architecture-map [data-architecture-supporting-content-for]>g[data-module-detail-trigger]:focus-visible rect{stroke:#0877ff;stroke-width:2.6}
+.architecture-map [data-diagram-node-id]:hover .arch-node,.architecture-map [data-diagram-node-id]:focus-visible .arch-node{stroke-width:2.6;filter:url(#workload-active-shadow)}
+.fallback-region-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.5rem;margin:.8rem 0}
+.fallback-region-index span{padding:.55rem .65rem;border:1px solid rgba(141,179,216,.45);border-radius:.75rem;background:#fff;color:#5a6c80;font-size:.75rem;line-height:1.4}
+.fallback-region-index b{display:block;color:#17324d}
+main [data-evidence-ledger="1"]{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;align-items:start;gap:.6rem 1rem;margin:.55rem 0 1rem;padding:.72rem .85rem!important;border-radius:1rem!important;background:rgba(255,255,255,.86)!important}
+main [data-evidence-summary]{display:block!important;padding:.08rem 0!important}
+main [data-evidence-summary] strong{font-size:.78rem!important;white-space:nowrap}
+main [data-evidence-summary] span{display:none}
+[data-reading-guide-groups]{display:flex;align-items:center;justify-content:space-between;gap:.55rem 1rem;min-inline-size:0}
+[data-reading-guide-group]{display:flex;align-items:center;gap:.42rem .72rem;min-inline-size:0;flex-wrap:wrap}
+[data-reading-guide-group]+[data-reading-guide-group]{padding-inline-start:1rem;border-inline-start:1px solid rgba(141,179,216,.45)}
+[data-reading-guide-group-title]{color:#17324d;font-size:.7rem;font-weight:850;white-space:nowrap}
+[data-reading-guide-item],main [data-evidence-id]{display:inline-flex!important;align-items:center;gap:.36rem;min-width:0;padding:0!important;border:0!important;background:transparent!important}
+[data-reading-guide-item] b,main [data-evidence-id] b{margin:0!important;color:#38546f;font-size:.7rem!important;line-height:1.2;white-space:nowrap}
+[data-line-swatch]{position:relative;display:inline-block;inline-size:2rem;block-size:.75rem;flex:0 0 auto}
+[data-line-swatch]::before{content:"";position:absolute;inset-inline:0 .32rem;inset-block-start:.3rem;border-block-start:3px solid #0877ff}
+[data-line-swatch]::after{content:"";position:absolute;inset-inline-end:0;inset-block-start:.06rem;border-inline-start:.5rem solid #0877ff;border-block:.34rem solid transparent}
+[data-line-kind="data-flow"] [data-line-swatch]::before{border-color:#00a56a}
+[data-line-kind="data-flow"] [data-line-swatch]::after{border-inline-start-color:#00a56a}
+[data-line-kind="control-flow"] [data-line-swatch]::before{border-color:#7c3aed;border-block-start-style:dashed}
+[data-line-kind="control-flow"] [data-line-swatch]::after{border-inline-start-color:#7c3aed}
+[data-line-kind="foundation-dependency"] [data-line-swatch]::before{border-color:#f59e0b;border-block-start-style:dotted}
+[data-line-kind="foundation-dependency"] [data-line-swatch]::after{border-inline-start-color:#f59e0b}
+main [data-evidence-id]::before{content:"";inline-size:.68rem;block-size:.68rem;flex:0 0 auto;border:2px solid;border-radius:.3rem;background:#fff}
+main [data-evidence-id][data-evidence-source-kind="file"]::before{border-color:#2787df;background:#e8f3ff}
+main [data-evidence-id][data-evidence-source-kind="test"]::before{border-color:#20a476;background:#e9f8f2}
+main [data-evidence-id][data-evidence-status="unresolved"]::before{border-color:#e49a10;border-style:dashed;background:#fff6de}
+@media(max-width:64rem){[data-reading-guide-groups]{align-items:flex-start;flex-direction:column}[data-reading-guide-group]+[data-reading-guide-group]{padding-inline-start:0;border-inline-start:0}}
+@media(max-width:48rem){[data-diagram-title-region]{align-items:flex-start;flex-direction:column;gap:0}[data-diagram-mobile="summary"]>.template-layout{display:none!important}main [data-evidence-ledger="1"]{grid-template-columns:1fr!important}[data-evidence-summary]{inline-size:100%}}
 </style>
   <style data-adaptive-viewport-kernel="1">
 [data-diagram-canvas][data-diagram-contract="1"] {
@@ -29,9 +93,24 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
+[data-diagram-title-region] {
+  display: flex;
+  max-inline-size: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem 1rem;
+}
+[data-diagram-title-copy] {
+  flex: 1 1 24rem;
+  min-inline-size: 0;
+}
+[data-diagram-title-region] > [data-diagram-controls] {
+  flex: 0 0 auto;
+  margin-block: 0;
+}
 [data-diagram-controls] {
   position: relative;
-  display: inline-flex;
+  display: none;
   max-inline-size: 100%;
   flex-wrap: wrap;
   align-items: center;
@@ -42,6 +121,9 @@
   border-radius: .9rem;
   background: rgba(255, 255, 255, .92);
   box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls][data-diagram-controls-visible="true"] {
+  display: inline-flex;
 }
 [data-diagram-controls] button {
   appearance: none;
@@ -88,8 +170,64 @@
   border: 0;
 }
 .diagram-fallback { display: none; }
+[data-evidence-ledger="1"] {
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+[data-evidence-summary] {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem 1rem;
+  padding: 0 .125rem .125rem;
+}
+[data-evidence-summary] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+[data-evidence-summary] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+[data-evidence-ledger="1"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .625rem;
+  margin-block: .5rem 1rem;
+}
+[data-evidence-id] {
+  display: grid;
+  align-content: start;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .75rem .875rem;
+  border: 1px solid rgba(141, 179, 216, .58);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .9);
+  overflow-wrap: anywhere;
+}
+[data-evidence-status="observed"] {
+  border-color: rgba(23, 120, 90, .38);
+  background: rgba(238, 249, 245, .94);
+}
+[data-evidence-source-kind="test"] {
+  border-color: rgba(31, 111, 178, .4);
+  background: rgba(237, 246, 255, .94);
+}
+[data-evidence-status="unresolved"] {
+  border-color: rgba(152, 101, 6, .38);
+  background: rgba(255, 248, 232, .96);
+}
 
 @media (max-width: 48rem) {
+  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
+  [data-diagram-title-copy] { flex: 0 1 auto; }
+  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
+  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
+  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
   [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
@@ -98,11 +236,268 @@
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
   [data-diagram-controls] { display: none !important; }
+  [data-evidence-ledger="1"] { break-inside: avoid; }
   .diagram-fallback { display: block; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-progressive-disclosure-kernel="1">
+[data-diagram-detail][hidden] { display: none; }
+[data-diagram-detail]:target { display: block; }
+
+[data-diagram-node-id][data-detail-for] {
+  cursor: pointer;
+}
+
+[data-diagram-node-id][data-detail-for]:focus-visible rect {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 6px rgba(31, 111, 178, .34));
+}
+
+[data-node-detail-region] {
+  margin-block-start: .875rem;
+  padding: .875rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+
+[data-node-detail-region] > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .4rem 1rem;
+  margin-block-end: .7rem;
+}
+
+[data-node-detail-region] h2 {
+  margin: 0;
+  color: #17324d;
+  font-size: .95rem;
+}
+
+[data-node-detail-region] header p {
+  margin: 0;
+  color: #5a6c80;
+  font-size: .75rem;
+}
+
+[data-node-detail-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: .55rem;
+}
+
+details[data-diagram-detail] {
+  position: relative;
+  display: block;
+  min-inline-size: 0;
+  border: 1px solid rgba(141, 179, 216, .54);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .96);
+  overflow: clip;
+}
+
+details[data-diagram-detail] > summary {
+  cursor: pointer;
+  padding: .7rem .8rem;
+  color: #17324d;
+  font-size: .8125rem;
+  font-weight: 780;
+}
+
+details[data-diagram-detail] > summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, currentColor 58%, transparent);
+  outline-offset: 4px;
+}
+
+details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+  margin: 0;
+  padding: 0 .8rem .8rem;
+  color: #52677d;
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+[data-diagram-detail-close] {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region][data-runtime-active="true"] {
+  display: block;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] > header {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+  position: fixed;
+  inset-block-start: var(--detail-top, 1rem);
+  inset-inline-start: var(--detail-left, 1rem);
+  z-index: 1;
+  display: block;
+  inline-size: var(--detail-width, min(22rem, calc(100vw - 1.5rem)));
+  max-block-size: min(26rem, calc(100vh - 1.5rem));
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(94, 151, 207, .72);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 100% 0, rgba(214, 233, 255, .72), transparent 14rem),
+    linear-gradient(180deg, #fff, #f7fbff);
+  box-shadow:
+    0 1.25rem 3.5rem rgba(20, 57, 92, .24),
+    0 .25rem .8rem rgba(20, 57, 92, .12);
+  pointer-events: auto;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::before {
+  content: "";
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  display: block;
+  block-size: .24rem;
+  background: linear-gradient(90deg, #0877ff, #7c3aed, #00a56a);
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] {
+  display: none;
+  min-block-size: 0;
+  padding: .95rem 1rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail][data-runtime-open="true"] {
+  display: block;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > summary {
+  padding: .15rem 2.65rem .7rem .1rem;
+  border-block-end: 1px solid rgba(141, 179, 216, .48);
+  color: #102033;
+  font-size: 1rem;
+  font-weight: 850;
+  list-style: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+  padding: .8rem .1rem .05rem;
+  color: #38546f;
+  font-size: .84rem;
+  line-height: 1.68;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close] {
+  position: absolute;
+  inset-block-start: .72rem;
+  inset-inline-end: .72rem;
+  display: grid;
+  inline-size: 2rem;
+  block-size: 2rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(94, 151, 207, .68);
+  border-radius: 999px;
+  background: #fff;
+  color: #17324d;
+  font: inherit;
+  font-size: 1.12rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 .3rem .8rem rgba(20, 57, 92, .1);
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:hover {
+  border-color: #0877ff;
+  background: #e8f3ff;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  [data-node-detail-region] > header { align-items: flex-start; flex-direction: column; }
+  [data-node-detail-grid] { grid-template-columns: 1fr; }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    inline-size: var(--detail-width, min(21rem, calc(100vw - 1.25rem)));
+    max-block-size: min(22rem, calc(100vh - 1.25rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    scroll-behavior: auto;
+  }
+}
+
+@media print {
+  [data-node-detail-region],
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] {
+    position: static;
+    display: block;
+    margin-block-start: .875rem;
+    padding: .875rem;
+    border: 1px solid #b9cfe2;
+    background: #fff;
+    pointer-events: auto;
+  }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] > header {
+    display: flex;
+  }
+  [data-node-detail-grid],
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    position: static;
+    display: grid;
+    inline-size: auto;
+    max-block-size: none;
+    grid-template-columns: 1fr 1fr;
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+  }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::before {
+    display: none;
+  }
+  [data-diagram-detail][hidden],
+  html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail],
+  html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail][data-runtime-open="true"] {
+    display: block !important;
+    min-block-size: 0;
+    padding: 0;
+    border: 1px solid #b9cfe2;
+    border-radius: .8rem;
+  }
+  details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+    display: block !important;
+  }
+  [data-diagram-detail-close] { display: none !important; }
 }
 </style>
   <style data-semantic-relations-kernel="1">
@@ -195,87 +590,157 @@
       data-template-contract-version="2"
       data-system-arch-view="container"
       data-routing-confidence="{{routing_confidence}}">
-  <h1 data-slot="title">{{title}}</h1>
-  <p class="summary" data-slot="summary">{{summary}}</p>
-  <div data-diagram-controls="workload-overview" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
-  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="workload-overview" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="summary"><section data-diagram-stage data-reading-guide="architecture landmarks" class="template-layout entry-core-foundation" aria-label="Workload overview template canvas">
-    <svg class="architecture-map" data-architecture-canvas="1" data-architecture-topology="entry-core-foundation" viewBox="0 0 1200 660" role="img" aria-labelledby="workload-overview-map-title workload-overview-map-description" style="grid-column:1/-1;display:block;inline-size:100%;block-size:auto;border:1px solid rgba(141,179,216,.44);border-radius:18px;background:#fbfdff">
-      <title id="workload-overview-map-title">Workload entry, core, operations, data, and foundation map</title>
-      <desc id="workload-overview-map-description">The runtime request enters through an access boundary, crosses the application core, reaches data and operational controls, and rests on an explicit foundation.</desc>
+  <header data-diagram-title-region>
+    <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
+    <div data-diagram-controls="workload-overview" data-diagram-status-fit="Fit width" data-diagram-status-fits="Fits at 100%" data-diagram-status-scroll="Scroll" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  </header>
+  <section data-slot="evidence-and-notes" data-evidence-ledger="1" aria-label="Diagram reading guide"><div data-evidence-summary><strong>Reading guide</strong></div><div data-reading-guide-groups><div data-reading-guide-group="relations" aria-label="Line types"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="runtime-flow"><i data-line-swatch aria-hidden="true"></i><b>Runtime path</b></span><span data-reading-guide-item data-line-kind="data-flow"><i data-line-swatch aria-hidden="true"></i><b>Data path</b></span><span data-reading-guide-item data-line-kind="control-flow"><i data-line-swatch aria-hidden="true"></i><b>Operations branch</b></span><span data-reading-guide-item data-line-kind="foundation-dependency"><i data-line-swatch aria-hidden="true"></i><b>Foundation dependency</b></span></div><div data-reading-guide-group="evidence" aria-label="Node evidence colors"><span data-reading-guide-group-title>Node colors</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed checks</b></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b></article></div><div data-reading-guide-group="interaction" aria-label="Interaction hint"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item data-interaction-hint="node-detail"><span aria-hidden="true">👆</span><b>{{node-detail-canvas-hint}}</b></span></div></div></section>
+  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="workload-overview" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent" data-diagram-topology="component-topology" data-primary-direction="north-to-south"><section data-diagram-stage data-reading-guide="architecture landmarks" class="template-layout entry-core-foundation" aria-label="Workload component topology template canvas">
+    <svg class="architecture-map" data-architecture-canvas="1" data-architecture-topology="entry-core-foundation" viewBox="0 0 1700 1180" role="img" aria-labelledby="workload-overview-map-title workload-overview-map-description">
+      <title id="workload-overview-map-title">Workload entry, core spine, operations, data plane, and infrastructure plane</title>
+      <desc id="workload-overview-map-description">Read north to south: the left entry rail enters the central runtime spine, branches into core and operations, then converges on the infrastructure foundation.</desc>
       <defs>
-        <marker id="workload-arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1f6fb2"></path></marker>
-        <marker id="workload-arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#17785a"></path></marker>
-        <marker id="workload-arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#6254ad"></path></marker>
+        <marker id="workload-arrow-blue" viewBox="0 0 10 10" refX="9.4" refY="5" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M.8 1L9.4 5L.8 9Z" fill="#0877ff"></path></marker>
+        <marker id="workload-arrow-green" viewBox="0 0 10 10" refX="9.4" refY="5" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M.8 1L9.4 5L.8 9Z" fill="#00a56a"></path></marker>
+        <marker id="workload-arrow-violet" viewBox="0 0 10 10" refX="9.4" refY="5" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M.8 1L9.4 5L.8 9Z" fill="#7c3aed"></path></marker>
+        <marker id="workload-arrow-amber" viewBox="0 0 10 10" refX="9.4" refY="5" markerWidth="14" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto"><path d="M.8 1L9.4 5L.8 9Z" fill="#f59e0b"></path></marker>
+        <filter id="workload-soft-shadow" x="-20%" y="-30%" width="140%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#14395c" flood-opacity=".10"></feDropShadow></filter>
+        <filter id="workload-active-shadow" x="-24%" y="-38%" width="148%" height="190%"><feDropShadow dx="0" dy="9" stdDeviation="9" flood-color="#1f6fb2" flood-opacity=".18"></feDropShadow></filter>
       </defs>
-      <g aria-label="Relation legend">
-        <g data-architecture-legend-item="runtime-flow"><line x1="42" y1="34" x2="90" y2="34" stroke="#1f6fb2" stroke-width="3"></line><text x="100" y="38" fill="#38546f" font-size="12" font-weight="700">Runtime flow</text></g>
-        <g data-architecture-legend-item="data-flow"><line x1="238" y1="34" x2="286" y2="34" stroke="#17785a" stroke-width="3"></line><text x="296" y="38" fill="#38546f" font-size="12" font-weight="700">Data flow</text></g>
-        <g data-architecture-legend-item="control-flow"><line x1="410" y1="34" x2="458" y2="34" stroke="#6254ad" stroke-width="3" stroke-dasharray="9 6"></line><text x="468" y="38" fill="#38546f" font-size="12" font-weight="700">Control and dependency</text></g>
+      <g aria-label="Architecture regions">
+        <g data-diagram-group-id="entry-region" data-semantic-role="architecture-region" data-diagram-rank="0" data-diagram-region="entry"><rect x="36" y="72" width="200" height="888" rx="26" fill="#f7fbff" stroke="#9bbfe0" stroke-width="1.8" data-architecture-boundary="entry"></rect><text x="136" y="108" text-anchor="middle" fill="#38546f" font-size="14" font-weight="850">EXTERNAL ENTRY</text></g>
+        <g data-diagram-group-id="core-region" data-semantic-role="architecture-region" data-diagram-rank="2" data-diagram-region="core"><rect x="264" y="60" width="1040" height="900" rx="28" fill="#f4f9ff" stroke="#67a6e4" stroke-width="2" data-architecture-boundary="core"></rect><text x="784" y="98" text-anchor="middle" fill="#0d5fc2" font-size="15" font-weight="850">VIBE DIAGRAM APPLICATION CORE</text><text x="784" y="121" text-anchor="middle" fill="#5a6c80" font-size="11.5" font-weight="700">client adapters ↓ runtime orchestration ↓ artifact generation and strict validation ↓ semantic assets</text></g>
+        <g data-diagram-group-id="operations-region" data-semantic-role="architecture-region" data-diagram-rank="2" data-diagram-region="operations"><rect x="1332" y="60" width="332" height="900" rx="28" fill="#fffaf0" stroke="#e5ad46" stroke-width="1.8" data-architecture-boundary="operations"></rect><text x="1498" y="98" text-anchor="middle" fill="#8a5800" font-size="14" font-weight="850">OPERATIONS / EXTERNAL</text></g>
+        <g data-diagram-group-id="data-region" data-semantic-role="architecture-region" data-diagram-rank="4" data-diagram-region="data"><rect x="320" y="799" width="928" height="131" rx="22" fill="#eefaf5" stroke="#65b89a" stroke-width="1.8" data-architecture-boundary="data"></rect><text x="784" y="818" text-anchor="middle" fill="#087957" font-size="13" font-weight="850" data-slot="data-observability-title">{{data-observability-title}}</text><text x="784" y="836" text-anchor="middle" fill="#5a6c80" font-size="10.5" font-weight="700" data-slot="data-observability">{{data-observability}}</text></g>
+        <g data-diagram-group-id="foundation-region" data-semantic-role="architecture-region" data-diagram-rank="5" data-diagram-region="foundation"><rect x="36" y="992" width="1628" height="156" rx="26" fill="#f4f3ff" stroke="#a69be5" stroke-width="1.8" data-architecture-boundary="foundation"></rect><text x="850" y="1019" text-anchor="middle" fill="#5742b3" font-size="13" font-weight="850" data-slot="foundation-title">{{foundation-title}}</text><text x="850" y="1038" text-anchor="middle" fill="#5a6c80" font-size="10.5" font-weight="700" data-slot="foundation">{{foundation}}</text></g>
       </g>
-      <g aria-label="Architecture boundaries">
-        <rect x="28" y="82" width="220" height="430" rx="28" fill="#f6faff" stroke="#8db3d8" stroke-width="1.8" stroke-dasharray="9 6" data-architecture-boundary="entry"></rect>
-        <text x="52" y="113" fill="#38546f" font-size="12" font-weight="800">ENTRY</text>
-        <rect x="278" y="82" width="492" height="230" rx="28" fill="#f4f9ff" stroke="#1f6fb2" stroke-width="2" data-architecture-boundary="core"></rect>
-        <text x="302" y="113" fill="#1f6fb2" font-size="12" font-weight="800">APPLICATION CORE</text>
-        <rect x="278" y="338" width="492" height="174" rx="28" fill="#f1fbf7" stroke="#5aa58c" stroke-width="1.8" data-architecture-boundary="data"></rect>
-        <text x="302" y="369" fill="#17785a" font-size="12" font-weight="800">DATA AND OBSERVABILITY</text>
-        <rect x="798" y="82" width="374" height="430" rx="28" fill="#f8f7ff" stroke="#8f85c9" stroke-width="1.8" stroke-dasharray="9 6" data-architecture-boundary="operations"></rect>
-        <text x="822" y="113" fill="#6254ad" font-size="12" font-weight="800">OPERATIONS AND DEPENDENCIES</text>
-        <rect x="278" y="540" width="894" height="92" rx="24" fill="#fff8e7" stroke="#c08a20" stroke-width="1.8" data-architecture-boundary="foundation"></rect>
-        <text x="302" y="570" fill="#986506" font-size="12" font-weight="800">FOUNDATION</text>
+      <g data-architecture-landmarks="1">
+        <a id="entry-rail" data-architecture-landmark-for="entry-rail" data-diagram-node-id="entry-rail" data-semantic-role="architecture-object" data-diagram-rank="0" data-diagram-region="entry" data-evidence-visual="observed" href="#entry-rail-detail" data-detail-for="entry-rail-detail" data-node-primary-label="{{entry-rail-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="58" y="150" width="148" height="100" rx="20"></rect><foreignObject x="64" y="156" width="136" height="88"><div class="compound-node"><div class="node-head"><span class="svg-node-icon" aria-hidden="true">👤</span><span><b data-slot="entry-rail-title">{{entry-rail-title}}</b><small data-slot="entry-rail">{{entry-rail}}</small></span></div></div></foreignObject></a>
+        <g data-architecture-supporting-content-for="entry-rail" aria-label="Client host coverage"><text x="136" y="278" text-anchor="middle" fill="#5a6c80" font-size="11" font-weight="800">CLIENT HOST COVERAGE</text><g data-detail-for="host-primary-detail"><rect x="58" y="300" width="148" height="120" rx="18" fill="#fff" stroke="#9bbfe0"></rect><text x="132" y="346" text-anchor="middle" font-size="23">💻</text><text x="132" y="376" text-anchor="middle" fill="#17324d" font-size="12" font-weight="850">PRIMARY HOST</text><text x="132" y="397" text-anchor="middle" fill="#5a6c80" font-size="10.5">client adapter</text></g><g data-detail-for="host-secondary-detail"><rect x="58" y="460" width="148" height="120" rx="18" fill="#fff" stroke="#9bbfe0"></rect><text x="132" y="506" text-anchor="middle" font-size="23">🧩</text><text x="132" y="536" text-anchor="middle" fill="#17324d" font-size="12" font-weight="850">SECONDARY HOST</text><text x="132" y="557" text-anchor="middle" fill="#5a6c80" font-size="10.5">client adapter</text></g><g data-detail-for="host-terminal-detail"><rect x="58" y="620" width="148" height="120" rx="18" fill="#fff" stroke="#9bbfe0"></rect><text x="132" y="666" text-anchor="middle" font-size="23">⌨️</text><text x="132" y="696" text-anchor="middle" fill="#17324d" font-size="12" font-weight="850">CLI HOST</text><text x="132" y="717" text-anchor="middle" fill="#5a6c80" font-size="10.5">terminal adapter</text></g><g data-detail-for="host-workspace-detail"><rect x="58" y="780" width="148" height="120" rx="18" fill="#fff" stroke="#9bbfe0"></rect><text x="132" y="826" text-anchor="middle" font-size="23">🛠️</text><text x="132" y="856" text-anchor="middle" fill="#17324d" font-size="12" font-weight="850">IDE HOST</text><text x="132" y="877" text-anchor="middle" fill="#5a6c80" font-size="10.5">workspace adapter</text></g></g>
+        <a id="access-boundary" data-architecture-landmark-for="access-boundary" data-diagram-node-id="access-boundary" data-semantic-role="architecture-object" data-diagram-rank="1" data-diagram-region="core" data-evidence-visual="observed" href="#access-boundary-detail" data-detail-for="access-boundary-detail" data-node-primary-label="{{access-boundary-title}}" aria-expanded="false"><rect class="arch-node node-observed layer-access" x="320" y="145" width="928" height="155" rx="21"></rect><foreignObject x="328" y="153" width="912" height="139"><div class="compound-node" style="--module-min:12rem"><div class="node-head"><span class="svg-node-icon" aria-hidden="true">🔐</span><span><b data-slot="access-boundary-title">{{access-boundary-title}}</b><small data-slot="access-boundary">{{access-boundary}}</small></span></div><div class="module-grid"><span class="module-chip" data-detail-for="manifest-contract-detail">Manifest contract</span><span class="module-chip" data-detail-for="client-adapter-detail">Client adapter</span><span class="module-chip" data-detail-for="package-path-detail">Package path</span><span class="module-chip" data-detail-for="skill-bootstrap-detail">Skill bootstrap</span></div></div></foreignObject></a>
+        <a id="application-core" data-architecture-landmark-for="application-core" data-diagram-node-id="application-core" data-semantic-role="architecture-object" data-diagram-rank="2" data-diagram-region="core" data-evidence-visual="observed" href="#application-core-detail" data-detail-for="application-core-detail" data-node-primary-label="{{application-core-title}}" aria-expanded="false"><rect class="arch-node node-observed layer-runtime" x="320" y="338" width="928" height="185" rx="22"></rect><foreignObject x="328" y="346" width="912" height="169"><div class="compound-node" style="--module-min:12rem"><div class="node-head"><span class="svg-node-icon" aria-hidden="true">🧭</span><span><b data-slot="application-core-title">{{application-core-title}}</b><small data-slot="application-core">{{application-core}}</small></span></div><div class="module-grid"><span class="module-chip" data-detail-for="update-gate-detail">Update gate</span><span class="module-chip" data-detail-for="runtime-workflow-detail">Runtime workflow</span><span class="module-chip" data-detail-for="diagram-router-detail">Diagram router</span><span class="module-chip" data-detail-for="template-selection-detail">Template selection</span><span class="module-chip" data-detail-for="language-guard-detail">Language guard</span><span class="module-chip" data-detail-for="evidence-boundary-detail">Evidence boundary</span><span class="module-chip" data-detail-for="interaction-contract-detail">Interaction contract</span><span class="module-chip" data-detail-for="delivery-handoff-detail">Delivery handoff</span></div></div></foreignObject></a>
+        <a id="support-capabilities" data-architecture-landmark-for="support-capabilities" data-diagram-node-id="support-capabilities" data-semantic-role="architecture-object" data-diagram-rank="3" data-diagram-region="core" data-evidence-visual="checked" href="#support-capabilities-detail" data-detail-for="support-capabilities-detail" data-node-primary-label="{{support-capabilities-title}}" aria-expanded="false"><rect class="arch-node node-checked layer-validation" x="320" y="561" width="928" height="200" rx="22"></rect><foreignObject x="328" y="569" width="912" height="184"><div class="compound-node" style="--module-min:10rem"><div class="node-head"><span class="svg-node-icon" aria-hidden="true">✅</span><span><b data-slot="support-capabilities-title">{{support-capabilities-title}}</b><small data-slot="support-capabilities">{{support-capabilities}}</small></span></div><div class="module-grid"><span class="module-chip checked" data-detail-for="canonical-scaffold-detail">Canonical scaffold</span><span class="module-chip checked" data-detail-for="template-filling-detail">Template filling</span><span class="module-chip checked" data-detail-for="strict-lint-detail">Strict lint</span><span class="module-chip checked" data-detail-for="semantic-relations-detail">Semantic relations</span><span class="module-chip checked" data-detail-for="collision-checks-detail">Collision checks</span><span class="module-chip checked" data-detail-for="mobile-fallback-detail">Mobile fallback</span><span class="module-chip checked" data-detail-for="node-details-detail">Node details</span><span class="module-chip checked" data-detail-for="print-nojs-detail">Print / no-JS</span><span class="module-chip checked" data-detail-for="responsive-zoom-detail">Responsive zoom</span><span class="module-chip checked" data-detail-for="self-contained-html-detail">Self-contained HTML</span></div></div></foreignObject></a>
+        <a id="ops-rail" data-architecture-landmark-for="ops-rail" data-diagram-node-id="ops-rail" data-semantic-role="architecture-object" data-diagram-rank="2" data-diagram-region="operations" data-evidence-visual="observed" href="#ops-rail-detail" data-detail-for="ops-rail-detail" data-node-primary-label="{{ops-rail-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="1360" y="150" width="276" height="260" rx="22"></rect><foreignObject x="1368" y="158" width="260" height="244"><div class="compound-node rail-stack" style="--module-min:12rem"><div class="node-head"><span class="svg-node-icon" aria-hidden="true">🛠️</span><span><b data-slot="ops-rail-title">{{ops-rail-title}}</b><small data-slot="ops-rail">{{ops-rail}}</small></span></div><div class="module-grid"><span class="module-chip" data-detail-for="deterministic-builder-detail">Deterministic builder</span><span class="module-chip" data-detail-for="static-validation-ci-detail">Static validation CI</span><span class="module-chip" data-detail-for="release-orchestration-detail">Release orchestration</span><span class="module-chip" data-detail-for="rollback-controls-detail">Rollback controls</span></div></div></foreignObject></a>
+        <a id="data-observability" data-architecture-landmark-for="data-observability" data-diagram-node-id="data-observability" data-semantic-role="architecture-object" data-diagram-rank="4" data-diagram-region="data" data-evidence-visual="checked" href="#data-observability-detail" data-detail-for="data-observability-detail" data-node-primary-label="{{data-observability-title}}" aria-expanded="false"><rect class="arch-node node-checked layer-assets" x="340" y="846" width="888" height="74" rx="18"></rect><foreignObject x="348" y="852" width="872" height="62"><div class="compound-node module-only" style="--module-min:8rem"><div class="module-grid"><span class="module-chip checked" data-detail-for="template-count-detail">59 templates</span><span class="module-chip checked" data-detail-for="family-count-detail">11 families</span><span class="module-chip checked" data-detail-for="reference-count-detail">13 references</span><span class="module-chip checked" data-detail-for="runtime-contracts-detail">Runtime contracts</span><span class="module-chip checked" data-detail-for="family-policies-detail">Family policies</span><span class="module-chip checked" data-detail-for="html-evidence-detail">HTML evidence</span></div></div></foreignObject></a>
+        <a id="external-dependencies" data-architecture-landmark-for="external-dependencies" data-diagram-node-id="external-dependencies" data-semantic-role="architecture-object" data-diagram-rank="3" data-diagram-region="operations" data-evidence-visual="unverified" href="#external-dependencies-detail" data-detail-for="external-dependencies-detail" data-node-primary-label="{{external-dependencies-title}}" aria-expanded="false"><rect class="arch-node node-unverified" x="1360" y="450" width="276" height="400" rx="22"></rect><foreignObject x="1368" y="458" width="260" height="384"><div class="compound-node rail-stack" style="--module-min:12rem"><div class="node-head"><span class="svg-node-icon" aria-hidden="true">🌐</span><span><b data-slot="external-dependencies-title">{{external-dependencies-title}}</b><small data-slot="external-dependencies">{{external-dependencies}}</small></span></div><div class="module-grid"><span class="module-chip" data-detail-for="client-packages-detail">Client packages</span><span class="module-chip" data-detail-for="publication-projection-detail">Publication projection</span><span class="module-chip pending" data-detail-for="stable-channel-detail">Stable channel</span><span class="module-chip pending" data-detail-for="update-manifest-detail">Update manifest</span><span class="module-chip pending" data-detail-for="client-lifecycle-detail">Client lifecycle</span></div></div></foreignObject></a>
+        <a id="foundation" data-architecture-landmark-for="foundation" data-diagram-node-id="foundation" data-semantic-role="architecture-object" data-diagram-rank="5" data-diagram-region="foundation" data-evidence-visual="observed" href="#foundation-detail" data-detail-for="foundation-detail" data-node-primary-label="{{foundation-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="58" y="1050" width="1578" height="80" rx="18"></rect><foreignObject x="66" y="1056" width="1562" height="68"><div class="compound-node module-only" style="--module-min:10rem"><div class="module-grid"><span class="module-chip" data-detail-for="skill-md-detail">SKILL.md</span><span class="module-chip" data-detail-for="templates-detail">Templates</span><span class="module-chip" data-detail-for="references-detail">References</span><span class="module-chip" data-detail-for="contracts-detail">Contracts</span><span class="module-chip" data-detail-for="policies-detail">Policies</span><span class="module-chip" data-detail-for="adapters-detail">Adapters</span><span class="module-chip" data-detail-for="scripts-detail">Scripts</span><span class="module-chip" data-detail-for="version-detail">VERSION</span></div></div></foreignObject></a>
       </g>
       <g data-architecture-relations="1" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M138 225V326" stroke="#1f6fb2" stroke-width="3" marker-end="url(#workload-arrow-blue)" data-diagram-visible-relation-id="entry-rail-access-boundary" data-from="entry-rail" data-to="access-boundary" data-relation-kind="runtime-flow"></path>
-        <path d="M222 372H330V210H354" stroke="#1f6fb2" stroke-width="3" marker-end="url(#workload-arrow-blue)" data-diagram-visible-relation-id="access-boundary-application-core" data-from="access-boundary" data-to="application-core" data-relation-kind="runtime-flow"></path>
-        <path d="M506 210H548" stroke="#1f6fb2" stroke-width="3" marker-end="url(#workload-arrow-blue)" data-diagram-visible-relation-id="application-core-support-capabilities" data-from="application-core" data-to="support-capabilities" data-relation-kind="runtime-flow"></path>
-        <path d="M624 252V390" stroke="#17785a" stroke-width="3" marker-end="url(#workload-arrow-green)" data-diagram-visible-relation-id="support-capabilities-data-observability" data-from="support-capabilities" data-to="data-observability" data-relation-kind="data-flow"></path>
-        <path d="M700 432H850V210H874" stroke="#6254ad" stroke-width="3" stroke-dasharray="9 6" marker-end="url(#workload-arrow-violet)" data-diagram-visible-relation-id="data-observability-ops-rail" data-from="data-observability" data-to="ops-rail" data-relation-kind="control-flow"></path>
-        <path d="M950 252V326" stroke="#6254ad" stroke-width="3" stroke-dasharray="9 6" marker-end="url(#workload-arrow-violet)" data-diagram-visible-relation-id="ops-rail-external-dependencies" data-from="ops-rail" data-to="external-dependencies" data-relation-kind="external-dependency"></path>
-        <path d="M950 410V586H830" stroke="#6254ad" stroke-width="3" stroke-dasharray="9 6" marker-end="url(#workload-arrow-violet)" data-diagram-visible-relation-id="external-dependencies-foundation" data-from="external-dependencies" data-to="foundation" data-relation-kind="foundation-dependency"></path>
+        <path d="M206 200H250V223H320" stroke="#0877ff" stroke-width="3.6" marker-end="url(#workload-arrow-blue)" data-diagram-visible-relation-id="entry-rail-access-boundary" data-from="entry-rail" data-to="access-boundary" data-relation-kind="runtime-flow" data-primary-relation="true"></path>
+        <path d="M784 300V338" stroke="#0877ff" stroke-width="3.6" marker-end="url(#workload-arrow-blue)" data-diagram-visible-relation-id="access-boundary-application-core" data-from="access-boundary" data-to="application-core" data-relation-kind="runtime-flow" data-primary-relation="true"></path>
+        <g data-architecture-branch-id="application-runtime-branch">
+          <path d="M784 523V561" stroke="#0877ff" stroke-width="3.6" marker-end="url(#workload-arrow-blue)" data-diagram-visible-relation-id="application-core-support-capabilities" data-from="application-core" data-to="support-capabilities" data-relation-kind="runtime-flow" data-primary-relation="true"></path>
+          <path d="M1100 523H1260V820H1220V846" stroke="#00a56a" stroke-width="3.6" marker-end="url(#workload-arrow-green)" data-diagram-visible-relation-id="application-core-data-observability" data-from="application-core" data-to="data-observability" data-relation-kind="data-flow" data-primary-relation="true"></path>
+        </g>
+        <path d="M1248 400H1360" stroke="#7c3aed" stroke-width="3.6" stroke-dasharray="10 7" marker-end="url(#workload-arrow-violet)" data-diagram-visible-relation-id="application-core-ops-rail" data-from="application-core" data-to="ops-rail" data-relation-kind="control-flow" data-primary-relation="false"></path>
+        <path d="M600 761V846" stroke="#00a56a" stroke-width="3.6" marker-end="url(#workload-arrow-green)" data-diagram-visible-relation-id="support-capabilities-data-observability" data-from="support-capabilities" data-to="data-observability" data-relation-kind="data-flow" data-primary-relation="true"></path>
+        <path d="M1498 410V450" stroke="#7c3aed" stroke-width="3.6" stroke-dasharray="10 7" marker-end="url(#workload-arrow-violet)" data-diagram-visible-relation-id="ops-rail-external-dependencies" data-from="ops-rail" data-to="external-dependencies" data-relation-kind="external-dependency" data-primary-relation="true"></path>
+        <g data-architecture-merge-id="foundation-dependency-merge">
+          <path d="M520 920V1050" stroke="#f59e0b" stroke-width="3.6" stroke-dasharray="2 7" marker-end="url(#workload-arrow-amber)" data-diagram-visible-relation-id="data-observability-foundation" data-from="data-observability" data-to="foundation" data-relation-kind="foundation-dependency" data-primary-relation="true"></path>
+          <path d="M1498 850V990H1330V1050" stroke="#f59e0b" stroke-width="3.6" stroke-dasharray="2 7" marker-end="url(#workload-arrow-amber)" data-diagram-visible-relation-id="external-dependencies-foundation" data-from="external-dependencies" data-to="foundation" data-relation-kind="foundation-dependency" data-primary-relation="true"></path>
+        </g>
       </g>
-      <g data-edge-label-for="access-boundary-application-core"><rect x="263" y="347" width="92" height="27" rx="13" fill="#fff"></rect><text x="309" y="365" text-anchor="middle" fill="#38546f" font-size="11" font-weight="700">enters</text></g>
-      <g data-edge-label-for="support-capabilities-data-observability"><rect x="578" y="316" width="92" height="27" rx="13" fill="#fff"></rect><text x="624" y="334" text-anchor="middle" fill="#17785a" font-size="11" font-weight="700">records</text></g>
-      <g data-architecture-landmarks="1" font-size="13" font-weight="750" text-anchor="middle">
-        <g data-architecture-landmark-for="entry-rail"><rect x="54" y="145" width="168" height="80" rx="17" fill="#fff" stroke="#8db3d8" stroke-width="1.5"></rect><text x="138" y="189" fill="#102033">Entry rail</text></g>
-        <g data-architecture-landmark-for="access-boundary"><rect x="54" y="326" width="168" height="80" rx="17" fill="#e8f3ff" stroke="#1f6fb2" stroke-width="1.6"></rect><text x="138" y="370" fill="#102033">Access boundary</text></g>
-        <g data-architecture-landmark-for="application-core"><rect x="354" y="170" width="152" height="82" rx="17" fill="#e8f3ff" stroke="#1f6fb2" stroke-width="1.6"></rect><text x="430" y="215" fill="#102033">Application core</text></g>
-        <g data-architecture-landmark-for="support-capabilities"><rect x="548" y="170" width="152" height="82" rx="17" fill="#f1efff" stroke="#8f85c9" stroke-width="1.5"></rect><text x="624" y="207" fill="#102033"><tspan x="624" dy="0">Support</tspan><tspan x="624" dy="16">capabilities</tspan></text></g>
-        <g data-architecture-landmark-for="data-observability"><rect x="420" y="390" width="280" height="82" rx="17" fill="#e9f8f2" stroke="#5aa58c" stroke-width="1.6"></rect><text x="560" y="435" fill="#102033">Data observability</text></g>
-        <g data-architecture-landmark-for="ops-rail"><rect x="874" y="170" width="152" height="82" rx="17" fill="#fff6de" stroke="#c08a20" stroke-width="1.5"></rect><text x="950" y="215" fill="#102033">Ops rail</text></g>
-        <g data-architecture-landmark-for="external-dependencies"><rect x="850" y="326" width="200" height="84" rx="17" fill="#fff" stroke="#8f85c9" stroke-width="1.5"></rect><text x="950" y="363" fill="#102033"><tspan x="950" dy="0">External</tspan><tspan x="950" dy="16">dependencies</tspan></text></g>
-        <g data-architecture-landmark-for="foundation"><rect x="530" y="558" width="300" height="56" rx="16" fill="#fff" stroke="#c08a20" stroke-width="1.5"></rect><text x="680" y="590" fill="#102033">Foundation</text></g>
-      </g>
+      <circle cx="784" cy="542" r="5" fill="#fff" stroke="#0877ff" stroke-width="2"></circle><text x="802" y="545" fill="#0d5fc2" font-size="11" font-weight="700">runtime branch</text>
     </svg>
-    <div class="stack">    <div id="entry-rail" class="slot " data-diagram-node-id="entry-rail" data-semantic-role="architecture-object" data-slot="entry-rail"><b>Entry rail</b><span>{{entry-rail}}</span></div>    <div id="access-boundary" class="slot " data-diagram-node-id="access-boundary" data-semantic-role="architecture-object" data-slot="access-boundary"><b>Access boundary</b><span>{{access-boundary}}</span></div></div>
-    <div class="stack">    <div id="application-core" class="slot core" data-diagram-node-id="application-core" data-semantic-role="architecture-object" data-slot="application-core"><b>Application core</b><span>{{application-core}}</span></div>    <div id="support-capabilities" class="slot support" data-diagram-node-id="support-capabilities" data-semantic-role="architecture-object" data-slot="support-capabilities"><b>Support capabilities</b><span>{{support-capabilities}}</span></div>    <div id="data-observability" class="slot data" data-diagram-node-id="data-observability" data-semantic-role="architecture-object" data-slot="data-observability"><b>Data observability</b><span>{{data-observability}}</span></div></div>
-    <div class="stack">    <div id="ops-rail" class="slot ops" data-diagram-node-id="ops-rail" data-semantic-role="architecture-object" data-slot="ops-rail"><b>Ops rail</b><span>{{ops-rail}}</span></div>    <div id="external-dependencies" class="slot " data-diagram-node-id="external-dependencies" data-semantic-role="architecture-object" data-slot="external-dependencies"><b>External dependencies</b><span>{{external-dependencies}}</span></div></div>
-    <div id="foundation" class="slot foundation wide" data-diagram-node-id="foundation" data-semantic-role="architecture-object" data-slot="foundation"><b>Foundation</b><span>{foundation}</span></div>
-  <span class="semantic-relation" data-diagram-relation-id="entry-rail-access-boundary" data-from="entry-rail" data-to="access-boundary" data-relation-kind="runtime-flow" data-semantic="entry-rail connects to access-boundary">entry-rail connects to access-boundary</span><span class="semantic-relation" data-diagram-relation-id="access-boundary-application-core" data-from="access-boundary" data-to="application-core" data-relation-kind="runtime-flow" data-semantic="access-boundary connects to application-core">access-boundary connects to application-core</span><span class="semantic-relation" data-diagram-relation-id="application-core-support-capabilities" data-from="application-core" data-to="support-capabilities" data-relation-kind="runtime-flow" data-semantic="application-core connects to support-capabilities">application-core connects to support-capabilities</span><span class="semantic-relation" data-diagram-relation-id="support-capabilities-data-observability" data-from="support-capabilities" data-to="data-observability" data-relation-kind="data-flow" data-semantic="support-capabilities connects to data-observability">support-capabilities connects to data-observability</span><span class="semantic-relation" data-diagram-relation-id="data-observability-ops-rail" data-from="data-observability" data-to="ops-rail" data-relation-kind="control-flow" data-semantic="data-observability connects to ops-rail">data-observability connects to ops-rail</span><span class="semantic-relation" data-diagram-relation-id="ops-rail-external-dependencies" data-from="ops-rail" data-to="external-dependencies" data-relation-kind="external-dependency" data-semantic="ops-rail connects to external-dependencies">ops-rail connects to external-dependencies</span><span class="semantic-relation" data-diagram-relation-id="external-dependencies-foundation" data-from="external-dependencies" data-to="foundation" data-relation-kind="foundation-dependency" data-semantic="external-dependencies connects to foundation">external-dependencies connects to foundation</span></section></div>
-  <details class="diagram-fallback" open data-fallback-for="workload-overview"><summary>Architecture landmark order</summary><ol><li>entry-rail</li><li>access-boundary</li><li>application-core</li><li>support-capabilities</li><li>data-observability</li><li>ops-rail</li><li>external-dependencies</li><li>foundation</li></ol></details>
-  <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
+    <span class="semantic-relation" data-diagram-relation-id="entry-rail-access-boundary" data-from="entry-rail" data-to="access-boundary" data-relation-kind="runtime-flow" data-primary-relation="true" data-semantic="entry-rail enters access-boundary">entry-rail enters access-boundary</span>
+    <span class="semantic-relation" data-diagram-relation-id="access-boundary-application-core" data-from="access-boundary" data-to="application-core" data-relation-kind="runtime-flow" data-primary-relation="true" data-semantic="access-boundary enters application-core">access-boundary enters application-core</span>
+    <span class="semantic-relation" data-diagram-relation-id="application-core-support-capabilities" data-from="application-core" data-to="support-capabilities" data-relation-kind="runtime-flow" data-primary-relation="true" data-semantic="application-core dispatches to support-capabilities">application-core dispatches to support-capabilities</span>
+    <span class="semantic-relation" data-diagram-relation-id="application-core-data-observability" data-from="application-core" data-to="data-observability" data-relation-kind="data-flow" data-primary-relation="true" data-semantic="application-core reads and writes semantic assets through data-observability">application-core reads and writes semantic assets through data-observability</span>
+    <span class="semantic-relation" data-diagram-relation-id="application-core-ops-rail" data-from="application-core" data-to="ops-rail" data-relation-kind="control-flow" data-primary-relation="false" data-semantic="application-core emits operational control to ops-rail">application-core emits operational control to ops-rail</span>
+    <span class="semantic-relation" data-diagram-relation-id="support-capabilities-data-observability" data-from="support-capabilities" data-to="data-observability" data-relation-kind="data-flow" data-primary-relation="true" data-semantic="support-capabilities records through data-observability">support-capabilities records through data-observability</span>
+    <span class="semantic-relation" data-diagram-relation-id="ops-rail-external-dependencies" data-from="ops-rail" data-to="external-dependencies" data-relation-kind="external-dependency" data-primary-relation="true" data-semantic="ops-rail coordinates external-dependencies">ops-rail coordinates external-dependencies</span>
+    <span class="semantic-relation" data-diagram-relation-id="data-observability-foundation" data-from="data-observability" data-to="foundation" data-relation-kind="foundation-dependency" data-primary-relation="true" data-semantic="data-observability depends on foundation">data-observability depends on foundation</span>
+    <span class="semantic-relation" data-diagram-relation-id="external-dependencies-foundation" data-from="external-dependencies" data-to="foundation" data-relation-kind="foundation-dependency" data-primary-relation="true" data-semantic="external-dependencies depend on foundation">external-dependencies depend on foundation</span>
+  </section>
+    <section data-node-detail-region data-detail-close-label="Close node details" aria-label="Node detail disclosure"><header><h2 data-slot="node-detail-heading">{{node-detail-heading}}</h2><p data-slot="node-detail-hint">{{node-detail-hint}}</p></header><div data-node-detail-grid>
+      <details id="entry-rail-detail" data-diagram-detail="entry-rail-detail" data-diagram-detail-id="entry-rail-detail" data-detail-for="entry-rail"><summary>{{entry-rail-title}}</summary><p data-slot="entry-rail-detail">{{entry-rail-detail}}</p></details>
+      <details id="access-boundary-detail" data-diagram-detail="access-boundary-detail" data-diagram-detail-id="access-boundary-detail" data-detail-for="access-boundary"><summary>{{access-boundary-title}}</summary><p data-slot="access-boundary-detail">{{access-boundary-detail}}</p></details>
+      <details id="application-core-detail" data-diagram-detail="application-core-detail" data-diagram-detail-id="application-core-detail" data-detail-for="application-core"><summary>{{application-core-title}}</summary><p data-slot="application-core-detail">{{application-core-detail}}</p></details>
+      <details id="support-capabilities-detail" data-diagram-detail="support-capabilities-detail" data-diagram-detail-id="support-capabilities-detail" data-detail-for="support-capabilities"><summary>{{support-capabilities-title}}</summary><p data-slot="support-capabilities-detail">{{support-capabilities-detail}}</p></details>
+      <details id="ops-rail-detail" data-diagram-detail="ops-rail-detail" data-diagram-detail-id="ops-rail-detail" data-detail-for="ops-rail"><summary>{{ops-rail-title}}</summary><p data-slot="ops-rail-detail">{{ops-rail-detail}}</p></details>
+      <details id="data-observability-detail" data-diagram-detail="data-observability-detail" data-diagram-detail-id="data-observability-detail" data-detail-for="data-observability"><summary>{{data-observability-title}}</summary><p data-slot="data-observability-detail">{{data-observability-detail}}</p></details>
+      <details id="external-dependencies-detail" data-diagram-detail="external-dependencies-detail" data-diagram-detail-id="external-dependencies-detail" data-detail-for="external-dependencies"><summary>{{external-dependencies-title}}</summary><p data-slot="external-dependencies-detail">{{external-dependencies-detail}}</p></details>
+      <details id="foundation-detail" data-diagram-detail="foundation-detail" data-diagram-detail-id="foundation-detail" data-detail-for="foundation"><summary>{{foundation-title}}</summary><p data-slot="foundation-detail">{{foundation-detail}}</p></details>
+      <details id="host-primary-detail" data-diagram-detail="host-primary-detail"><summary>Primary client host</summary><p>Uses its client adapter and package manifest to discover and invoke the same host-neutral skill core.</p></details>
+      <details id="host-secondary-detail" data-diagram-detail="host-secondary-detail"><summary>Secondary client host</summary><p>Uses a host-specific package projection while preserving the same canonical skill behavior.</p></details>
+      <details id="host-terminal-detail" data-diagram-detail="host-terminal-detail"><summary>Terminal client host</summary><p>Loads the generated terminal package and delegates diagram work to the canonical core.</p></details>
+      <details id="host-workspace-detail" data-diagram-detail="host-workspace-detail"><summary>Workspace client host</summary><p>Uses a workspace adapter to expose the same skill without copying core logic.</p></details>
+      <details id="manifest-contract-detail" data-diagram-detail="manifest-contract-detail"><summary>Manifest contract</summary><p>Declares package identity, entry metadata, and required files for one client projection.</p></details>
+      <details id="client-adapter-detail" data-diagram-detail="client-adapter-detail"><summary>Client adapter</summary><p>Holds host-specific manifest fields and output paths without copying core logic.</p></details>
+      <details id="package-path-detail" data-diagram-detail="package-path-detail"><summary>Package path</summary><p>Defines where the generated package is written for the selected client.</p></details>
+      <details id="skill-bootstrap-detail" data-diagram-detail="skill-bootstrap-detail"><summary>Skill bootstrap</summary><p>Loads the host-neutral skill entry and hands control to the runtime workflow.</p></details>
+      <details id="update-gate-detail" data-diagram-detail="update-gate-detail"><summary>Update gate</summary><p>Checks stable update metadata before the requested diagram workflow begins.</p></details>
+      <details id="runtime-workflow-detail" data-diagram-detail="runtime-workflow-detail"><summary>Runtime workflow</summary><p>Loads the complete authoring and verification sequence for one invocation.</p></details>
+      <details id="diagram-router-detail" data-diagram-detail="diagram-router-detail"><summary>Diagram router</summary><p>Selects the family whose relationships match the user question.</p></details>
+      <details id="template-selection-detail" data-diagram-detail="template-selection-detail"><summary>Template selection</summary><p>Chooses one canonical topology without merging unrelated views.</p></details>
+      <details id="language-guard-detail" data-diagram-detail="language-guard-detail"><summary>Language guard</summary><p>Keeps every visible artifact label in the authored output language.</p></details>
+      <details id="evidence-boundary-detail" data-diagram-detail="evidence-boundary-detail"><summary>Evidence boundary</summary><p>Separates observed implementation, completed checks, and unverified runtime claims.</p></details>
+      <details id="interaction-contract-detail" data-diagram-detail="interaction-contract-detail"><summary>Interaction contract</summary><p>Preserves zoom, details, focus, print, and mobile fallback behavior.</p></details>
+      <details id="delivery-handoff-detail" data-diagram-detail="delivery-handoff-detail"><summary>Delivery handoff</summary><p>Returns the self-contained HTML artifact and its verified local path.</p></details>
+      <details id="canonical-scaffold-detail" data-diagram-detail="canonical-scaffold-detail"><summary>Canonical scaffold</summary><p>Copies the selected canonical template without rebuilding its shell.</p></details>
+      <details id="template-filling-detail" data-diagram-detail="template-filling-detail"><summary>Template filling</summary><p>Replaces authored slots with evidence-backed nodes, relations, and labels.</p></details>
+      <details id="strict-lint-detail" data-diagram-detail="strict-lint-detail"><summary>Strict lint</summary><p>Validates structure, scripts, slots, ranks, regions, endpoints, and evidence.</p></details>
+      <details id="semantic-relations-detail" data-diagram-detail="semantic-relations-detail"><summary>Semantic relations</summary><p>Binds every authored relationship to one visible SVG carrier.</p></details>
+      <details id="collision-checks-detail" data-diagram-detail="collision-checks-detail"><summary>Collision checks</summary><p>Rejects routes or labels that overlap protected diagram geometry.</p></details>
+      <details id="mobile-fallback-detail" data-diagram-detail="mobile-fallback-detail"><summary>Mobile fallback</summary><p>Preserves identities and direction when desktop topology cannot fit.</p></details>
+      <details id="node-details-detail" data-diagram-detail="node-details-detail"><summary>Node details</summary><p>Maps concise canvas nodes to printable author-provided details.</p></details>
+      <details id="print-nojs-detail" data-diagram-detail="print-nojs-detail"><summary>Print and no-script view</summary><p>Expands readable evidence when enhancements or JavaScript are unavailable.</p></details>
+      <details id="responsive-zoom-detail" data-diagram-detail="responsive-zoom-detail"><summary>Responsive zoom</summary><p>Fits width when possible and preserves scrolling when shrinking would harm readability.</p></details>
+      <details id="self-contained-html-detail" data-diagram-detail="self-contained-html-detail"><summary>Self-contained HTML</summary><p>Keeps CSS, scripts, semantics, and evidence in one offline file.</p></details>
+      <details id="deterministic-builder-detail" data-diagram-detail="deterministic-builder-detail"><summary>Deterministic builder</summary><p>Builds client packages transactionally from canonical core plus adapter definitions.</p></details>
+      <details id="static-validation-ci-detail" data-diagram-detail="static-validation-ci-detail"><summary>Static validation CI</summary><p>Runs read-only lint, projection, and release checks in continuous integration.</p></details>
+      <details id="release-orchestration-detail" data-diagram-detail="release-orchestration-detail"><summary>Release orchestration</summary><p>Prepares, validates, publishes, and promotes the stable channel.</p></details>
+      <details id="rollback-controls-detail" data-diagram-detail="rollback-controls-detail"><summary>Rollback controls</summary><p>Restores a previous safe projection when publication fails.</p></details>
+      <details id="template-count-detail" data-diagram-detail="template-count-detail"><summary>Template inventory</summary><p>Current canonical template inventory registered across all diagram families.</p></details>
+      <details id="family-count-detail" data-diagram-detail="family-count-detail"><summary>Diagram families</summary><p>Trusted visual grammars used for routing and validation.</p></details>
+      <details id="reference-count-detail" data-diagram-detail="reference-count-detail"><summary>Authoring references</summary><p>Family and shared workflow references that constrain authoring behavior.</p></details>
+      <details id="runtime-contracts-detail" data-diagram-detail="runtime-contracts-detail"><summary>Runtime contracts</summary><p>Versioned rules for viewport, disclosure, and semantic relations.</p></details>
+      <details id="family-policies-detail" data-diagram-detail="family-policies-detail"><summary>Family policies</summary><p>Trusted complexity budgets, topology requirements, and relation allowlists.</p></details>
+      <details id="html-evidence-detail" data-diagram-detail="html-evidence-detail"><summary>HTML evidence</summary><p>Self-contained artifacts and fallback ledgers that preserve delivery evidence.</p></details>
+      <details id="client-packages-detail" data-diagram-detail="client-packages-detail"><summary>Client packages</summary><p>Rebuildable client package projections generated from the canonical core.</p></details>
+      <details id="publication-projection-detail" data-diagram-detail="publication-projection-detail"><summary>Publication projection</summary><p>Builder-owned plugin files used by the repository marketplace.</p></details>
+      <details id="stable-channel-detail" data-diagram-detail="stable-channel-detail"><summary>Stable channel</summary><p>External stable branch and release state are not verified by local files alone.</p></details>
+      <details id="update-manifest-detail" data-diagram-detail="update-manifest-detail"><summary>Update manifest</summary><p>Version, reference, and tree digest used by the updater.</p></details>
+      <details id="client-lifecycle-detail" data-diagram-detail="client-lifecycle-detail"><summary>Client lifecycle</summary><p>Installation, discovery, invocation, upgrade, and uninstall evidence per client.</p></details>
+      <details id="skill-md-detail" data-diagram-detail="skill-md-detail"><summary>Skill entry</summary><p>Canonical bootstrap and routing entry for every client.</p></details>
+      <details id="templates-detail" data-diagram-detail="templates-detail"><summary>Templates</summary><p>Host-neutral visual skeletons owned by the canonical core.</p></details>
+      <details id="references-detail" data-diagram-detail="references-detail"><summary>References</summary><p>Family-specific and shared authoring constraints.</p></details>
+      <details id="contracts-detail" data-diagram-detail="contracts-detail"><summary>Contracts</summary><p>Versioned structural and interaction rules.</p></details>
+      <details id="policies-detail" data-diagram-detail="policies-detail"><summary>Policies</summary><p>Trusted family limits and topology requirements.</p></details>
+      <details id="adapters-detail" data-diagram-detail="adapters-detail"><summary>Adapters</summary><p>Host-specific packaging definitions with no duplicated core.</p></details>
+      <details id="scripts-detail" data-diagram-detail="scripts-detail"><summary>Scripts</summary><p>Builder, updater, scaffold, linter, and release tooling.</p></details>
+      <details id="version-detail" data-diagram-detail="version-detail"><summary>Version</summary><p>Canonical version used to align generated projections.</p></details>
+    </div></section></div>
+  <details class="diagram-fallback" open data-fallback-for="workload-overview"><summary>Workload regions and north-to-south relations</summary><div class="fallback-region-index"><span><b>Entry</b>entry-rail → access-boundary</span><span><b>Core</b>application-core → support-capabilities</span><span><b>Operations</b>ops-rail → external-dependencies</span><span><b>Data</b>data-observability</span><span><b>Foundation</b>foundation</span></div><section data-semantic-edge-ledger aria-label="Fallback directed relations"><h2>Directed relation ledger</h2><div data-semantic-edge-grid>
+    <article data-semantic-edge data-fallback-relation-id="entry-rail-access-boundary" data-from="entry-rail" data-to="access-boundary" data-relation-kind="runtime-flow" data-primary-relation="true"><span data-semantic-edge-route><b>entry-rail</b><i aria-hidden="true"></i><b>access-boundary</b></span><span data-semantic-edge-label>Runtime enters the access boundary.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="access-boundary-application-core" data-from="access-boundary" data-to="application-core" data-relation-kind="runtime-flow" data-primary-relation="true"><span data-semantic-edge-route><b>access-boundary</b><i aria-hidden="true"></i><b>application-core</b></span><span data-semantic-edge-label>The accepted request reaches the central core.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="application-core-support-capabilities" data-from="application-core" data-to="support-capabilities" data-relation-kind="runtime-flow" data-primary-relation="true"><span data-semantic-edge-route><b>application-core</b><i aria-hidden="true"></i><b>support-capabilities</b></span><span data-semantic-edge-label>Core runtime branch.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="application-core-data-observability" data-from="application-core" data-to="data-observability" data-relation-kind="data-flow" data-primary-relation="true"><span data-semantic-edge-route><b>application-core</b><i aria-hidden="true"></i><b>data-observability</b></span><span data-semantic-edge-label>Runtime core reads and writes semantic assets through the evidence plane.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="application-core-ops-rail" data-from="application-core" data-to="ops-rail" data-relation-kind="control-flow" data-primary-relation="false"><span data-semantic-edge-route><b>application-core</b><i aria-hidden="true"></i><b>ops-rail</b></span><span data-semantic-edge-label>Parallel operations branch.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="support-capabilities-data-observability" data-from="support-capabilities" data-to="data-observability" data-relation-kind="data-flow" data-primary-relation="true"><span data-semantic-edge-route><b>support-capabilities</b><i aria-hidden="true"></i><b>data-observability</b></span><span data-semantic-edge-label>Core data path enters the south data plane.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="ops-rail-external-dependencies" data-from="ops-rail" data-to="external-dependencies" data-relation-kind="external-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>ops-rail</b><i aria-hidden="true"></i><b>external-dependencies</b></span><span data-semantic-edge-label>Operations reaches external dependencies.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="data-observability-foundation" data-from="data-observability" data-to="foundation" data-relation-kind="foundation-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>data-observability</b><i aria-hidden="true"></i><b>foundation</b></span><span data-semantic-edge-label>Data plane depends on the infrastructure foundation.</span></article>
+    <article data-semantic-edge data-fallback-relation-id="external-dependencies-foundation" data-from="external-dependencies" data-to="foundation" data-relation-kind="foundation-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>external-dependencies</b><i aria-hidden="true"></i><b>foundation</b></span><span data-semantic-edge-label>The operations branch converges on the same foundation.</span></article>
+  </div></section></details>
 </main>
 <script data-adaptive-viewport-kernel="1">
 (() => {
   "use strict";
   const allowed = new Set(["fit", "0.75", "0.9", "1"]);
+  const managed = new Set();
+  const requestedByCanvas = new WeakMap();
+  let resizeFrame = 0;
+
+  const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const controlsFor = (canvas, root = document) =>
+    Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
+      (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
+    );
   const reset = (canvas) => {
     canvas.style.removeProperty("--diagram-scale");
     canvas.removeAttribute("data-diagram-scaled");
   };
-  const apply = (canvas, requested = "fit") => {
-    reset(canvas);
-    if (!allowed.has(requested)) return false;
-    const stage = canvas.querySelector(":scope > [data-diagram-stage]");
-    if (!stage || !canvas.clientWidth || !stage.scrollWidth) return false;
-    const scale = requested === "fit"
-      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
-      : Number(requested);
-    if (!Number.isFinite(scale) || scale < 0.75 || scale > 1) return false;
-    canvas.style.setProperty("--diagram-scale", String(scale));
-    canvas.setAttribute("data-diagram-scaled", "true");
-    return true;
-  };
-  const reflect = (controls, requested, applied) => {
+  const reflect = (controls, requested, applied, message) => {
     controls.querySelectorAll("[data-diagram-zoom-control]").forEach((button) => {
       button.setAttribute(
         "aria-pressed",
@@ -283,39 +748,393 @@
       );
     });
     const status = controls.querySelector("[data-diagram-zoom-status]");
-    if (status) status.value = applied ? (requested === "fit" ? "Fit width" : `${Number(requested) * 100}%`) : "Scroll";
+    if (status) {
+      status.textContent = message;
+      if ("value" in status) status.value = message;
+    }
+  };
+  const revealControls = (canvas, visible, overflow, root = document) => {
+    controlsFor(canvas, root).forEach((controls) => {
+      controls.hidden = !visible;
+      controls.dataset.diagramControlsVisible = String(visible);
+      controls.dataset.diagramOverflow = String(overflow);
+    });
+  };
+  const retest = (canvas, requested = requestedByCanvas.get(canvas) || canvas.dataset.diagramZoom || "fit") => {
+    reset(canvas);
+    if (!allowed.has(requested)) requested = "fit";
+    requestedByCanvas.set(canvas, requested);
+    const stage = stageFor(canvas);
+    if (!stage || !canvas.clientWidth || !stage.scrollWidth) {
+      revealControls(canvas, false, false);
+      return false;
+    }
+    const overflow = stage.scrollWidth > canvas.clientWidth + 1;
+    const persistent = canvas.dataset.diagramControlsMode === "persistent";
+    const controlsVisible = persistent || overflow;
+    revealControls(canvas, controlsVisible, overflow);
+    const controls = controlsFor(canvas);
+    if (!controlsVisible) {
+      controls.forEach((item) =>
+        reflect(
+          item,
+          "fit",
+          true,
+          item.dataset.diagramStatusFits || "Fits at 100%"
+        )
+      );
+      return true;
+    }
+    const scale = requested === "fit"
+      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
+      : Number(requested);
+    const applied = Number.isFinite(scale) && scale >= 0.75 && scale <= 1;
+    if (applied) {
+      canvas.style.setProperty("--diagram-scale", String(scale));
+      canvas.setAttribute("data-diagram-scaled", "true");
+    }
+    controls.forEach((item) => {
+      const message = applied
+        ? (
+          requested === "fit"
+            ? (
+              overflow
+                ? item.dataset.diagramStatusFit || "Fit width"
+                : item.dataset.diagramStatusFits || "Fits at 100%"
+            )
+            : `${Number(requested) * 100}%`
+        )
+        : item.dataset.diagramStatusScroll || "Scroll";
+      reflect(item, requested, applied, message);
+    });
+    return applied;
+  };
+  const apply = (canvas, requested = "fit") => {
+    if (!allowed.has(requested)) return false;
+    return retest(canvas, requested);
+  };
+  const scheduleRetest = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      managed.forEach((canvas) => retest(canvas));
+    });
   };
   const bind = (root = document) => {
     root.querySelectorAll("[data-diagram-controls]").forEach((controls) => {
       const id = controls.dataset.diagramControls;
-      const canvas = id ? root.querySelector(`[data-diagram-id="${CSS.escape(id)}"]`) : null;
+      const canvas = id
+        ? Array.from(root.querySelectorAll("[data-diagram-id]")).find(
+            (candidate) => candidate.dataset.diagramId === id
+          )
+        : null;
       if (!canvas || controls.dataset.diagramBound === "true") return;
       controls.dataset.diagramBound = "true";
+      controls.hidden = true;
       controls.addEventListener("click", (event) => {
         const button = event.target.closest("[data-diagram-zoom-control]");
         if (!button || !controls.contains(button)) return;
         const requested = button.dataset.diagramZoomControl;
-        const applied = apply(canvas, requested);
-        reflect(controls, requested, applied);
+        apply(canvas, requested);
       });
     });
   };
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(scheduleRetest)
+    : null;
   const enhance = (root = document) => {
     bind(root);
     root.querySelectorAll('[data-diagram-canvas][data-diagram-contract="1"]')
       .forEach((canvas) => {
         try {
-          apply(canvas, canvas.dataset.diagramZoom || "fit");
+          if (!managed.has(canvas)) {
+            managed.add(canvas);
+            if (resizeObserver) {
+              resizeObserver.observe(canvas);
+              const stage = stageFor(canvas);
+              if (stage) resizeObserver.observe(stage);
+            }
+          }
+          retest(canvas, canvas.dataset.diagramZoom || "fit");
         } catch (_error) {
           reset(canvas);
+          revealControls(canvas, false, false, root);
         }
       });
   };
-  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset });
+  if (!resizeObserver) globalThis.addEventListener("resize", scheduleRetest, { passive: true });
+  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset, retest });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
   } else {
     enhance();
+  }
+})();
+</script>
+<script data-progressive-disclosure-kernel="1">
+(() => {
+  "use strict";
+  const activeByRoot = new WeakMap();
+  const returnFocusByRoot = new WeakMap();
+  const boundRoots = new WeakSet();
+  const isNativeDetails = (detail) => detail.matches("details");
+  const documentElementFor = (root) =>
+    root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root.ownerDocument.documentElement;
+  const triggersFor = (root, id) =>
+    Array.from(root.querySelectorAll("[data-diagram-node-id][data-detail-for]")).filter(
+      (trigger) => trigger.dataset.detailFor === id
+    );
+  const reflect = (root, id, expanded) => {
+    triggersFor(root, id).forEach((trigger) => {
+      trigger.setAttribute("aria-expanded", String(expanded));
+    });
+  };
+  const regionFor = (detail) => detail.closest("[data-node-detail-region]");
+  const gridFor = (detail) => detail.closest("[data-node-detail-grid]");
+  const syncDocumentState = (root) => {
+    const documentElement = documentElementFor(root);
+    documentElement.setAttribute("data-progressive-disclosure-enhanced", "true");
+    documentElement.toggleAttribute(
+      "data-progressive-disclosure-open",
+      Boolean(root.querySelector("[data-node-detail-region][data-runtime-active='true']"))
+    );
+  };
+  const ensureCloseButton = (root, detail) => {
+    let button = detail.querySelector(":scope > [data-diagram-detail-close]");
+    if (button) return button;
+    const region = regionFor(detail);
+    button = detail.ownerDocument.createElement("button");
+    button.type = "button";
+    button.dataset.diagramDetailClose = "true";
+    button.setAttribute(
+      "aria-label",
+      region?.dataset.detailCloseLabel || "Close node details"
+    );
+    button.textContent = "×";
+    button.addEventListener("click", () => close(root, true));
+    detail.append(button);
+    return button;
+  };
+  const clamp = (value, minimum, maximum) =>
+    Math.min(Math.max(value, minimum), Math.max(minimum, maximum));
+  const place = (detail, trigger) => {
+    const grid = gridFor(detail);
+    const view = detail.ownerDocument.defaultView;
+    if (!grid || !view) return;
+    const margin = 12;
+    const gap = 10;
+    const viewportWidth = Math.max(0, view.innerWidth);
+    const viewportHeight = Math.max(0, view.innerHeight);
+    const width = Math.min(352, Math.max(240, viewportWidth - margin * 2));
+    grid.style.setProperty("--detail-width", `${width}px`);
+    grid.style.setProperty("--detail-left", `${margin}px`);
+    grid.style.setProperty("--detail-top", `${margin}px`);
+    const popupRect = grid.getBoundingClientRect();
+    const popupWidth = Math.min(width, popupRect.width || width);
+    const popupHeight = Math.min(
+      popupRect.height || 240,
+      Math.max(160, viewportHeight - margin * 2)
+    );
+    const triggerRect = trigger?.getBoundingClientRect();
+    let left = clamp((viewportWidth - popupWidth) / 2, margin, viewportWidth - popupWidth - margin);
+    let top = clamp((viewportHeight - popupHeight) / 2, margin, viewportHeight - popupHeight - margin);
+    let side = "center";
+    if (triggerRect) {
+      if (triggerRect.right + gap + popupWidth <= viewportWidth - margin) {
+        left = triggerRect.right + gap;
+        side = "right";
+      } else if (triggerRect.left - gap - popupWidth >= margin) {
+        left = triggerRect.left - gap - popupWidth;
+        side = "left";
+      } else {
+        left = clamp(
+          triggerRect.left + triggerRect.width / 2 - popupWidth / 2,
+          margin,
+          viewportWidth - popupWidth - margin
+        );
+        side = "center";
+      }
+      top = clamp(
+        triggerRect.top + triggerRect.height / 2 - popupHeight / 2,
+        margin,
+        viewportHeight - popupHeight - margin
+      );
+    }
+    grid.style.setProperty("--detail-left", `${Math.round(left)}px`);
+    grid.style.setProperty("--detail-top", `${Math.round(top)}px`);
+    grid.dataset.popupSide = side;
+  };
+  const restoreDetail = (root, detail) => {
+    const id = detail.dataset.diagramDetail;
+    if (isNativeDetails(detail)) {
+      const wasOpen = detail.getAttribute("data-runtime-was-open") === "true";
+      detail.open = wasOpen;
+      detail.removeAttribute("data-runtime-was-open");
+    } else {
+      const wasHidden = detail.getAttribute("data-runtime-was-hidden") === "true";
+      detail.hidden = wasHidden;
+      detail.removeAttribute("data-runtime-was-hidden");
+    }
+    detail.removeAttribute("data-runtime-open");
+    detail.removeAttribute("role");
+    detail.removeAttribute("aria-modal");
+    const grid = gridFor(detail);
+    if (grid) {
+      grid.style.removeProperty("--detail-width");
+      grid.style.removeProperty("--detail-left");
+      grid.style.removeProperty("--detail-top");
+      delete grid.dataset.popupSide;
+    }
+    regionFor(detail)?.removeAttribute("data-runtime-active");
+    reflect(root, id, isNativeDetails(detail) && detail.open);
+  };
+  const close = (root = document, restoreFocus = true) => {
+    const detail = activeByRoot.get(root);
+    if (!detail) return false;
+    restoreDetail(root, detail);
+    activeByRoot.delete(root);
+    syncDocumentState(root);
+    if (restoreFocus) {
+      const trigger = returnFocusByRoot.get(root);
+      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+    }
+    returnFocusByRoot.delete(root);
+    return true;
+  };
+  const reset = (root = document) => {
+    close(root, false);
+    root.querySelectorAll("[data-diagram-detail][data-runtime-open]").forEach((detail) => {
+      restoreDetail(root, detail);
+    });
+    root.querySelectorAll("[data-node-detail-region][data-runtime-active]").forEach((region) => {
+      region.removeAttribute("data-runtime-active");
+    });
+    syncDocumentState(root);
+  };
+  const open = (root, id, trigger = null) => {
+    const detail = root.querySelector(`[data-diagram-detail="${CSS.escape(id)}"]`);
+    if (!detail) return false;
+    const previous = activeByRoot.get(root);
+    if (previous && previous !== detail) restoreDetail(root, previous);
+    if (!detail.hasAttribute("data-runtime-open")) {
+      if (isNativeDetails(detail)) {
+        detail.setAttribute("data-runtime-was-open", String(detail.open));
+      } else {
+        detail.setAttribute("data-runtime-was-hidden", String(detail.hidden));
+      }
+    }
+    if (isNativeDetails(detail)) {
+      detail.open = true;
+    } else {
+      detail.hidden = false;
+    }
+    detail.setAttribute("data-runtime-open", "true");
+    detail.setAttribute("role", "dialog");
+    detail.setAttribute("aria-modal", "false");
+    regionFor(detail)?.setAttribute("data-runtime-active", "true");
+    activeByRoot.set(root, detail);
+    returnFocusByRoot.set(root, trigger || detail.ownerDocument.activeElement);
+    ensureCloseButton(root, detail);
+    reflect(root, id, true);
+    syncDocumentState(root);
+    place(detail, trigger);
+    const focusTarget = detail.querySelector("summary") || detail;
+    focusTarget.focus({ preventScroll: true });
+    return true;
+  };
+  const bind = (root = document) => {
+    const triggers = root.querySelectorAll("[data-diagram-node-id][data-detail-for]");
+    if (!triggers.length) return;
+    syncDocumentState(root);
+    triggers.forEach((trigger) => {
+      const id = trigger.dataset.detailFor;
+      const detail = id
+        ? root.querySelector(`[data-diagram-detail="${CSS.escape(id)}"]`)
+        : null;
+      if (!detail || trigger.dataset.diagramDetailBound === "true") return;
+      trigger.dataset.diagramDetailBound = "true";
+      trigger.setAttribute("aria-controls", detail.id);
+      reflect(root, id, false);
+      trigger.addEventListener("click", (event) => {
+        event.preventDefault();
+        open(root, id, trigger);
+      });
+      if (isNativeDetails(detail) && detail.dataset.diagramToggleBound !== "true") {
+        detail.dataset.diagramToggleBound = "true";
+        detail.addEventListener("toggle", () => {
+          const runtimeOpen = detail.getAttribute("data-runtime-open") === "true";
+          if (runtimeOpen && !detail.open) close(root, true);
+          else reflect(root, id, detail.open);
+        });
+      }
+    });
+    if (boundRoots.has(root)) return;
+    boundRoots.add(root);
+    root.addEventListener("pointerdown", (event) => {
+      const detail = activeByRoot.get(root);
+      if (!detail) return;
+      const trigger = returnFocusByRoot.get(root);
+      if (!detail.contains(event.target) && !trigger?.contains(event.target)) {
+        close(root, false);
+      }
+    });
+    root.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && close(root, true)) event.preventDefault();
+    });
+    const view = root.nodeType === Node.DOCUMENT_NODE
+      ? root.defaultView
+      : root.ownerDocument.defaultView;
+    const reposition = () => {
+      const detail = activeByRoot.get(root);
+      if (detail) place(detail, returnFocusByRoot.get(root));
+    };
+    view?.addEventListener("resize", reposition);
+    view?.addEventListener("scroll", reposition, true);
+  };
+  const enhance = (root = document) => bind(root);
+  globalThis.VibeDiagramDisclosure = Object.freeze({ bind, close, enhance, open, reset });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
+<script data-workload-module-disclosure="1">
+(() => {
+  "use strict";
+  const bind = () => {
+    const selector = [
+      ".architecture-map .module-chip",
+      ".architecture-map [data-architecture-supporting-content-for] > g"
+    ].join(",");
+    document.querySelectorAll(selector).forEach((trigger) => {
+      if (trigger.dataset.moduleDetailTrigger === "true") return;
+      const owner = trigger.closest("[data-diagram-node-id]");
+      const detailId = trigger.dataset.detailFor || owner?.dataset.detailFor || "entry-rail-detail";
+      const detail = document.querySelector(`[data-diagram-detail="${CSS.escape(detailId)}"]`);
+      if (!detail) return;
+      trigger.dataset.moduleDetailTrigger = "true";
+      trigger.setAttribute("role", "button");
+      trigger.setAttribute("tabindex", "0");
+      trigger.setAttribute("aria-haspopup", "dialog");
+      trigger.setAttribute("aria-controls", detail.id);
+      const open = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        globalThis.VibeDiagramDisclosure?.open(document, detailId, trigger);
+      };
+      trigger.addEventListener("click", open);
+      trigger.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        open(event);
+      });
+    });
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bind, { once: true });
+  } else {
+    bind();
   }
 })();
 </script>

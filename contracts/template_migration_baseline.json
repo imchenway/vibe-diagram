@@ -12,6 +12,7 @@
   ],
   "interaction_migration_batches": {
     "B01": [
+      "business-flow/dual-path-swimlane.html",
       "business-flow/swimlane-flow.html",
       "decision-communication/option-matrix-path.html"
     ],
@@ -192,11 +193,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "185c1e770ab8c2b99ff64f483c61d3f15e921eae7be2b4bf4876844f31c3faca",
+        "file_sha256": "e3e15ca4704b436254f1c2e65580c5326a1afdeacb42aef8a49c344de5a6d54e",
         "structure_sha256": "8bad40e43d3460fd6cf21ec5b15dd250c9f6e043c6ec15511f386e8441e8395d",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "actor",
           "need",
           "goal",
@@ -207,13 +209,21 @@
           "object-b",
           "rule",
           "evidence",
-          "feedback",
-          "evidence-and-notes"
+          "feedback"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "actor",
           "need",
           "goal",
@@ -224,8 +234,7 @@
           "object-b",
           "rule",
           "evidence",
-          "feedback",
-          "evidence_and_notes"
+          "feedback"
         ],
         "slot_macro_pairs": [
           {
@@ -239,6 +248,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "actor",
@@ -283,10 +328,6 @@
           {
             "macro": "feedback",
             "slot": "feedback"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -369,32 +410,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "3ed560c92232c94bffee7a62365fa71359698a8d081d03143a8092bdf6643fdc",
+        "file_sha256": "ca26434bbdecb7a15b5e5675c08dc6b71d1f8c4e9f256c28be412762578da383",
         "structure_sha256": "ef8b5aaf0a955c895764a1ecd1d3c8ef046f3a7dbd10bcea2373fecc524d7f7b",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "initiator",
           "external",
           "owner",
           "core-commitment",
           "result",
           "basis",
-          "operator",
-          "evidence-and-notes"
+          "operator"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "initiator",
           "external",
           "owner",
           "core-commitment",
           "result",
           "basis",
-          "operator",
-          "evidence_and_notes"
+          "operator"
         ],
         "slot_macro_pairs": [
           {
@@ -408,6 +457,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "initiator",
@@ -436,10 +521,6 @@
           {
             "macro": "operator",
             "slot": "operator"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -552,11 +633,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0de1eec83781b19057ad84fd479003283dc61d6d6a26be9d27a721d445f4674d",
+        "file_sha256": "2de3756e4ad677f38850f15c44cdc1d4bc9d2601793f5235780bf55d2f05e2eb",
         "structure_sha256": "05a2a102bf434d2659cc306cb7875146f65852164c0b284d32a68a7aef66d634",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "target-object",
           "decision-axis",
           "risk-note",
@@ -568,13 +650,21 @@
           "rollback",
           "state",
           "audit",
-          "unknown",
-          "evidence-and-notes"
+          "unknown"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "target-object",
           "decision-axis",
           "risk-note",
@@ -586,8 +676,7 @@
           "rollback",
           "state",
           "audit",
-          "unknown",
-          "evidence_and_notes"
+          "unknown"
         ],
         "slot_macro_pairs": [
           {
@@ -601,6 +690,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "target-object",
@@ -649,10 +774,6 @@
           {
             "macro": "unknown",
             "slot": "unknown"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -741,11 +862,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "32d1943547a9418e266064c38870e4c71c738928e04999e5a32af3acdbf5e7b5",
+        "file_sha256": "1dab5844290fffa66c59437625ca97a4f48b3ba24e63d2789303b0a467d2b306",
         "structure_sha256": "ebf3d0d21eae1ce9c9da680766ee394d8255a3f2d674ded815a1119ce5547c6d",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "value-1",
           "value-2",
           "value-3",
@@ -753,13 +875,21 @@
           "value-5",
           "input-signal",
           "learning-loop",
-          "output-value",
-          "evidence-and-notes"
+          "output-value"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "value-1",
           "value-2",
           "value-3",
@@ -767,8 +897,7 @@
           "value-5",
           "input-signal",
           "learning-loop",
-          "output-value",
-          "evidence_and_notes"
+          "output-value"
         ],
         "slot_macro_pairs": [
           {
@@ -782,6 +911,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "value-1",
@@ -814,10 +979,6 @@
           {
             "macro": "output-value",
             "slot": "output-value"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -888,28 +1049,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "9b53383ff31dfe07c43ec3bd28edc51190aec64cb38b11bbe879260eba610ffa",
+        "file_sha256": "d82eee9c3dd765b0798cd07e8e7f1396258a961df616fdb0de3783635ba6c6ce",
         "structure_sha256": "510d7e2f516de3c9a7998cde1483c9c906a98e8711822d1c415777dcd9ae3655",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "start-event",
           "activity-one",
           "decision",
           "activity-two",
-          "end-event",
-          "evidence-and-notes"
+          "end-event"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "start-event",
           "activity-one",
           "decision",
           "activity-two",
-          "end-event",
-          "evidence_and_notes"
+          "end-event"
         ],
         "slot_macro_pairs": [
           {
@@ -923,6 +1092,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "start-event",
@@ -943,14 +1148,318 @@
           {
             "macro": "end-event",
             "slot": "end-event"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
       "change_reason": "approved adaptive viewport and semantic relation migration"
+    },
+    "business-flow/dual-path-swimlane.html": {
+      "source": {
+        "file_sha256": "6e9db4efc559c5f7b34daf7f9b594c9f43147ff4d0a85fa541aea27edd2e3948",
+        "structure_sha256": "21d3135ad64af080a515701362d4b1a08f1afb2ae87efe698ca744410563f0d7",
+        "data_slots": [
+          "title",
+          "summary",
+          "shared-trigger",
+          "path-a-label",
+          "path-a-context",
+          "path-a-handoff",
+          "path-a-execute",
+          "path-b-label",
+          "path-b-context",
+          "path-b-check",
+          "path-b-stop",
+          "shared-result",
+          "missing-handoff-label",
+          "blocked-result-label",
+          "evidence-and-notes"
+        ],
+        "macros": [
+          "title",
+          "title",
+          "summary",
+          "shared-trigger",
+          "path-a-label",
+          "path-a-context",
+          "path-a-handoff",
+          "path-a-execute",
+          "path-b-label",
+          "path-b-context",
+          "path-b-check",
+          "path-b-stop",
+          "shared-result",
+          "missing-handoff-label",
+          "blocked-result-label",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved"
+        ],
+        "slot_macro_pairs": [
+          {
+            "macro": "title",
+            "slot": ""
+          },
+          {
+            "macro": "title",
+            "slot": "title"
+          },
+          {
+            "macro": "summary",
+            "slot": "summary"
+          },
+          {
+            "macro": "shared-trigger",
+            "slot": "shared-trigger"
+          },
+          {
+            "macro": "path-a-label",
+            "slot": "path-a-label"
+          },
+          {
+            "macro": "path-a-context",
+            "slot": "path-a-context"
+          },
+          {
+            "macro": "path-a-handoff",
+            "slot": "path-a-handoff"
+          },
+          {
+            "macro": "path-a-execute",
+            "slot": "path-a-execute"
+          },
+          {
+            "macro": "path-b-label",
+            "slot": "path-b-label"
+          },
+          {
+            "macro": "path-b-context",
+            "slot": "path-b-context"
+          },
+          {
+            "macro": "path-b-check",
+            "slot": "path-b-check"
+          },
+          {
+            "macro": "path-b-stop",
+            "slot": "path-b-stop"
+          },
+          {
+            "macro": "shared-result",
+            "slot": "shared-result"
+          },
+          {
+            "macro": "missing-handoff-label",
+            "slot": "missing-handoff-label"
+          },
+          {
+            "macro": "blocked-result-label",
+            "slot": "blocked-result-label"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
+          }
+        ]
+      },
+      "canonical": {
+        "file_sha256": "278a6040e9e912d81f5dd96a2cf40d627b9a5e01d52bfb0636499d209f3552e3",
+        "structure_sha256": "2e9db17667b6d5be82fe5fb718fcc3a9d4ef083d1cb0118e35269c2275fc9a7e",
+        "data_slots": [
+          "title",
+          "summary",
+          "shared-trigger",
+          "path-a-label",
+          "path-a-context",
+          "path-a-handoff",
+          "path-a-execute",
+          "path-b-label",
+          "path-b-context",
+          "path-b-check",
+          "path-b-stop",
+          "shared-result",
+          "missing-handoff-label",
+          "blocked-result-label",
+          "evidence-and-notes"
+        ],
+        "macros": [
+          "title",
+          "title",
+          "summary",
+          "shared-trigger",
+          "path-a-label",
+          "path-a-context",
+          "path-a-handoff",
+          "path-a-execute",
+          "path-b-label",
+          "path-b-context",
+          "path-b-check",
+          "path-b-stop",
+          "shared-result",
+          "missing-handoff-label",
+          "blocked-result-label",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
+          "evidence-unresolved-source"
+        ],
+        "slot_macro_pairs": [
+          {
+            "macro": "title",
+            "slot": ""
+          },
+          {
+            "macro": "title",
+            "slot": "title"
+          },
+          {
+            "macro": "summary",
+            "slot": "summary"
+          },
+          {
+            "macro": "shared-trigger",
+            "slot": "shared-trigger"
+          },
+          {
+            "macro": "path-a-label",
+            "slot": "path-a-label"
+          },
+          {
+            "macro": "path-a-context",
+            "slot": "path-a-context"
+          },
+          {
+            "macro": "path-a-handoff",
+            "slot": "path-a-handoff"
+          },
+          {
+            "macro": "path-a-execute",
+            "slot": "path-a-execute"
+          },
+          {
+            "macro": "path-b-label",
+            "slot": "path-b-label"
+          },
+          {
+            "macro": "path-b-context",
+            "slot": "path-b-context"
+          },
+          {
+            "macro": "path-b-check",
+            "slot": "path-b-check"
+          },
+          {
+            "macro": "path-b-stop",
+            "slot": "path-b-stop"
+          },
+          {
+            "macro": "shared-result",
+            "slot": "shared-result"
+          },
+          {
+            "macro": "missing-handoff-label",
+            "slot": "missing-handoff-label"
+          },
+          {
+            "macro": "blocked-result-label",
+            "slot": "blocked-result-label"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          }
+        ]
+      },
+      "change_reason": "added a distinct dual-path SVG swimlane and moved its evidence boundary before the canvas to enter the generic interaction contract"
     },
     "business-flow/exception-branch-flow.html": {
       "source": {
@@ -1035,11 +1544,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "a50fe892d0211098864c8a020bd3269dc9d9c07cbab07060048b56d0cadc52c7",
+        "file_sha256": "cc1d431d357e6b2962cb585c82e352cadb05980c3d7ebaadb78f633f09c0d659",
         "structure_sha256": "95eb60fb88e124e844d42598f005ace72297a4f48e84c5eb82054510ba7a2545",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "main-start",
           "main-action",
           "branch-condition",
@@ -1047,13 +1557,21 @@
           "main-end",
           "exception",
           "compensation",
-          "return-point",
-          "evidence-and-notes"
+          "return-point"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "main-start",
           "main-action",
           "branch-condition",
@@ -1061,8 +1579,7 @@
           "main-end",
           "exception",
           "compensation",
-          "return-point",
-          "evidence_and_notes"
+          "return-point"
         ],
         "slot_macro_pairs": [
           {
@@ -1076,6 +1593,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "main-start",
@@ -1108,10 +1661,6 @@
           {
             "macro": "return-point",
             "slot": "return-point"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -1206,11 +1755,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "50260ab123b875d2c584bd276193a9f7be4b86cf03f4f283910d0daf896acfdd",
+        "file_sha256": "90afcbbc8a9b7e4d4d6d28f52c058ee6104d742a446c233f7ea2c9a982c585b9",
         "structure_sha256": "ef7c223844c13892e2bd43e5fedcbf877f50190bbb25bc76f4f3a0ee7d6ef252",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "check-1",
           "check-2",
           "check-3",
@@ -1219,13 +1769,21 @@
           "stage-1",
           "stage-2",
           "stage-3",
-          "stage-4",
-          "evidence-and-notes"
+          "stage-4"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "check-1",
           "check-2",
           "check-3",
@@ -1234,8 +1792,7 @@
           "stage-1",
           "stage-2",
           "stage-3",
-          "stage-4",
-          "evidence_and_notes"
+          "stage-4"
         ],
         "slot_macro_pairs": [
           {
@@ -1249,6 +1806,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "check-1",
@@ -1285,10 +1878,6 @@
           {
             "macro": "stage-4",
             "slot": "stage-4"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -1383,11 +1972,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ea5b90b2a68364e61bf80788da1bd7ce13c8d59a990701d2a40560ff2bb05794",
+        "file_sha256": "e34c87dbf553584f5010e8809f363316b783d2483239d9e043d672c9990fa8e8",
         "structure_sha256": "d569d66b30bfb232adaecf2cb065f6e1dccf9d430576c4d647a5e24b18d4a270",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "lane-1-step-1",
           "lane-1-handoff",
           "lane-1-step-2",
@@ -1396,13 +1986,21 @@
           "lane-2-step-2",
           "lane-3-step-1",
           "lane-3-handoff",
-          "lane-3-step-2",
-          "evidence-and-notes"
+          "lane-3-step-2"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "lane-1-step-1",
           "lane-1-handoff",
           "lane-1-step-2",
@@ -1411,8 +2009,7 @@
           "lane-2-step-2",
           "lane-3-step-1",
           "lane-3-handoff",
-          "lane-3-step-2",
-          "evidence_and_notes"
+          "lane-3-step-2"
         ],
         "slot_macro_pairs": [
           {
@@ -1426,6 +2023,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "lane-1-step-1",
@@ -1462,10 +2095,6 @@
           {
             "macro": "lane-3-step-2",
             "slot": "lane-3-step-2"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -2142,11 +2771,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0bf3fa733be8e1dd4b6dd981bd0a45425b96bf23f84f88242724364a7a627002",
+        "file_sha256": "6d10ab76b7d8d37935467730d8e024ef71cacf1ed47e1d89416ee37aacf549be",
         "structure_sha256": "44381ebd6123d3f8f24d13d41f5a84fcac6ca9dc22f65e4ba542d10069bbb754",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "problem",
           "condition-a",
           "condition-b",
@@ -2154,13 +2784,21 @@
           "option-a",
           "option-b",
           "option-c",
-          "recommend",
-          "evidence-and-notes"
+          "recommend"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "problem",
           "condition-a",
           "condition-b",
@@ -2168,8 +2806,7 @@
           "option-a",
           "option-b",
           "option-c",
-          "recommend",
-          "evidence_and_notes"
+          "recommend"
         ],
         "slot_macro_pairs": [
           {
@@ -2183,6 +2820,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "problem",
@@ -2215,10 +2888,6 @@
           {
             "macro": "recommend",
             "slot": "recommend"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -2319,11 +2988,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "fb823d0236541ad2b50db63f1e57bdfc505749b140e0fbae6de69da887888ff3",
+        "file_sha256": "a4a700b78704f51e79b435120048a89634961b26755e2432ca1956d71179db24",
         "structure_sha256": "923dba0813ac5997b52357043dce08647924318379eab1981053dc889a4f32ca",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "goal",
           "constraint",
           "acceptance",
@@ -2333,13 +3003,21 @@
           "cost",
           "risk",
           "fit",
-          "main-path",
-          "evidence-and-notes"
+          "main-path"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "goal",
           "constraint",
           "acceptance",
@@ -2349,8 +3027,7 @@
           "cost",
           "risk",
           "fit",
-          "main-path",
-          "evidence_and_notes"
+          "main-path"
         ],
         "slot_macro_pairs": [
           {
@@ -2364,6 +3041,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "goal",
@@ -2404,10 +3117,6 @@
           {
             "macro": "main-path",
             "slot": "main-path"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -2490,32 +3199,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "234299c8dbe6fd13ac0b634cd68b6621328585166e4e7ab73a79d4e80a617c5c",
+        "file_sha256": "67ca4ecee63db6363a030a838a831d935b5d86a9a5c3f9c22d589d29277cdadd",
         "structure_sha256": "06120369dbf2724ff75a3df75015f3740f464b4b165892fbb3ad2dee5b9ce49d",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "start",
           "decision-one",
           "execute",
           "accept",
           "risk-a",
           "adjust",
-          "fallback",
-          "evidence-and-notes"
+          "fallback"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "start",
           "decision-one",
           "execute",
           "accept",
           "risk-a",
           "adjust",
-          "fallback",
-          "evidence_and_notes"
+          "fallback"
         ],
         "slot_macro_pairs": [
           {
@@ -2529,6 +3246,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "start",
@@ -2557,10 +3310,6 @@
           {
             "macro": "fallback",
             "slot": "fallback"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -2625,26 +3374,34 @@
         ]
       },
       "canonical": {
-        "file_sha256": "a568201f090a39516dfe8f4c57ab283179479de1b7edc1ec6593096f51e06cc1",
+        "file_sha256": "ecfb652b7eaec089559f1e7e45da52aaf077f07af78fb5f66e889ac8bb5dbb00",
         "structure_sha256": "6050fc5ce78e4d0e2cbc61fb269373f02d57d451ab28ff018eb5fcdf3d4fc7d6",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "quick-win",
           "strategic",
           "minor",
-          "avoid",
-          "evidence-and-notes"
+          "avoid"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "quick-win",
           "strategic",
           "minor",
-          "avoid",
-          "evidence_and_notes"
+          "avoid"
         ],
         "slot_macro_pairs": [
           {
@@ -2658,6 +3415,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "quick-win",
@@ -2674,10 +3467,6 @@
           {
             "macro": "avoid",
             "slot": "avoid"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -2838,11 +3627,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "70c861058f1442f78510ca9d95d1b013483d538f97708e0129bf09128b806797",
+        "file_sha256": "1018ceca4d91b31e1662405896c14e0c11133b5186c0649dc72dcdcbeed1ac40",
         "structure_sha256": "42b5509a5e3c77b894226b094bd6a241b46565bd1f8e7b56928ddd66c949c57c",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "ledger-head-1",
           "ledger-head-2",
           "ledger-head-3",
@@ -2862,13 +3652,21 @@
           "r3-change",
           "r3-evidence",
           "r3-decision",
-          "r3-action",
-          "evidence-and-notes"
+          "r3-action"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "ledger-head-1",
           "ledger-head-2",
           "ledger-head-3",
@@ -2888,8 +3686,7 @@
           "r3-change",
           "r3-evidence",
           "r3-decision",
-          "r3-action",
-          "evidence_and_notes"
+          "r3-action"
         ],
         "slot_macro_pairs": [
           {
@@ -2903,6 +3700,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "ledger-head-1",
@@ -2983,10 +3816,6 @@
           {
             "macro": "r3-action",
             "slot": "r3-action"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -3057,28 +3886,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "d3a014a83477fa44b71cbc0278245c603373279618d1620dc3b36a48fc014200",
+        "file_sha256": "531dab494bf2730438f145d3b5643c62ccb3fa4dbe88b20dece2b2eee1c839dd",
         "structure_sha256": "3a6ec64a2370f567361a3103cd0d42e2662ce48b800443b099e4101923506e4c",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "request",
           "implementation",
           "verification",
           "sync",
-          "acceptance",
-          "evidence-and-notes"
+          "acceptance"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "request",
           "implementation",
           "verification",
           "sync",
-          "acceptance",
-          "evidence_and_notes"
+          "acceptance"
         ],
         "slot_macro_pairs": [
           {
@@ -3092,6 +3929,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "request",
@@ -3112,10 +3985,6 @@
           {
             "macro": "acceptance",
             "slot": "acceptance"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -3228,11 +4097,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "3c134800ecd583ff2a38d222832211acb52cf172f5538918aec8a46603b29675",
+        "file_sha256": "33824319f829d532aa4dd76186359deed94b5861a135e7d55bc08a5fe42edc6a",
         "structure_sha256": "c932803904cb70e0a3f2b6c81fa8dc237efa6e9d1710d0cef4295191ba0cdeee",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "ev-1-r",
           "ev-1-cmd",
           "ev-1-result",
@@ -3244,13 +4114,21 @@
           "ev-3-r",
           "ev-3-cmd",
           "ev-3-result",
-          "ev-3-decision",
-          "evidence-and-notes"
+          "ev-3-decision"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "ev-1-r",
           "ev-1-cmd",
           "ev-1-result",
@@ -3262,8 +4140,7 @@
           "ev-3-r",
           "ev-3-cmd",
           "ev-3-result",
-          "ev-3-decision",
-          "evidence_and_notes"
+          "ev-3-decision"
         ],
         "slot_macro_pairs": [
           {
@@ -3277,6 +4154,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "ev-1-r",
@@ -3325,10 +4238,6 @@
           {
             "macro": "ev-3-decision",
             "slot": "ev-3-decision"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -3441,11 +4350,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ed519edd13a76404c3d5db7c47fc3cc27bfbb6857131174fa97c9fa76c6d63c3",
+        "file_sha256": "5d8b086ec07bf0c3c5e03386ba44411963f4b43bd234584b0e0e0b394fb1ad20",
         "structure_sha256": "b527d5ae640ba9ab873335dd2f4f955c882892b68283c9ea07dbd586fe8c2fd9",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "board-1-head",
           "board-1-risk",
           "board-1-action",
@@ -3457,13 +4367,21 @@
           "board-3-action",
           "board-4-head",
           "board-4-risk",
-          "board-4-action",
-          "evidence-and-notes"
+          "board-4-action"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "board-1-head",
           "board-1-risk",
           "board-1-action",
@@ -3475,8 +4393,7 @@
           "board-3-action",
           "board-4-head",
           "board-4-risk",
-          "board-4-action",
-          "evidence_and_notes"
+          "board-4-action"
         ],
         "slot_macro_pairs": [
           {
@@ -3490,6 +4407,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "board-1-head",
@@ -3538,10 +4491,6 @@
           {
             "macro": "board-4-action",
             "slot": "board-4-action"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -3630,11 +4579,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "aeb672755867ee53a14b666168b174d157d75f48c1a1547d6c38344786a3abb0",
+        "file_sha256": "9d270731d6eb92404bc689a95374f8034b0a1d8fe7d9d0a0d48c6035a9d181b1",
         "structure_sha256": "601ce6ae4ac5767a5ab3984e77704ff9c040d3acc726f2df562ea3eb630b5063",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "current-1",
           "breakpoint",
           "current-risk",
@@ -3642,13 +4592,21 @@
           "target-1",
           "fix-point",
           "target-risk",
-          "rollback",
-          "evidence-and-notes"
+          "rollback"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "current-1",
           "breakpoint",
           "current-risk",
@@ -3656,8 +4614,7 @@
           "target-1",
           "fix-point",
           "target-risk",
-          "rollback",
-          "evidence_and_notes"
+          "rollback"
         ],
         "slot_macro_pairs": [
           {
@@ -3671,6 +4628,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "current-1",
@@ -3703,10 +4696,6 @@
           {
             "macro": "rollback",
             "slot": "rollback"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -3777,28 +4766,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "895951bed44307a5cd0d0e26221dc641e7a202a4c51afb26b943ab0c32ed2f49",
+        "file_sha256": "69cf6fb8ce510e43df3eedfe573adff840ccceb9f01f3847ce3c5c7ab08cc5f9",
         "structure_sha256": "a666600ec750acdad3bfd4e379e42252356f62d58fbd33d9af1409d766868a80",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "reproduce",
           "locate",
           "verify-hypothesis",
           "repair",
-          "regression",
-          "evidence-and-notes"
+          "regression"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "reproduce",
           "locate",
           "verify-hypothesis",
           "repair",
-          "regression",
-          "evidence_and_notes"
+          "regression"
         ],
         "slot_macro_pairs": [
           {
@@ -3812,6 +4809,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "reproduce",
@@ -3832,10 +4865,6 @@
           {
             "macro": "regression",
             "slot": "regression"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -3906,28 +4935,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "a6d5ebf4bb25d8b6f5bde1d6ab43ba9f6d85aae9e072dab70e609c603a5ed01e",
+        "file_sha256": "e6addffd494e15cadced48b37f31af88ff7a451e0bfc63ec7a1ebde9e0f3963b",
         "structure_sha256": "01c45dda8cb7e50a97ac1945e16eeb66b16163d6588650499b01b1333ca0d262",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "visible-symptom",
           "impact",
           "evidence-chain",
           "root-cause",
-          "action-loop",
-          "evidence-and-notes"
+          "action-loop"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "visible-symptom",
           "impact",
           "evidence-chain",
           "root-cause",
-          "action-loop",
-          "evidence_and_notes"
+          "action-loop"
         ],
         "slot_macro_pairs": [
           {
@@ -3941,6 +4978,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "visible-symptom",
@@ -3961,10 +5034,6 @@
           {
             "macro": "action-loop",
             "slot": "action-loop"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -4224,32 +5293,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0767b808b6b154293c34a11efc30185d0cf1e177a0efc9725264f87b2b76b712",
+        "file_sha256": "b0bca2d5e320c3a60ec1f3733e5d144674c52435ff173ab48b2231e6434b25db",
         "structure_sha256": "12ae93ad1c330e145330031902387f98ea3d7924bb63d481ac44bea33f4cc77a",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "state-entry",
           "data-write",
           "state-exit",
           "bad-state",
           "bad-data",
           "guard",
-          "check",
-          "evidence-and-notes"
+          "check"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "state-entry",
           "data-write",
           "state-exit",
           "bad-state",
           "bad-data",
           "guard",
-          "check",
-          "evidence_and_notes"
+          "check"
         ],
         "slot_macro_pairs": [
           {
@@ -4263,6 +5340,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "state-entry",
@@ -4291,10 +5404,6 @@
           {
             "macro": "check",
             "slot": "check"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -4383,11 +5492,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "336e39306f12e4409c6b4a467d0f36a4faefe7b03e4af206a0eb6c79abe3b753",
+        "file_sha256": "a904b5f6f53cae6b2b0c056c5ff2c7d66d73ddac6d9f257312d358c3a6aa886a",
         "structure_sha256": "8362260d24ccf990cc2f24025ebbed2005f8dce254b38f58ac5a74dce7c3d4f7",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "current-entry",
           "current-action",
           "current-result",
@@ -4395,13 +5505,21 @@
           "target-entry",
           "target-action",
           "target-result",
-          "target-risk",
-          "evidence-and-notes"
+          "target-risk"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "current-entry",
           "current-action",
           "current-result",
@@ -4409,8 +5527,7 @@
           "target-entry",
           "target-action",
           "target-result",
-          "target-risk",
-          "evidence_and_notes"
+          "target-risk"
         ],
         "slot_macro_pairs": [
           {
@@ -4424,6 +5541,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "current-entry",
@@ -4456,10 +5609,6 @@
           {
             "macro": "target-risk",
             "slot": "target-risk"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -4695,11 +5844,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ad9d598de190d21b50b34e5e14c7b89a6b81da808a556c987c4f0bba7f47aacf",
+        "file_sha256": "149bc826058387235ec218e6477e05521d1875d987bc57de84c2c55fc66a36b1",
         "structure_sha256": "ba051d32a9ca2c0547946aadb0aea444a2715893e79f0dfbb9292b73b25a4b8b",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "add-1",
           "add-2",
           "change-1",
@@ -4708,13 +5858,21 @@
           "keep-1",
           "risk-1",
           "rollback-1",
-          "verify-1",
-          "evidence-and-notes"
+          "verify-1"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "add-1",
           "add-2",
           "change-1",
@@ -4723,8 +5881,7 @@
           "keep-1",
           "risk-1",
           "rollback-1",
-          "verify-1",
-          "evidence_and_notes"
+          "verify-1"
         ],
         "slot_macro_pairs": [
           {
@@ -4738,6 +5895,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "add-1",
@@ -4774,10 +5967,6 @@
           {
             "macro": "verify-1",
             "slot": "verify-1"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -4866,11 +6055,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "f225b952e98553554825d47a234c2c834585b83a7609fdd21ea7bd315e415929",
+        "file_sha256": "749cf2c3d9d6631e2ef14604196f2249e351023671f7ff41689a49ed0179deae",
         "structure_sha256": "a902eabaf6ac28539f3286ddb31a4d19c0c0b528fad9ab3bbad99aa43494cba7",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "gray",
           "verify",
           "monitor",
@@ -4878,13 +6068,21 @@
           "close",
           "rollback-trigger",
           "rollback-action",
-          "rollback-check",
-          "evidence-and-notes"
+          "rollback-check"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "gray",
           "verify",
           "monitor",
@@ -4892,8 +6090,7 @@
           "close",
           "rollback-trigger",
           "rollback-action",
-          "rollback-check",
-          "evidence_and_notes"
+          "rollback-check"
         ],
         "slot_macro_pairs": [
           {
@@ -4907,6 +6104,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "gray",
@@ -4939,10 +6172,6 @@
           {
             "macro": "rollback-check",
             "slot": "rollback-check"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -5049,11 +6278,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "85e9e8b40f9e2e664016a4dcb9e9fc452abce5e9bee921998d28cd664ae9025f",
+        "file_sha256": "568bb524adbb9aa04abfc1c2391883bccae4376ae92842328d4bc887bc31a8b7",
         "structure_sha256": "e51ace0809694b4c7853e2d91c044e1409395cfe086b73aeb47ccfcd4bff60b4",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "candidate-1",
           "candidate-1-thesis",
           "candidate-1-action",
@@ -5064,13 +6294,21 @@
           "candidate-3-thesis",
           "candidate-3-action",
           "recommendation",
-          "difference",
-          "evidence-and-notes"
+          "difference"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "candidate-1",
           "candidate-1-thesis",
           "candidate-1-action",
@@ -5081,8 +6319,7 @@
           "candidate-3-thesis",
           "candidate-3-action",
           "recommendation",
-          "difference",
-          "evidence_and_notes"
+          "difference"
         ],
         "slot_macro_pairs": [
           {
@@ -5096,6 +6333,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "candidate-1",
@@ -5140,10 +6413,6 @@
           {
             "macro": "difference",
             "slot": "difference"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -5226,32 +6495,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "7a8dfddcb2fee58051026a17c813c3c7bd46354f3826e268026cd5e64cbb4f54",
+        "file_sha256": "9dd388ea927f51488b03c15ac08ca9ba0e8b85f8f90955edfa943b11feb75f2d",
         "structure_sha256": "b0ef8ebc30b0655e028c3ac9ff091ba615316932e628e4ac13bd52d373711ef7",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "navigation",
           "secondary",
           "hero",
           "primary-action",
           "content",
           "state-loading",
-          "state-error",
-          "evidence-and-notes"
+          "state-error"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "navigation",
           "secondary",
           "hero",
           "primary-action",
           "content",
           "state-loading",
-          "state-error",
-          "evidence_and_notes"
+          "state-error"
         ],
         "slot_macro_pairs": [
           {
@@ -5265,6 +6542,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "navigation",
@@ -5293,10 +6606,6 @@
           {
             "macro": "state-error",
             "slot": "state-error"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -5367,28 +6676,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "93b228ea9d0d4587a3b2a53b8891cf8e6baeab952458d5c6e5738ba112ac23ea",
+        "file_sha256": "9b4896e4d8b2735370fb593ed3b15b4f8e71405539a332e8d2088c24378d8e51",
         "structure_sha256": "9ccbda6478627fa2719420080d9728a7fdae346ed2afa0889426303fde157708",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "entry-page",
           "action-page",
           "feedback-page",
           "result-page",
-          "exception-page",
-          "evidence-and-notes"
+          "exception-page"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "entry-page",
           "action-page",
           "feedback-page",
           "result-page",
-          "exception-page",
-          "evidence_and_notes"
+          "exception-page"
         ],
         "slot_macro_pairs": [
           {
@@ -5402,6 +6719,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "entry-page",
@@ -5422,10 +6775,6 @@
           {
             "macro": "exception-page",
             "slot": "exception-page"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -5514,11 +6863,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "7955a40e1316e13691000c160a2718c091f8a5ba05d7c14754ed8d715a0aca30",
+        "file_sha256": "7b63ca45463cf29b201071cc2dcb1f9e4ad558eb804ee6ee7faccf8ba843df2a",
         "structure_sha256": "c451d4487c98f0df922a346c01319f24159aef33a547c19bcdbe686cb2d2ddb1",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "desktop",
           "desktop-focus",
           "tablet",
@@ -5526,13 +6876,21 @@
           "mobile",
           "loading",
           "empty",
-          "error",
-          "evidence-and-notes"
+          "error"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "desktop",
           "desktop-focus",
           "tablet",
@@ -5540,8 +6898,7 @@
           "mobile",
           "loading",
           "empty",
-          "error",
-          "evidence_and_notes"
+          "error"
         ],
         "slot_macro_pairs": [
           {
@@ -5555,6 +6912,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "desktop",
@@ -5587,10 +6980,6 @@
           {
             "macro": "error",
             "slot": "error"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -5679,11 +7068,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ceaf3b8ed65964ca0722433bdde0fd5246cdf192f1c983a9f5b0ece2d9d0f69c",
+        "file_sha256": "ce71e9e85075beca6de990566a8a9456af4a68c5371ba42a5f787abf142f2097",
         "structure_sha256": "32c7f51502196fba405663a1f35555c9262e26bc5e4bdebae5cf6a4895c300fa",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "source",
           "input-policy",
           "process-a",
@@ -5691,13 +7081,21 @@
           "store",
           "quality",
           "consumer",
-          "governance",
-          "evidence-and-notes"
+          "governance"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "source",
           "input-policy",
           "process-a",
@@ -5705,8 +7103,7 @@
           "store",
           "quality",
           "consumer",
-          "governance",
-          "evidence_and_notes"
+          "governance"
         ],
         "slot_macro_pairs": [
           {
@@ -5720,6 +7117,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "source",
@@ -5752,10 +7185,6 @@
           {
             "macro": "governance",
             "slot": "governance"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -5868,11 +7297,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "fc612001028dea97e0f8b9636894b34a6f21379557f8e47635a786899c5f0cea",
+        "file_sha256": "570814990d7eee8ee4db094d1a5197d2b3f140b4b6b6094ea2969266f8f77540",
         "structure_sha256": "2c413221fef6fae104d34e962cc100559a9697c7c636f17f61daf53cf2d8bf68",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "entity-1",
           "field-1-1",
           "field-1-2",
@@ -5884,13 +7314,21 @@
           "entity-3",
           "field-3-1",
           "field-3-2",
-          "relation-3",
-          "evidence-and-notes"
+          "relation-3"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "entity-1",
           "field-1-1",
           "field-1-2",
@@ -5902,8 +7340,7 @@
           "entity-3",
           "field-3-1",
           "field-3-2",
-          "relation-3",
-          "evidence_and_notes"
+          "relation-3"
         ],
         "slot_macro_pairs": [
           {
@@ -5917,6 +7354,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "entity-1",
@@ -5965,10 +7438,6 @@
           {
             "macro": "relation-3",
             "slot": "relation-3"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -6069,11 +7538,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "2b5349fd795bdd26eec15e5eedf5790e4c477c6a8d92c60de0064cb6709363d4",
+        "file_sha256": "39866906736cb62830e6d4b726a188f44d41b07bc564bd4db3ee682c2220d079",
         "structure_sha256": "2133c236f5d7f4070785580f34a939e932c78e1f47ae44fd936f470298901b2e",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "created",
           "active",
           "processing",
@@ -6083,13 +7553,21 @@
           "phase-rule-2",
           "phase-rule-3",
           "phase-rule-4",
-          "phase-rule-5",
-          "evidence-and-notes"
+          "phase-rule-5"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "created",
           "active",
           "processing",
@@ -6099,8 +7577,7 @@
           "phase-rule-2",
           "phase-rule-3",
           "phase-rule-4",
-          "phase-rule-5",
-          "evidence_and_notes"
+          "phase-rule-5"
         ],
         "slot_macro_pairs": [
           {
@@ -6114,6 +7591,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "created",
@@ -6154,10 +7667,6 @@
           {
             "macro": "phase-rule-5",
             "slot": "phase-rule-5"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -6288,11 +7797,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "a7dc71ba8c9958b5d4f50176da57b6e321222921d573d38e1ff569a0aecb2671",
+        "file_sha256": "8de3885e0e400e82d47af75b539284f69076131be9babb78e624f1c364fffcad",
         "structure_sha256": "51c025bd760088f09ecba8a8e7a271426a629de9beb688c5627c4f567687e693",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "event-a",
           "event-b",
           "event-c",
@@ -6307,13 +7817,21 @@
           "state-c",
           "warn-c",
           "allow-c",
-          "deny-c",
-          "evidence-and-notes"
+          "deny-c"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "event-a",
           "event-b",
           "event-c",
@@ -6328,8 +7846,7 @@
           "state-c",
           "warn-c",
           "allow-c",
-          "deny-c",
-          "evidence_and_notes"
+          "deny-c"
         ],
         "slot_macro_pairs": [
           {
@@ -6343,6 +7860,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "event-a",
@@ -6403,10 +7956,6 @@
           {
             "macro": "deny-c",
             "slot": "deny-c"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -6477,28 +8026,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "db68cb84ec60193738f6de9994255032c93599b390a86e5596a4200da07b9ec6",
+        "file_sha256": "818845ed68a0080d18febf6d725a7c85826c981de27233114fdb312c5db709cc",
         "structure_sha256": "a1ba6ceff78ba3c4a2d89387fc85cda34115d474650e6c73a0ba5525bfa91d3b",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "initial",
           "processing",
           "condition",
           "success",
-          "failure",
-          "evidence-and-notes"
+          "failure"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "initial",
           "processing",
           "condition",
           "success",
-          "failure",
-          "evidence_and_notes"
+          "failure"
         ],
         "slot_macro_pairs": [
           {
@@ -6512,6 +8069,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "initial",
@@ -6532,10 +8125,6 @@
           {
             "macro": "failure",
             "slot": "failure"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -6618,32 +8207,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "832529f333c428aef44ed888d805cc151ce02651e7fe36c2bf29c80f7a6659b3",
+        "file_sha256": "c3aaf3b2f0a235edd8c731f8a913d7eeb52bdb2f9a683d0aae45b9da9eabdc23",
         "structure_sha256": "f6e41d2433ac40332a07c07f867298466a38a16a669ebd35df94cdd627f063c5",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "api-callers",
           "client-contracts",
           "gateway-contract",
           "protocols",
           "error-retry",
           "providers",
-          "provider-contracts",
-          "evidence-and-notes"
+          "provider-contracts"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "api-callers",
           "client-contracts",
           "gateway-contract",
           "protocols",
           "error-retry",
           "providers",
-          "provider-contracts",
-          "evidence_and_notes"
+          "provider-contracts"
         ],
         "slot_macro_pairs": [
           {
@@ -6657,6 +8254,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "api-callers",
@@ -6685,10 +8318,6 @@
           {
             "macro": "provider-contracts",
             "slot": "provider-contracts"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -6777,11 +8406,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "2348114bc31b4c7f763cff53abef35c12bbc19fcb1646ef82487899945350204",
+        "file_sha256": "aed03cdc330a376aaca6e9ca61d32e41d5d27465330b3c1feb8d9bb906c2cd0f",
         "structure_sha256": "939f9769bae123b3762d2408a534aadac20732a8942a3becab3b051f6230119c",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "inbound-ports",
           "adapter-boundary",
           "component-a",
@@ -6789,13 +8419,21 @@
           "component-c",
           "component-d",
           "outbound-ports",
-          "internal-data",
-          "evidence-and-notes"
+          "internal-data"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "inbound-ports",
           "adapter-boundary",
           "component-a",
@@ -6803,8 +8441,7 @@
           "component-c",
           "component-d",
           "outbound-ports",
-          "internal-data",
-          "evidence_and_notes"
+          "internal-data"
         ],
         "slot_macro_pairs": [
           {
@@ -6818,6 +8455,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "inbound-ports",
@@ -6850,10 +8523,6 @@
           {
             "macro": "internal-data",
             "slot": "internal-data"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -6942,11 +8611,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "79d888ffac26d926437c34c3f590d5327b63cb0e297afb6432819fd1cd97d133",
+        "file_sha256": "9065d160b674c7600186678cd06ff6efc8259236bb6d061233096f8206077c67",
         "structure_sha256": "497976c084f8a25ffa67c03ce9498854253049f7d43a12839b61b3a592c96a46",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "data-producers",
           "ingestion-path",
           "domain-a",
@@ -6954,13 +8624,21 @@
           "governance",
           "lineage",
           "data-consumers",
-          "serving-path",
-          "evidence-and-notes"
+          "serving-path"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "data-producers",
           "ingestion-path",
           "domain-a",
@@ -6968,8 +8646,7 @@
           "governance",
           "lineage",
           "data-consumers",
-          "serving-path",
-          "evidence_and_notes"
+          "serving-path"
         ],
         "slot_macro_pairs": [
           {
@@ -6983,6 +8660,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "data-producers",
@@ -7015,10 +8728,6 @@
           {
             "macro": "serving-path",
             "slot": "serving-path"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -7107,11 +8816,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "4b0c7f9573d78478dc22681efbe3830a3b994f5d49e9d1ac2fbdc43e327adc1c",
+        "file_sha256": "12ca913054e242bdc0998a9fdc0b1ab466bb68f1d1659b23785a33fd04b872c7",
         "structure_sha256": "9dd70f1768f2db33f3e1d824f43d7198ee12e99cb535ecd99faa3012db1e076d",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "external-entity",
           "data-input",
           "process-a",
@@ -7119,13 +8829,21 @@
           "data-store",
           "trust-boundary",
           "data-output",
-          "external-sink",
-          "evidence-and-notes"
+          "external-sink"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "external-entity",
           "data-input",
           "process-a",
@@ -7133,8 +8851,7 @@
           "data-store",
           "trust-boundary",
           "data-output",
-          "external-sink",
-          "evidence_and_notes"
+          "external-sink"
         ],
         "slot_macro_pairs": [
           {
@@ -7148,6 +8865,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "external-entity",
@@ -7180,10 +8933,6 @@
           {
             "macro": "external-sink",
             "slot": "external-sink"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -7260,30 +9009,38 @@
         ]
       },
       "canonical": {
-        "file_sha256": "a9672600406b730e599426cdcce551b6141578999cc5bd6110759686d688e790",
+        "file_sha256": "7a70a1d3c80dc06a40b98a595f73c9f117d87df41ace364e3eb0881f4f7c6d0c",
         "structure_sha256": "e6c744805d54475c01a10198936a40bd54a07c5459c59e38806d50b4dd4597bd",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "source-change",
           "build-verify",
           "artifact-store",
           "release-strategy",
           "runtime-deploy",
-          "rollback-gate",
-          "evidence-and-notes"
+          "rollback-gate"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "source-change",
           "build-verify",
           "artifact-store",
           "release-strategy",
           "runtime-deploy",
-          "rollback-gate",
-          "evidence_and_notes"
+          "rollback-gate"
         ],
         "slot_macro_pairs": [
           {
@@ -7297,6 +9054,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "source-change",
@@ -7321,10 +9114,6 @@
           {
             "macro": "rollback-gate",
             "slot": "rollback-gate"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -7407,32 +9196,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "4f55cbf07db688753942fa95bd57dac0899e73144ffb6ae31dda65d41bd34564",
+        "file_sha256": "07a74e3c7c8d04067d5b90895d6a8c016966c665b3e5ae96cdd832191f66d663",
         "structure_sha256": "c7fdbbc0e02e459294d35c4960203ec5269cd014437fe584bce195b9c1a288c6",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "edge-env",
           "edge-runtime",
           "app-env",
           "workload-units",
           "runtime-config",
           "data-env",
-          "managed-services",
-          "evidence-and-notes"
+          "managed-services"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "edge-env",
           "edge-runtime",
           "app-env",
           "workload-units",
           "runtime-config",
           "data-env",
-          "managed-services",
-          "evidence_and_notes"
+          "managed-services"
         ],
         "slot_macro_pairs": [
           {
@@ -7446,6 +9243,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "edge-env",
@@ -7474,10 +9307,6 @@
           {
             "macro": "managed-services",
             "slot": "managed-services"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -7555,31 +9384,39 @@
         ]
       },
       "canonical": {
-        "file_sha256": "7447851fa61d60b51eb59e83a4f3f212d92d250bda2667bba13ba8d870da4e37",
+        "file_sha256": "296309acea23c5e4e2f6d0bd6f9e6a052495535f231c0c2d25037511aea7323f",
         "structure_sha256": "f253d56bfd6f00b73f972c57519c112886ab8d1ee1cd4500f68c600471682ced",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "producer-a",
           "producer-b",
           "producer-c",
           "event-channel",
           "consumer-a",
           "projection",
-          "consistency",
-          "evidence-and-notes"
+          "consistency"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "producer-a",
           "producer-b",
           "producer-c",
           "consumer-a",
           "projection",
-          "consistency",
-          "evidence_and_notes"
+          "consistency"
         ],
         "slot_macro_pairs": [
           {
@@ -7593,6 +9430,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "producer-a",
@@ -7617,10 +9490,6 @@
           {
             "macro": "consistency",
             "slot": "consistency"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -7691,28 +9560,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "5fe60fd063e9ba24c51fb85ae8f33517041c3126cd23639aa4de1fc71a6f6c3c",
+        "file_sha256": "f593771174c59c4eab1187790b0ec880cbd38b3b85a250104ddf937b8b0cdf46",
         "structure_sha256": "84ad75c5fc1f7e6fd07bbc77cdf9aaa108890b6cea14bc2a8ab923988cd2fe83",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "subjects",
           "authentication",
           "authorization",
           "resources",
-          "audit-session",
-          "evidence-and-notes"
+          "audit-session"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "subjects",
           "authentication",
           "authorization",
           "resources",
-          "audit-session",
-          "evidence_and_notes"
+          "audit-session"
         ],
         "slot_macro_pairs": [
           {
@@ -7726,6 +9603,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "subjects",
@@ -7746,10 +9659,6 @@
           {
             "macro": "audit-session",
             "slot": "audit-session"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -7844,36 +9753,107 @@
         ]
       },
       "canonical": {
-        "file_sha256": "0600e4765e4d2d788c5766310b9acc2380a4269790699f0995e05030027c93f3",
-        "structure_sha256": "4b481e6a27661b5a06d6121b7decac4afb564fa7e7a2f446c14652f030202282",
+      "file_sha256": "eed25338fbcbd018216dfc11686cda60c2973b1a3759db9e6bb66a84f1ba5d44",
+      "structure_sha256": "cc81aae5538cd31563e74ff792cf97f573b7660571376730851c332ef6b88368",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
+          "presentation-layer-title",
           "presentation-layer",
+          "application-layer-title",
           "application-layer",
+          "policy-layer-title",
           "policy-layer",
+          "domain-layer-title",
           "domain-layer",
-          "integration-layer",
+          "workflow-layer-title",
           "workflow-layer",
+          "integration-layer-title",
+          "integration-layer",
+          "data-layer-title",
           "data-layer",
+          "platform-layer-title",
           "platform-layer",
+          "ops-layer-title",
           "ops-layer",
-          "evidence-and-notes"
+          "node-detail-heading",
+          "node-detail-hint",
+          "presentation-layer-detail",
+          "application-layer-detail",
+          "policy-layer-detail",
+          "domain-layer-detail",
+          "workflow-layer-detail",
+          "integration-layer-detail",
+          "data-layer-detail",
+          "platform-layer-detail",
+          "ops-layer-detail"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "primary-relation-label",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "node-detail-canvas-hint",
+          "presentation-region-title",
+          "application-region-title",
+          "business-region-title",
+          "integration-region-title",
+          "platform-region-title",
+          "operations-region-title",
+          "presentation-layer-title",
+          "presentation-layer-title",
           "presentation-layer",
+          "application-layer-title",
+          "application-layer-title",
           "application-layer",
+          "policy-layer-title",
+          "policy-layer-title",
           "policy-layer",
+          "domain-layer-title",
+          "domain-layer-title",
           "domain-layer",
-          "integration-layer",
+          "workflow-layer-title",
+          "workflow-layer-title",
           "workflow-layer",
+          "integration-layer-title",
+          "integration-layer-title",
+          "integration-layer",
+          "data-layer-title",
+          "data-layer-title",
           "data-layer",
+          "platform-layer-title",
+          "platform-layer-title",
           "platform-layer",
+          "ops-layer-title",
+          "ops-layer-title",
           "ops-layer",
-          "evidence_and_notes"
+          "node-detail-heading",
+          "node-detail-hint",
+          "presentation-layer-title",
+          "presentation-layer-detail",
+          "application-layer-title",
+          "application-layer-detail",
+          "policy-layer-title",
+          "policy-layer-detail",
+          "domain-layer-title",
+          "domain-layer-detail",
+          "workflow-layer-title",
+          "workflow-layer-detail",
+          "integration-layer-title",
+          "integration-layer-detail",
+          "data-layer-title",
+          "data-layer-detail",
+          "platform-layer-title",
+          "platform-layer-detail",
+          "ops-layer-title",
+          "ops-layer-detail"
         ],
         "slot_macro_pairs": [
           {
@@ -7889,44 +9869,248 @@
             "slot": "summary"
           },
           {
+            "macro": "primary-relation-label",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "node-detail-canvas-hint",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "presentation-region-title",
+            "slot": ""
+          },
+          {
+            "macro": "application-region-title",
+            "slot": ""
+          },
+          {
+            "macro": "business-region-title",
+            "slot": ""
+          },
+          {
+            "macro": "integration-region-title",
+            "slot": ""
+          },
+          {
+            "macro": "platform-region-title",
+            "slot": ""
+          },
+          {
+            "macro": "operations-region-title",
+            "slot": ""
+          },
+          {
+            "macro": "presentation-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "presentation-layer-title",
+            "slot": "presentation-layer-title"
+          },
+          {
             "macro": "presentation-layer",
             "slot": "presentation-layer"
+          },
+          {
+            "macro": "application-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "application-layer-title",
+            "slot": "application-layer-title"
           },
           {
             "macro": "application-layer",
             "slot": "application-layer"
           },
           {
+            "macro": "policy-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "policy-layer-title",
+            "slot": "policy-layer-title"
+          },
+          {
             "macro": "policy-layer",
             "slot": "policy-layer"
+          },
+          {
+            "macro": "domain-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "domain-layer-title",
+            "slot": "domain-layer-title"
           },
           {
             "macro": "domain-layer",
             "slot": "domain-layer"
           },
           {
-            "macro": "integration-layer",
-            "slot": "integration-layer"
+            "macro": "workflow-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "workflow-layer-title",
+            "slot": "workflow-layer-title"
           },
           {
             "macro": "workflow-layer",
             "slot": "workflow-layer"
           },
           {
+            "macro": "integration-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "integration-layer-title",
+            "slot": "integration-layer-title"
+          },
+          {
+            "macro": "integration-layer",
+            "slot": "integration-layer"
+          },
+          {
+            "macro": "data-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "data-layer-title",
+            "slot": "data-layer-title"
+          },
+          {
             "macro": "data-layer",
             "slot": "data-layer"
+          },
+          {
+            "macro": "platform-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "platform-layer-title",
+            "slot": "platform-layer-title"
           },
           {
             "macro": "platform-layer",
             "slot": "platform-layer"
           },
           {
+            "macro": "ops-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "ops-layer-title",
+            "slot": "ops-layer-title"
+          },
+          {
             "macro": "ops-layer",
             "slot": "ops-layer"
           },
           {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
+            "macro": "node-detail-heading",
+            "slot": "node-detail-heading"
+          },
+          {
+            "macro": "node-detail-hint",
+            "slot": "node-detail-hint"
+          },
+          {
+            "macro": "presentation-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "presentation-layer-detail",
+            "slot": "presentation-layer-detail"
+          },
+          {
+            "macro": "application-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "application-layer-detail",
+            "slot": "application-layer-detail"
+          },
+          {
+            "macro": "policy-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "policy-layer-detail",
+            "slot": "policy-layer-detail"
+          },
+          {
+            "macro": "domain-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "domain-layer-detail",
+            "slot": "domain-layer-detail"
+          },
+          {
+            "macro": "workflow-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "workflow-layer-detail",
+            "slot": "workflow-layer-detail"
+          },
+          {
+            "macro": "integration-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "integration-layer-detail",
+            "slot": "integration-layer-detail"
+          },
+          {
+            "macro": "data-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "data-layer-detail",
+            "slot": "data-layer-detail"
+          },
+          {
+            "macro": "platform-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "platform-layer-detail",
+            "slot": "platform-layer-detail"
+          },
+          {
+            "macro": "ops-layer-title",
+            "slot": ""
+          },
+          {
+            "macro": "ops-layer-detail",
+            "slot": "ops-layer-detail"
           }
         ]
       },
@@ -8015,11 +10199,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "ff51d26d838d79017fa3afd52b67665f578a573aaeee4c221443e90e8caae517",
+        "file_sha256": "0e9a69508543ef6e27f8884e7173f19d21234346e060b9b6f8300af006b28631",
         "structure_sha256": "60e71343edd2512209e07e2006436bf63f35c83423f7b3edb2d5bcb41ebc3426",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "internet-zone",
           "ingress-control",
           "edge-zone",
@@ -8027,13 +10212,21 @@
           "private-zone",
           "service-network",
           "protected-zone",
-          "egress-path",
-          "evidence-and-notes"
+          "egress-path"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "internet-zone",
           "ingress-control",
           "edge-zone",
@@ -8041,8 +10234,7 @@
           "private-zone",
           "service-network",
           "protected-zone",
-          "egress-path",
-          "evidence_and_notes"
+          "egress-path"
         ],
         "slot_macro_pairs": [
           {
@@ -8056,6 +10248,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "internet-zone",
@@ -8088,10 +10316,6 @@
           {
             "macro": "egress-path",
             "slot": "egress-path"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -8162,28 +10386,36 @@
         ]
       },
       "canonical": {
-        "file_sha256": "e01a537e1244f3dc94bc5b613a4ce061f186b1132597cae25b27658e2b69b576",
+        "file_sha256": "a0f53d2e9719fcdd164c0231575fd36fee7593b6ec21e3e5df7dc1fb20d8392a",
         "structure_sha256": "fb098c7b77fca216b8c4e75ea7efa135686eb1ad815ecdaa4cefdeb9ffe2be7d",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "emitters",
           "collectors",
           "storage-query",
           "alert-rules",
-          "response-loop",
-          "evidence-and-notes"
+          "response-loop"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "emitters",
           "collectors",
           "storage-query",
           "alert-rules",
-          "response-loop",
-          "evidence_and_notes"
+          "response-loop"
         ],
         "slot_macro_pairs": [
           {
@@ -8197,6 +10429,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "emitters",
@@ -8217,10 +10485,6 @@
           {
             "macro": "response-loop",
             "slot": "response-loop"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -8297,30 +10561,38 @@
         ]
       },
       "canonical": {
-        "file_sha256": "95cb6740e186421fb4a1d8938b09b42710b3d9db2e54d173c5dfc0c84db1d80a",
+        "file_sha256": "c3b062a96b7577a0d28d30db3995f521138f6aceebf3d219c26f9cb607cab6f1",
         "structure_sha256": "aaaae07e5b1af74a202c8026417c7ccd9d827e3c7327d32dbe4f69ac13c97607",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "failure-domain-a",
           "primary-path",
           "degradation-path",
           "recovery-targets",
           "standby-resources",
-          "restore-validation",
-          "evidence-and-notes"
+          "restore-validation"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "failure-domain-a",
           "primary-path",
           "degradation-path",
           "recovery-targets",
           "standby-resources",
-          "restore-validation",
-          "evidence_and_notes"
+          "restore-validation"
         ],
         "slot_macro_pairs": [
           {
@@ -8334,6 +10606,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "failure-domain-a",
@@ -8358,10 +10666,6 @@
           {
             "macro": "restore-validation",
             "slot": "restore-validation"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -8450,11 +10754,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "35573a778ae7dce1b87b1028dcc7b3b771fe800db14dbbcd47ce73ec2e879635",
+        "file_sha256": "96bfc7cef53f0e344540fbe17260be91ddce4e4bb1f4912031f98a7fc3de02fb",
         "structure_sha256": "052f75613350b78dfaef98fc6437a74dc7169e4bd700ac6487f49c338015e170",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "intent",
           "material",
           "primary-view",
@@ -8462,13 +10767,21 @@
           "companion-views",
           "handoff-target",
           "quality-gate",
-          "template-id",
-          "evidence-and-notes"
+          "template-id"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "intent",
           "material",
           "primary-view",
@@ -8476,8 +10789,7 @@
           "companion-views",
           "handoff-target",
           "quality-gate",
-          "template-id",
-          "evidence_and_notes"
+          "template-id"
         ],
         "slot_macro_pairs": [
           {
@@ -8491,6 +10803,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "intent",
@@ -8523,10 +10871,6 @@
           {
             "macro": "template-id",
             "slot": "template-id"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -8609,32 +10953,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "80ce47d36748adc9c5160c8043ea9e319ba3ea93b1a734ceb8b8b03f27d9600a",
+        "file_sha256": "7bcc8adbb92dfbf7642393b7cc97a6fca36760ba1fa1293cc18c8bd850f2b05b",
         "structure_sha256": "46c396ec742a21288f65e18ea01a1e8dd54ebafbe53676eb95a6902351e68428",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "assets",
           "entry-threats",
           "trust-zones",
           "controls",
           "audit-evidence",
           "sensitive-flows",
-          "residual-risks",
-          "evidence-and-notes"
+          "residual-risks"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "assets",
           "entry-threats",
           "trust-zones",
           "controls",
           "audit-evidence",
           "sensitive-flows",
-          "residual-risks",
-          "evidence_and_notes"
+          "residual-risks"
         ],
         "slot_macro_pairs": [
           {
@@ -8648,6 +11000,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "assets",
@@ -8676,10 +11064,6 @@
           {
             "macro": "residual-risks",
             "slot": "residual-risks"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -8762,32 +11146,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "832b29649c7d6c1795bba3804284e0f17fe6300f72c8535a847dc4dee1482e17",
+        "file_sha256": "be78cbcedfbbb6fa6d1cd1d8de70b3b5d2465acbbf67cd8637113287aceed361",
         "structure_sha256": "2682938e2d9d2fe5f81e270d9ca37885fcce10c2bb62fabb398e5ae629b07455",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "external-actors",
           "external-needs",
           "system-boundary",
           "system-responsibility",
           "known-unknowns",
           "external-systems",
-          "integration-relations",
-          "evidence-and-notes"
+          "integration-relations"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "external-actors",
           "external-needs",
           "system-boundary",
           "system-responsibility",
           "known-unknowns",
           "external-systems",
-          "integration-relations",
-          "evidence_and_notes"
+          "integration-relations"
         ],
         "slot_macro_pairs": [
           {
@@ -8801,6 +11193,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "external-actors",
@@ -8829,10 +11257,6 @@
           {
             "macro": "integration-relations",
             "slot": "integration-relations"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -8916,33 +11340,92 @@
         ]
       },
       "canonical": {
-        "file_sha256": "5b3405389cb2ed2f6f3618a324080dc5309e08a8f5e358d5cb6913c7ca4570f2",
-        "structure_sha256": "0ed6cf0786b11006f399e4f4c78fe5ec37cc0c905b40d23406ee8223dc13b1f6",
+      "file_sha256": "add31045118425a96a0bd9f7a63ad0fe511003e83c4d36115286e011968664e9",
+      "structure_sha256": "01fe9e0349b30dde70bd5d69dc6f8cb28313ab3fe640c3c721c410718895fe12",
         "data_slots": [
           "title",
           "summary",
-          "entry-rail",
-          "access-boundary",
-          "application-core",
-          "support-capabilities",
+          "evidence-and-notes",
+          "data-observability-title",
           "data-observability",
-          "ops-rail",
-          "external-dependencies",
+          "foundation-title",
           "foundation",
-          "evidence-and-notes"
+          "entry-rail-title",
+          "entry-rail",
+          "access-boundary-title",
+          "access-boundary",
+          "application-core-title",
+          "application-core",
+          "support-capabilities-title",
+          "support-capabilities",
+          "ops-rail-title",
+          "ops-rail",
+          "external-dependencies-title",
+          "external-dependencies",
+          "node-detail-heading",
+          "node-detail-hint",
+          "entry-rail-detail",
+          "access-boundary-detail",
+          "application-core-detail",
+          "support-capabilities-detail",
+          "ops-rail-detail",
+          "data-observability-detail",
+          "external-dependencies-detail",
+          "foundation-detail"
         ],
         "macros": [
           "routing_confidence",
           "title",
           "summary",
-          "entry-rail",
-          "access-boundary",
-          "application-core",
-          "support-capabilities",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "node-detail-canvas-hint",
+          "data-observability-title",
           "data-observability",
+          "foundation-title",
+          "foundation",
+          "entry-rail-title",
+          "entry-rail-title",
+          "entry-rail",
+          "access-boundary-title",
+          "access-boundary-title",
+          "access-boundary",
+          "application-core-title",
+          "application-core-title",
+          "application-core",
+          "support-capabilities-title",
+          "support-capabilities-title",
+          "support-capabilities",
+          "ops-rail-title",
+          "ops-rail-title",
           "ops-rail",
+          "data-observability-title",
+          "external-dependencies-title",
+          "external-dependencies-title",
           "external-dependencies",
-          "evidence_and_notes"
+          "foundation-title",
+          "node-detail-heading",
+          "node-detail-hint",
+          "entry-rail-title",
+          "entry-rail-detail",
+          "access-boundary-title",
+          "access-boundary-detail",
+          "application-core-title",
+          "application-core-detail",
+          "support-capabilities-title",
+          "support-capabilities-detail",
+          "ops-rail-title",
+          "ops-rail-detail",
+          "data-observability-title",
+          "data-observability-detail",
+          "external-dependencies-title",
+          "external-dependencies-detail",
+          "foundation-title",
+          "foundation-detail"
         ],
         "slot_macro_pairs": [
           {
@@ -8958,36 +11441,200 @@
             "slot": "summary"
           },
           {
-            "macro": "entry-rail",
-            "slot": "entry-rail"
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
           },
           {
-            "macro": "access-boundary",
-            "slot": "access-boundary"
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
           },
           {
-            "macro": "application-core",
-            "slot": "application-core"
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
           },
           {
-            "macro": "support-capabilities",
-            "slot": "support-capabilities"
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "node-detail-canvas-hint",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "data-observability-title",
+            "slot": "data-observability-title"
           },
           {
             "macro": "data-observability",
             "slot": "data-observability"
           },
           {
+            "macro": "foundation-title",
+            "slot": "foundation-title"
+          },
+          {
+            "macro": "foundation",
+            "slot": "foundation"
+          },
+          {
+            "macro": "entry-rail-title",
+            "slot": ""
+          },
+          {
+            "macro": "entry-rail-title",
+            "slot": "entry-rail-title"
+          },
+          {
+            "macro": "entry-rail",
+            "slot": "entry-rail"
+          },
+          {
+            "macro": "access-boundary-title",
+            "slot": ""
+          },
+          {
+            "macro": "access-boundary-title",
+            "slot": "access-boundary-title"
+          },
+          {
+            "macro": "access-boundary",
+            "slot": "access-boundary"
+          },
+          {
+            "macro": "application-core-title",
+            "slot": ""
+          },
+          {
+            "macro": "application-core-title",
+            "slot": "application-core-title"
+          },
+          {
+            "macro": "application-core",
+            "slot": "application-core"
+          },
+          {
+            "macro": "support-capabilities-title",
+            "slot": ""
+          },
+          {
+            "macro": "support-capabilities-title",
+            "slot": "support-capabilities-title"
+          },
+          {
+            "macro": "support-capabilities",
+            "slot": "support-capabilities"
+          },
+          {
+            "macro": "ops-rail-title",
+            "slot": ""
+          },
+          {
+            "macro": "ops-rail-title",
+            "slot": "ops-rail-title"
+          },
+          {
             "macro": "ops-rail",
             "slot": "ops-rail"
+          },
+          {
+            "macro": "data-observability-title",
+            "slot": ""
+          },
+          {
+            "macro": "external-dependencies-title",
+            "slot": ""
+          },
+          {
+            "macro": "external-dependencies-title",
+            "slot": "external-dependencies-title"
           },
           {
             "macro": "external-dependencies",
             "slot": "external-dependencies"
           },
           {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
+            "macro": "foundation-title",
+            "slot": ""
+          },
+          {
+            "macro": "node-detail-heading",
+            "slot": "node-detail-heading"
+          },
+          {
+            "macro": "node-detail-hint",
+            "slot": "node-detail-hint"
+          },
+          {
+            "macro": "entry-rail-title",
+            "slot": ""
+          },
+          {
+            "macro": "entry-rail-detail",
+            "slot": "entry-rail-detail"
+          },
+          {
+            "macro": "access-boundary-title",
+            "slot": ""
+          },
+          {
+            "macro": "access-boundary-detail",
+            "slot": "access-boundary-detail"
+          },
+          {
+            "macro": "application-core-title",
+            "slot": ""
+          },
+          {
+            "macro": "application-core-detail",
+            "slot": "application-core-detail"
+          },
+          {
+            "macro": "support-capabilities-title",
+            "slot": ""
+          },
+          {
+            "macro": "support-capabilities-detail",
+            "slot": "support-capabilities-detail"
+          },
+          {
+            "macro": "ops-rail-title",
+            "slot": ""
+          },
+          {
+            "macro": "ops-rail-detail",
+            "slot": "ops-rail-detail"
+          },
+          {
+            "macro": "data-observability-title",
+            "slot": ""
+          },
+          {
+            "macro": "data-observability-detail",
+            "slot": "data-observability-detail"
+          },
+          {
+            "macro": "external-dependencies-title",
+            "slot": ""
+          },
+          {
+            "macro": "external-dependencies-detail",
+            "slot": "external-dependencies-detail"
+          },
+          {
+            "macro": "foundation-title",
+            "slot": ""
+          },
+          {
+            "macro": "foundation-detail",
+            "slot": "foundation-detail"
           }
         ]
       },
@@ -9124,11 +11771,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "3c99871214ce20f70a803b90b691c0b58e550ee3ccbb6c7a674eb63387fc07ef",
+        "file_sha256": "f7ec45b2caedd06364f1d6c3091bba8ef185c62f77712904d16425adbd682424",
         "structure_sha256": "c42888a48b2a6715d68f7d238f39cabba3771eea27d291cfc004450f0c9a16b7",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "api-1-request",
           "api-1-contract",
           "api-1-error",
@@ -9144,13 +11792,21 @@
           "api-4-request",
           "api-4-contract",
           "api-4-error",
-          "api-4-compat",
-          "evidence-and-notes"
+          "api-4-compat"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "api-1-request",
           "api-1-contract",
           "api-1-error",
@@ -9166,8 +11822,7 @@
           "api-4-request",
           "api-4-contract",
           "api-4-error",
-          "api-4-compat",
-          "evidence_and_notes"
+          "api-4-compat"
         ],
         "slot_macro_pairs": [
           {
@@ -9181,6 +11836,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "api-1-request",
@@ -9245,10 +11936,6 @@
           {
             "macro": "api-4-compat",
             "slot": "api-4-compat"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -9337,11 +12024,12 @@
         ]
       },
       "canonical": {
-        "file_sha256": "71a2c09f29ce22ae5d3e6c9bba4d2be6cabe1f94fedcd62af376ee17750c0ef3",
+        "file_sha256": "9b0aff01beef0930955e6365132e50ac987e4409af35a8d1095e76d70d3ea0fd",
         "structure_sha256": "6ee9bac6f38d8a8f6a6b57e9a16325b11ff3e8de52ae3bdc6e8c85b40f74e57b",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "write-source",
           "input-check",
           "consistency",
@@ -9349,13 +12037,21 @@
           "compensation",
           "reconcile",
           "consumer",
-          "audit",
-          "evidence-and-notes"
+          "audit"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "write-source",
           "input-check",
           "consistency",
@@ -9363,8 +12059,7 @@
           "compensation",
           "reconcile",
           "consumer",
-          "audit",
-          "evidence_and_notes"
+          "audit"
         ],
         "slot_macro_pairs": [
           {
@@ -9378,6 +12073,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "write-source",
@@ -9410,10 +12141,6 @@
           {
             "macro": "audit",
             "slot": "audit"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -9496,32 +12223,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "c8e996d2ba5bd832696687875db974fabbd9aaae0819c771586fa84321dc3a54",
+        "file_sha256": "11e9362922fd8e271585453487b955e0472554d23d901256b3f351dc4a09c3de",
         "structure_sha256": "a4205a2c56026869e57ee61a5816c380c0f5bb9caf8cdcb49e38b5a86a5efaa3",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "module-boundary",
           "api-contract",
           "data-structure",
           "observability",
           "test-matrix",
           "release",
-          "rollback",
-          "evidence-and-notes"
+          "rollback"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "module-boundary",
           "api-contract",
           "data-structure",
           "observability",
           "test-matrix",
           "release",
-          "rollback",
-          "evidence_and_notes"
+          "rollback"
         ],
         "slot_macro_pairs": [
           {
@@ -9535,6 +12270,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "module-boundary",
@@ -9563,10 +12334,6 @@
           {
             "macro": "rollback",
             "slot": "rollback"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },
@@ -9649,32 +12416,40 @@
         ]
       },
       "canonical": {
-        "file_sha256": "f29cb92d660eee42eb8cd81a1ab258bb6b67c2b978cb52c583ac1bdc16d4f6a4",
+        "file_sha256": "8b3bf6656e55c9817ab46d09137002967e7913517b3bf4eedf3bc81f3b42a5ab",
         "structure_sha256": "de140cb1359d003db594a0cc8b11d536072ffb88e94eba094b521b544a4ec7fb",
         "data_slots": [
           "title",
           "summary",
+          "evidence-and-notes",
           "prepare",
           "gray",
           "switch",
           "observe",
           "finish",
           "gate",
-          "rollback",
-          "evidence-and-notes"
+          "rollback"
         ],
         "macros": [
           "title",
           "title",
           "summary",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-observed",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-check",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
+          "evidence-unresolved",
           "prepare",
           "gray",
           "switch",
           "observe",
           "finish",
           "gate",
-          "rollback",
-          "evidence_and_notes"
+          "rollback"
         ],
         "slot_macro_pairs": [
           {
@@ -9688,6 +12463,42 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "prepare",
@@ -9716,10 +12527,6 @@
           {
             "macro": "rollback",
             "slot": "rollback"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
           }
         ]
       },

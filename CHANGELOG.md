@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-07-23
+
+- Reworked the workload overview into a west-entry, central north-to-south core-spine, east-operations, south-foundation topology and rebuilt logical layering as a true north-to-south DAG with parallel ranks, branches, and merges.
+- Made topology direction, ranks, regions, primary relations, exact fallback relations, and structured evidence ledgers fail-closed in both the artifact linter and deterministic builder.
+- Moved zoom controls into the responsive title region, added an explicit persistent mode for the two system-architecture views while retaining overflow-only defaults elsewhere, and migrated the shared presentation contract across all 53 generic templates.
+- Made the authored conversation language govern visible node labels, kept pre-canvas evidence as the default while allowing trusted templates to place visible key evidence after the primary canvas, and added one-to-one native clickable detail disclosure for every node in the two system-architecture views.
+- Required the node-detail interaction hint to appear exactly once inside the shared reading guide and never as a floating SVG-canvas annotation.
+- Added a true dual-path swimlane template with inline SVG arrows, an explicit missing-handoff relation, aligned success and blocked outcomes, a visible diagram-type title, visible key evidence after the canvas, and folded long provenance.
+- Kept browser rendering evidence separate from static contract validity and kept real client lifecycle verification explicitly unverified.
+
 ## [0.1.6] - 2026-07-23
 
 - Removed the repository-wide network-access prohibition so agent tasks may use network access while remote Git, GitHub, marketplace, and client mutations still require explicit authorization.

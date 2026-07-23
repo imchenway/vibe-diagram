@@ -8,7 +8,7 @@
 
 ## 单一事实源
 
-`skills/vibe-diagram/` 是 skill 行为的唯一可编辑事实源。该目录包含 bootstrap `SKILL.md`、12 份 reference、58 个 HTML 模板、一个标准库 updater 和一个标准库 linter，保持零第三方运行时依赖。
+`skills/vibe-diagram/` 是 skill 行为的唯一可编辑事实源。该目录包含 bootstrap `SKILL.md`、12 份 reference、59 个 HTML 模板、一个标准库 updater 和一个标准库 linter，保持零第三方运行时依赖。
 
 `adapters/` 只保存各端 manifest 和白名单 overlay 定义。下列目录均为可重新生成的产物，不得手工维护：
 

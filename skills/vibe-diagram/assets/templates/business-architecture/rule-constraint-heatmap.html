@@ -24,9 +24,24 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
+[data-diagram-title-region] {
+  display: flex;
+  max-inline-size: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem 1rem;
+}
+[data-diagram-title-copy] {
+  flex: 1 1 24rem;
+  min-inline-size: 0;
+}
+[data-diagram-title-region] > [data-diagram-controls] {
+  flex: 0 0 auto;
+  margin-block: 0;
+}
 [data-diagram-controls] {
   position: relative;
-  display: inline-flex;
+  display: none;
   max-inline-size: 100%;
   flex-wrap: wrap;
   align-items: center;
@@ -37,6 +52,9 @@
   border-radius: .9rem;
   background: rgba(255, 255, 255, .92);
   box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls][data-diagram-controls-visible="true"] {
+  display: inline-flex;
 }
 [data-diagram-controls] button {
   appearance: none;
@@ -83,8 +101,64 @@
   border: 0;
 }
 .diagram-fallback { display: none; }
+[data-evidence-ledger="1"] {
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+[data-evidence-summary] {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem 1rem;
+  padding: 0 .125rem .125rem;
+}
+[data-evidence-summary] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+[data-evidence-summary] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+[data-evidence-ledger="1"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .625rem;
+  margin-block: .5rem 1rem;
+}
+[data-evidence-id] {
+  display: grid;
+  align-content: start;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .75rem .875rem;
+  border: 1px solid rgba(141, 179, 216, .58);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .9);
+  overflow-wrap: anywhere;
+}
+[data-evidence-status="observed"] {
+  border-color: rgba(23, 120, 90, .38);
+  background: rgba(238, 249, 245, .94);
+}
+[data-evidence-source-kind="test"] {
+  border-color: rgba(31, 111, 178, .4);
+  background: rgba(237, 246, 255, .94);
+}
+[data-evidence-status="unresolved"] {
+  border-color: rgba(152, 101, 6, .38);
+  background: rgba(255, 248, 232, .96);
+}
 
 @media (max-width: 48rem) {
+  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
+  [data-diagram-title-copy] { flex: 0 1 auto; }
+  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
+  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
+  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
   [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
@@ -93,6 +167,7 @@
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
   [data-diagram-controls] { display: none !important; }
+  [data-evidence-ledger="1"] { break-inside: avoid; }
   .diagram-fallback { display: block; }
 }
 
@@ -187,9 +262,11 @@
       data-template-id="rule-constraint-heatmap"
       data-template-layout="rule-constraint-heatmap"
       data-template-contract-version="2">
-  <h1 data-slot="title">{{title}}</h1>
-  <p class="summary" data-slot="summary">{{summary}}</p>
-  <div data-diagram-controls="rule-constraint-heatmap" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  <header data-diagram-title-region>
+    <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
+    <div data-diagram-controls="rule-constraint-heatmap" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  </header>
+  <section data-slot="evidence-and-notes" data-evidence-ledger="1" aria-label="Evidence ledger"><div data-evidence-summary><strong>Evidence boundary</strong><span>Observed · checked · unresolved</span></div><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Checked</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Unresolved</b><span>{{evidence-unresolved}}</span></article></section>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="rule-constraint-heatmap" data-diagram-profile="matrix" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="summary">
     <section data-diagram-stage class="template-layout rule-constraint-heatmap" aria-label="Rule constraint heatmap template canvas"><div class="line-label" data-reading-guide="constraint axes">Object / constraint</div><div class="line-label" data-matrix-col-id="low">Low constraint</div><div class="line-label" data-matrix-col-id="mid">Medium constraint</div><div class="line-label" data-matrix-col-id="high">High constraint</div><div id="target-object" class="slot data" data-diagram-node-id="target-object" data-semantic-role="row-axis" data-matrix-row-id="scope" data-slot="target-object"><b>Target object</b><span>{{target-object}}</span></div><div id="decision-axis" class="slot core" data-diagram-node-id="decision-axis" data-semantic-role="row-axis" data-matrix-row-id="decision" data-slot="decision-axis"><b>Decision axis</b><span>{{decision-axis}}</span></div><div id="risk-note" class="slot risk" data-diagram-node-id="risk-note" data-semantic-role="row-axis" data-matrix-row-id="risk" data-slot="risk-note"><b>Risk note</b><span>{{risk-note}}</span></div><div id="rule-low" class="slot data" data-diagram-node-id="rule-low" data-semantic-role="constraint" data-matrix-row="scope" data-matrix-col="low" data-slot="rule-low"><b>Rule low</b><span>{{rule-low}}</span></div><div id="rule-mid" class="slot ops" data-diagram-node-id="rule-mid" data-semantic-role="constraint" data-matrix-row="scope" data-matrix-col="mid" data-slot="rule-mid"><b>Rule mid</b><span>{{rule-mid}}</span></div><div id="rule-high" class="slot risk" data-diagram-node-id="rule-high" data-semantic-role="constraint" data-matrix-row="scope" data-matrix-col="high" data-slot="rule-high"><b>Rule high</b><span>{{rule-high}}</span></div><div id="permission" class="slot support" data-diagram-node-id="permission" data-semantic-role="constraint" data-matrix-row="decision" data-matrix-col="low" data-slot="permission"><b>Permission</b><span>{{permission}}</span></div><div id="threshold" class="slot ops" data-diagram-node-id="threshold" data-semantic-role="constraint" data-matrix-row="decision" data-matrix-col="mid" data-slot="threshold"><b>Threshold</b><span>{{threshold}}</span></div><div id="rollback" class="slot risk" data-diagram-node-id="rollback" data-semantic-role="constraint" data-matrix-row="decision" data-matrix-col="high" data-slot="rollback"><b>Rollback</b><span>{{rollback}}</span></div><div id="state" class="slot core" data-diagram-node-id="state" data-semantic-role="constraint" data-matrix-row="risk" data-matrix-col="low" data-slot="state"><b>State</b><span>{{state}}</span></div><div id="audit" class="slot data" data-diagram-node-id="audit" data-semantic-role="constraint" data-matrix-row="risk" data-matrix-col="mid" data-slot="audit"><b>Audit</b><span>{{audit}}</span></div><div id="unknown" class="slot " data-diagram-node-id="unknown" data-semantic-role="constraint" data-matrix-row="risk" data-matrix-col="high" data-slot="unknown"><b>Unknown</b><span>{{unknown}}</span></div>  <section data-semantic-edge-ledger aria-label="Visible relationship paths">
     <h2>Relationship paths</h2>
@@ -208,30 +285,25 @@
 <span class="semantic-relation" data-diagram-relation-id="scope-low-constraint" data-from="target-object" data-to="rule-low" data-relation-kind="classifies" data-semantic="Target object at low resolves to Rule low">Target object at low resolves to Rule low</span><span class="semantic-relation" data-diagram-relation-id="scope-mid-constraint" data-from="target-object" data-to="rule-mid" data-relation-kind="classifies" data-semantic="Target object at mid resolves to Rule mid">Target object at mid resolves to Rule mid</span><span class="semantic-relation" data-diagram-relation-id="scope-high-constraint" data-from="target-object" data-to="rule-high" data-relation-kind="classifies" data-semantic="Target object at high resolves to Rule high">Target object at high resolves to Rule high</span><span class="semantic-relation" data-diagram-relation-id="decision-low-constraint" data-from="decision-axis" data-to="permission" data-relation-kind="classifies" data-semantic="Decision axis at low resolves to Permission">Decision axis at low resolves to Permission</span><span class="semantic-relation" data-diagram-relation-id="decision-mid-constraint" data-from="decision-axis" data-to="threshold" data-relation-kind="classifies" data-semantic="Decision axis at mid resolves to Threshold">Decision axis at mid resolves to Threshold</span><span class="semantic-relation" data-diagram-relation-id="decision-high-constraint" data-from="decision-axis" data-to="rollback" data-relation-kind="classifies" data-semantic="Decision axis at high resolves to Rollback">Decision axis at high resolves to Rollback</span><span class="semantic-relation" data-diagram-relation-id="risk-low-constraint" data-from="risk-note" data-to="state" data-relation-kind="classifies" data-semantic="Risk note at low resolves to State">Risk note at low resolves to State</span><span class="semantic-relation" data-diagram-relation-id="risk-mid-constraint" data-from="risk-note" data-to="audit" data-relation-kind="classifies" data-semantic="Risk note at mid resolves to Audit">Risk note at mid resolves to Audit</span><span class="semantic-relation" data-diagram-relation-id="risk-high-constraint" data-from="risk-note" data-to="unknown" data-relation-kind="classifies" data-semantic="Risk note at high resolves to Unknown">Risk note at high resolves to Unknown</span></section>
   </div>
   <details class="diagram-fallback" data-fallback-for="rule-constraint-heatmap"><summary>Rule Constraint Heatmap semantic fallback</summary><table><thead><tr><th>Object / constraint</th><th>Low</th><th>Medium</th><th>High</th></tr></thead><tbody><tr><th>Target object</th><td>Rule low</td><td>Rule mid</td><td>Rule high</td></tr><tr><th>Decision axis</th><td>Permission</td><td>Threshold</td><td>Rollback</td></tr><tr><th>Risk note</th><td>State</td><td>Audit</td><td>Unknown</td></tr></tbody></table></details>
-  <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
 </main>
 <script data-adaptive-viewport-kernel="1">
 (() => {
   "use strict";
   const allowed = new Set(["fit", "0.75", "0.9", "1"]);
+  const managed = new Set();
+  const requestedByCanvas = new WeakMap();
+  let resizeFrame = 0;
+
+  const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const controlsFor = (canvas, root = document) =>
+    Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
+      (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
+    );
   const reset = (canvas) => {
     canvas.style.removeProperty("--diagram-scale");
     canvas.removeAttribute("data-diagram-scaled");
   };
-  const apply = (canvas, requested = "fit") => {
-    reset(canvas);
-    if (!allowed.has(requested)) return false;
-    const stage = canvas.querySelector(":scope > [data-diagram-stage]");
-    if (!stage || !canvas.clientWidth || !stage.scrollWidth) return false;
-    const scale = requested === "fit"
-      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
-      : Number(requested);
-    if (!Number.isFinite(scale) || scale < 0.75 || scale > 1) return false;
-    canvas.style.setProperty("--diagram-scale", String(scale));
-    canvas.setAttribute("data-diagram-scaled", "true");
-    return true;
-  };
-  const reflect = (controls, requested, applied) => {
+  const reflect = (controls, requested, applied, message) => {
     controls.querySelectorAll("[data-diagram-zoom-control]").forEach((button) => {
       button.setAttribute(
         "aria-pressed",
@@ -239,35 +311,122 @@
       );
     });
     const status = controls.querySelector("[data-diagram-zoom-status]");
-    if (status) status.value = applied ? (requested === "fit" ? "Fit width" : `${Number(requested) * 100}%`) : "Scroll";
+    if (status) {
+      status.textContent = message;
+      if ("value" in status) status.value = message;
+    }
+  };
+  const revealControls = (canvas, visible, overflow, root = document) => {
+    controlsFor(canvas, root).forEach((controls) => {
+      controls.hidden = !visible;
+      controls.dataset.diagramControlsVisible = String(visible);
+      controls.dataset.diagramOverflow = String(overflow);
+    });
+  };
+  const retest = (canvas, requested = requestedByCanvas.get(canvas) || canvas.dataset.diagramZoom || "fit") => {
+    reset(canvas);
+    if (!allowed.has(requested)) requested = "fit";
+    requestedByCanvas.set(canvas, requested);
+    const stage = stageFor(canvas);
+    if (!stage || !canvas.clientWidth || !stage.scrollWidth) {
+      revealControls(canvas, false, false);
+      return false;
+    }
+    const overflow = stage.scrollWidth > canvas.clientWidth + 1;
+    const persistent = canvas.dataset.diagramControlsMode === "persistent";
+    const controlsVisible = persistent || overflow;
+    revealControls(canvas, controlsVisible, overflow);
+    const controls = controlsFor(canvas);
+    if (!controlsVisible) {
+      controls.forEach((item) =>
+        reflect(
+          item,
+          "fit",
+          true,
+          item.dataset.diagramStatusFits || "Fits at 100%"
+        )
+      );
+      return true;
+    }
+    const scale = requested === "fit"
+      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
+      : Number(requested);
+    const applied = Number.isFinite(scale) && scale >= 0.75 && scale <= 1;
+    if (applied) {
+      canvas.style.setProperty("--diagram-scale", String(scale));
+      canvas.setAttribute("data-diagram-scaled", "true");
+    }
+    controls.forEach((item) => {
+      const message = applied
+        ? (
+          requested === "fit"
+            ? (
+              overflow
+                ? item.dataset.diagramStatusFit || "Fit width"
+                : item.dataset.diagramStatusFits || "Fits at 100%"
+            )
+            : `${Number(requested) * 100}%`
+        )
+        : item.dataset.diagramStatusScroll || "Scroll";
+      reflect(item, requested, applied, message);
+    });
+    return applied;
+  };
+  const apply = (canvas, requested = "fit") => {
+    if (!allowed.has(requested)) return false;
+    return retest(canvas, requested);
+  };
+  const scheduleRetest = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      managed.forEach((canvas) => retest(canvas));
+    });
   };
   const bind = (root = document) => {
     root.querySelectorAll("[data-diagram-controls]").forEach((controls) => {
       const id = controls.dataset.diagramControls;
-      const canvas = id ? root.querySelector(`[data-diagram-id="${CSS.escape(id)}"]`) : null;
+      const canvas = id
+        ? Array.from(root.querySelectorAll("[data-diagram-id]")).find(
+            (candidate) => candidate.dataset.diagramId === id
+          )
+        : null;
       if (!canvas || controls.dataset.diagramBound === "true") return;
       controls.dataset.diagramBound = "true";
+      controls.hidden = true;
       controls.addEventListener("click", (event) => {
         const button = event.target.closest("[data-diagram-zoom-control]");
         if (!button || !controls.contains(button)) return;
         const requested = button.dataset.diagramZoomControl;
-        const applied = apply(canvas, requested);
-        reflect(controls, requested, applied);
+        apply(canvas, requested);
       });
     });
   };
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(scheduleRetest)
+    : null;
   const enhance = (root = document) => {
     bind(root);
     root.querySelectorAll('[data-diagram-canvas][data-diagram-contract="1"]')
       .forEach((canvas) => {
         try {
-          apply(canvas, canvas.dataset.diagramZoom || "fit");
+          if (!managed.has(canvas)) {
+            managed.add(canvas);
+            if (resizeObserver) {
+              resizeObserver.observe(canvas);
+              const stage = stageFor(canvas);
+              if (stage) resizeObserver.observe(stage);
+            }
+          }
+          retest(canvas, canvas.dataset.diagramZoom || "fit");
         } catch (_error) {
           reset(canvas);
+          revealControls(canvas, false, false, root);
         }
       });
   };
-  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset });
+  if (!resizeObserver) globalThis.addEventListener("resize", scheduleRetest, { passive: true });
+  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset, retest });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
   } else {

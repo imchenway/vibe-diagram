@@ -1,12 +1,65 @@
 [data-diagram-detail][hidden] { display: none; }
 [data-diagram-detail]:target { display: block; }
 
+[data-diagram-node-id][data-detail-for] {
+  cursor: pointer;
+}
+
+[data-diagram-node-id][data-detail-for]:focus-visible rect {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 6px rgba(31, 111, 178, .34));
+}
+
+[data-node-detail-region] {
+  margin-block-start: .875rem;
+  padding: .875rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+
+[data-node-detail-region] > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .4rem 1rem;
+  margin-block-end: .7rem;
+}
+
+[data-node-detail-region] h2 {
+  margin: 0;
+  color: #17324d;
+  font-size: .95rem;
+}
+
+[data-node-detail-region] header p {
+  margin: 0;
+  color: #5a6c80;
+  font-size: .75rem;
+}
+
+[data-node-detail-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: .55rem;
+}
+
 details[data-diagram-detail] {
+  position: relative;
   display: block;
+  min-inline-size: 0;
+  border: 1px solid rgba(141, 179, 216, .54);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .96);
+  overflow: clip;
 }
 
 details[data-diagram-detail] > summary {
   cursor: pointer;
+  padding: .7rem .8rem;
+  color: #17324d;
+  font-size: .8125rem;
+  font-weight: 780;
 }
 
 details[data-diagram-detail] > summary:focus-visible {
@@ -14,7 +67,188 @@ details[data-diagram-detail] > summary:focus-visible {
   outline-offset: 4px;
 }
 
+details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+  margin: 0;
+  padding: 0 .8rem .8rem;
+  color: #52677d;
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+[data-diagram-detail-close] {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region][data-runtime-active="true"] {
+  display: block;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] > header {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+  position: fixed;
+  inset-block-start: var(--detail-top, 1rem);
+  inset-inline-start: var(--detail-left, 1rem);
+  z-index: 1;
+  display: block;
+  inline-size: var(--detail-width, min(22rem, calc(100vw - 1.5rem)));
+  max-block-size: min(26rem, calc(100vh - 1.5rem));
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(94, 151, 207, .72);
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 100% 0, rgba(214, 233, 255, .72), transparent 14rem),
+    linear-gradient(180deg, #fff, #f7fbff);
+  box-shadow:
+    0 1.25rem 3.5rem rgba(20, 57, 92, .24),
+    0 .25rem .8rem rgba(20, 57, 92, .12);
+  pointer-events: auto;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::before {
+  content: "";
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  display: block;
+  block-size: .24rem;
+  background: linear-gradient(90deg, #0877ff, #7c3aed, #00a56a);
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] {
+  display: none;
+  min-block-size: 0;
+  padding: .95rem 1rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail][data-runtime-open="true"] {
+  display: block;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > summary {
+  padding: .15rem 2.65rem .7rem .1rem;
+  border-block-end: 1px solid rgba(141, 179, 216, .48);
+  color: #102033;
+  font-size: 1rem;
+  font-weight: 850;
+  list-style: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+  padding: .8rem .1rem .05rem;
+  color: #38546f;
+  font-size: .84rem;
+  line-height: 1.68;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close] {
+  position: absolute;
+  inset-block-start: .72rem;
+  inset-inline-end: .72rem;
+  display: grid;
+  inline-size: 2rem;
+  block-size: 2rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(94, 151, 207, .68);
+  border-radius: 999px;
+  background: #fff;
+  color: #17324d;
+  font: inherit;
+  font-size: 1.12rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 .3rem .8rem rgba(20, 57, 92, .1);
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:hover {
+  border-color: #0877ff;
+  background: #e8f3ff;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  [data-node-detail-region] > header { align-items: flex-start; flex-direction: column; }
+  [data-node-detail-grid] { grid-template-columns: 1fr; }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    inline-size: var(--detail-width, min(21rem, calc(100vw - 1.25rem)));
+    max-block-size: min(22rem, calc(100vh - 1.25rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    scroll-behavior: auto;
+  }
+}
+
 @media print {
-  [data-diagram-detail][hidden] { display: block !important; }
-  details[data-diagram-detail] > :not(summary) { display: block !important; }
+  [data-node-detail-region],
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] {
+    position: static;
+    display: block;
+    margin-block-start: .875rem;
+    padding: .875rem;
+    border: 1px solid #b9cfe2;
+    background: #fff;
+    pointer-events: auto;
+  }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] > header {
+    display: flex;
+  }
+  [data-node-detail-grid],
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    position: static;
+    display: grid;
+    inline-size: auto;
+    max-block-size: none;
+    grid-template-columns: 1fr 1fr;
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+  }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::before {
+    display: none;
+  }
+  [data-diagram-detail][hidden],
+  html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail],
+  html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail][data-runtime-open="true"] {
+    display: block !important;
+    min-block-size: 0;
+    padding: 0;
+    border: 1px solid #b9cfe2;
+    border-radius: .8rem;
+  }
+  details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+    display: block !important;
+  }
+  [data-diagram-detail-close] { display: none !important; }
 }

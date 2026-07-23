@@ -1,7 +1,7 @@
 {
   "channel": "stable",
-  "ref": "v0.1.6",
+  "ref": "v0.1.7",
   "schema_version": 1,
-  "tree_sha256": "38c2c55d7c7a70d6e3cbafec97b33e56daec0e0d2f2944e42926a6a9d487d705",
-  "version": "0.1.6"
+  "tree_sha256": "84edb02d56c37de3fe804c4ad1c7c993a3ac4d2961ff9cd3fafa7f6cee456925",
+  "version": "0.1.7"
 }

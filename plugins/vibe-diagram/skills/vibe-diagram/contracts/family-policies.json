@@ -11,6 +11,7 @@
   ],
   "migration_batches": {
     "B01": [
+      "business-flow/dual-path-swimlane.html",
       "business-flow/swimlane-flow.html",
       "decision-communication/option-matrix-path.html"
     ],
@@ -103,6 +104,16 @@
       "limits": {"nodes": 30, "relations": 36, "groups": 10, "details": 8},
       "templates": {
         "bpmn-light-flow": {"profile": "graph", "limits": {}},
+        "dual-path-swimlane": {
+          "profile": "graph",
+          "limits": {"nodes": 8, "relations": 9, "groups": 4},
+          "topology": "dual-path-comparison",
+          "direction": "west-to-east",
+          "required_regions": ["shared-trigger", "path-a", "path-b", "shared-result"],
+          "evidence_placement": "after-primary-canvas",
+          "requires_branch": true,
+          "requires_merge": false
+        },
         "exception-branch-flow": {"profile": "graph", "limits": {}},
         "stage-track": {"profile": "timeline", "limits": {}},
         "swimlane-flow": {"profile": "graph", "limits": {"nodes": 24}}
@@ -173,14 +184,40 @@
         "deployment-topology": {"profile": "graph", "limits": {}},
         "event-driven": {"profile": "graph", "limits": {}},
         "identity-access": {"profile": "graph", "limits": {}},
-        "logical-layering": {"profile": "graph", "limits": {}},
+        "logical-layering": {
+          "profile": "graph",
+          "limits": {"details": 9},
+          "topology": "layered-architecture",
+          "direction": "north-to-south",
+          "controls_mode": "persistent",
+          "required_regions": ["presentation", "application", "business", "integration", "platform", "operations"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_geometric_direction": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "requires_localized_node_labels": true
+        },
         "network-topology": {"profile": "graph", "limits": {}},
         "observability-view": {"profile": "graph", "limits": {}},
         "resilience-view": {"profile": "graph", "limits": {}},
         "router-v6": {"profile": "graph", "limits": {}},
         "security-view": {"profile": "graph", "limits": {}},
         "system-context": {"profile": "graph", "limits": {}},
-        "workload-overview": {"profile": "graph", "limits": {}}
+        "workload-overview": {
+          "profile": "graph",
+          "limits": {"details": 8},
+          "topology": "component-topology",
+          "direction": "north-to-south",
+          "controls_mode": "persistent",
+          "required_regions": ["entry", "core", "operations", "data", "foundation"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_geometric_direction": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "requires_localized_node_labels": true
+        }
       }
     },
     "technical-design": {

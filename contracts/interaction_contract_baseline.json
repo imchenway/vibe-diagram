@@ -6,7 +6,7 @@
     "progressive_disclosure": "1"
   },
   "scope": {
-    "generic_template_count": 52,
+    "generic_template_count": 53,
     "sequence_template_count": 6,
     "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13"],
     "completed_templates": [
@@ -15,6 +15,7 @@
       "business-architecture/rule-constraint-heatmap.html",
       "business-architecture/value-chain-map.html",
       "business-flow/bpmn-light-flow.html",
+      "business-flow/dual-path-swimlane.html",
       "business-flow/exception-branch-flow.html",
       "business-flow/stage-track.html",
       "business-flow/swimlane-flow.html",

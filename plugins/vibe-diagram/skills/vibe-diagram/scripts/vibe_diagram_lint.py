@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import re
 import sys
 from collections import Counter
@@ -18,7 +19,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = SKILL_ROOT / "assets" / "templates"
 FAMILY_POLICY_PATH = SKILL_ROOT / "contracts" / "family-policies.json"
-EXPECTED_TEMPLATE_COUNT = 58
+EXPECTED_TEMPLATE_COUNT = 59
 RESOURCE_ATTRIBUTES = {"src", "srcset", "poster", "action", "formaction"}
 LINK_ATTRIBUTES = {"href", "xlink:href"}
 VOID_ELEMENTS = {
@@ -110,6 +111,56 @@ GENERIC_WIDTH_MODES = frozenset({"contained", "auto", "wide"})
 GENERIC_HEIGHT_MODES = frozenset({"flow", "auto", "scroll"})
 GENERIC_MOBILE_MODES = frozenset({"stack", "scroll", "summary"})
 GENERIC_LIMIT_KEYS = frozenset({"nodes", "relations", "groups", "details"})
+GENERIC_PRIMARY_DIRECTIONS = frozenset(
+    {"north-to-south", "south-to-north", "west-to-east", "east-to-west"}
+)
+EVIDENCE_STATUSES = frozenset({"observed", "inferred", "proposed", "unresolved"})
+EVIDENCE_PLACEMENTS = frozenset(
+    {"before-primary-canvas", "after-primary-canvas"}
+)
+EVIDENCE_SOURCE_KINDS = frozenset(
+    {"file", "line", "log", "test", "command", "user", "runtime", "design", "external"}
+)
+SEMANTIC_SLUG_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+DIAGRAM_RANK_RE = re.compile(r"(?:0|[1-9]\d{0,2})")
+SVG_NUMBER_SOURCE = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
+SVG_NUMBER_RE = re.compile(rf"^{SVG_NUMBER_SOURCE}$")
+SVG_PATH_TOKEN_RE = re.compile(rf"[MLHV]|{SVG_NUMBER_SOURCE}")
+HAN_CHARACTER_RE = re.compile(r"[\u3400-\u9fff]")
+ASCII_LETTER_RE = re.compile(r"[A-Za-z]")
+VISIBLE_PLACEHOLDER_RE = re.compile(r"\{\{[^{}]+\}\}")
+VISIBLE_STABLE_ID_RE = re.compile(
+    r"[a-z0-9][a-z0-9._/-]*"
+    r"(?:\s*(?:→|·)\s*[a-z0-9][a-z0-9._/-]*)*"
+)
+VISIBLE_TECHNICAL_ATOM_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.+#_-]*")
+VISIBLE_TECHNICAL_NAMES = frozenset(
+    {
+        "App",
+        "Boot",
+        "Diagram",
+        "Docker",
+        "Elasticsearch",
+        "GitHub",
+        "Java",
+        "Kafka",
+        "Kubernetes",
+        "MongoDB",
+        "MySQL",
+        "Nginx",
+        "Ollama",
+        "OpenTelemetry",
+        "PostgreSQL",
+        "RabbitMQ",
+        "Redis",
+        "SkyWalking",
+        "Spring",
+        "Vibe",
+        "nginx",
+        "ollama",
+        "pgvector",
+    }
+)
 FAMILY_POLICY_KEYS = frozenset(
     {
         "schema_version",
@@ -120,7 +171,22 @@ FAMILY_POLICY_KEYS = frozenset(
     }
 )
 FAMILY_POLICY_FAMILY_KEYS = frozenset({"limits", "templates"})
-FAMILY_POLICY_TEMPLATE_KEYS = frozenset({"profile", "limits"})
+FAMILY_POLICY_TEMPLATE_REQUIRED_KEYS = frozenset({"profile", "limits"})
+FAMILY_POLICY_TEMPLATE_OPTIONAL_KEYS = frozenset(
+    {
+        "topology",
+        "direction",
+        "required_regions",
+        "requires_branch",
+        "requires_merge",
+        "controls_mode",
+        "requires_node_details",
+        "requires_node_detail_hint_in_reading_guide",
+        "requires_localized_node_labels",
+        "requires_geometric_direction",
+        "evidence_placement",
+    }
+)
 EXPECTED_SEQUENCE_EXCLUSIONS = (
     "code-sequence/async-callback-sequence.html",
     "code-sequence/participant-timeline.html",
@@ -148,17 +214,37 @@ MUTABLE_STRUCTURE_ATTRIBUTES = frozenset(
         "title",
         "alt",
         "href",
+        "lang",
         "for",
         "data-diagram-id",
         "data-diagram-node-id",
         "data-diagram-group-id",
         "data-diagram-relation-id",
         "data-diagram-visible-relation-id",
+        "data-fallback-relation-id",
         "data-detail-for",
+        "data-diagram-detail",
+        "data-diagram-detail-id",
+        "data-detail-close-label",
+        "data-node-primary-label",
+        "data-diagram-status-fit",
+        "data-diagram-status-fits",
+        "data-diagram-status-scroll",
         "data-fallback-for",
         "data-from",
         "data-to",
         "data-semantic",
+        "data-primary-relation",
+        "data-diagram-topology",
+        "data-primary-direction",
+        "data-diagram-rank",
+        "data-diagram-region",
+        "data-evidence-id",
+        "data-evidence-status",
+        "data-evidence-for",
+        "data-evidence-source-kind",
+        "data-evidence-source",
+        "data-routing-confidence",
         "data-sequence-id",
         "data-sequence-detail-for",
         "data-sequence-step-index",
@@ -303,7 +389,13 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
         for template_id, template in templates.items():
             if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", template_id):
                 raise ValueError(f"family policy template id is invalid: {family}/{template_id}")
-            if not isinstance(template, dict) or set(template) != FAMILY_POLICY_TEMPLATE_KEYS:
+            template_keys = set(template) if isinstance(template, dict) else set()
+            if (
+                not isinstance(template, dict)
+                or not FAMILY_POLICY_TEMPLATE_REQUIRED_KEYS <= template_keys
+                or not template_keys
+                <= FAMILY_POLICY_TEMPLATE_REQUIRED_KEYS | FAMILY_POLICY_TEMPLATE_OPTIONAL_KEYS
+            ):
                 raise ValueError(
                     f"family policy template definition is invalid: {family}/{template_id}"
                 )
@@ -318,6 +410,70 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
                 raise ValueError(
                     f"family policy template limit widens its family: {family}/{template_id}"
                 )
+            semantic_policy_keys = template_keys & (
+                FAMILY_POLICY_TEMPLATE_OPTIONAL_KEYS - {"evidence_placement"}
+            )
+            if semantic_policy_keys and template["profile"] != "graph":
+                raise ValueError(
+                    f"family policy topology fields require a graph profile: {family}/{template_id}"
+                )
+            topology = template.get("topology")
+            direction = template.get("direction")
+            if (topology is None) != (direction is None):
+                raise ValueError(
+                    f"family policy topology and direction must be declared together: {family}/{template_id}"
+                )
+            if topology is not None and (
+                not isinstance(topology, str) or SEMANTIC_SLUG_RE.fullmatch(topology) is None
+            ):
+                raise ValueError(f"family policy topology is invalid: {family}/{template_id}")
+            if direction is not None and direction not in GENERIC_PRIMARY_DIRECTIONS:
+                raise ValueError(f"family policy direction is invalid: {family}/{template_id}")
+            required_regions = template.get("required_regions")
+            if required_regions is not None:
+                if (
+                    topology is None
+                    or not isinstance(required_regions, list)
+                    or not required_regions
+                    or len(required_regions) != len(set(required_regions))
+                    or any(
+                        not isinstance(region, str)
+                        or SEMANTIC_SLUG_RE.fullmatch(region) is None
+                        for region in required_regions
+                    )
+                ):
+                    raise ValueError(
+                        f"family policy required regions are invalid: {family}/{template_id}"
+                    )
+            controls_mode = template.get("controls_mode")
+            if controls_mode is not None and controls_mode not in {"overflow", "persistent"}:
+                raise ValueError(
+                    f"family policy controls_mode is invalid: {family}/{template_id}"
+                )
+            evidence_placement = template.get("evidence_placement")
+            if (
+                evidence_placement is not None
+                and evidence_placement not in EVIDENCE_PLACEMENTS
+            ):
+                raise ValueError(
+                    f"family policy evidence_placement is invalid: {family}/{template_id}"
+                )
+            for key in (
+                "requires_branch",
+                "requires_merge",
+                "requires_node_details",
+                "requires_localized_node_labels",
+                "requires_geometric_direction",
+            ):
+                if key in template and (direction is None or type(template[key]) is not bool):
+                    raise ValueError(
+                        f"family policy {key} is invalid: {family}/{template_id}"
+                    )
+            if template.get("requires_geometric_direction") and direction != "north-to-south":
+                raise ValueError(
+                    "family policy geometric direction currently requires north-to-south: "
+                    f"{family}/{template_id}"
+                )
             covered.add(f"{family}/{template_id}.html")
     all_templates = {
         f"{family}/{template_id}.html"
@@ -326,32 +482,108 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
     }
     expected = all_templates - set(EXPECTED_SEQUENCE_EXCLUSIONS)
     if covered != expected:
-        raise ValueError("family policy must cover the exact 52 non-sequence templates")
+        raise ValueError("family policy must cover the exact 53 non-sequence templates")
     _validated_migration_batches(policy["migration_batches"], expected)
     return policy
+
+
+@dataclass(frozen=True)
+class _GenericObjectRecord:
+    object_id: str
+    semantic_role: str
+    rank: str
+    region: str
+    detail_for: str
+    primary_label: str
+    element_tag: str
+    href: str
+
+
+@dataclass(frozen=True)
+class _GenericRelationRecord:
+    relation_id: str
+    source: str
+    target: str
+    kind: str
+    semantic: str
+    primary: str
+
+
+@dataclass(frozen=True)
+class _RelationBindingRecord:
+    relation_id: str
+    source: str
+    target: str
+    kind: str
 
 
 @dataclass
 class _GenericCanvasRecord:
     attrs: Dict[str, str]
-    node_ids: List[str]
-    group_ids: List[str]
-    relations: List[Tuple[str, str, str, str, str]]
+    nodes: List[_GenericObjectRecord]
+    groups: List[_GenericObjectRecord]
+    relations: List[_GenericRelationRecord]
     row_ids: List[str]
     col_ids: List[str]
     cells: List[Tuple[str, str]]
     detail_ids: List[str]
-    visible_relation_ids: List[str]
+    detail_targets: List[str]
+    visible_relations: List[_RelationBindingRecord]
+    node_bounds: Dict[str, Tuple[float, float, float, float]]
+    visible_paths: Dict[str, str]
+
+    @property
+    def node_ids(self) -> List[str]:
+        return [node.object_id for node in self.nodes]
+
+    @property
+    def group_ids(self) -> List[str]:
+        return [group.object_id for group in self.groups]
+
+
+@dataclass
+class _FallbackRecord:
+    fallback_for: str
+    relations: List[_RelationBindingRecord]
+
+
+@dataclass(frozen=True)
+class _EvidenceEntryRecord:
+    evidence_id: str
+    status: str
+    evidence_for: str
+    source_kind: str
+    source: str
+
+
+@dataclass
+class _EvidenceSlotRecord:
+    ledger_count: int
+    entries: List[_EvidenceEntryRecord]
+    text_parts: List[str]
+    before_canvas: bool
 
 
 class _GenericContractParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.canvases: List[_GenericCanvasRecord] = []
-        self.fallback_ids: List[str] = []
+        self.fallbacks: List[_FallbackRecord] = []
+        self.evidence_slots: List[_EvidenceSlotRecord] = []
         self.errors: List[str] = []
         self._canvas: Optional[_GenericCanvasRecord] = None
-        self._stack: List[Tuple[str, bool]] = []
+        self._fallback: Optional[_FallbackRecord] = None
+        self._evidence_slot: Optional[_EvidenceSlotRecord] = None
+        self._ledger_active = False
+        self._saw_canvas = False
+        self.document_lang = ""
+        self.node_detail_hint_count = 0
+        self.node_detail_hint_reading_guide_count = 0
+        self.node_detail_hint_canvas_count = 0
+        self._interaction_group_depth = 0
+        self._svg_depth = 0
+        self._active_node_ids: List[str] = []
+        self._stack: List[Tuple[str, bool, bool, bool, bool, str, bool, bool]] = []
 
     def handle_starttag(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
@@ -359,14 +591,83 @@ class _GenericContractParser(HTMLParser):
         normalized = [(name.lower(), value or "") for name, value in attrs]
         values = dict(normalized)
         starts_canvas = "data-diagram-canvas" in values
+        starts_fallback = "data-fallback-for" in values
+        starts_evidence_slot = values.get("data-slot", "").strip() == "evidence-and-notes"
+        starts_ledger = "data-evidence-ledger" in values
+        starts_interaction_group = (
+            values.get("data-reading-guide-group", "").strip() == "interaction"
+        )
+        starts_svg = tag == "svg"
+        starts_node_id = ""
+        if tag == "html":
+            self.document_lang = values.get("lang", "").strip().lower()
         if starts_canvas:
             if self._canvas is not None:
                 self.errors.append("Diagram canvases must not be nested.")
             else:
-                self._canvas = _GenericCanvasRecord(values, [], [], [], [], [], [], [], [])
+                self._canvas = _GenericCanvasRecord(
+                    values, [], [], [], [], [], [], [], [], [], {}, {}
+                )
                 self.canvases.append(self._canvas)
-        if "data-fallback-for" in values:
-            self.fallback_ids.append(values["data-fallback-for"].strip())
+            self._saw_canvas = True
+        if starts_fallback:
+            if self._fallback is not None:
+                self.errors.append("Diagram fallbacks must not be nested.")
+            else:
+                self._fallback = _FallbackRecord(values["data-fallback-for"].strip(), [])
+                self.fallbacks.append(self._fallback)
+        if starts_evidence_slot:
+            if self._evidence_slot is not None:
+                self.errors.append("Evidence-and-notes slots must not be nested.")
+            else:
+                self._evidence_slot = _EvidenceSlotRecord(0, [], [], not self._saw_canvas)
+                self.evidence_slots.append(self._evidence_slot)
+        if starts_ledger:
+            if self._evidence_slot is None:
+                self.errors.append("A generic evidence ledger must be inside the evidence-and-notes slot.")
+            elif self._ledger_active:
+                self.errors.append("Generic evidence ledgers must not be nested.")
+            else:
+                self._ledger_active = True
+                self._evidence_slot.ledger_count += 1
+                if values["data-evidence-ledger"].strip() != GENERIC_CONTRACT_VERSION:
+                    self.errors.append("Generic evidence ledger contract must be version 1.")
+        if "data-evidence-id" in values:
+            if self._evidence_slot is None or not self._ledger_active:
+                self.errors.append("Generic evidence entries must be inside the evidence ledger.")
+            else:
+                self._evidence_slot.entries.append(
+                    _EvidenceEntryRecord(
+                        values["data-evidence-id"].strip(),
+                        values.get("data-evidence-status", "").strip(),
+                        values.get("data-evidence-for", "").strip(),
+                        values.get("data-evidence-source-kind", "").strip(),
+                        values.get("data-evidence-source", "").strip(),
+                    )
+                )
+        if values.get("data-interaction-hint", "").strip() == "node-detail":
+            self.node_detail_hint_count += 1
+            inside_ledger = self._ledger_active or starts_ledger
+            inside_interaction_group = (
+                self._interaction_group_depth > 0 or starts_interaction_group
+            )
+            inside_svg = self._svg_depth > 0 or starts_svg
+            if inside_ledger and inside_interaction_group and not inside_svg:
+                self.node_detail_hint_reading_guide_count += 1
+            if inside_svg:
+                self.node_detail_hint_canvas_count += 1
+        if "data-fallback-relation-id" in values:
+            if self._fallback is None:
+                self.errors.append("Fallback relation bindings must be inside data-fallback-for.")
+            else:
+                self._fallback.relations.append(
+                    _RelationBindingRecord(
+                        values["data-fallback-relation-id"].strip(),
+                        values.get("data-from", "").strip(),
+                        values.get("data-to", "").strip(),
+                        values.get("data-relation-kind", "").strip(),
+                    )
+                )
         if self._canvas is not None:
             semantic = any(
                 key in values
@@ -386,21 +687,57 @@ class _GenericContractParser(HTMLParser):
                     "Duplicate generic contract attributes: " + ", ".join(duplicates) + "."
                 )
             if "data-diagram-node-id" in values:
-                self._canvas.node_ids.append(values["data-diagram-node-id"].strip())
-                if not values.get("data-semantic-role", "").strip():
+                node = _GenericObjectRecord(
+                    values["data-diagram-node-id"].strip(),
+                    values.get("data-semantic-role", "").strip(),
+                    values.get("data-diagram-rank", "").strip(),
+                    values.get("data-diagram-region", "").strip(),
+                    values.get("data-detail-for", "").strip(),
+                    values.get("data-node-primary-label", "").strip(),
+                    tag,
+                    values.get("href", "").strip(),
+                )
+                self._canvas.nodes.append(node)
+                starts_node_id = node.object_id
+                self._active_node_ids.append(starts_node_id)
+                if not node.semantic_role:
                     self.errors.append("Every diagram node must declare data-semantic-role.")
+            if tag == "rect" and self._active_node_ids:
+                node_id = self._active_node_ids[-1]
+                bounds = _parse_svg_rect_bounds(values)
+                if bounds is None:
+                    self.errors.append(
+                        f"Diagram node {node_id} requires numeric SVG rect bounds."
+                    )
+                elif node_id in self._canvas.node_bounds:
+                    self.errors.append(
+                        f"Diagram node {node_id} must contain exactly one geometry rect."
+                    )
+                else:
+                    self._canvas.node_bounds[node_id] = bounds
             if "data-diagram-group-id" in values:
-                self._canvas.group_ids.append(values["data-diagram-group-id"].strip())
-                if not values.get("data-semantic-role", "").strip():
+                group = _GenericObjectRecord(
+                    values["data-diagram-group-id"].strip(),
+                    values.get("data-semantic-role", "").strip(),
+                    values.get("data-diagram-rank", "").strip(),
+                    values.get("data-diagram-region", "").strip(),
+                    "",
+                    "",
+                    tag,
+                    "",
+                )
+                self._canvas.groups.append(group)
+                if not group.semantic_role:
                     self.errors.append("Every diagram group must declare data-semantic-role.")
             if "data-diagram-relation-id" in values:
                 self._canvas.relations.append(
-                    (
+                    _GenericRelationRecord(
                         values["data-diagram-relation-id"].strip(),
                         values.get("data-from", "").strip(),
                         values.get("data-to", "").strip(),
                         values.get("data-relation-kind", "").strip(),
                         values.get("data-semantic", "").strip(),
+                        values.get("data-primary-relation", "").strip(),
                     )
                 )
             if "data-matrix-row-id" in values:
@@ -415,7 +752,21 @@ class _GenericContractParser(HTMLParser):
                     )
                 )
             if "data-diagram-detail-id" in values:
-                self._canvas.detail_ids.append(values["data-diagram-detail-id"].strip())
+                detail_id = values["data-diagram-detail-id"].strip()
+                self._canvas.detail_ids.append(detail_id)
+                self._canvas.detail_targets.append(
+                    values.get("data-detail-for", "").strip()
+                )
+                if tag != "details":
+                    self.errors.append("Diagram node details must use native details elements.")
+                if values.get("id", "").strip() != detail_id:
+                    self.errors.append(
+                        "Diagram node detail id must match its data-diagram-detail-id."
+                    )
+                if values.get("data-diagram-detail", "").strip() != detail_id:
+                    self.errors.append(
+                        "Diagram node detail runtime target must match its detail id."
+                    )
             if "data-diagram-visible-relation-id" in values:
                 is_svg_edge = tag in {"line", "path", "polygon", "polyline"}
                 is_html_edge = values.get("data-visible-relation-kind") == "edge"
@@ -423,11 +774,34 @@ class _GenericContractParser(HTMLParser):
                     self.errors.append(
                         "Visible relation bindings must use an SVG edge or an explicit HTML edge carrier."
                     )
-                self._canvas.visible_relation_ids.append(
-                    values["data-diagram-visible-relation-id"].strip()
+                self._canvas.visible_relations.append(
+                    _RelationBindingRecord(
+                        values["data-diagram-visible-relation-id"].strip(),
+                        values.get("data-from", "").strip(),
+                        values.get("data-to", "").strip(),
+                        values.get("data-relation-kind", "").strip(),
+                    )
                 )
+                if tag == "path":
+                    relation_id = values["data-diagram-visible-relation-id"].strip()
+                    self._canvas.visible_paths[relation_id] = values.get("d", "").strip()
+        if starts_interaction_group:
+            self._interaction_group_depth += 1
+        if starts_svg:
+            self._svg_depth += 1
         if tag not in VOID_ELEMENTS:
-            self._stack.append((tag, starts_canvas))
+            self._stack.append(
+                (
+                    tag,
+                    starts_canvas,
+                    starts_fallback,
+                    starts_evidence_slot,
+                    starts_ledger,
+                    starts_node_id,
+                    starts_interaction_group,
+                    starts_svg,
+                )
+            )
 
     def handle_startendtag(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
@@ -439,9 +813,549 @@ class _GenericContractParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if not self._stack:
             return
-        _open_tag, closes_canvas = self._stack.pop()
+        (
+            _open_tag,
+            closes_canvas,
+            closes_fallback,
+            closes_evidence_slot,
+            closes_ledger,
+            closes_node_id,
+            closes_interaction_group,
+            closes_svg,
+        ) = self._stack.pop()
+        if closes_node_id:
+            if not self._active_node_ids or self._active_node_ids[-1] != closes_node_id:
+                self.errors.append("Diagram node geometry nesting is invalid.")
+            else:
+                self._active_node_ids.pop()
+        if closes_ledger:
+            self._ledger_active = False
+        if closes_evidence_slot:
+            self._evidence_slot = None
+        if closes_fallback:
+            self._fallback = None
         if closes_canvas:
             self._canvas = None
+        if closes_interaction_group:
+            self._interaction_group_depth -= 1
+        if closes_svg:
+            self._svg_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self._evidence_slot is not None and data.strip():
+            self._evidence_slot.text_parts.append(data.strip())
+
+
+def _is_template_placeholder(value: str) -> bool:
+    return re.fullmatch(r"\{\{[^{}]+\}\}", value.strip()) is not None
+
+
+def _parse_svg_number(value: str) -> Optional[float]:
+    stripped = value.strip()
+    if SVG_NUMBER_RE.fullmatch(stripped) is None:
+        return None
+    number = float(stripped)
+    return number if math.isfinite(number) else None
+
+
+def _parse_svg_rect_bounds(
+    attrs: Mapping[str, str],
+) -> Optional[Tuple[float, float, float, float]]:
+    values = [_parse_svg_number(attrs.get(key, "")) for key in ("x", "y", "width", "height")]
+    if any(value is None for value in values):
+        return None
+    x, y, width, height = values
+    assert x is not None and y is not None and width is not None and height is not None
+    if width <= 0 or height <= 0:
+        return None
+    return x, y, width, height
+
+
+def _parse_absolute_orthogonal_path_points(
+    value: str,
+) -> Optional[List[Tuple[float, float]]]:
+    tokens: List[str] = []
+    position = 0
+    for match in SVG_PATH_TOKEN_RE.finditer(value):
+        if re.fullmatch(r"[\s,]*", value[position : match.start()]) is None:
+            return None
+        tokens.append(match.group(0))
+        position = match.end()
+    if re.fullmatch(r"[\s,]*", value[position:]) is None or not tokens:
+        return None
+
+    index = 0
+    command = ""
+    current: Optional[Tuple[float, float]] = None
+    start: Optional[Tuple[float, float]] = None
+    points: List[Tuple[float, float]] = []
+    while index < len(tokens):
+        if tokens[index] in {"M", "L", "H", "V"}:
+            command = tokens[index]
+            index += 1
+        if not command or index >= len(tokens) or tokens[index] in {"M", "L", "H", "V"}:
+            return None
+        if command in {"M", "L"}:
+            if index + 1 >= len(tokens) or tokens[index + 1] in {"M", "L", "H", "V"}:
+                return None
+            x = _parse_svg_number(tokens[index])
+            y = _parse_svg_number(tokens[index + 1])
+            if x is None or y is None or (command != "M" and current is None):
+                return None
+            current = (x, y)
+            if command == "M":
+                if start is not None:
+                    return None
+                start = current
+                command = "L"
+            points.append(current)
+            index += 2
+        elif command == "H":
+            x = _parse_svg_number(tokens[index])
+            if x is None or current is None:
+                return None
+            current = (x, current[1])
+            points.append(current)
+            index += 1
+        else:
+            y = _parse_svg_number(tokens[index])
+            if y is None or current is None:
+                return None
+            current = (current[0], y)
+            points.append(current)
+            index += 1
+    if start is None or current is None or not points:
+        return None
+    return points
+
+
+class _VisibleLanguageParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: List[Tuple[str, str, bool]] = []
+        self.document_lang = ""
+        self._stack: List[Tuple[str, bool, bool]] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        normalized = [(name.lower(), value or "") for name, value in attrs]
+        values = dict(normalized)
+        if tag == "html":
+            self.document_lang = values.get("lang", "").strip().lower()
+        inherited_ignored = self._stack[-1][1] if self._stack else False
+        inherited_stable = self._stack[-1][2] if self._stack else False
+        classes = set(values.get("class", "").split())
+        ignored = (
+            inherited_ignored
+            or tag in {"script", "style", "template"}
+            or "hidden" in values
+            or values.get("aria-hidden", "").strip().lower() == "true"
+            or "semantic-relation" in classes
+        )
+        stable_context = (
+            inherited_stable
+            or "fallback-region-index" in classes
+            or "data-semantic-edge-route" in values
+        )
+        if not ignored:
+            for name, value in normalized:
+                if value and (
+                    name in {"aria-label", "title", "alt"}
+                    or name.startswith("data-diagram-status-")
+                ):
+                    self.parts.append((name, " ".join(value.split()), stable_context))
+        if tag not in VOID_ELEMENTS:
+            self._stack.append((tag, ignored, stable_context))
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self.handle_starttag(tag, attrs)
+        if tag not in VOID_ELEMENTS:
+            self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if self._stack:
+            self._stack.pop()
+
+    def handle_data(self, data: str) -> None:
+        if self._stack and not self._stack[-1][1] and data.strip():
+            self.parts.append(
+                ("text", " ".join(data.split()), self._stack[-1][2])
+            )
+
+
+def _is_allowed_technical_visible_text(value: str, stable_context: bool) -> bool:
+    if stable_context and VISIBLE_STABLE_ID_RE.fullmatch(value):
+        return True
+    if (
+        VISIBLE_STABLE_ID_RE.fullmatch(value)
+        and ("/" in value or "." in value)
+        and " " not in value
+    ):
+        return True
+    atoms = [part for part in re.split(r"[\s·,/]+", value) if part]
+    if not atoms:
+        return False
+    simple_titlecase = 0
+    neutral_names = 0
+    for atom in atoms:
+        if VISIBLE_TECHNICAL_ATOM_RE.fullmatch(atom) is None:
+            return False
+        if atom in VISIBLE_TECHNICAL_NAMES:
+            neutral_names += 1
+            continue
+        if re.fullmatch(r"\d+(?:\.\d+)*", atom):
+            continue
+        if re.fullmatch(r"[A-Z][A-Z0-9]{1,}", atom):
+            continue
+        if re.search(r"\d|[a-z][A-Z]|[A-Z].*[A-Z]|[.+#_]", atom):
+            continue
+        if re.fullmatch(r"[A-Z][a-z]+", atom):
+            simple_titlecase += 1
+            continue
+        return False
+    if simple_titlecase and neutral_names * 2 < len(atoms):
+        return False
+    return True
+
+
+def _validate_visible_language(html: str, document_lang: str) -> List[str]:
+    parser = _VisibleLanguageParser()
+    try:
+        parser.feed(html)
+        parser.close()
+    except Exception as exc:
+        return [f"Could not parse visible artifact language: {exc}."]
+    effective_lang = document_lang or parser.document_lang
+    if not effective_lang.startswith("zh"):
+        return []
+    errors: List[str] = []
+    for kind, value, stable_context in parser.parts:
+        if VISIBLE_PLACEHOLDER_RE.search(value):
+            errors.append(
+                f"Chinese artifacts must not expose an unresolved visible placeholder in {kind}."
+            )
+        elif (
+            ASCII_LETTER_RE.search(value)
+            and HAN_CHARACTER_RE.search(value) is None
+            and not _is_allowed_technical_visible_text(value, stable_context)
+        ):
+            sample = value if len(value) <= 96 else value[:93] + "..."
+            errors.append(
+                f"Chinese artifacts contain English-only visible {kind}: {sample!r}."
+            )
+    return list(dict.fromkeys(errors))
+
+
+def _point_inside_bounds(
+    point: Tuple[float, float],
+    bounds: Tuple[float, float, float, float],
+    tolerance: float = 0.001,
+) -> bool:
+    x, y = point
+    left, top, width, height = bounds
+    return (
+        left - tolerance <= x <= left + width + tolerance
+        and top - tolerance <= y <= top + height + tolerance
+    )
+
+
+def _point_on_bounds_edge(
+    point: Tuple[float, float],
+    bounds: Tuple[float, float, float, float],
+    tolerance: float = 0.001,
+) -> bool:
+    if not _point_inside_bounds(point, bounds, tolerance):
+        return False
+    x, y = point
+    left, top, width, height = bounds
+    return (
+        abs(x - left) <= tolerance
+        or abs(x - (left + width)) <= tolerance
+        or abs(y - top) <= tolerance
+        or abs(y - (top + height)) <= tolerance
+    )
+
+
+def _point_on_south_edge(
+    point: Tuple[float, float],
+    bounds: Tuple[float, float, float, float],
+    tolerance: float = 0.001,
+) -> bool:
+    x, y = point
+    left, top, width, height = bounds
+    return (
+        left - tolerance <= x <= left + width + tolerance
+        and abs(y - (top + height)) <= tolerance
+    )
+
+
+def _point_on_north_edge(
+    point: Tuple[float, float],
+    bounds: Tuple[float, float, float, float],
+    tolerance: float = 0.001,
+) -> bool:
+    x, y = point
+    left, top, width, _height = bounds
+    return left - tolerance <= x <= left + width + tolerance and abs(y - top) <= tolerance
+
+
+def _validate_north_to_south_geometry(
+    canvas: _GenericCanvasRecord,
+    primary_relations: Sequence[_GenericRelationRecord],
+    topology: str,
+) -> List[str]:
+    errors: List[str] = []
+    missing_bounds = sorted(set(canvas.node_ids) - set(canvas.node_bounds))
+    if missing_bounds:
+        errors.append(
+            "Geometric direction requires one SVG rect bound for every diagram node: "
+            + ", ".join(missing_bounds)
+            + "."
+        )
+
+    centers_by_rank: Dict[int, List[float]] = {}
+    for node in canvas.nodes:
+        bounds = canvas.node_bounds.get(node.object_id)
+        if bounds is None or DIAGRAM_RANK_RE.fullmatch(node.rank) is None:
+            continue
+        centers_by_rank.setdefault(int(node.rank), []).append(bounds[1] + bounds[3] / 2)
+    ordered_ranks = sorted(centers_by_rank)
+    for previous, current in zip(ordered_ranks, ordered_ranks[1:]):
+        if max(centers_by_rank[previous]) >= min(centers_by_rank[current]):
+            errors.append(
+                "North-to-south geometry requires actual node Y positions to increase by rank."
+            )
+            break
+
+    for relation in primary_relations:
+        path_data = canvas.visible_paths.get(relation.relation_id)
+        if path_data is None:
+            errors.append(
+                "Geometric direction requires every primary relation to use a visible SVG path: "
+                f"{relation.relation_id}."
+            )
+            continue
+        points = _parse_absolute_orthogonal_path_points(path_data)
+        if points is None:
+            errors.append(
+                "Geometric direction paths must use valid absolute M/L/H/V commands: "
+                f"{relation.relation_id}."
+            )
+            continue
+        start, end = points[0], points[-1]
+        source_bounds = canvas.node_bounds.get(relation.source)
+        target_bounds = canvas.node_bounds.get(relation.target)
+        if source_bounds is None or target_bounds is None:
+            continue
+        layered = topology == "layered-architecture"
+        valid_start = (
+            _point_on_south_edge(start, source_bounds)
+            if layered
+            else _point_on_bounds_edge(start, source_bounds)
+        )
+        valid_end = (
+            _point_on_north_edge(end, target_bounds)
+            if layered
+            else _point_on_bounds_edge(end, target_bounds)
+        )
+        if not valid_start:
+            errors.append(
+                "Primary relation path must start on the permitted source node boundary: "
+                f"{relation.relation_id}."
+            )
+        if not valid_end:
+            errors.append(
+                "Primary relation path must end on the permitted target node boundary: "
+                f"{relation.relation_id}."
+            )
+        if any(
+            current[1] < previous[1] - 0.001
+            for previous, current in zip(points, points[1:])
+        ):
+            errors.append(
+                "North-to-south primary relation paths must never route northward: "
+                f"{relation.relation_id}."
+            )
+        if end[1] <= start[1]:
+            errors.append(
+                "North-to-south primary relation paths must visibly advance downward: "
+                f"{relation.relation_id}."
+            )
+    return errors
+
+
+def _validate_evidence_ledger(
+    parser: _GenericContractParser,
+    semantic_targets: set[str],
+    evidence_placement: str,
+) -> List[str]:
+    errors: List[str] = []
+    if not parser.evidence_slots:
+        return ["A generic artifact requires a structured evidence-and-notes slot."]
+    evidence_ids: List[str] = []
+    for slot in parser.evidence_slots:
+        if evidence_placement == "before-primary-canvas" and not slot.before_canvas:
+            errors.append("The evidence boundary ledger must appear before the first diagram canvas.")
+        if evidence_placement == "after-primary-canvas" and slot.before_canvas:
+            errors.append("The evidence ledger must appear after the first diagram canvas.")
+        if slot.ledger_count != 1:
+            errors.append(
+                "Every generic evidence-and-notes slot requires exactly one data-evidence-ledger."
+            )
+        if not slot.entries:
+            errors.append(
+                "A generic evidence ledger requires at least one structured evidence entry; bare text is not evidence."
+            )
+        for entry in slot.entries:
+            evidence_ids.append(entry.evidence_id)
+            if not entry.evidence_id or SEMANTIC_SLUG_RE.fullmatch(entry.evidence_id) is None:
+                errors.append("Generic evidence ids must be non-empty semantic slugs.")
+            if entry.status not in EVIDENCE_STATUSES:
+                errors.append("Generic evidence status is invalid.")
+            targets = entry.evidence_for.split()
+            if not targets:
+                errors.append("Generic evidence entries must reference at least one semantic target.")
+            elif not _is_template_placeholder(entry.evidence_for):
+                unknown = sorted(set(targets) - semantic_targets)
+                if unknown:
+                    errors.append(
+                        "Generic evidence targets must reference authored semantic ids: "
+                        + ", ".join(unknown)
+                        + "."
+                    )
+            if entry.source_kind not in EVIDENCE_SOURCE_KINDS:
+                errors.append("Generic evidence source kind is invalid.")
+            if not entry.source:
+                errors.append("Generic evidence source must be non-empty.")
+    if len(evidence_ids) != len(set(evidence_ids)):
+        errors.append("Generic evidence ids must be unique within a document.")
+    return errors
+
+
+def _validate_directional_graph(
+    canvas: _GenericCanvasRecord,
+    definition: Mapping[str, Any],
+    document_lang: str,
+) -> List[str]:
+    if "direction" not in definition:
+        return []
+    errors: List[str] = []
+    attrs = canvas.attrs
+    if attrs.get("data-diagram-topology", "").strip() != definition["topology"]:
+        errors.append("Diagram topology must match its trusted template policy.")
+    if attrs.get("data-primary-direction", "").strip() != definition["direction"]:
+        errors.append("Diagram primary direction must match its trusted template policy.")
+    controls_mode = definition.get("controls_mode")
+    if controls_mode is not None and attrs.get("data-diagram-controls-mode", "").strip() != controls_mode:
+        errors.append("Diagram controls mode must match its trusted template policy.")
+    objects = canvas.nodes + canvas.groups
+    ranks: Dict[str, int] = {}
+    for item in objects:
+        if DIAGRAM_RANK_RE.fullmatch(item.rank) is None:
+            errors.append("Directional graph nodes and groups require integer data-diagram-rank values.")
+        else:
+            ranks[item.object_id] = int(item.rank)
+        if SEMANTIC_SLUG_RE.fullmatch(item.region) is None:
+            errors.append("Directional graph nodes and groups require semantic data-diagram-region values.")
+    group_regions = [group.region for group in canvas.groups if group.region]
+    if len(group_regions) != len(set(group_regions)):
+        errors.append("Directional graph group regions must be unique within a canvas.")
+    required_regions = set(definition.get("required_regions", []))
+    missing_regions = sorted(required_regions - set(group_regions))
+    if missing_regions:
+        errors.append(
+            "Directional graph groups do not cover required policy regions: "
+            + ", ".join(missing_regions)
+            + "."
+        )
+    unknown_node_regions = sorted(
+        {node.region for node in canvas.nodes if node.region and node.region not in set(group_regions)}
+    )
+    if unknown_node_regions:
+        errors.append(
+            "Directional graph node regions must reference authored group regions: "
+            + ", ".join(unknown_node_regions)
+            + "."
+        )
+    primary_relations: List[_GenericRelationRecord] = []
+    for relation in canvas.relations:
+        if relation.primary not in {"true", "false"}:
+            errors.append(
+                "Directional graph relations must declare data-primary-relation as true or false."
+            )
+        elif relation.primary == "true":
+            primary_relations.append(relation)
+    if not primary_relations:
+        errors.append("A directional graph requires at least one authored primary relation.")
+    for relation in primary_relations:
+        source_rank = ranks.get(relation.source)
+        target_rank = ranks.get(relation.target)
+        if source_rank is None or target_rank is None:
+            errors.append("Primary relation endpoints must have authored diagram ranks.")
+        elif source_rank >= target_rank:
+            errors.append(
+                "Primary relations must advance from a lower authored rank to a higher authored rank."
+            )
+    outgoing: Dict[str, set[str]] = {}
+    incoming: Dict[str, set[str]] = {}
+    for relation in primary_relations:
+        outgoing.setdefault(relation.source, set()).add(relation.target)
+        incoming.setdefault(relation.target, set()).add(relation.source)
+    has_branch = any(len(targets) > 1 for targets in outgoing.values())
+    has_merge = any(len(sources) > 1 for sources in incoming.values())
+    if "requires_branch" in definition and has_branch != definition["requires_branch"]:
+        errors.append("Directional graph primary relations do not satisfy the branch policy.")
+    if "requires_merge" in definition and has_merge != definition["requires_merge"]:
+        errors.append("Directional graph primary relations do not satisfy the merge policy.")
+    if definition.get("requires_geometric_direction"):
+        errors.extend(
+            _validate_north_to_south_geometry(
+                canvas,
+                primary_relations,
+                str(definition["topology"]),
+            )
+        )
+    if definition.get("requires_node_details"):
+        detail_ids = canvas.detail_ids
+        detail_targets = canvas.detail_targets
+        node_targets = [node.detail_for for node in canvas.nodes]
+        if len(detail_ids) != len(set(detail_ids)):
+            errors.append("Diagram node detail ids must be unique within a canvas.")
+        if any(SEMANTIC_SLUG_RE.fullmatch(value) is None for value in node_targets):
+            errors.append("Every diagram node requires one semantic data-detail-for target.")
+        if any(SEMANTIC_SLUG_RE.fullmatch(value) is None for value in detail_targets):
+            errors.append("Every native detail block must point back to one semantic node id.")
+        if set(node_targets) != set(detail_ids) or len(node_targets) != len(detail_ids):
+            errors.append("Diagram nodes and native detail blocks must form a one-to-one mapping.")
+        if set(detail_targets) != set(canvas.node_ids) or len(detail_targets) != len(canvas.nodes):
+            errors.append("Native detail blocks and diagram nodes must form a reverse one-to-one mapping.")
+        reverse_targets = dict(zip(detail_ids, detail_targets))
+        for node in canvas.nodes:
+            if node.element_tag != "a" or node.href != f"#{node.detail_for}":
+                errors.append(
+                    "Every detailed diagram node must remain a native link to its detail block."
+                )
+            if reverse_targets.get(node.detail_for) != node.object_id:
+                errors.append(
+                    "Every detailed diagram node and native detail block must point to each other."
+                )
+    if definition.get("requires_localized_node_labels"):
+        if any(not node.primary_label for node in canvas.nodes):
+            errors.append("Every localized diagram node requires data-node-primary-label.")
+        if document_lang.startswith("zh"):
+            for node in canvas.nodes:
+                if _is_template_placeholder(node.primary_label):
+                    errors.append(
+                        "Chinese artifacts must resolve every diagram node primary-label placeholder."
+                    )
+                elif node.primary_label and HAN_CHARACTER_RE.search(node.primary_label) is None:
+                    errors.append(
+                        "Chinese artifacts require Chinese primary labels on every diagram node."
+                    )
+    return errors
 
 
 def generic_contract_errors(
@@ -463,6 +1377,20 @@ def generic_contract_errors(
     except Exception as exc:
         return [f"Could not parse generic diagram contract: {exc}."]
     errors = list(parser.errors)
+    errors.extend(_validate_visible_language(html, parser.document_lang))
+    if definition.get("requires_node_detail_hint_in_reading_guide"):
+        if parser.node_detail_hint_count != 1:
+            errors.append(
+                "Detailed architecture templates require exactly one node-detail interaction hint."
+            )
+        if parser.node_detail_hint_reading_guide_count != 1:
+            errors.append(
+                "The node-detail interaction hint must be inside the interaction group of the evidence reading guide."
+            )
+        if parser.node_detail_hint_canvas_count:
+            errors.append(
+                "The node-detail interaction hint must not float inside the primary SVG canvas."
+            )
     if not parser.canvases:
         errors.append("Generic diagram contract requires at least one canvas.")
         return errors
@@ -473,6 +1401,7 @@ def generic_contract_errors(
         errors.append("Every diagram canvas requires a non-empty data-diagram-id.")
     if len(canvas_ids) != len(set(canvas_ids)):
         errors.append("Diagram canvas ids must be unique.")
+    semantic_targets = set(canvas_ids)
     for canvas in parser.canvases:
         attrs = canvas.attrs
         canvas_id = attrs.get("data-diagram-id", "").strip()
@@ -491,17 +1420,30 @@ def generic_contract_errors(
             errors.append("Diagram node and group ids must be non-empty.")
         if len(semantic_ids) != len(set(semantic_ids)):
             errors.append("Diagram node and group ids must be unique within a canvas.")
+        semantic_targets.update(semantic_ids)
+        semantic_targets.update(canvas.detail_ids)
         endpoints = set(semantic_ids)
         relation_ids = []
-        for relation_id, source, target, kind, semantic in canvas.relations:
-            relation_ids.append(relation_id)
-            if not all((relation_id, source, target, kind, semantic)):
+        declared_relations: Dict[str, _GenericRelationRecord] = {}
+        for relation in canvas.relations:
+            relation_ids.append(relation.relation_id)
+            if not all(
+                (
+                    relation.relation_id,
+                    relation.source,
+                    relation.target,
+                    relation.kind,
+                    relation.semantic,
+                )
+            ):
                 errors.append("Every diagram relation requires id, endpoints, kind, and semantic.")
-            elif source not in endpoints or target not in endpoints:
+            elif relation.source not in endpoints or relation.target not in endpoints:
                 errors.append("Diagram relation endpoints must reference authored nodes or groups.")
+            declared_relations[relation.relation_id] = relation
+            semantic_targets.add(relation.relation_id)
         if len(relation_ids) != len(set(relation_ids)):
             errors.append("Diagram relation ids must be unique within a canvas.")
-        visible_relation_ids = canvas.visible_relation_ids
+        visible_relation_ids = [binding.relation_id for binding in canvas.visible_relations]
         if any(not relation_id for relation_id in visible_relation_ids):
             errors.append("Visible relation bindings must use non-empty relation ids.")
         if len(visible_relation_ids) != len(set(visible_relation_ids)):
@@ -520,6 +1462,21 @@ def generic_contract_errors(
                 + ", ".join(extra_visible)
                 + "."
             )
+        for binding in canvas.visible_relations:
+            declared = declared_relations.get(binding.relation_id)
+            if declared is None:
+                continue
+            if not all((binding.source, binding.target, binding.kind)):
+                errors.append("Visible relation bindings require structured endpoints and kind.")
+            elif (binding.source, binding.target, binding.kind) != (
+                declared.source,
+                declared.target,
+                declared.kind,
+            ):
+                errors.append(
+                    "Visible relation endpoints and kind must match the authored diagram relation."
+                )
+        errors.extend(_validate_directional_graph(canvas, definition, parser.document_lang))
         if definition["profile"] == "matrix":
             rows, columns = set(canvas.row_ids), set(canvas.col_ids)
             if not rows or not columns or not canvas.cells:
@@ -536,8 +1493,51 @@ def generic_contract_errors(
         for key, count in counts.items():
             if count > limits[key]:
                 errors.append(f"Diagram canvas exceeds the {key} complexity budget.")
-        if canvas_id and canvas_id not in parser.fallback_ids:
+        fallbacks = [fallback for fallback in parser.fallbacks if fallback.fallback_for == canvas_id]
+        if canvas_id and not fallbacks:
             errors.append("Every diagram canvas requires a matching data-fallback-for baseline.")
+        if len(fallbacks) > 1:
+            errors.append("Every diagram canvas may have only one matching data-fallback-for baseline.")
+        for fallback in fallbacks:
+            fallback_ids = [binding.relation_id for binding in fallback.relations]
+            if len(fallback_ids) != len(set(fallback_ids)):
+                errors.append("Fallback relation ids must be unique within a canvas fallback.")
+            for binding in fallback.relations:
+                declared = declared_relations.get(binding.relation_id)
+                if not all((binding.relation_id, binding.source, binding.target, binding.kind)):
+                    errors.append("Fallback relation bindings require id, endpoints, and kind.")
+                elif declared is None:
+                    errors.append("Fallback relation bindings must reference authored diagram relations.")
+                elif (binding.source, binding.target, binding.kind) != (
+                    declared.source,
+                    declared.target,
+                    declared.kind,
+                ):
+                    errors.append(
+                        "Fallback relation endpoints and kind must match the authored diagram relation."
+                    )
+            if "direction" in definition:
+                missing_fallback = sorted(set(relation_ids) - set(fallback_ids))
+                extra_fallback = sorted(set(fallback_ids) - set(relation_ids))
+                if missing_fallback:
+                    errors.append(
+                        "Directional graph fallbacks must bind every authored relation: "
+                        + ", ".join(missing_fallback)
+                        + "."
+                    )
+                if extra_fallback:
+                    errors.append(
+                        "Directional graph fallback bindings reference unknown relations: "
+                        + ", ".join(extra_fallback)
+                        + "."
+                    )
+    errors.extend(
+        _validate_evidence_ledger(
+            parser,
+            semantic_targets,
+            definition.get("evidence_placement", "before-primary-canvas"),
+        )
+    )
     return list(dict.fromkeys(errors))
 
 
@@ -568,6 +1568,28 @@ def lint_adaptive_kernel(html: str) -> List[str]:
             errors.append(f"Migrated generic template requires exactly one adaptive {tag} kernel.")
         elif matches[0] != expected:
             errors.append(f"Migrated generic template adaptive {tag} kernel has drifted.")
+    return errors
+
+
+def lint_progressive_kernel(html: str) -> List[str]:
+    errors = []
+    paths = {
+        "style": SKILL_ROOT / "assets" / "contracts" / "progressive-disclosure" / "v1.css",
+        "script": SKILL_ROOT / "assets" / "contracts" / "progressive-disclosure" / "v1.js",
+    }
+    for tag, path in paths.items():
+        expected = path.read_text(encoding="utf-8").rstrip("\n")
+        matches = re.findall(
+            rf'<{tag} data-progressive-disclosure-kernel="1">\n(.*?)\n</{tag}>',
+            html,
+            flags=re.DOTALL,
+        )
+        if len(matches) != 1:
+            errors.append(
+                f"Detailed diagram template requires exactly one progressive {tag} kernel."
+            )
+        elif matches[0] != expected:
+            errors.append(f"Detailed diagram template progressive {tag} kernel has drifted.")
     return errors
 
 
@@ -1513,6 +2535,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         html = args.path.read_text(encoding="utf-8")
         errors = lint_self_contained_resources(html)
+        errors.extend(_validate_visible_language(html, ""))
         errors.extend(lint_template_identity(html, args.diagram_type))
         errors.extend(lint_visual_shell(html))
         errors.extend(lint_template_conformance(html, args.diagram_type))
@@ -1544,6 +2567,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             if f"{family}/{template_id}.html" in completed:
                 errors.extend(lint_generic_contract(html, family, template_id, policy))
                 errors.extend(lint_adaptive_kernel(html))
+                definition = policy["families"][family]["templates"][template_id]
+                if definition.get("requires_node_details"):
+                    errors.extend(lint_progressive_kernel(html))
     except (OSError, UnicodeError, ValueError) as exc:
         errors = [str(exc)]
     errors = _deduplicate(errors)
@@ -1552,6 +2578,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             print(f"ERROR: {error}")
         return 1
     print(f"OK: {args.path}")
+    print("EVIDENCE: static-contract-valid; browser-rendering=not-verified")
     return 0
 
 

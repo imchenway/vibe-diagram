@@ -8,7 +8,7 @@ Chinese overview: [README.zh-CN.md](README.zh-CN.md).
 
 ## Repository model
 
-`skills/vibe-diagram/` is the only editable source for skill behavior. That directory contains the bootstrap `SKILL.md`, 12 references, 58 HTML templates, a standard-library updater, and a standard-library linter. It has zero third-party runtime dependencies.
+`skills/vibe-diagram/` is the only editable source for skill behavior. That directory contains the bootstrap `SKILL.md`, 12 references, 59 HTML templates, a standard-library updater, and a standard-library linter. It has zero third-party runtime dependencies.
 
 Client manifests and overlays live under `adapters/`. Generated outputs are disposable artifacts and must not be edited by hand:
 

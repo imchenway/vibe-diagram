@@ -24,9 +24,24 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
+[data-diagram-title-region] {
+  display: flex;
+  max-inline-size: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem 1rem;
+}
+[data-diagram-title-copy] {
+  flex: 1 1 24rem;
+  min-inline-size: 0;
+}
+[data-diagram-title-region] > [data-diagram-controls] {
+  flex: 0 0 auto;
+  margin-block: 0;
+}
 [data-diagram-controls] {
   position: relative;
-  display: inline-flex;
+  display: none;
   max-inline-size: 100%;
   flex-wrap: wrap;
   align-items: center;
@@ -37,6 +52,9 @@
   border-radius: .9rem;
   background: rgba(255, 255, 255, .92);
   box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls][data-diagram-controls-visible="true"] {
+  display: inline-flex;
 }
 [data-diagram-controls] button {
   appearance: none;
@@ -83,8 +101,64 @@
   border: 0;
 }
 .diagram-fallback { display: none; }
+[data-evidence-ledger="1"] {
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+[data-evidence-summary] {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem 1rem;
+  padding: 0 .125rem .125rem;
+}
+[data-evidence-summary] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+[data-evidence-summary] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+[data-evidence-ledger="1"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .625rem;
+  margin-block: .5rem 1rem;
+}
+[data-evidence-id] {
+  display: grid;
+  align-content: start;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .75rem .875rem;
+  border: 1px solid rgba(141, 179, 216, .58);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .9);
+  overflow-wrap: anywhere;
+}
+[data-evidence-status="observed"] {
+  border-color: rgba(23, 120, 90, .38);
+  background: rgba(238, 249, 245, .94);
+}
+[data-evidence-source-kind="test"] {
+  border-color: rgba(31, 111, 178, .4);
+  background: rgba(237, 246, 255, .94);
+}
+[data-evidence-status="unresolved"] {
+  border-color: rgba(152, 101, 6, .38);
+  background: rgba(255, 248, 232, .96);
+}
 
 @media (max-width: 48rem) {
+  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
+  [data-diagram-title-copy] { flex: 0 1 auto; }
+  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
+  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
+  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
   [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
@@ -93,6 +167,7 @@
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
   [data-diagram-controls] { display: none !important; }
+  [data-evidence-ledger="1"] { break-inside: avoid; }
   .diagram-fallback { display: block; }
 }
 
@@ -187,9 +262,11 @@
       data-template-id="api-contract-swimlane"
       data-template-layout="api-contract-swimlane"
       data-template-contract-version="2">
-  <h1 data-slot="title">{{title}}</h1>
-  <p class="summary" data-slot="summary">{{summary}}</p>
-  <div data-diagram-controls="api-contract-swimlane" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  <header data-diagram-title-region>
+    <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
+    <div data-diagram-controls="api-contract-swimlane" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
+  </header>
+  <section data-slot="evidence-and-notes" data-evidence-ledger="1" aria-label="Evidence ledger"><div data-evidence-summary><strong>Evidence boundary</strong><span>Observed · checked · unresolved</span></div><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Checked</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Unresolved</b><span>{{evidence-unresolved}}</span></article></section>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="api-contract-swimlane" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack">
     <section data-diagram-stage class="template-layout api-contract-swimlane" aria-label="API contract swimlane template canvas">
     <div class="lane" data-diagram-group-id="api-lane-1" data-semantic-role="api-lane" data-reading-guide="api lane 1"><div class="line-label">Caller</div><div id="api-1-request" class="slot support" data-diagram-node-id="api-1-request" data-semantic-role="technical-object" data-slot="api-1-request"><b>API 1 request</b><span>{{api-1-request}}</span></div><div id="api-1-contract" class="slot data" data-diagram-node-id="api-1-contract" data-semantic-role="technical-object" data-slot="api-1-contract"><b>API 1 contract</b><span>{{api-1-contract}}</span></div><div id="api-1-error" class="slot risk" data-diagram-node-id="api-1-error" data-semantic-role="technical-object" data-slot="api-1-error"><b>API 1 error</b><span>{{api-1-error}}</span></div><div id="api-1-compat" class="slot ops" data-diagram-node-id="api-1-compat" data-semantic-role="technical-object" data-slot="api-1-compat"><b>API 1 compat</b><span>{{api-1-compat}}</span></div></div><div class="lane" data-diagram-group-id="api-lane-2" data-semantic-role="api-lane" data-reading-guide="api lane 2"><div class="line-label">Interface layer</div><div id="api-2-request" class="slot data" data-diagram-node-id="api-2-request" data-semantic-role="technical-object" data-slot="api-2-request"><b>API 2 request</b><span>{{api-2-request}}</span></div><div id="api-2-contract" class="slot risk" data-diagram-node-id="api-2-contract" data-semantic-role="technical-object" data-slot="api-2-contract"><b>API 2 contract</b><span>{{api-2-contract}}</span></div><div id="api-2-error" class="slot ops" data-diagram-node-id="api-2-error" data-semantic-role="technical-object" data-slot="api-2-error"><b>API 2 error</b><span>{{api-2-error}}</span></div><div id="api-2-compat" class="slot" data-diagram-node-id="api-2-compat" data-semantic-role="technical-object" data-slot="api-2-compat"><b>API 2 compat</b><span>{{api-2-compat}}</span></div></div><div class="lane" data-diagram-group-id="api-lane-3" data-semantic-role="api-lane" data-reading-guide="api lane 3"><div class="line-label">Service layer</div><div id="api-3-request" class="slot risk" data-diagram-node-id="api-3-request" data-semantic-role="technical-object" data-slot="api-3-request"><b>API 3 request</b><span>{{api-3-request}}</span></div><div id="api-3-contract" class="slot ops" data-diagram-node-id="api-3-contract" data-semantic-role="technical-object" data-slot="api-3-contract"><b>API 3 contract</b><span>{{api-3-contract}}</span></div><div id="api-3-error" class="slot" data-diagram-node-id="api-3-error" data-semantic-role="technical-object" data-slot="api-3-error"><b>API 3 error</b><span>{{api-3-error}}</span></div><div id="api-3-compat" class="slot core" data-diagram-node-id="api-3-compat" data-semantic-role="technical-object" data-slot="api-3-compat"><b>API 3 compat</b><span>{{api-3-compat}}</span></div></div><div class="lane" data-diagram-group-id="api-lane-4" data-semantic-role="api-lane" data-reading-guide="api lane 4"><div class="line-label">Observability layer</div><div id="api-4-request" class="slot ops" data-diagram-node-id="api-4-request" data-semantic-role="technical-object" data-slot="api-4-request"><b>API 4 request</b><span>{{api-4-request}}</span></div><div id="api-4-contract" class="slot" data-diagram-node-id="api-4-contract" data-semantic-role="technical-object" data-slot="api-4-contract"><b>API 4 contract</b><span>{{api-4-contract}}</span></div><div id="api-4-error" class="slot core" data-diagram-node-id="api-4-error" data-semantic-role="technical-object" data-slot="api-4-error"><b>API 4 error</b><span>{{api-4-error}}</span></div><div id="api-4-compat" class="slot support" data-diagram-node-id="api-4-compat" data-semantic-role="technical-object" data-slot="api-4-compat"><b>API 4 compat</b><span>{{api-4-compat}}</span></div></div>
@@ -216,30 +293,25 @@
 <span class="semantic-relation" data-diagram-relation-id="api-1-request-api-1-contract" data-from="api-1-request" data-to="api-1-contract" data-relation-kind="flow" data-semantic="api-1-request flow api-1-contract">api-1-request flow api-1-contract</span><span class="semantic-relation" data-diagram-relation-id="api-1-contract-api-1-error" data-from="api-1-contract" data-to="api-1-error" data-relation-kind="flow" data-semantic="api-1-contract flow api-1-error">api-1-contract flow api-1-error</span><span class="semantic-relation" data-diagram-relation-id="api-1-error-api-1-compat" data-from="api-1-error" data-to="api-1-compat" data-relation-kind="flow" data-semantic="api-1-error flow api-1-compat">api-1-error flow api-1-compat</span><span class="semantic-relation" data-diagram-relation-id="api-2-request-api-2-contract" data-from="api-2-request" data-to="api-2-contract" data-relation-kind="flow" data-semantic="api-2-request flow api-2-contract">api-2-request flow api-2-contract</span><span class="semantic-relation" data-diagram-relation-id="api-2-contract-api-2-error" data-from="api-2-contract" data-to="api-2-error" data-relation-kind="flow" data-semantic="api-2-contract flow api-2-error">api-2-contract flow api-2-error</span><span class="semantic-relation" data-diagram-relation-id="api-2-error-api-2-compat" data-from="api-2-error" data-to="api-2-compat" data-relation-kind="flow" data-semantic="api-2-error flow api-2-compat">api-2-error flow api-2-compat</span><span class="semantic-relation" data-diagram-relation-id="api-3-request-api-3-contract" data-from="api-3-request" data-to="api-3-contract" data-relation-kind="flow" data-semantic="api-3-request flow api-3-contract">api-3-request flow api-3-contract</span><span class="semantic-relation" data-diagram-relation-id="api-3-contract-api-3-error" data-from="api-3-contract" data-to="api-3-error" data-relation-kind="flow" data-semantic="api-3-contract flow api-3-error">api-3-contract flow api-3-error</span><span class="semantic-relation" data-diagram-relation-id="api-3-error-api-3-compat" data-from="api-3-error" data-to="api-3-compat" data-relation-kind="flow" data-semantic="api-3-error flow api-3-compat">api-3-error flow api-3-compat</span><span class="semantic-relation" data-diagram-relation-id="api-4-request-api-4-contract" data-from="api-4-request" data-to="api-4-contract" data-relation-kind="flow" data-semantic="api-4-request flow api-4-contract">api-4-request flow api-4-contract</span><span class="semantic-relation" data-diagram-relation-id="api-4-contract-api-4-error" data-from="api-4-contract" data-to="api-4-error" data-relation-kind="flow" data-semantic="api-4-contract flow api-4-error">api-4-contract flow api-4-error</span><span class="semantic-relation" data-diagram-relation-id="api-4-error-api-4-compat" data-from="api-4-error" data-to="api-4-compat" data-relation-kind="flow" data-semantic="api-4-error flow api-4-compat">api-4-error flow api-4-compat</span><span class="semantic-relation" data-diagram-relation-id="api-1-handoff" data-from="api-1-contract" data-to="api-2-request" data-relation-kind="handoff" data-semantic="api-1-contract handoff api-2-request">api-1-contract handoff api-2-request</span><span class="semantic-relation" data-diagram-relation-id="api-2-handoff" data-from="api-2-contract" data-to="api-3-request" data-relation-kind="handoff" data-semantic="api-2-contract handoff api-3-request">api-2-contract handoff api-3-request</span><span class="semantic-relation" data-diagram-relation-id="api-3-handoff" data-from="api-3-contract" data-to="api-4-request" data-relation-kind="handoff" data-semantic="api-3-contract handoff api-4-request">api-3-contract handoff api-4-request</span></section>
   </div>
   <details class="diagram-fallback" data-fallback-for="api-contract-swimlane"><summary>Api Contract Swimlane reading order</summary><ol><li>api-1-request</li><li>api-1-contract</li><li>api-1-error</li><li>api-1-compat</li><li>api-2-request</li><li>api-2-contract</li><li>api-2-error</li><li>api-2-compat</li><li>api-3-request</li><li>api-3-contract</li><li>api-3-error</li><li>api-3-compat</li><li>api-4-request</li><li>api-4-contract</li><li>api-4-error</li><li>api-4-compat</li></ol></details>
-  <section data-slot="evidence-and-notes">{{evidence_and_notes}}</section>
 </main>
 <script data-adaptive-viewport-kernel="1">
 (() => {
   "use strict";
   const allowed = new Set(["fit", "0.75", "0.9", "1"]);
+  const managed = new Set();
+  const requestedByCanvas = new WeakMap();
+  let resizeFrame = 0;
+
+  const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const controlsFor = (canvas, root = document) =>
+    Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
+      (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
+    );
   const reset = (canvas) => {
     canvas.style.removeProperty("--diagram-scale");
     canvas.removeAttribute("data-diagram-scaled");
   };
-  const apply = (canvas, requested = "fit") => {
-    reset(canvas);
-    if (!allowed.has(requested)) return false;
-    const stage = canvas.querySelector(":scope > [data-diagram-stage]");
-    if (!stage || !canvas.clientWidth || !stage.scrollWidth) return false;
-    const scale = requested === "fit"
-      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
-      : Number(requested);
-    if (!Number.isFinite(scale) || scale < 0.75 || scale > 1) return false;
-    canvas.style.setProperty("--diagram-scale", String(scale));
-    canvas.setAttribute("data-diagram-scaled", "true");
-    return true;
-  };
-  const reflect = (controls, requested, applied) => {
+  const reflect = (controls, requested, applied, message) => {
     controls.querySelectorAll("[data-diagram-zoom-control]").forEach((button) => {
       button.setAttribute(
         "aria-pressed",
@@ -247,35 +319,122 @@
       );
     });
     const status = controls.querySelector("[data-diagram-zoom-status]");
-    if (status) status.value = applied ? (requested === "fit" ? "Fit width" : `${Number(requested) * 100}%`) : "Scroll";
+    if (status) {
+      status.textContent = message;
+      if ("value" in status) status.value = message;
+    }
+  };
+  const revealControls = (canvas, visible, overflow, root = document) => {
+    controlsFor(canvas, root).forEach((controls) => {
+      controls.hidden = !visible;
+      controls.dataset.diagramControlsVisible = String(visible);
+      controls.dataset.diagramOverflow = String(overflow);
+    });
+  };
+  const retest = (canvas, requested = requestedByCanvas.get(canvas) || canvas.dataset.diagramZoom || "fit") => {
+    reset(canvas);
+    if (!allowed.has(requested)) requested = "fit";
+    requestedByCanvas.set(canvas, requested);
+    const stage = stageFor(canvas);
+    if (!stage || !canvas.clientWidth || !stage.scrollWidth) {
+      revealControls(canvas, false, false);
+      return false;
+    }
+    const overflow = stage.scrollWidth > canvas.clientWidth + 1;
+    const persistent = canvas.dataset.diagramControlsMode === "persistent";
+    const controlsVisible = persistent || overflow;
+    revealControls(canvas, controlsVisible, overflow);
+    const controls = controlsFor(canvas);
+    if (!controlsVisible) {
+      controls.forEach((item) =>
+        reflect(
+          item,
+          "fit",
+          true,
+          item.dataset.diagramStatusFits || "Fits at 100%"
+        )
+      );
+      return true;
+    }
+    const scale = requested === "fit"
+      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
+      : Number(requested);
+    const applied = Number.isFinite(scale) && scale >= 0.75 && scale <= 1;
+    if (applied) {
+      canvas.style.setProperty("--diagram-scale", String(scale));
+      canvas.setAttribute("data-diagram-scaled", "true");
+    }
+    controls.forEach((item) => {
+      const message = applied
+        ? (
+          requested === "fit"
+            ? (
+              overflow
+                ? item.dataset.diagramStatusFit || "Fit width"
+                : item.dataset.diagramStatusFits || "Fits at 100%"
+            )
+            : `${Number(requested) * 100}%`
+        )
+        : item.dataset.diagramStatusScroll || "Scroll";
+      reflect(item, requested, applied, message);
+    });
+    return applied;
+  };
+  const apply = (canvas, requested = "fit") => {
+    if (!allowed.has(requested)) return false;
+    return retest(canvas, requested);
+  };
+  const scheduleRetest = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      managed.forEach((canvas) => retest(canvas));
+    });
   };
   const bind = (root = document) => {
     root.querySelectorAll("[data-diagram-controls]").forEach((controls) => {
       const id = controls.dataset.diagramControls;
-      const canvas = id ? root.querySelector(`[data-diagram-id="${CSS.escape(id)}"]`) : null;
+      const canvas = id
+        ? Array.from(root.querySelectorAll("[data-diagram-id]")).find(
+            (candidate) => candidate.dataset.diagramId === id
+          )
+        : null;
       if (!canvas || controls.dataset.diagramBound === "true") return;
       controls.dataset.diagramBound = "true";
+      controls.hidden = true;
       controls.addEventListener("click", (event) => {
         const button = event.target.closest("[data-diagram-zoom-control]");
         if (!button || !controls.contains(button)) return;
         const requested = button.dataset.diagramZoomControl;
-        const applied = apply(canvas, requested);
-        reflect(controls, requested, applied);
+        apply(canvas, requested);
       });
     });
   };
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(scheduleRetest)
+    : null;
   const enhance = (root = document) => {
     bind(root);
     root.querySelectorAll('[data-diagram-canvas][data-diagram-contract="1"]')
       .forEach((canvas) => {
         try {
-          apply(canvas, canvas.dataset.diagramZoom || "fit");
+          if (!managed.has(canvas)) {
+            managed.add(canvas);
+            if (resizeObserver) {
+              resizeObserver.observe(canvas);
+              const stage = stageFor(canvas);
+              if (stage) resizeObserver.observe(stage);
+            }
+          }
+          retest(canvas, canvas.dataset.diagramZoom || "fit");
         } catch (_error) {
           reset(canvas);
+          revealControls(canvas, false, false, root);
         }
       });
   };
-  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset });
+  if (!resizeObserver) globalThis.addEventListener("resize", scheduleRetest, { passive: true });
+  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset, retest });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
   } else {

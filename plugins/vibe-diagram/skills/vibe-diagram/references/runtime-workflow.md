@@ -6,6 +6,8 @@ Use this skill when relationships, flow, time, causality, state, evidence, or be
 
 Follow the user's language for visible content; use English when the language cannot be determined. Preserve explicit uncertainty and distinguish observed facts, inferences, proposed design, and unresolved questions.
 
+Determine the authored output language before filling the scaffold. Set the document `lang` accordingly and translate every visible template-authored string, not only the title and free-text slots. Node titles, node summaries, region labels, legends, controls, detail summaries, mobile fallbacks, evidence headings, and status wording must all follow the current user request. Canonical English is only the source default; it must not leak into a Chinese artifact.
+
 ## Artifact contract
 
 Produce a self-contained single-file HTML document as the primary artifact. Inline all CSS and JavaScript and keep the document readable without a network connection.
@@ -17,6 +19,8 @@ Create the artifact with `python3 <skill-root>/scripts/vibe_diagram_scaffold.py 
 ## Invocation completion
 
 Treat a visual request as `invocation-complete` only after the update gate, workflow load, template selection, canonical scaffold, strict linter, and HTML delivery all succeed. Loading this Skill, describing a diagram, or returning Mermaid is incomplete. Mermaid may supplement the HTML only when useful.
+
+After the user has authorized the artifact and evidence can determine the template, continue through scaffold, authored filling, lint repair, any required browser acceptance, and delivery in one uninterrupted workflow. Pause only for a real unresolved decision that would change meaning, scope, or authorized side effects; do not ask the user to repeat “continue” between routine stages.
 
 ## Capability-based delivery
 
@@ -55,6 +59,8 @@ For any of the six sequence templates, read the `Sequence interaction contract` 
 
 Give every major node one role, every connector one direction, and every visual encoding one stable meaning. Put the primary reading path in the dominant direction. Use boundaries for ownership or trust, lanes for actors, phases for time, and evidence annotations for claims.
 
+Template identity is provenance, not topology evidence. A template id, layout name, CSS class, heading, or visible phrase such as “north to south” does not establish the authored primary direction. Graph canvases that make a directional claim must declare `data-primary-direction`, give semantic objects authored `data-diagram-rank` and `data-diagram-region` values, and classify relations with `data-primary-relation="true|false"`. The primary relation endpoints must advance through authored ranks; policies that require geometric direction also verify authored SVG node bounds and path endpoints against that axis. Secondary and feedback relations remain explicit without being mistaken for the primary path.
+
 Copy the selected HTML template, preserve `data-diagram-type`, `data-template-family`, `data-template-id`, `data-template-layout`, responsive structure, and slot/macro bindings, then replace visible content. Add local structure only when existing slots cannot express the verified model.
 
 ## Global generation requirements
@@ -73,6 +79,10 @@ Give every important object, relationship, direction, and boundary a stable iden
 
 Expose the conclusion and primary reading path first. Place concise evidence beside the object or transition it supports, then place the complete evidence ledger later. Interactive disclosure may enhance access but must not be the only carrier of a fact.
 
+For a generic canvas, put complete evidence in one `data-evidence-ledger="1"` container. Each evidence entry declares a unique `data-evidence-id`, one status (`observed`, `inferred`, `proposed`, or `unresolved`), the semantic ids it supports through `data-evidence-for`, and an authored source kind plus source reference. Plain prose in the `evidence-and-notes` slot is a note, not a verifiable evidence ledger, and must not be used as the only evidence carrier.
+
+Place that evidence ledger immediately after the title region and before the first diagram canvas. When the diagram also uses multiple line kinds, combine the line-style legend and node evidence-color legend into one compact reading guide instead of scattering separate legends around the page. When nodes expose mapped details, put one concise interaction hint in that same reading guide; never float the hint inside the SVG canvas. Keep the evidence portion to observed implementation, completed checks, and not-yet-verified claims. Keep detailed provenance in structured attributes and mapped node details instead of repeating it as a paragraph.
+
 ### G4 — Stable, collision-free visual encoding
 
 Use each shape, line style, and color for one stable meaning. Color must never be the only signal. Keep connectors out of labels, anchor arrows to object edges, and use deliberate whitespace or a label mask where a route crosses text.
@@ -80,6 +90,8 @@ Use each shape, line style, and color for one stable meaning. Color must never b
 ### G5 — Readability without unlimited shrinking
 
 Keep essential text readable. When the viewport or complexity budget is exceeded, prefer reflow, scoped scrolling, or mapped overview/detail views. Show controls only when useful, but keep their size, pressed state, focus state, and status treatment consistent whenever they appear.
+
+Use `data-diagram-controls-mode="overflow"` for a compact diagram where zoom is only a recovery aid. Use `data-diagram-controls-mode="persistent"` when user-controlled Fit, 75%, 90%, and 100% views are part of the intended viewer. In persistent mode, keep the controls visible whenever the stage is measurable, even when it already fits; manual percentages must still apply. In overflow mode, reveal controls only when the unscaled stage overflows. Re-evaluate both modes after container or viewport resize. Controls may be embedded beside the diagram title by using the shared title-region attributes; their absence must never remove the scroll fallback.
 
 ### G6 — Equivalent fallback across environments
 
@@ -98,6 +110,10 @@ Keep the artifact self-contained, free of remote runtime dependencies, and trace
 Lay out the main path before secondary evidence. Keep arrows outside label boxes, route branches through explicit junctions, and avoid crossings through nodes. Prefer vertical scrolling on narrow screens; never solve density by shrinking essential text below readable size.
 
 Use progressive detail: overview first, local evidence second, full ledger last. A large diagram may use internal navigation, but its default view must still expose the conclusion and primary path.
+
+For graph fallbacks, repeat authored relation ids and their `data-from`, `data-to`, and `data-relation-kind` endpoints. A list of node names or a sentence that merely says “A to B” is not an equivalent directional fallback because its direction cannot be verified without parsing visible prose.
+
+When the selected template supports node details, author one concise, language-matched title and summary on the primary node, then map that node through `data-detail-for` to one native `details[data-diagram-detail]` block. The node remains a real focusable link without JavaScript. With enhancement active, open the detail as a small anchored popover beside the selected node; clamp it to the viewport rather than turning it into a side inspector or full-width sheet. Closing it returns focus to the originating node. Detail content may contain paths and implementation evidence that would overload the primary canvas. Print must expose every detail block.
 
 ## Visual quality and accessibility
 
@@ -122,3 +138,5 @@ Before delivery:
 5. Run `python3 <skill-root>/scripts/vibe_diagram_lint.py <artifact> --type <family>` and fix every reported error.
 6. Confirm the final response contains an HTML artifact path or, in text-only mode, one complete HTML code block; Mermaid-only delivery is forbidden.
 7. Return the artifact path plus only the brief context needed to use it.
+
+Static direction checks establish authored structure and supported SVG coordinates only. When direction, grouping, responsive reflow, interaction, or control visibility is material to acceptance, also render the artifact at the declared desktop and narrow widths. Verify computed node bounding-box order follows `data-primary-direction`, arrows terminate at the authored target, groups occupy their declared regions, labels and routes do not collide, page-level horizontal overflow is absent, and zoom controls follow the declared mode: persistent controls remain available on a measurable desktop stage while overflow controls appear only when needed. Record those viewport sizes and observations as browser evidence; do not infer rendered acceptance from the template name or a passing linter.

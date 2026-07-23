@@ -3,7 +3,7 @@
   "source_skill_content_sha256": "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48",
   "references": {
     "business-architecture.md": "a51da9a1919ca414e8b1a18a57d1552643ed6802f4c0572499dc8e5d516dc201",
-    "business-flow.md": "8cd243220b1e44df870301d80eeba253e3cad62a095b1011a4d2ec15e02f0fb6",
+    "business-flow.md": "f4970e6a57c91bd0ddc94e30d6a690ecbf903b7945f87a8ceff3ff7fbbfc5b30",
     "code-sequence.md": "e52d13ed10df449db5dc289e4032324fa01fe15c1dc4e85a2c86a14d7f47ceb4",
     "decision-communication.md": "9af2f79828591334b0317027b72574b15bb38cab6bc097c7fb897fdebf178a71",
     "delivery-acceptance.md": "92196960ab6dbf6180f23215d4ba8420846ca05406a66b75fc7529a354516b77",
@@ -11,7 +11,7 @@
     "feature-iteration.md": "4d544050b9140a92e132121e11ba72fae79b634d617a2230f3ddcc24f5a9eecf",
     "page-mockup.md": "3cf3be8b66985a0f28215c9e858ae11518b44b73f97980f7cccb4224481b13c2",
     "state-data-model.md": "e0b21424ba4fd14c628dfb42b61be179a581fd0353290d4c9ab79ec01074836d",
-    "system-architecture.md": "d2ac3b00b80b9ec94063166cf52cd266fa8e80254ca495b4de6af99628215284",
+    "system-architecture.md": "bbc8567cfea533e52a5ef736900eb15851e66ede19b4d17f91570269d52c86b9",
     "technical-design.md": "841ecb39639c9057d42a58e23543704c1cfc369bbab7cf8365ad7a78a5f62c2b"
   }
 }

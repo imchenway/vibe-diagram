@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{title}}</title>
+  <style>
+    :root {
+      --ink: #102033;
+      --muted: #5a6c80;
+      --paper: #fbfdff;
+      --line: #8db3d8;
+      --blue: #1f6fb2;
+      --blue-soft: #e8f3ff;
+      --green: #17785a;
+      --green-soft: #e9f8f2;
+      --red: #a63a3a;
+      --red-soft: #fff0f0;
+      --amber: #986506;
+      --amber-soft: #fff6de;
+      --shadow: 0 16px 42px rgba(20, 57, 92, .085);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 18% 3%, rgba(214, 233, 255, .78), transparent 30rem),
+        radial-gradient(circle at 78% 6%, rgba(228, 246, 239, .8), transparent 28rem),
+        linear-gradient(rgba(93, 133, 173, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93, 133, 173, .045) 1px, transparent 1px),
+        linear-gradient(180deg, #fff 0%, #f7fbff 54%, #fbfdff 100%);
+      background-size: auto, auto, 28px 28px, 28px 28px, auto;
+      overflow-x: clip;
+    }
+    main {
+      width: min(1280px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 24px 0 36px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 2.8vw, 34px);
+      line-height: 1.18;
+      letter-spacing: -.025em;
+    }
+    .summary {
+      max-width: 76ch;
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .evidence-panel[data-evidence-ledger="1"] {
+      margin-block: 18px 0;
+      padding: 18px;
+      border-color: rgba(141, 179, 216, .7);
+      background: rgba(247, 251, 255, .92);
+      box-shadow: 0 10px 28px rgba(20, 57, 92, .065);
+    }
+    .evidence-panel [data-evidence-summary] {
+      align-items: end;
+      padding: 0 2px 4px;
+    }
+    .evidence-panel [data-evidence-summary] strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ink);
+      font-size: 16px;
+    }
+    .evidence-source-details {
+      margin-top: 5px;
+      border-top: 1px solid rgba(90, 108, 128, .16);
+      padding-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+    .evidence-source-details > summary {
+      width: fit-content;
+      color: #38546f;
+      font-size: 11px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+    .evidence-source-details > summary:focus-visible {
+      outline: 3px solid #77b8f2;
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+    .evidence-source-details code {
+      display: block;
+      margin-top: 7px;
+      color: #41566d;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .template-layout {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(141, 179, 216, .52);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: var(--shadow);
+    }
+    .dual-path-swimlane svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 30rem;
+    }
+    .lane-band {
+      fill: rgba(247, 251, 255, .94);
+      stroke: rgba(141, 179, 216, .7);
+      stroke-width: 1.5;
+    }
+    .lane-band.path-b { fill: rgba(255, 248, 232, .6); }
+    .lane-heading {
+      fill: #38546f;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .node rect {
+      fill: #fff;
+      stroke: rgba(31, 111, 178, .58);
+      stroke-width: 1.7;
+      filter: drop-shadow(0 8px 14px rgba(20, 57, 92, .08));
+    }
+    .node.shared rect { fill: var(--blue-soft); stroke: var(--blue); }
+    .node.success rect { fill: var(--green-soft); stroke: var(--green); }
+    .node.blocked rect { fill: var(--red-soft); stroke: var(--red); }
+    .node-title {
+      fill: var(--ink);
+      font-size: 14px;
+      font-weight: 800;
+      text-anchor: middle;
+    }
+    .svg-node-copy {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      align-items: flex-start;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.25;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+    .flow-edge {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .gap-edge, .blocked-edge {
+      fill: none;
+      stroke: var(--red);
+      stroke-width: 2.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 8 7;
+    }
+    .gap-marker circle { fill: #fff; stroke: var(--red); stroke-width: 2; }
+    .gap-marker path { stroke: var(--red); stroke-width: 2.4; stroke-linecap: round; }
+    .gap-label {
+      fill: var(--red);
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: .05em;
+      text-anchor: middle;
+      paint-order: stroke;
+      stroke: rgba(255, 255, 255, .96);
+      stroke-width: 6px;
+      stroke-linejoin: round;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin: 12px 2px 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .legend i { display: inline-block; width: 28px; height: 2px; background: var(--blue); }
+    .legend .missing i {
+      height: 0;
+      border-top: 2px dashed var(--red);
+      background: transparent;
+    }
+    .semantic-relation {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .noscript-note {
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border: 1px solid rgba(152, 101, 6, .42);
+      border-radius: 12px;
+      background: var(--amber-soft);
+      color: #614500;
+    }
+    @media (max-width: 48rem) {
+      main { width: min(100vw - 20px, 760px); padding-top: 14px; }
+      .dual-path-swimlane svg { min-height: 0; }
+      .evidence-panel [data-evidence-summary] { align-items: flex-start; }
+    }
+    @media print {
+      body { background: #fff; }
+      main { width: 100%; padding: 0; }
+      .template-layout { box-shadow: none; break-inside: avoid; }
+      .legend { break-inside: avoid; }
+      .evidence-source-details:not([open]) > :not(summary) { display: block !important; }
+    }
+  </style>
+  <style data-adaptive-viewport-kernel="1">
+[data-diagram-canvas][data-diagram-contract="1"] {
+  --diagram-scale: 1;
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  transform-origin: top left;
+}
+
+[data-diagram-width="contained"] { inline-size: min(100%, 72rem); margin-inline: auto; }
+[data-diagram-width="auto"] { inline-size: 100%; }
+[data-diagram-width="wide"] { inline-size: max-content; min-inline-size: 100%; }
+[data-diagram-height="flow"] { block-size: auto; }
+[data-diagram-height="auto"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
+[data-diagram-height="scroll"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
+[data-diagram-scaled="true"] > [data-diagram-stage] {
+  transform: scale(var(--diagram-scale));
+  transform-origin: top left;
+}
+[data-diagram-title-region] {
+  display: flex;
+  max-inline-size: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .75rem 1rem;
+}
+[data-diagram-title-copy] {
+  flex: 1 1 24rem;
+  min-inline-size: 0;
+}
+[data-diagram-title-region] > [data-diagram-controls] {
+  flex: 0 0 auto;
+  margin-block: 0;
+}
+[data-diagram-controls] {
+  position: relative;
+  display: none;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin-block: 0 1rem;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+[data-diagram-controls][data-diagram-controls-visible="true"] {
+  display: inline-flex;
+}
+[data-diagram-controls] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+[data-diagram-controls] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+[data-diagram-controls] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+[data-diagram-controls] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+[data-diagram-controls] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+[data-diagram-zoom-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.diagram-fallback { display: none; }
+[data-evidence-ledger="1"] {
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+[data-evidence-summary] {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem 1rem;
+  padding: 0 .125rem .125rem;
+}
+[data-evidence-summary] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+[data-evidence-summary] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+[data-evidence-ledger="1"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .625rem;
+  margin-block: .5rem 1rem;
+}
+[data-evidence-id] {
+  display: grid;
+  align-content: start;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .75rem .875rem;
+  border: 1px solid rgba(141, 179, 216, .58);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .9);
+  overflow-wrap: anywhere;
+}
+[data-evidence-status="observed"] {
+  border-color: rgba(23, 120, 90, .38);
+  background: rgba(238, 249, 245, .94);
+}
+[data-evidence-source-kind="test"] {
+  border-color: rgba(31, 111, 178, .4);
+  background: rgba(237, 246, 255, .94);
+}
+[data-evidence-status="unresolved"] {
+  border-color: rgba(152, 101, 6, .38);
+  background: rgba(255, 248, 232, .96);
+}
+
+@media (max-width: 48rem) {
+  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
+  [data-diagram-title-copy] { flex: 0 1 auto; }
+  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
+  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
+  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
+  [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
+  [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
+}
+
+@media print {
+  [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
+  [data-diagram-controls] { display: none !important; }
+  [data-evidence-ledger="1"] { break-inside: avoid; }
+  .diagram-fallback { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-diagram-canvas] { scroll-behavior: auto; }
+}
+</style>
+  <style data-semantic-relations-kernel="1">
+[data-architecture-canvas="1"] [data-diagram-visible-relation-id] {
+  vector-effect: non-scaling-stroke;
+}
+
+[data-semantic-edge-ledger] {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: .65rem;
+  margin-block-start: .5rem;
+  padding: .85rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .88);
+}
+[data-semantic-edge-ledger] > h2 {
+  margin: 0;
+  color: #38546f;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+[data-semantic-edge-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: .55rem;
+}
+[data-semantic-edge] {
+  display: grid;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: .65rem .7rem;
+  border: 1px solid rgba(141, 179, 216, .48);
+  border-radius: .8rem;
+  background: #fff;
+}
+[data-semantic-edge-route] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+}
+[data-semantic-edge-route] b {
+  min-inline-size: 0;
+  color: #17324d;
+  font-size: .72rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+[data-semantic-edge-route] b:last-child { text-align: end; }
+[data-semantic-edge-route] i {
+  position: relative;
+  display: block;
+  block-size: 2px;
+  background: #1f6fb2;
+}
+[data-semantic-edge-route] i::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -1px;
+  inset-block-start: -4px;
+  border-inline-start: 8px solid #1f6fb2;
+  border-block: 5px solid transparent;
+}
+[data-semantic-edge-label] {
+  color: #5a6c80;
+  font-size: .7rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 48rem) {
+  [data-semantic-edge-grid] { grid-template-columns: 1fr; }
+}
+
+@media print {
+  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
+}
+</style>
+</head>
+<body>
+<main data-diagram-type="business-flow"
+      data-template-family="business-flow"
+      data-template-id="dual-path-swimlane"
+      data-template-layout="dual-path-swimlane"
+      data-template-contract-version="2">
+  <header data-diagram-title-region>
+    <div data-diagram-title-copy>
+      <h1 data-slot="title">{{title}}</h1>
+      <p class="summary" data-slot="summary">{{summary}}</p>
+    </div>
+  </header>
+
+  <div data-diagram-canvas
+       data-diagram-contract="1"
+       data-diagram-id="dual-path-comparison"
+       data-diagram-profile="graph"
+       data-diagram-width="contained"
+       data-diagram-height="flow"
+       data-diagram-mobile="summary"
+       data-diagram-topology="dual-path-comparison"
+       data-primary-direction="west-to-east">
+    <section data-diagram-stage class="template-layout dual-path-swimlane" aria-label="Two aligned business paths with a missing handoff">
+      <svg viewBox="0 0 1200 560"
+           role="img"
+           aria-labelledby="dual-path-svg-title dual-path-svg-description"
+           preserveAspectRatio="xMidYMid meet">
+        <title id="dual-path-svg-title">Two-path business flow comparison</title>
+        <desc id="dual-path-svg-description">A shared trigger branches into two aligned lanes. Solid arrows show work that occurs. A red broken relation marks the missing handoff between the lanes, and the lower path stops before the shared result.</desc>
+        <defs>
+          <marker id="dual-path-arrow" viewBox="0 0 10 10" refX="9" refY="5"
+                  markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f6fb2"></path>
+          </marker>
+        </defs>
+
+        <g data-diagram-group-id="shared-trigger-region"
+           data-semantic-role="shared-trigger-region"
+           data-diagram-rank="0"
+           data-diagram-region="shared-trigger">
+          <g class="node shared"
+             data-diagram-node-id="shared-trigger"
+             data-semantic-role="trigger"
+             data-diagram-rank="0"
+             data-diagram-region="shared-trigger"
+             data-slot="shared-trigger">
+            <rect x="28" y="224" width="134" height="112" rx="24"></rect>
+            <text x="95" y="270" class="node-title"><tspan x="95">Shared trigger</tspan></text>
+            <foreignObject x="38" y="282" width="114" height="38"><div class="svg-node-copy">{{shared-trigger}}</div></foreignObject>
+          </g>
+        </g>
+
+        <g data-diagram-group-id="path-a-region"
+           data-semantic-role="swimlane"
+           data-diagram-rank="1"
+           data-diagram-region="path-a">
+          <rect class="lane-band path-a" x="184" y="72" width="820" height="184" rx="24"></rect>
+          <text x="208" y="102" class="lane-heading" data-slot="path-a-label">{{path-a-label}}</text>
+          <g class="node"
+             data-diagram-node-id="path-a-context"
+             data-semantic-role="activity"
+             data-diagram-rank="1"
+             data-diagram-region="path-a"
+             data-slot="path-a-context">
+            <rect x="222" y="126" width="150" height="84" rx="18"></rect>
+            <text x="297" y="160" class="node-title"><tspan x="297">Resolve context</tspan></text>
+            <foreignObject x="232" y="172" width="130" height="30"><div class="svg-node-copy">{{path-a-context}}</div></foreignObject>
+          </g>
+          <g class="node"
+             data-diagram-node-id="path-a-handoff"
+             data-semantic-role="handoff-source"
+             data-diagram-rank="2"
+             data-diagram-region="path-a"
+             data-slot="path-a-handoff">
+            <rect x="433" y="126" width="170" height="84" rx="18"></rect>
+            <text x="518" y="160" class="node-title"><tspan x="518">Prepare handoff</tspan></text>
+            <foreignObject x="443" y="172" width="150" height="30"><div class="svg-node-copy">{{path-a-handoff}}</div></foreignObject>
+          </g>
+          <g class="node success"
+             data-diagram-node-id="path-a-execute"
+             data-semantic-role="activity"
+             data-diagram-rank="3"
+             data-diagram-region="path-a"
+             data-slot="path-a-execute">
+            <rect x="670" y="126" width="170" height="84" rx="18"></rect>
+            <text x="755" y="160" class="node-title"><tspan x="755">Execute service</tspan></text>
+            <foreignObject x="680" y="172" width="150" height="30"><div class="svg-node-copy">{{path-a-execute}}</div></foreignObject>
+          </g>
+        </g>
+
+        <g data-diagram-group-id="path-b-region"
+           data-semantic-role="swimlane"
+           data-diagram-rank="1"
+           data-diagram-region="path-b">
+          <rect class="lane-band path-b" x="184" y="304" width="820" height="184" rx="24"></rect>
+          <text x="208" y="334" class="lane-heading" data-slot="path-b-label">{{path-b-label}}</text>
+          <g class="node"
+             data-diagram-node-id="path-b-context"
+             data-semantic-role="activity"
+             data-diagram-rank="1"
+             data-diagram-region="path-b"
+             data-slot="path-b-context">
+            <rect x="222" y="358" width="150" height="84" rx="18"></rect>
+            <text x="297" y="392" class="node-title"><tspan x="297">Resolve context</tspan></text>
+            <foreignObject x="232" y="404" width="130" height="30"><div class="svg-node-copy">{{path-b-context}}</div></foreignObject>
+          </g>
+          <g class="node"
+             data-diagram-node-id="path-b-check"
+             data-semantic-role="activity"
+             data-diagram-rank="2"
+             data-diagram-region="path-b"
+             data-slot="path-b-check">
+            <rect x="433" y="358" width="170" height="84" rx="18"></rect>
+            <text x="518" y="392" class="node-title"><tspan x="518">Check prerequisite</tspan></text>
+            <foreignObject x="443" y="404" width="150" height="30"><div class="svg-node-copy">{{path-b-check}}</div></foreignObject>
+          </g>
+          <g class="node blocked"
+             data-diagram-node-id="path-b-stop"
+             data-semantic-role="blocked-outcome"
+             data-diagram-rank="3"
+             data-diagram-region="path-b"
+             data-slot="path-b-stop">
+            <rect x="670" y="358" width="170" height="84" rx="18"></rect>
+            <text x="755" y="392" class="node-title"><tspan x="755">Stop locally</tspan></text>
+            <foreignObject x="680" y="404" width="150" height="30"><div class="svg-node-copy">{{path-b-stop}}</div></foreignObject>
+          </g>
+        </g>
+
+        <g data-diagram-group-id="shared-result-region"
+           data-semantic-role="shared-result-region"
+           data-diagram-rank="4"
+           data-diagram-region="shared-result">
+          <g class="node shared"
+             data-diagram-node-id="shared-result"
+             data-semantic-role="business-result"
+             data-diagram-rank="4"
+             data-diagram-region="shared-result"
+             data-slot="shared-result">
+            <rect x="1026" y="224" width="146" height="112" rx="24"></rect>
+            <text x="1099" y="270" class="node-title"><tspan x="1099">Shared result</tspan></text>
+            <foreignObject x="1036" y="282" width="126" height="38"><div class="svg-node-copy">{{shared-result}}</div></foreignObject>
+          </g>
+        </g>
+
+        <g aria-hidden="true">
+          <path class="flow-edge" d="M162 258 C184 258 190 168 222 168"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="trigger-to-path-a"
+                data-from="shared-trigger" data-to="path-a-context" data-relation-kind="flow"></path>
+          <path class="flow-edge" d="M372 168 H433"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="path-a-context-to-handoff"
+                data-from="path-a-context" data-to="path-a-handoff" data-relation-kind="flow"></path>
+          <path class="flow-edge" d="M603 168 H670"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="path-a-handoff-to-execute"
+                data-from="path-a-handoff" data-to="path-a-execute" data-relation-kind="flow"></path>
+          <path class="flow-edge" d="M840 168 C920 168 956 258 1026 258"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="path-a-execute-to-result"
+                data-from="path-a-execute" data-to="shared-result" data-relation-kind="flow"></path>
+
+          <path class="flow-edge" d="M162 302 C184 302 190 400 222 400"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="trigger-to-path-b"
+                data-from="shared-trigger" data-to="path-b-context" data-relation-kind="flow"></path>
+          <path class="flow-edge" d="M372 400 H433"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="path-b-context-to-check"
+                data-from="path-b-context" data-to="path-b-check" data-relation-kind="flow"></path>
+          <path class="flow-edge" d="M603 400 H670"
+                marker-end="url(#dual-path-arrow)"
+                data-diagram-visible-relation-id="path-b-check-to-stop"
+                data-from="path-b-check" data-to="path-b-stop" data-relation-kind="flow"></path>
+          <path class="blocked-edge" d="M840 400 C912 400 946 312 998 294"
+                data-diagram-visible-relation-id="path-b-stop-before-result"
+                data-from="path-b-stop" data-to="shared-result" data-relation-kind="blocked-before-result"></path>
+          <path class="gap-edge" d="M518 210 V266 M518 292 V358"
+                data-diagram-visible-relation-id="missing-handoff-a-to-b"
+                data-from="path-a-handoff" data-to="path-b-check" data-relation-kind="missing-handoff"></path>
+        </g>
+
+        <g class="gap-marker" aria-hidden="true" transform="translate(518 279)">
+          <circle r="14"></circle>
+          <path d="M-5 -5 L5 5 M5 -5 L-5 5"></path>
+        </g>
+        <text x="645" y="275" class="gap-label" data-slot="missing-handoff-label">{{missing-handoff-label}}</text>
+        <g class="gap-marker" aria-hidden="true" transform="translate(1004 292)">
+          <circle r="12"></circle>
+          <path d="M-4 -4 L4 4 M4 -4 L-4 4"></path>
+        </g>
+        <text x="924" y="332" class="gap-label" data-slot="blocked-result-label">{{blocked-result-label}}</text>
+
+      </svg>
+      <span class="semantic-relation" data-diagram-relation-id="trigger-to-path-a" data-from="shared-trigger" data-to="path-a-context" data-relation-kind="flow" data-semantic="shared trigger starts path A" data-primary-relation="true">Shared trigger starts path A.</span>
+      <span class="semantic-relation" data-diagram-relation-id="path-a-context-to-handoff" data-from="path-a-context" data-to="path-a-handoff" data-relation-kind="flow" data-semantic="path A resolves context before preparing the handoff" data-primary-relation="true">Path A resolves context before preparing the handoff.</span>
+      <span class="semantic-relation" data-diagram-relation-id="path-a-handoff-to-execute" data-from="path-a-handoff" data-to="path-a-execute" data-relation-kind="flow" data-semantic="path A executes with the prepared handoff" data-primary-relation="true">Path A executes with the prepared handoff.</span>
+      <span class="semantic-relation" data-diagram-relation-id="path-a-execute-to-result" data-from="path-a-execute" data-to="shared-result" data-relation-kind="flow" data-semantic="path A reaches the shared result" data-primary-relation="true">Path A reaches the shared result.</span>
+      <span class="semantic-relation" data-diagram-relation-id="trigger-to-path-b" data-from="shared-trigger" data-to="path-b-context" data-relation-kind="flow" data-semantic="shared trigger starts path B" data-primary-relation="true">Shared trigger starts path B.</span>
+      <span class="semantic-relation" data-diagram-relation-id="path-b-context-to-check" data-from="path-b-context" data-to="path-b-check" data-relation-kind="flow" data-semantic="path B resolves context before checking its prerequisite" data-primary-relation="true">Path B resolves context before checking its prerequisite.</span>
+      <span class="semantic-relation" data-diagram-relation-id="path-b-check-to-stop" data-from="path-b-check" data-to="path-b-stop" data-relation-kind="flow" data-semantic="path B stops locally when the prerequisite is absent" data-primary-relation="true">Path B stops locally when the prerequisite is absent.</span>
+      <span class="semantic-relation" data-diagram-relation-id="path-b-stop-before-result" data-from="path-b-stop" data-to="shared-result" data-relation-kind="blocked-before-result" data-semantic="path B does not reach the shared result" data-primary-relation="false">Path B does not reach the shared result.</span>
+      <span class="semantic-relation" data-diagram-relation-id="missing-handoff-a-to-b" data-from="path-a-handoff" data-to="path-b-check" data-relation-kind="missing-handoff" data-semantic="the prepared context is not handed from path A to path B" data-primary-relation="false">The prepared context is not handed from path A to path B.</span>
+    </section>
+  </div>
+
+  <div class="legend" aria-label="Relationship legend">
+    <span><i aria-hidden="true"></i>Solid arrow: observed path continues</span>
+    <span class="missing"><i aria-hidden="true"></i>Broken red relation: required handoff or result is not reached</span>
+  </div>
+
+  <section class="evidence-panel"
+           data-slot="evidence-and-notes"
+           data-evidence-ledger="1"
+           aria-labelledby="dual-path-evidence-title">
+    <div data-evidence-summary>
+      <div>
+        <strong id="dual-path-evidence-title">Key evidence</strong>
+        <span>Facts that support the diagram remain visible; only long provenance is folded.</span>
+      </div>
+      <span>Observed, checked, and unresolved claims stay distinct.</span>
+    </div>
+    <article data-evidence-id="evidence-observed"
+             data-evidence-status="observed"
+             data-evidence-for="{{evidence-observed-for}}"
+             data-evidence-source-kind="file"
+             data-evidence-source="{{evidence-observed-source}}">
+      <b>Observed</b><span>{{evidence-observed}}</span>
+      <details class="evidence-source-details">
+        <summary>Complete source</summary>
+        <code>{{evidence-observed-source}}</code>
+      </details>
+    </article>
+    <article data-evidence-id="evidence-check"
+             data-evidence-status="observed"
+             data-evidence-for="{{evidence-check-for}}"
+             data-evidence-source-kind="test"
+             data-evidence-source="{{evidence-check-source}}">
+      <b>Checked</b><span>{{evidence-check}}</span>
+      <details class="evidence-source-details">
+        <summary>Complete source</summary>
+        <code>{{evidence-check-source}}</code>
+      </details>
+    </article>
+    <article data-evidence-id="evidence-unresolved"
+             data-evidence-status="unresolved"
+             data-evidence-for="{{evidence-unresolved-for}}"
+             data-evidence-source-kind="runtime"
+             data-evidence-source="{{evidence-unresolved-source}}">
+      <b>Unresolved</b><span>{{evidence-unresolved}}</span>
+      <details class="evidence-source-details">
+        <summary>Complete boundary</summary>
+        <code>{{evidence-unresolved-source}}</code>
+      </details>
+    </article>
+  </section>
+
+  <details class="diagram-fallback" data-fallback-for="dual-path-comparison" open>
+    <summary>Structured mobile, print, and no-script reading order</summary>
+    <ol>
+      <li data-fallback-relation-id="trigger-to-path-a" data-from="shared-trigger" data-to="path-a-context" data-relation-kind="flow">Shared trigger starts path A.</li>
+      <li data-fallback-relation-id="path-a-context-to-handoff" data-from="path-a-context" data-to="path-a-handoff" data-relation-kind="flow">Path A resolves context, then prepares the handoff.</li>
+      <li data-fallback-relation-id="path-a-handoff-to-execute" data-from="path-a-handoff" data-to="path-a-execute" data-relation-kind="flow">Path A executes with that context.</li>
+      <li data-fallback-relation-id="path-a-execute-to-result" data-from="path-a-execute" data-to="shared-result" data-relation-kind="flow">Path A reaches the shared result.</li>
+      <li data-fallback-relation-id="trigger-to-path-b" data-from="shared-trigger" data-to="path-b-context" data-relation-kind="flow">The same trigger starts path B.</li>
+      <li data-fallback-relation-id="path-b-context-to-check" data-from="path-b-context" data-to="path-b-check" data-relation-kind="flow">Path B resolves its context, then checks the prerequisite.</li>
+      <li data-fallback-relation-id="path-b-check-to-stop" data-from="path-b-check" data-to="path-b-stop" data-relation-kind="flow">Path B stops locally when the prerequisite is absent.</li>
+      <li data-fallback-relation-id="path-b-stop-before-result" data-from="path-b-stop" data-to="shared-result" data-relation-kind="blocked-before-result">Path B is blocked before the shared result.</li>
+      <li data-fallback-relation-id="missing-handoff-a-to-b" data-from="path-a-handoff" data-to="path-b-check" data-relation-kind="missing-handoff">The context prepared in path A is not handed to path B.</li>
+    </ol>
+  </details>
+  <noscript>
+    <style>.diagram-fallback { display: block; }</style>
+    <p class="noscript-note">The structured relation list above is the no-script equivalent of the SVG flow.</p>
+  </noscript>
+
+</main>
+<script data-adaptive-viewport-kernel="1">
+(() => {
+  "use strict";
+  const allowed = new Set(["fit", "0.75", "0.9", "1"]);
+  const managed = new Set();
+  const requestedByCanvas = new WeakMap();
+  let resizeFrame = 0;
+
+  const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const controlsFor = (canvas, root = document) =>
+    Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
+      (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
+    );
+  const reset = (canvas) => {
+    canvas.style.removeProperty("--diagram-scale");
+    canvas.removeAttribute("data-diagram-scaled");
+  };
+  const reflect = (controls, requested, applied, message) => {
+    controls.querySelectorAll("[data-diagram-zoom-control]").forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.diagramZoomControl === requested && applied)
+      );
+    });
+    const status = controls.querySelector("[data-diagram-zoom-status]");
+    if (status) {
+      status.textContent = message;
+      if ("value" in status) status.value = message;
+    }
+  };
+  const revealControls = (canvas, visible, overflow, root = document) => {
+    controlsFor(canvas, root).forEach((controls) => {
+      controls.hidden = !visible;
+      controls.dataset.diagramControlsVisible = String(visible);
+      controls.dataset.diagramOverflow = String(overflow);
+    });
+  };
+  const retest = (canvas, requested = requestedByCanvas.get(canvas) || canvas.dataset.diagramZoom || "fit") => {
+    reset(canvas);
+    if (!allowed.has(requested)) requested = "fit";
+    requestedByCanvas.set(canvas, requested);
+    const stage = stageFor(canvas);
+    if (!stage || !canvas.clientWidth || !stage.scrollWidth) {
+      revealControls(canvas, false, false);
+      return false;
+    }
+    const overflow = stage.scrollWidth > canvas.clientWidth + 1;
+    const persistent = canvas.dataset.diagramControlsMode === "persistent";
+    const controlsVisible = persistent || overflow;
+    revealControls(canvas, controlsVisible, overflow);
+    const controls = controlsFor(canvas);
+    if (!controlsVisible) {
+      controls.forEach((item) =>
+        reflect(
+          item,
+          "fit",
+          true,
+          item.dataset.diagramStatusFits || "Fits at 100%"
+        )
+      );
+      return true;
+    }
+    const scale = requested === "fit"
+      ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
+      : Number(requested);
+    const applied = Number.isFinite(scale) && scale >= 0.75 && scale <= 1;
+    if (applied) {
+      canvas.style.setProperty("--diagram-scale", String(scale));
+      canvas.setAttribute("data-diagram-scaled", "true");
+    }
+    controls.forEach((item) => {
+      const message = applied
+        ? (
+          requested === "fit"
+            ? (
+              overflow
+                ? item.dataset.diagramStatusFit || "Fit width"
+                : item.dataset.diagramStatusFits || "Fits at 100%"
+            )
+            : `${Number(requested) * 100}%`
+        )
+        : item.dataset.diagramStatusScroll || "Scroll";
+      reflect(item, requested, applied, message);
+    });
+    return applied;
+  };
+  const apply = (canvas, requested = "fit") => {
+    if (!allowed.has(requested)) return false;
+    return retest(canvas, requested);
+  };
+  const scheduleRetest = () => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      managed.forEach((canvas) => retest(canvas));
+    });
+  };
+  const bind = (root = document) => {
+    root.querySelectorAll("[data-diagram-controls]").forEach((controls) => {
+      const id = controls.dataset.diagramControls;
+      const canvas = id
+        ? Array.from(root.querySelectorAll("[data-diagram-id]")).find(
+            (candidate) => candidate.dataset.diagramId === id
+          )
+        : null;
+      if (!canvas || controls.dataset.diagramBound === "true") return;
+      controls.dataset.diagramBound = "true";
+      controls.hidden = true;
+      controls.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-diagram-zoom-control]");
+        if (!button || !controls.contains(button)) return;
+        const requested = button.dataset.diagramZoomControl;
+        apply(canvas, requested);
+      });
+    });
+  };
+  const resizeObserver = typeof ResizeObserver === "function"
+    ? new ResizeObserver(scheduleRetest)
+    : null;
+  const enhance = (root = document) => {
+    bind(root);
+    root.querySelectorAll('[data-diagram-canvas][data-diagram-contract="1"]')
+      .forEach((canvas) => {
+        try {
+          if (!managed.has(canvas)) {
+            managed.add(canvas);
+            if (resizeObserver) {
+              resizeObserver.observe(canvas);
+              const stage = stageFor(canvas);
+              if (stage) resizeObserver.observe(stage);
+            }
+          }
+          retest(canvas, canvas.dataset.diagramZoom || "fit");
+        } catch (_error) {
+          reset(canvas);
+          revealControls(canvas, false, false, root);
+        }
+      });
+  };
+  if (!resizeObserver) globalThis.addEventListener("resize", scheduleRetest, { passive: true });
+  globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset, retest });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
+</body>
+</html>
