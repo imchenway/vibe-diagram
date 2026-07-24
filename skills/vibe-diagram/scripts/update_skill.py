@@ -28,6 +28,12 @@ MANIFEST_URL = (
 ARCHIVE_URL = "https://github.com/imchenway/vibe-diagram/archive/refs/tags/{ref}.zip"
 VERSION_RE = re.compile(r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)")
 DIGEST_RE = re.compile(r"[0-9a-f]{64}")
+LEGACY_BACKUP_RE = re.compile(
+    r"vibe-diagram-"
+    r"(?P<version>(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*))-"
+    r"(?P<stamp>\d{14})(?:-(?P<suffix>[1-9]\d*))?"
+)
+NO_BACKUP_UPDATER_VERSION = (0, 1, 8)
 MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
 REQUIRED_FILES = {
     "SKILL.md",
@@ -243,12 +249,6 @@ def _managed_package(skill_root: Path, local_version: str) -> bool:
     return False
 
 
-def _backup_root(skill_root: Path) -> Path:
-    if skill_root.parent.name == "skills":
-        return skill_root.parent.parent / "backups" / "skills"
-    return skill_root.parent / ".vibe-diagram-backups"
-
-
 @contextlib.contextmanager
 def _update_lock(skill_root: Path, timeout: float = 10.0) -> Iterator[None]:
     lock_path = skill_root.parent / ".vibe-diagram-update.lock"
@@ -293,6 +293,55 @@ def _update_lock(skill_root: Path, timeout: float = 10.0) -> Iterator[None]:
         handle.close()
 
 
+def _verified_legacy_backup(path: Path, expected_version: str) -> bool:
+    try:
+        if path.is_symlink() or not path.is_dir():
+            return False
+        if read_version(path) != expected_version:
+            return False
+        manifest = validate_manifest(
+            _json_object((path / "update.json").read_bytes())
+        )
+        return (
+            manifest["version"] == expected_version
+            and tree_sha256(path) == manifest["tree_sha256"]
+        )
+    except (OSError, UpdateError):
+        return False
+
+
+def _cleanup_verified_legacy_backups(skill_root: Path, local_version: str) -> int:
+    if (
+        parse_version(local_version) < NO_BACKUP_UPDATER_VERSION
+        or skill_root.parent.name != "skills"
+    ):
+        return 0
+    backup_root = skill_root.parent.parent / "backups" / "skills"
+    if not backup_root.exists():
+        return 0
+    if backup_root.is_symlink() or not backup_root.is_dir():
+        raise UpdateError("legacy updater backup root must be a real directory")
+    if not any(LEGACY_BACKUP_RE.fullmatch(path.name) for path in backup_root.iterdir()):
+        return 0
+    removed = 0
+    with _update_lock(skill_root):
+        for path in sorted(backup_root.iterdir()):
+            match = LEGACY_BACKUP_RE.fullmatch(path.name)
+            if match is None:
+                continue
+            expected_version = match.group("version")
+            if not _verified_legacy_backup(path, expected_version):
+                continue
+            shutil.rmtree(path)
+            removed += 1
+        for directory in (backup_root, backup_root.parent):
+            try:
+                directory.rmdir()
+            except OSError:
+                break
+    return removed
+
+
 def _verify_candidate(candidate: Path, manifest: Dict[str, object]) -> None:
     actual_files = {relative for relative, _path in _safe_files(candidate)} | {"update.json"}
     missing = sorted(REQUIRED_FILES - actual_files)
@@ -308,22 +357,17 @@ def _verify_candidate(candidate: Path, manifest: Dict[str, object]) -> None:
         raise UpdateError("release tree integrity check failed")
 
 
-def _activate_candidate(skill_root: Path, candidate: Path, local_version: str) -> Path:
-    backups = _backup_root(skill_root)
-    backups.mkdir(parents=True, exist_ok=True)
-    stamp = time.strftime("%Y%m%d%H%M%S", time.gmtime())
-    backup = backups / f"vibe-diagram-{local_version}-{stamp}"
-    suffix = 1
-    while backup.exists():
-        backup = backups / f"vibe-diagram-{local_version}-{stamp}-{suffix}"
-        suffix += 1
-    os.replace(skill_root, backup)
+def _activate_candidate(skill_root: Path, candidate: Path, staging_root: Path) -> None:
+    previous = staging_root / "previous"
+    if previous.exists() or previous.is_symlink():
+        raise UpdateError(f"transient previous tree already exists: {previous}")
+    os.replace(skill_root, previous)
     try:
         os.replace(candidate, skill_root)
     except BaseException:
-        os.replace(backup, skill_root)
+        os.replace(previous, skill_root)
         raise
-    return backup
+    shutil.rmtree(previous)
 
 
 def check_and_update(
@@ -339,17 +383,30 @@ def check_and_update(
         return UpdateResult("failed", "unknown", message=str(exc))
     if _managed_package(skill_root, local_version):
         return UpdateResult("managed", local_version, message="package manager owns this skill tree")
+    cleanup_message = ""
+    try:
+        removed = _cleanup_verified_legacy_backups(skill_root, local_version)
+        if removed:
+            cleanup_message = f"removed {removed} verified legacy updater backup(s)"
+    except (OSError, UpdateError) as exc:
+        cleanup_message = f"legacy updater backup cleanup skipped: {exc}"
     try:
         raw_manifest = fetch_manifest()
     except (OSError, urllib.error.URLError) as exc:
-        return UpdateResult("offline", local_version, message=str(exc))
+        message = "; ".join(part for part in (cleanup_message, str(exc)) if part)
+        return UpdateResult("offline", local_version, message=message)
     try:
         manifest = validate_manifest(raw_manifest)
     except UpdateError as exc:
         return UpdateResult("failed", local_version, message=str(exc))
     remote_version = str(manifest["version"])
     if parse_version(remote_version) <= parse_version(local_version):
-        return UpdateResult("current", local_version, remote_version)
+        return UpdateResult(
+            "current",
+            local_version,
+            remote_version,
+            message=cleanup_message,
+        )
     try:
         with _update_lock(skill_root):
             local_version = read_version(skill_root)
@@ -364,39 +421,19 @@ def check_and_update(
                     return UpdateResult("offline", local_version, remote_version, message=str(exc))
                 candidate = stage_archive(archive_path, staging)
                 _verify_candidate(candidate, manifest)
-                backup = _activate_candidate(skill_root, candidate, local_version)
-                return UpdateResult("updated", local_version, remote_version, str(backup))
+                _activate_candidate(skill_root, candidate, staging)
+                return UpdateResult(
+                    "updated",
+                    local_version,
+                    remote_version,
+                    message=cleanup_message,
+                )
             except (OSError, UpdateError) as exc:
                 return UpdateResult("failed", local_version, remote_version, message=str(exc))
             finally:
                 shutil.rmtree(staging, ignore_errors=True)
     except (OSError, UpdateError) as exc:
         return UpdateResult("failed", local_version, message=str(exc))
-
-
-def rollback(skill_root: Path) -> UpdateResult:
-    skill_root = skill_root.resolve()
-    local_version = read_version(skill_root)
-    backups = _backup_root(skill_root)
-    candidates = sorted(
-        (path for path in backups.glob("vibe-diagram-*") if path.is_dir() and not path.is_symlink()),
-        key=lambda path: (path.stat().st_mtime_ns, path.name),
-        reverse=True,
-    )
-    if not candidates:
-        return UpdateResult("failed", local_version, message="no recoverable backup exists")
-    selected = candidates[0]
-    restored_version = read_version(selected)
-    stamp = time.strftime("%Y%m%d%H%M%S", time.gmtime())
-    displaced = backups / f"vibe-diagram-{local_version}-rollback-{stamp}"
-    with _update_lock(skill_root):
-        os.replace(skill_root, displaced)
-        try:
-            os.replace(selected, skill_root)
-        except BaseException:
-            os.replace(displaced, skill_root)
-            raise
-    return UpdateResult("rolled_back", local_version, restored_version, str(displaced))
 
 
 def _result_payload(result: UpdateResult) -> Dict[str, object]:
@@ -414,7 +451,6 @@ def main(argv: Optional[list] = None) -> int:
     actions = parser.add_mutually_exclusive_group()
     actions.add_argument("--check-and-update", action="store_true")
     actions.add_argument("--force-check", action="store_true")
-    actions.add_argument("--rollback", action="store_true")
     actions.add_argument("--print-tree-sha256", action="store_true")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--skill-root", type=Path, default=Path(__file__).resolve().parents[1])
@@ -423,21 +459,15 @@ def main(argv: Optional[list] = None) -> int:
     if args.print_tree_sha256:
         print(tree_sha256(args.skill_root.resolve()))
         return 0
-    if args.rollback:
-        try:
-            result = rollback(args.skill_root)
-        except (OSError, UpdateError) as exc:
-            result = UpdateResult("failed", "unknown", message=str(exc))
-    else:
-        result = check_and_update(args.skill_root)
+    result = check_and_update(args.skill_root)
     if args.json:
         print(json.dumps(_result_payload(result), ensure_ascii=True, sort_keys=True))
     else:
         print(result.status)
         if result.message:
             print(result.message, file=sys.stderr)
-    if args.force_check or args.rollback:
-        return 0 if result.status in {"current", "updated", "rolled_back"} else 1
+    if args.force_check:
+        return 0 if result.status in {"current", "updated"} else 1
     return 0
 
 

@@ -11,7 +11,7 @@ On every invocation, resolve this skill directory and run `python3 <skill-root>/
 
 - For `current`, `updated`, or `managed`, continue normally.
 - For `offline` or `failed`, continue with the installed version and mention the update status briefly without blocking the requested artifact.
-- Never replace the installed tree directly or bypass the updater's integrity check, lock, backup, or rollback behavior.
+- Never replace the installed tree directly or bypass the updater's integrity check, lock, or transactional activation.
 - For an explicit manual update request, run the same script with `--force-check --json` and report the exact result.
 
 ## Runtime workflow

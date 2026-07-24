@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-07-24
+
+- Changed direct updater activation to use an in-process transient previous tree, delete it before reporting success, and retain no updater backup.
+- Removed the updater `--rollback` action; pinned immutable-tag reinstallation is now the explicit downgrade path.
+- Added a compatibility cleanup that removes only legacy updater backups with a matching legacy name, version, manifest, and complete tree digest while preserving manual or modified backups.
+- Kept the legacy `backup_path` JSON field as a compatibility field that is `null` for updates performed by the new updater.
+
 ## [0.1.7] - 2026-07-23
 
 - Reworked the workload overview into a west-entry, central north-to-south core-spine, east-operations, south-foundation topology and rebuilt logical layering as a true north-to-south DAG with parallel ranks, branches, and merges.

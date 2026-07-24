@@ -1608,19 +1608,37 @@ def _runtime_archive_writer(payload: bytes, expected_ref: str) -> Callable[[str,
     return write_archive
 
 
+def _legacy_updater_backup_cleanup_status(
+    skill_root: Path,
+    backup_path: Optional[str],
+) -> str:
+    if backup_path is None:
+        return "not-created"
+    backup = Path(backup_path)
+    expected_parent = skill_root.parent.parent / "backups" / "skills"
+    if (
+        not backup.is_absolute()
+        or backup.parent.resolve() != expected_parent.resolve()
+    ):
+        raise ReleaseError("updater returned an unsafe legacy backup path", exit_code=7)
+    if backup.exists() or backup.is_symlink():
+        raise ReleaseError("target updater retained the legacy backup", exit_code=7)
+    return "removed-by-target-updater"
+
+
 def _record_runtime_failure(
     state: ReleaseState,
     store: ReleaseStateStore,
     *,
     mode: str,
     phase: str,
-    rollback_validation: str,
+    recovery_validation: str,
 ) -> None:
     result = {
         "status": "runtime-failed",
         "mode": mode,
         "phase": phase,
-        "rollback_validation": rollback_validation,
+        "recovery_validation": recovery_validation,
         "runtime_validation": "failed",
     }
     if state.release_state == "STABLE_PROMOTED":
@@ -1644,7 +1662,7 @@ def verify_runtime_isolated(
     *,
     fetch_bytes: Callable[[str], bytes] = _default_fetch_bytes,
 ) -> Dict[str, object]:
-    """在临时目录完成公开 updater 的升级、回滚和重升级闭环。"""
+    """在临时目录完成公开 updater 的无备份升级闭环。"""
 
     _commit, verified_digest = _require_runtime_state(
         root, config, version, state
@@ -1691,8 +1709,8 @@ def verify_runtime_isolated(
             )
             if updated.status != "updated" or _read_version(installed / "VERSION") != version:
                 raise ReleaseError("isolated updater did not activate the target version")
-            if not updated.backup_path or not Path(updated.backup_path).is_dir():
-                raise ReleaseError("isolated updater did not create a recoverable backup")
+            if any(installed.parent.glob(".vibe-diagram-update-*")):
+                raise ReleaseError("isolated updater retained a staging directory")
 
             phase = "current"
             target_updater = load_updater(installed)
@@ -1705,6 +1723,12 @@ def verify_runtime_isolated(
             )
             if current.status != "current" or _read_version(installed / "VERSION") != version:
                 raise ReleaseError("isolated current check did not preserve the target")
+            legacy_backup_cleanup = _legacy_updater_backup_cleanup_status(
+                installed,
+                updated.backup_path,
+            )
+            if (runtime_root / "backups").exists():
+                raise ReleaseError("isolated updater retained a persistent backup directory")
 
             phase = "offline"
             offline = target_updater.check_and_update(
@@ -1714,26 +1738,6 @@ def verify_runtime_isolated(
             )
             if offline.status != "offline" or _read_version(installed / "VERSION") != version:
                 raise ReleaseError("isolated offline check did not fail open")
-
-            phase = "rollback"
-            rolled_back = target_updater.rollback(installed)
-            if (
-                rolled_back.status != "rolled_back"
-                or _read_version(installed / "VERSION") != state.previous_version
-            ):
-                raise ReleaseError("isolated rollback did not restore the previous version")
-
-            phase = "reupgrade"
-            previous_updater = load_updater(installed)
-            reupdated = previous_updater.check_and_update(
-                installed,
-                fetch_manifest=lambda: dict(stable_manifest),
-                fetch_archive=_runtime_archive_writer(
-                    target_archive, f"v{version}"
-                ),
-            )
-            if reupdated.status != "updated" or _read_version(installed / "VERSION") != version:
-                raise ReleaseError("isolated re-upgrade did not restore the target")
 
             phase = "fresh-install"
             fresh_candidate = _stage_runtime_archive(
@@ -1760,7 +1764,7 @@ def verify_runtime_isolated(
             store,
             mode="isolated",
             phase=phase,
-            rollback_validation="not-applicable",
+            recovery_validation="not-applicable",
         )
         raise ReleaseError(
             f"isolated runtime lifecycle failed during {phase}", exit_code=7
@@ -1771,7 +1775,7 @@ def verify_runtime_isolated(
             store,
             mode="isolated",
             phase=phase,
-            rollback_validation="not-applicable",
+            recovery_validation="not-applicable",
         )
         raise ReleaseError(
             f"isolated runtime lifecycle failed during {phase}", exit_code=7
@@ -1779,10 +1783,10 @@ def verify_runtime_isolated(
 
     lifecycle = {
         "upgrade": "passed",
+        "retained_backup": "absent",
+        "legacy_backup_cleanup": legacy_backup_cleanup,
         "current": "passed",
         "offline": "passed",
-        "rollback": "passed",
-        "reupgrade": "passed",
         "fresh_install": "passed",
         "removal": "passed",
     }
@@ -1910,47 +1914,33 @@ def _require_isolated_runtime_evidence(
         raise ReleaseError("installed-client requires matching isolated runtime evidence")
 
 
-def _rollback_installed_runtime(
+def _restore_installed_runtime(
     skill_root: Path,
     previous_version: str,
-    recovery_backup: Optional[Path],
+    previous_candidate: Path,
+    recovery_root: Path,
 ) -> str:
     try:
         current = _read_version(skill_root / "VERSION")
         if current == previous_version:
             return "passed"
         if (
-            recovery_backup is not None
-            and recovery_backup.is_absolute()
-            and not recovery_backup.is_symlink()
-            and recovery_backup.is_dir()
-            and recovery_backup.parent.resolve()
-            == (skill_root.parent.parent / "backups" / "skills").resolve()
-            and _read_version(recovery_backup / "VERSION") == previous_version
+            previous_candidate.is_symlink()
+            or not previous_candidate.is_dir()
+            or _read_version(previous_candidate / "VERSION") != previous_version
         ):
-            backups = recovery_backup.parent
-            stamp = time.strftime("%Y%m%d%H%M%S", time.gmtime())
-            displaced = backups / f"vibe-diagram-{current}-runtime-failed-{stamp}"
-            suffix = 1
-            while displaced.exists():
-                displaced = backups / (
-                    f"vibe-diagram-{current}-runtime-failed-{stamp}-{suffix}"
-                )
-                suffix += 1
-            os.replace(skill_root, displaced)
-            try:
-                os.replace(recovery_backup, skill_root)
-            except BaseException:
-                os.replace(displaced, skill_root)
-                raise
-            if _read_version(skill_root / "VERSION") == previous_version:
-                return "passed"
-        updater = load_updater(skill_root)
-        result = updater.rollback(skill_root)
-        if (
-            result.status == "rolled_back"
-            and _read_version(skill_root / "VERSION") == previous_version
-        ):
+            return "failed"
+        displaced = recovery_root / "failed-current"
+        if displaced.exists() or displaced.is_symlink():
+            return "failed"
+        os.replace(skill_root, displaced)
+        try:
+            shutil.copytree(previous_candidate, skill_root)
+        except BaseException:
+            os.replace(displaced, skill_root)
+            raise
+        shutil.rmtree(displaced)
+        if _read_version(skill_root / "VERSION") == previous_version:
             return "passed"
     except Exception:
         pass
@@ -1994,17 +1984,39 @@ def verify_runtime_installed(
         raise ReleaseError(
             "installed-client requires the previous stable version before mutation"
         )
-    stable_manifest, target_archive, _previous = _runtime_release_payloads(
+    stable_manifest, target_archive, previous_archive = _runtime_release_payloads(
         root,
         config,
         version,
         verified_digest,
         fetch_bytes=fetch_bytes,
+        previous_version=state.previous_version,
     )
+    if previous_archive is None:
+        raise ReleaseError("previous immutable archive is unavailable", exit_code=5)
+    previous_manifest = _validate_archive_bytes(
+        root, config, state.previous_version, previous_archive
+    )
+
+    recovery_root = Path(
+        tempfile.mkdtemp(prefix=".vibe-diagram-runtime-recovery-", dir=codex_root)
+    )
+    try:
+        canonical_updater = load_updater(root / config.skill_root)
+        previous_candidate = _stage_runtime_archive(
+            canonical_updater,
+            previous_archive,
+            previous_manifest,
+            state.previous_version,
+            recovery_root / "previous-stage",
+        )
+    except BaseException:
+        shutil.rmtree(recovery_root, ignore_errors=True)
+        raise
 
     phase = "upgrade"
     mutation_started = False
-    recovery_backup: Optional[Path] = None
+    legacy_backup_cleanup = "not-required"
     quarantine: Optional[Path] = None
     displaced: Optional[Path] = None
     remove_quarantine_parent = False
@@ -2018,29 +2030,21 @@ def verify_runtime_installed(
         mutation_started = upgraded.status == "updated"
         if not mutation_started or _read_version(installed / "VERSION") != version:
             raise ReleaseError("installed updater did not activate the target", exit_code=7)
-        recovery_backup = Path(upgraded.backup_path) if upgraded.backup_path else None
 
-        phase = "rollback"
+        phase = "current-cleanup"
         target_updater = load_updater(installed)
-        rolled_back = target_updater.rollback(installed)
-        if (
-            rolled_back.status != "rolled_back"
-            or _read_version(installed / "VERSION") != state.previous_version
-        ):
-            raise ReleaseError("installed rollback did not restore the previous version", exit_code=7)
-        recovery_backup = None
-
-        phase = "reupgrade"
-        previous_updater = load_updater(installed)
-        reupgraded = previous_updater.check_and_update(
+        current = target_updater.check_and_update(
             installed,
             fetch_manifest=lambda: dict(stable_manifest),
-            fetch_archive=_runtime_archive_writer(target_archive, f"v{version}"),
+            fetch_archive=lambda _ref, _target: (_ for _ in ()).throw(
+                OSError("current check unexpectedly requested an archive")
+            ),
         )
-        if reupgraded.status != "updated" or _read_version(installed / "VERSION") != version:
-            raise ReleaseError("installed re-upgrade did not restore the target", exit_code=7)
-        recovery_backup = (
-            Path(reupgraded.backup_path) if reupgraded.backup_path else None
+        if current.status != "current" or _read_version(installed / "VERSION") != version:
+            raise ReleaseError("installed current check did not preserve the target", exit_code=7)
+        legacy_backup_cleanup = _legacy_updater_backup_cleanup_status(
+            installed,
+            upgraded.backup_path,
         )
 
         phase = "codex-invocation"
@@ -2120,9 +2124,12 @@ def verify_runtime_installed(
                 displaced = None
             except OSError:
                 pass
-        rollback_validation = (
-            _rollback_installed_runtime(
-                installed, state.previous_version, recovery_backup
+        recovery_validation = (
+            _restore_installed_runtime(
+                installed,
+                state.previous_version,
+                previous_candidate,
+                recovery_root,
             )
             if mutation_started and installed.exists()
             else "not-required"
@@ -2132,7 +2139,7 @@ def verify_runtime_installed(
             store,
             mode="installed-client",
             phase=phase,
-            rollback_validation=rollback_validation,
+            recovery_validation=recovery_validation,
         )
         if isinstance(exc, ReleaseError):
             raise
@@ -2142,6 +2149,7 @@ def verify_runtime_installed(
     finally:
         if quarantine is not None and quarantine.exists() and displaced is None:
             shutil.rmtree(quarantine, ignore_errors=True)
+        shutil.rmtree(recovery_root, ignore_errors=True)
 
     lanes = _runtime_lanes(state)
     lanes["installed-client"] = {
@@ -2152,7 +2160,10 @@ def verify_runtime_installed(
         "artifact_sha256": artifact_digest,
         "artifact_validation": "passed",
         "discovery_validation": "passed",
+        "current_validation": "passed",
         "uninstall_validation": "passed",
+        "retained_backup_validation": "passed",
+        "legacy_backup_cleanup": legacy_backup_cleanup,
     }
     result = {
         "status": "runtime-verified",
@@ -2163,7 +2174,10 @@ def verify_runtime_installed(
         "artifact_sha256": artifact_digest,
         "artifact_validation": "passed",
         "discovery_validation": "passed",
+        "current_validation": "passed",
         "uninstall_validation": "passed",
+        "retained_backup_validation": "passed",
+        "legacy_backup_cleanup": legacy_backup_cleanup,
         "runtime_validation": "runtime-verified",
     }
     state = dataclasses.replace(

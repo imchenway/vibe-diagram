@@ -75,7 +75,7 @@ python3 "$CODEX_ROOT/skills/.system/skill-installer/scripts/install-skill-from-g
 
 ### 自动与手动更新
 
-对直装的 `v0.1.1+`，bootstrap 每次调用都运行更新门禁：版本已最新时静默继续；发现新稳定标签时先校验、备份并更新，再加载运行时工作流；stable 来源不可用时继续使用本地版本。从 `v0.1.2` 起，current 与 offline 检查不创建锁文件，只有检测到更高版本后才需要写权限。从 `v0.1.3` 起，发行归档只导出 canonical 版本标记，updater 也只接受仓库根下的精确 canonical 路径；激活阶段仍可能要求宿主授权网络或文件操作。
+对直装的 `v0.1.1+`，bootstrap 每次调用都运行更新门禁：版本已最新时静默继续；发现新稳定标签时先校验并更新，再加载运行时工作流；stable 来源不可用时继续使用本地版本。从 `v0.1.2` 起，current 与 offline 检查不创建锁文件，只有检测到更高版本后才需要写权限。从 `v0.1.3` 起，发行归档只导出 canonical 版本标记，updater 也只接受仓库根下的精确 canonical 路径；激活阶段仍可能要求宿主授权网络或文件操作。
 
 可以直接向已安装 Skill 提出：
 
@@ -90,12 +90,7 @@ python3 "$CODEX_ROOT/skills/vibe-diagram/scripts/update_skill.py" \
   --json
 ```
 
-updater 会把新版下载到同级 staging 目录，校验发行 manifest 和目录摘要，保留可恢复备份，并仅在验证通过后启用新版。需要时可恢复最近备份：
-
-```bash
-CODEX_ROOT="${CODEX_HOME:-$HOME/.codex}"
-python3 "$CODEX_ROOT/skills/vibe-diagram/scripts/update_skill.py" --rollback --json
-```
+updater 会把新版下载到同级 staging 目录，校验发行 manifest 和目录摘要，把当前安装临时移入本次激活槽，再启用已经验证的候选版本。候选提升失败时会在当前进程内恢复原安装；成功返回前会删除临时旧树。updater 不保留持久备份，也不再提供 `--rollback`；需要旧版本时应重新安装固定的不可变标签。从仍会备份的旧 updater 首次迁入时，因为该次升级执行的仍是旧代码，可能短暂留下一个遗留备份；下一次门禁只会清理由旧命名格式、`VERSION`、manifest 和完整目录摘要共同验证通过的目录，手工或已修改的备份会保留。
 
 ### 可恢复卸载
 
@@ -178,9 +173,9 @@ python3 scripts/release_github_skill.py verify-runtime --version 0.1.4 \
 
 `promote-stable` 要求已有持久化的 `TAG_VERIFIED` 证据，并单独提供 `--confirm-stable-promotion` 授权。写入前，它会重新读取 main、tag、Release、当前异步 workflow 状态、不可变 tag ZIP、stable 祖先关系和 stable manifest；workflow 完成不再是推进前置条件。它只接受把已验证 release commit 以普通、非强制方式快进到 stable。push 后只读取一次 stable commit、raw manifest 与不可变归档；若已经同步则记录 `stable_validation: passed`，若 raw/CDN 暂时滞后则记录异步待确认，不等待也不倒退 `stable`。
 
-`verify-runtime --mode isolated` 在临时目录安装前一个不可变 tag，通过已发布 stable manifest 完成升级，验证 current 与 offline fail-open，执行回滚、重升级、全新归档安装，并移除两份隔离安装。它不会触碰已安装 Skill，也不能证明 Codex 客户端发现。isolated 通过后只记录为前置证据，发行状态仍是 `STABLE_PROMOTED`。
+`verify-runtime --mode isolated` 在临时目录安装前一个不可变 tag，通过已发布 stable manifest 完成升级，再运行目标 updater 的 current 门禁，清理校验通过的一次性旧备份，证明它不保留备份和 staging 目录；随后验证 offline fail-open、全新归档安装，并移除两份隔离安装。它不会触碰已安装 Skill，也不能证明 Codex 客户端发现。isolated 通过后只记录为前置证据，发行状态仍是 `STABLE_PROMOTED`。
 
-`verify-runtime --mode installed-client` 要求 matching isolated 证据、已安装的前一稳定版本、一个尚不存在的绝对 artifact 路径，以及独立的 `--confirm-installed-skill-mutation`。它通过真实已安装 updater 完成升级、回滚和重升级；在全新的 ephemeral `codex exec` 进程中调用 `$vibe-diagram`；用升级后自带 linter 验证 HTML 工件；再临时隔离并恢复 Skill，由第二个全新进程确认不可发现。只有两种模式都通过，状态才成为限定于 Codex CLI lane 的 `RUNTIME_VERIFIED`。修改安装后若失败，脚本恢复本轮精确的前一版本备份并记录 `PROMOTED_RUNTIME_FAILED`，不会改写发行 tag，也不会倒退 stable。
+`verify-runtime --mode installed-client` 要求 matching isolated 证据、已安装的前一稳定版本、一个尚不存在的绝对 artifact 路径，以及独立的 `--confirm-installed-skill-mutation`。它先在发现目录外暂存不可变的前一版归档，再对真实安装执行一次升级，并运行目标 updater 的 current 门禁清理校验通过的一次性旧备份；随后在全新的 ephemeral `codex exec` 进程中调用 `$vibe-diagram`，用升级后自带 linter 验证 HTML 工件，再临时隔离并恢复 Skill，由第二个全新进程确认不可发现。只有两种模式都通过，状态才成为限定于 Codex CLI lane 的 `RUNTIME_VERIFIED`。修改安装后若失败，脚本在当前进程内恢复已暂存的不可变前一版本并记录 `PROMOTED_RUNTIME_FAILED`；不会保留 updater 备份，也不会改写发行 tag 或倒退 stable。
 
 脚本不会 commit、merge、修改 remote URL、force push、删除 tag、重写历史或把 `stable` 倒退；`publish`、stable 推进和已安装客户端修改分别使用独立确认。当前代码变更尚未执行真实运行时生命周期，因此实现 R07 能力本身不构成 runtime 证据。贡献者可以通过 `--repo owner/name` 使用 fork 范围的证据能力；只有具备自己 fork 写权限并提供相应显式确认时，才可执行 fork 范围发布或 stable 推进。
 
