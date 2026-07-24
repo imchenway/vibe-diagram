@@ -1,13 +1,13 @@
 [data-diagram-detail][hidden] { display: none; }
 [data-diagram-detail]:target { display: block; }
 
-[data-diagram-node-id][data-detail-for] {
+[data-diagram-detail-trigger][data-detail-for] {
   cursor: pointer;
 }
 
-[data-diagram-node-id][data-detail-for]:focus-visible rect {
-  stroke-width: 3;
-  filter: drop-shadow(0 0 6px rgba(31, 111, 178, .34));
+[data-diagram-detail-trigger][data-detail-for]:focus-visible {
+  outline: 3px solid #0877ff;
+  outline-offset: 2px;
 }
 
 [data-node-detail-region] {

@@ -2,16 +2,16 @@
   "schema_version": 1,
   "source_skill_content_sha256": "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48",
   "references": {
-    "business-architecture.md": "a51da9a1919ca414e8b1a18a57d1552643ed6802f4c0572499dc8e5d516dc201",
-    "business-flow.md": "f4970e6a57c91bd0ddc94e30d6a690ecbf903b7945f87a8ceff3ff7fbbfc5b30",
-    "code-sequence.md": "e52d13ed10df449db5dc289e4032324fa01fe15c1dc4e85a2c86a14d7f47ceb4",
-    "decision-communication.md": "9af2f79828591334b0317027b72574b15bb38cab6bc097c7fb897fdebf178a71",
-    "delivery-acceptance.md": "92196960ab6dbf6180f23215d4ba8420846ca05406a66b75fc7529a354516b77",
-    "fault-debugging.md": "24a488954f699b9ca10bcae6281b5c72679ee95618b547a2f060a057be7d8b93",
-    "feature-iteration.md": "4d544050b9140a92e132121e11ba72fae79b634d617a2230f3ddcc24f5a9eecf",
-    "page-mockup.md": "3cf3be8b66985a0f28215c9e858ae11518b44b73f97980f7cccb4224481b13c2",
-    "state-data-model.md": "e0b21424ba4fd14c628dfb42b61be179a581fd0353290d4c9ab79ec01074836d",
-    "system-architecture.md": "bbc8567cfea533e52a5ef736900eb15851e66ede19b4d17f91570269d52c86b9",
-    "technical-design.md": "841ecb39639c9057d42a58e23543704c1cfc369bbab7cf8365ad7a78a5f62c2b"
+    "business-architecture.md": "64ecb4e41237df19b36cd5a882f9f72e93d289040af06465302a3ab7fb7b8bd4",
+    "business-flow.md": "3de2d54d3bbf89579bb709620a9fb2e810d229390e24bd3c39fd50d5e7f33f26",
+    "code-sequence.md": "2de9dd7b763c640b0177b1a1f2fe8eca9e23099f3701a7a508002ce2536ecc22",
+    "decision-communication.md": "9ea619c5a1ec0cec6f29339a5619f9baf8f1f832fd605cbafbdf08784ec063ab",
+    "delivery-acceptance.md": "11c5728989ee7abeda89116d09f246b0a5fed4954bf741d4a75b174546400432",
+    "fault-debugging.md": "45b0acfb3d0778ea5e698916b1055d87ee0927ce0ec83e25e548828a4aac8ca2",
+    "feature-iteration.md": "991a32a95352470846bffef19c808ba124d512b9baf52c2a7d6454b7b3101b7f",
+    "page-mockup.md": "df25b59aef45438a6121956b8a8cb65fdcc8e64fcb94b36a3d69f02cced66aa8",
+    "state-data-model.md": "edf3eb31d240e78dc99a1f65fad2098216581aa465fbaf9fc4abe6bcc0c00598",
+    "system-architecture.md": "070abd3d5ddee4abf9ca139814b4d088d3a2d211ad9c62476eba82fea1f6cbeb",
+    "technical-design.md": "34b9fcc9a615fbd76f7ae88cefda6278b222fbad5684206a712fda235cbc95b0"
   }
 }

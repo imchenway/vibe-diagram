@@ -10,6 +10,328 @@
 
 .router-pipeline{display:grid;grid-template-columns:1fr 28px 1.2fr 28px 1.2fr 28px 1fr;gap:12px;align-items:center}.router-group{display:grid;gap:10px}.boundary-hub{display:grid;grid-template-columns:1fr 1.25fr 1fr;grid-template-rows:auto auto;gap:16px}.boundary-box{grid-row:1/3;border:2px dashed rgba(31,111,178,.46);border-radius:28px;padding:18px;display:grid;gap:12px}.entry-core-foundation{display:grid;grid-template-columns:170px 1fr 210px;grid-template-rows:auto auto auto;gap:14px}.entry-core-foundation .foundation{grid-column:1/4}.whitebox-cluster{display:grid;grid-template-columns:170px 1fr 170px;gap:16px}.component-box{border:2px solid rgba(31,111,178,.42);border-radius:22px;padding:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.environment-zones{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.env-zone{border:1.5px solid rgba(141,179,216,.58);border-radius:22px;padding:14px;display:grid;gap:12px}.north-south-layers{display:grid;gap:12px}.north-south-layers .layer{display:grid;grid-template-columns:180px 1fr 1fr;gap:12px}.data-domain-map{display:grid;grid-template-columns:180px 1fr 180px;grid-template-rows:auto auto;gap:14px}.domain-center{grid-row:1/3;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;border:1.5px solid rgba(23,120,90,.4);border-radius:22px;padding:14px}.dfd-trust-boundary{display:grid;grid-template-columns:180px 1fr 180px;gap:16px}.trust-box{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}.contract-mesh{display:grid;grid-template-columns:1fr 220px 1fr;gap:16px}.contract-center{display:grid;gap:12px;border:1.6px solid rgba(31,111,178,.44);border-radius:22px;padding:14px}.event-bus{display:grid;grid-template-rows:auto 68px auto;gap:14px}.bus-line{display:grid;place-items:center;border-radius:18px;background:linear-gradient(90deg,var(--blue-soft),var(--violet-soft));border:1.5px solid rgba(98,84,173,.38);font-weight:900}.event-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.network-zones{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.security-threat-controls{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:16px}.security-center{border:2px dashed rgba(166,58,58,.42);border-radius:24px;padding:16px;display:grid;gap:12px}.identity-access-path{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:center}.failure-domain-recovery{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.failure-domain{border:1.5px dashed rgba(166,58,58,.34);border-radius:22px;padding:14px;display:grid;gap:12px}.telemetry-pipeline{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.delivery-rail{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}.rail-stage{min-height:128px}.stack{display:grid;gap:12px}.wide{grid-column:1/-1}
 </style>
+  <style data-artifact-shell-kernel="1">
+[data-diagram-title-region] {
+  display: block;
+  max-inline-size: 100%;
+}
+
+[data-diagram-title-copy] {
+  min-inline-size: 0;
+}
+
+[data-diagram-reading-guide="1"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "heading controls"
+    "groups controls";
+  align-items: start;
+  gap: .55rem 1rem;
+  margin-block: .5rem 1rem;
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .9);
+}
+
+[data-reading-guide-heading] {
+  grid-area: heading;
+  display: flex;
+  align-items: baseline;
+  gap: .35rem .75rem;
+  min-inline-size: 0;
+}
+
+[data-reading-guide-heading] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+
+[data-reading-guide-heading] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+
+[data-reading-guide-groups] {
+  grid-area: groups;
+  display: flex;
+  align-items: center;
+  gap: .55rem 1rem;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+[data-reading-guide-group] {
+  display: flex;
+  align-items: center;
+  gap: .4rem .65rem;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+[data-reading-guide-group] + [data-reading-guide-group] {
+  padding-inline-start: 1rem;
+  border-inline-start: 1px solid rgba(141, 179, 216, .45);
+}
+
+[data-reading-guide-group-title] {
+  color: #17324d;
+  font-size: .7rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+[data-reading-guide-item],
+[data-diagram-reading-guide="1"] [data-evidence-id] {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+[data-reading-guide-item] b,
+[data-diagram-reading-guide="1"] [data-evidence-id] b {
+  margin: 0;
+  color: #38546f;
+  font-size: .7rem;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-id] span {
+  max-inline-size: 18rem;
+  color: #5a6c80;
+  font-size: .68rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+[data-line-swatch] {
+  position: relative;
+  display: inline-block;
+  inline-size: 2rem;
+  block-size: .75rem;
+  flex: 0 0 auto;
+}
+
+[data-line-swatch]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0 .32rem;
+  inset-block-start: .3rem;
+  border-block-start: 3px solid #0877ff;
+}
+
+[data-line-swatch]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: .06rem;
+  border-inline-start: .5rem solid #0877ff;
+  border-block: .34rem solid transparent;
+}
+
+[data-line-kind="line-02"] [data-line-swatch]::before {
+  border-color: #00a56a;
+}
+
+[data-line-kind="line-02"] [data-line-swatch]::after {
+  border-inline-start-color: #00a56a;
+}
+
+[data-line-kind="line-03"] [data-line-swatch]::before {
+  border-color: #7c3aed;
+  border-block-start-style: dashed;
+}
+
+[data-line-kind="line-03"] [data-line-swatch]::after {
+  border-inline-start-color: #7c3aed;
+}
+
+[data-line-kind="line-04"] [data-line-swatch]::before {
+  border-color: #f59e0b;
+  border-block-start-style: dotted;
+}
+
+[data-line-kind="line-04"] [data-line-swatch]::after {
+  border-inline-start-color: #f59e0b;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-id]::before {
+  content: "";
+  inline-size: .68rem;
+  block-size: .68rem;
+  flex: 0 0 auto;
+  border: 2px solid;
+  border-radius: .3rem;
+  background: #fff;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-source-kind="file"]::before {
+  border-color: #2787df;
+  background: #e8f3ff;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-source-kind="test"]::before {
+  border-color: #20a476;
+  background: #e9f8f2;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-status="unresolved"]::before {
+  border-color: #e49a10;
+  border-style: dashed;
+  background: #fff6de;
+}
+
+[data-reading-guide-controls] {
+  grid-area: controls;
+  display: flex;
+  min-inline-size: max-content;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: .45rem;
+}
+
+[data-reading-guide-controls] [data-reading-guide-group="interaction"] {
+  justify-content: flex-start;
+  padding: .1rem .35rem 0;
+  border-inline-start: 0;
+}
+
+[data-diagram-controls],
+[data-sequence-toolbar] {
+  position: relative;
+  display: none;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin: 0;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+
+[data-diagram-controls][data-diagram-controls-visible="true"],
+[data-sequence-toolbar]:not([hidden]) {
+  display: inline-flex;
+}
+
+[data-diagram-controls] button,
+[data-sequence-toolbar] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+[data-diagram-controls] button:hover,
+[data-sequence-toolbar] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+
+[data-diagram-controls] button[aria-pressed="true"],
+[data-sequence-toolbar] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+
+[data-diagram-controls] button:focus-visible,
+[data-sequence-toolbar] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+
+[data-diagram-controls] button:disabled,
+[data-sequence-toolbar] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+[data-diagram-zoom-status],
+[data-sequence-scale-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 64rem) {
+  [data-diagram-reading-guide="1"] {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "groups"
+      "controls";
+  }
+
+  [data-reading-guide-controls] {
+    min-inline-size: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  [data-reading-guide-group] + [data-reading-guide-group] {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+}
+
+@media (max-width: 48rem) {
+  [data-reading-guide-heading],
+  [data-reading-guide-groups] {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  [data-reading-guide-group] {
+    align-items: flex-start;
+  }
+
+  [data-diagram-reading-guide="1"] [data-evidence-id] span {
+    max-inline-size: none;
+  }
+}
+
+@media print {
+  [data-diagram-reading-guide="1"] {
+    break-inside: avoid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "groups";
+    background: #fff;
+  }
+
+  [data-reading-guide-controls] {
+    display: none !important;
+  }
+}
+</style>
   <style data-adaptive-viewport-kernel="1">
 [data-diagram-canvas][data-diagram-contract="1"] {
   --diagram-scale: 1;
@@ -29,141 +351,9 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-title-region] {
-  display: flex;
-  max-inline-size: 100%;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: .75rem 1rem;
-}
-[data-diagram-title-copy] {
-  flex: 1 1 24rem;
-  min-inline-size: 0;
-}
-[data-diagram-title-region] > [data-diagram-controls] {
-  flex: 0 0 auto;
-  margin-block: 0;
-}
-[data-diagram-controls] {
-  position: relative;
-  display: none;
-  max-inline-size: 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .375rem;
-  margin-block: 0 1rem;
-  padding: .35rem;
-  border: 1px solid rgba(141, 179, 216, .72);
-  border-radius: .9rem;
-  background: rgba(255, 255, 255, .92);
-  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
-}
-[data-diagram-controls][data-diagram-controls-visible="true"] {
-  display: inline-flex;
-}
-[data-diagram-controls] button {
-  appearance: none;
-  min-block-size: 2.75rem;
-  padding-inline: .9rem;
-  border: 1px solid rgba(141, 179, 216, .78);
-  border-radius: .7rem;
-  background: #f7fbff;
-  color: #17324d;
-  font: inherit;
-  font-size: .8125rem;
-  font-weight: 750;
-  line-height: 1;
-  cursor: pointer;
-  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
-}
-[data-diagram-controls] button:hover {
-  border-color: #5f96c8;
-  background: #e8f3ff;
-}
-[data-diagram-controls] button[aria-pressed="true"] {
-  border-color: #1f6fb2;
-  background: #1f6fb2;
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
-}
-[data-diagram-controls] button:focus-visible {
-  outline: 3px solid #77b8f2;
-  outline-offset: 2px;
-}
-[data-diagram-controls] button:disabled {
-  opacity: .48;
-  cursor: not-allowed;
-}
-[data-diagram-zoom-status] {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
 .diagram-fallback { display: none; }
-[data-evidence-ledger="1"] {
-  padding: .75rem;
-  border: 1px solid rgba(141, 179, 216, .5);
-  border-radius: 1rem;
-  background: rgba(247, 251, 255, .84);
-}
-[data-evidence-summary] {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: .35rem 1rem;
-  padding: 0 .125rem .125rem;
-}
-[data-evidence-summary] strong {
-  color: #17324d;
-  font-size: .875rem;
-}
-[data-evidence-summary] span {
-  color: #5a6c80;
-  font-size: .75rem;
-}
-[data-evidence-ledger="1"] {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .625rem;
-  margin-block: .5rem 1rem;
-}
-[data-evidence-id] {
-  display: grid;
-  align-content: start;
-  gap: .35rem;
-  min-inline-size: 0;
-  padding: .75rem .875rem;
-  border: 1px solid rgba(141, 179, 216, .58);
-  border-radius: .8rem;
-  background: rgba(255, 255, 255, .9);
-  overflow-wrap: anywhere;
-}
-[data-evidence-status="observed"] {
-  border-color: rgba(23, 120, 90, .38);
-  background: rgba(238, 249, 245, .94);
-}
-[data-evidence-source-kind="test"] {
-  border-color: rgba(31, 111, 178, .4);
-  background: rgba(237, 246, 255, .94);
-}
-[data-evidence-status="unresolved"] {
-  border-color: rgba(152, 101, 6, .38);
-  background: rgba(255, 248, 232, .96);
-}
 
 @media (max-width: 48rem) {
-  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
-  [data-diagram-title-copy] { flex: 0 1 auto; }
-  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
-  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
-  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
   [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
@@ -171,8 +361,6 @@
 
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
-  [data-diagram-controls] { display: none !important; }
-  [data-evidence-ledger="1"] { break-inside: avoid; }
   .diagram-fallback { display: block; }
 }
 
@@ -270,40 +458,48 @@
       data-template-contract-version="2"
       data-system-arch-view="deployment"
       data-routing-confidence="{{routing_confidence}}">
-  <header data-diagram-title-region>
+    <header data-diagram-title-region data-artifact-shell-title="1">
     <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
-    <div data-diagram-controls="deployment-topology" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
   </header>
-  <section data-slot="evidence-and-notes" data-evidence-ledger="1" aria-label="Evidence ledger"><div data-evidence-summary><strong>Evidence boundary</strong><span>Observed · checked · unresolved</span></div><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Checked</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Unresolved</b><span>{{evidence-unresolved}}</span></article></section>
-  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="deployment-topology" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack"><section data-diagram-stage data-reading-guide="architecture landmarks" class="template-layout environment-zones" aria-label="Deployment topology template canvas">
+  <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide">
+    <div data-reading-guide-heading><strong>Reading guide</strong><span>How to read this artifact</span></div>
+    <div data-reading-guide-groups>
+      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
+      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b><span>{{evidence-unresolved}}</span></article></div>
+    </div>
+    <div data-reading-guide-controls aria-label="Diagram scale controls">
+      <div data-reading-guide-group="interaction"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item>☝️ <b>{{interaction-hint}}</b></span></div>
+      <div data-diagram-controls="deployment-topology" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div></div>
+  </section>
+<div data-diagram-canvas data-diagram-contract="1" data-diagram-id="deployment-topology" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack"><section data-diagram-stage data-reading-guide="{{canvas-attribute-015}}" class="template-layout environment-zones" aria-label="{{canvas-attribute-001}}">
     <svg class="architecture-map" data-architecture-canvas="1" viewBox="0 0 1200 184" role="img" aria-labelledby="deployment-topology-map-title deployment-topology-map-description" style="grid-column:1/-1;display:block;inline-size:100%;block-size:auto;border:1px solid rgba(141,179,216,.44);border-radius:18px;background:#fbfdff">
-      <title id="deployment-topology-map-title">Deployment Topology architecture landmarks</title>
-      <desc id="deployment-topology-map-description">Primary architecture relations are bound to visible directional paths. Detailed slots follow in the same semantic order.</desc>
+      <title id="deployment-topology-map-title">{{canvas-text-001}}</title>
+      <desc id="deployment-topology-map-description">{{canvas-text-002}}</desc>
       <defs><marker id="deployment-topology-architecture-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1f6fb2"></path></marker></defs>
-      <g aria-label="Primary relation legend"><line x1="42" y1="24" x2="82" y2="24" stroke="#1f6fb2" stroke-width="2.4"></line><text x="92" y="28" fill="#5a6c80" font-size="12" font-weight="700">Primary flow</text></g>
+      <g aria-label="{{canvas-attribute-002}}"><line x1="42" y1="24" x2="82" y2="24" stroke="#1f6fb2" stroke-width="2.4"></line><text x="92" y="28" fill="#5a6c80" font-size="12" font-weight="700">{{canvas-text-003}}</text></g>
     <g data-architecture-relations="1">
-      <path d="M 216.0 117 H 234.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="edge-env-edge-runtime" data-from="edge-env" data-to="edge-runtime" data-relation-kind="architecture-flow"></path>
-      <path d="M 366.0 117 H 384.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="edge-runtime-app-env" data-from="edge-runtime" data-to="app-env" data-relation-kind="architecture-flow"></path>
-      <path d="M 516.0 117 H 534.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="app-env-workload-units" data-from="app-env" data-to="workload-units" data-relation-kind="architecture-flow"></path>
-      <path d="M 666.0 117 H 684.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="workload-units-runtime-config" data-from="workload-units" data-to="runtime-config" data-relation-kind="architecture-flow"></path>
-      <path d="M 816.0 117 H 834.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="runtime-config-data-env" data-from="runtime-config" data-to="data-env" data-relation-kind="architecture-flow"></path>
-      <path d="M 966.0 117 H 984.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="data-env-managed-services" data-from="data-env" data-to="managed-services" data-relation-kind="architecture-flow"></path>
+      <path d="M 216.0 117 H 234.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-009}}"></path>
+      <path d="M 366.0 117 H 384.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-010}}"></path>
+      <path d="M 516.0 117 H 534.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-011}}"></path>
+      <path d="M 666.0 117 H 684.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-004" data-from="layout-node-004" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-012}}"></path>
+      <path d="M 816.0 117 H 834.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-005" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-013}}"></path>
+      <path d="M 966.0 117 H 984.0" fill="none" stroke="#1f6fb2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#deployment-topology-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-006" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-014}}"></path>
     </g>
     <g data-architecture-landmarks="1">
-      <g data-architecture-landmark-for="edge-env"><rect x="84.0" y="84" width="132.0" height="66" rx="14" fill="#e8f3ff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="150.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="150.0" dy="0">Edge</tspan><tspan x="150.0" dy="15">env</tspan></text></g>
-      <g data-architecture-landmark-for="edge-runtime"><rect x="234.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="300.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="300.0" dy="0">Edge</tspan><tspan x="300.0" dy="15">runtime</tspan></text></g>
-      <g data-architecture-landmark-for="app-env"><rect x="384.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="450.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="450.0" dy="0">App</tspan><tspan x="450.0" dy="15">env</tspan></text></g>
-      <g data-architecture-landmark-for="workload-units"><rect x="534.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="600.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="600.0" dy="0">Workload</tspan><tspan x="600.0" dy="15">units</tspan></text></g>
-      <g data-architecture-landmark-for="runtime-config"><rect x="684.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="750.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="750.0" dy="0">Runtime</tspan><tspan x="750.0" dy="15">config</tspan></text></g>
-      <g data-architecture-landmark-for="data-env"><rect x="834.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="900.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="900.0" dy="0">Data</tspan><tspan x="900.0" dy="15">env</tspan></text></g>
-      <g data-architecture-landmark-for="managed-services"><rect x="984.0" y="84" width="132.0" height="66" rx="14" fill="#e8f3ff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="1050.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="1050.0" dy="0">Managed</tspan><tspan x="1050.0" dy="15">services</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-001"><rect x="84.0" y="84" width="132.0" height="66" rx="14" fill="#e8f3ff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="150.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="150.0" dy="0">{{canvas-text-004}}</tspan><tspan x="150.0" dy="15">{{canvas-text-005}}</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-002"><rect x="234.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="300.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="300.0" dy="0">{{canvas-text-006}}</tspan><tspan x="300.0" dy="15">{{canvas-text-007}}</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-003"><rect x="384.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="450.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="450.0" dy="0">{{canvas-text-008}}</tspan><tspan x="450.0" dy="15">{{canvas-text-009}}</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-004"><rect x="534.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="600.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="600.0" dy="0">{{canvas-text-010}}</tspan><tspan x="600.0" dy="15">{{canvas-text-011}}</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-005"><rect x="684.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="750.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="750.0" dy="0">{{canvas-text-012}}</tspan><tspan x="750.0" dy="15">{{canvas-text-013}}</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-006"><rect x="834.0" y="84" width="132.0" height="66" rx="14" fill="#ffffff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="900.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="900.0" dy="0">{{canvas-text-014}}</tspan><tspan x="900.0" dy="15">{{canvas-text-015}}</tspan></text></g>
+      <g data-architecture-landmark-for="layout-node-007"><rect x="984.0" y="84" width="132.0" height="66" rx="14" fill="#e8f3ff" stroke="#8db3d8" stroke-width="1.4"></rect><text x="1050.0" y="109" text-anchor="middle" fill="#102033" font-size="12" font-weight="700"><tspan x="1050.0" dy="0">{{canvas-text-016}}</tspan><tspan x="1050.0" dy="15">{{canvas-text-017}}</tspan></text></g>
     </g>
     </svg>
-    <div class="env-zone">    <div id="edge-env" class="slot " data-diagram-node-id="edge-env" data-semantic-role="architecture-object" data-slot="edge-env"><b>Edge env</b><span>{{edge-env}}</span></div>    <div id="edge-runtime" class="slot core" data-diagram-node-id="edge-runtime" data-semantic-role="architecture-object" data-slot="edge-runtime"><b>Edge runtime</b><span>{{edge-runtime}}</span></div></div>
-    <div class="env-zone">    <div id="app-env" class="slot " data-diagram-node-id="app-env" data-semantic-role="architecture-object" data-slot="app-env"><b>App env</b><span>{{app-env}}</span></div>    <div id="workload-units" class="slot core" data-diagram-node-id="workload-units" data-semantic-role="architecture-object" data-slot="workload-units"><b>Workload units</b><span>{{workload-units}}</span></div>    <div id="runtime-config" class="slot ops" data-diagram-node-id="runtime-config" data-semantic-role="architecture-object" data-slot="runtime-config"><b>Runtime config</b><span>{{runtime-config}}</span></div></div>
-    <div class="env-zone">    <div id="data-env" class="slot data" data-diagram-node-id="data-env" data-semantic-role="architecture-object" data-slot="data-env"><b>Data env</b><span>{{data-env}}</span></div>    <div id="managed-services" class="slot support" data-diagram-node-id="managed-services" data-semantic-role="architecture-object" data-slot="managed-services"><b>Managed services</b><span>{{managed-services}}</span></div></div>
-  <span class="semantic-relation" data-diagram-relation-id="edge-env-edge-runtime" data-from="edge-env" data-to="edge-runtime" data-relation-kind="architecture-flow" data-semantic="edge-env connects to edge-runtime">edge-env connects to edge-runtime</span><span class="semantic-relation" data-diagram-relation-id="edge-runtime-app-env" data-from="edge-runtime" data-to="app-env" data-relation-kind="architecture-flow" data-semantic="edge-runtime connects to app-env">edge-runtime connects to app-env</span><span class="semantic-relation" data-diagram-relation-id="app-env-workload-units" data-from="app-env" data-to="workload-units" data-relation-kind="architecture-flow" data-semantic="app-env connects to workload-units">app-env connects to workload-units</span><span class="semantic-relation" data-diagram-relation-id="workload-units-runtime-config" data-from="workload-units" data-to="runtime-config" data-relation-kind="architecture-flow" data-semantic="workload-units connects to runtime-config">workload-units connects to runtime-config</span><span class="semantic-relation" data-diagram-relation-id="runtime-config-data-env" data-from="runtime-config" data-to="data-env" data-relation-kind="architecture-flow" data-semantic="runtime-config connects to data-env">runtime-config connects to data-env</span><span class="semantic-relation" data-diagram-relation-id="data-env-managed-services" data-from="data-env" data-to="managed-services" data-relation-kind="architecture-flow" data-semantic="data-env connects to managed-services">data-env connects to managed-services</span></section></div>
-  <details class="diagram-fallback" data-fallback-for="deployment-topology"><summary>Architecture landmark order</summary><ol><li>edge-env</li><li>edge-runtime</li><li>app-env</li><li>workload-units</li><li>runtime-config</li><li>data-env</li><li>managed-services</li></ol></details>
+    <div class="env-zone">    <div id="layout-node-001" class="slot " data-diagram-node-id="layout-node-001" data-semantic-role="{{canvas-attribute-016}}" data-slot="layout-slot-001"><b>{{canvas-text-018}}</b><span>{{canvas-text-019}}</span></div>    <div id="layout-node-002" class="slot core" data-diagram-node-id="layout-node-002" data-semantic-role="{{canvas-attribute-017}}" data-slot="layout-slot-002"><b>{{canvas-text-020}}</b><span>{{canvas-text-021}}</span></div></div>
+    <div class="env-zone">    <div id="layout-node-003" class="slot " data-diagram-node-id="layout-node-003" data-semantic-role="{{canvas-attribute-018}}" data-slot="layout-slot-003"><b>{{canvas-text-022}}</b><span>{{canvas-text-023}}</span></div>    <div id="layout-node-004" class="slot core" data-diagram-node-id="layout-node-004" data-semantic-role="{{canvas-attribute-019}}" data-slot="layout-slot-004"><b>{{canvas-text-024}}</b><span>{{canvas-text-025}}</span></div>    <div id="layout-node-005" class="slot ops" data-diagram-node-id="layout-node-005" data-semantic-role="{{canvas-attribute-020}}" data-slot="layout-slot-005"><b>{{canvas-text-026}}</b><span>{{canvas-text-027}}</span></div></div>
+    <div class="env-zone">    <div id="layout-node-006" class="slot data" data-diagram-node-id="layout-node-006" data-semantic-role="{{canvas-attribute-021}}" data-slot="layout-slot-006"><b>{{canvas-text-028}}</b><span>{{canvas-text-029}}</span></div>    <div id="layout-node-007" class="slot support" data-diagram-node-id="layout-node-007" data-semantic-role="{{canvas-attribute-022}}" data-slot="layout-slot-007"><b>{{canvas-text-030}}</b><span>{{canvas-text-031}}</span></div></div>
+  <span class="semantic-relation" data-diagram-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-009}}" data-semantic="{{canvas-attribute-003}}">{{canvas-text-032}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-010}}" data-semantic="{{canvas-attribute-004}}">{{canvas-text-033}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-011}}" data-semantic="{{canvas-attribute-005}}">{{canvas-text-034}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-004" data-from="layout-node-004" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-012}}" data-semantic="{{canvas-attribute-006}}">{{canvas-text-035}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-005" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-013}}" data-semantic="{{canvas-attribute-007}}">{{canvas-text-036}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-006" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-014}}" data-semantic="{{canvas-attribute-008}}">{{canvas-text-037}}</span></section></div>
+  <details class="diagram-fallback" data-fallback-for="deployment-topology"><summary>{{canvas-text-038}}</summary><ol><li>{{canvas-text-039}}</li><li>{{canvas-text-040}}</li><li>{{canvas-text-041}}</li><li>{{canvas-text-042}}</li><li>{{canvas-text-043}}</li><li>{{canvas-text-044}}</li><li>{{canvas-text-045}}</li></ol></details>
 </main>
 <script data-adaptive-viewport-kernel="1">
 (() => {
@@ -448,6 +644,362 @@
   globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset, retest });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
+<script data-artifact-shell-preview-kernel="1">
+(() => {
+  "use strict";
+
+  const unresolvedCanvasText = /^\s*\{\{canvas-text-\d{3}\}\}\s*$/;
+  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
+  const auditRoots = "[data-diagram-canvas], [data-sequence-canvas]";
+  const epsilon = 1;
+
+  const suppressUnfilledCanvasText = (root) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const unresolvedNodes = [];
+    while (walker.nextNode()) {
+      if (unresolvedCanvasText.test(walker.currentNode.nodeValue || "")) {
+        unresolvedNodes.push(walker.currentNode);
+      }
+    }
+    unresolvedNodes.forEach((node) => {
+      node.nodeValue = "";
+    });
+    if (unresolvedNodes.length) {
+      root.setAttribute("data-template-preview", "unfilled");
+    }
+  };
+
+  const isVisible = (element) => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return (
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") > 0 &&
+      rect.width > epsilon &&
+      rect.height > epsilon
+    );
+  };
+
+  const overlaps = (left, right, inset = epsilon) => (
+    left.left + inset < right.right &&
+    left.right - inset > right.left &&
+    left.top + inset < right.bottom &&
+    left.bottom - inset > right.top
+  );
+
+  const containsPoint = (rect, point, inset = 2) => (
+    point.x > rect.left + inset &&
+    point.x < rect.right - inset &&
+    point.y > rect.top + inset &&
+    point.y < rect.bottom - inset
+  );
+
+  const pointOnBoundary = (rect, point, tolerance = 6) => {
+    const withinHorizontal = point.x >= rect.left - tolerance && point.x <= rect.right + tolerance;
+    const withinVertical = point.y >= rect.top - tolerance && point.y <= rect.bottom + tolerance;
+    return (
+      (withinHorizontal && (
+        Math.abs(point.y - rect.top) <= tolerance ||
+        Math.abs(point.y - rect.bottom) <= tolerance
+      )) ||
+      (withinVertical && (
+        Math.abs(point.x - rect.left) <= tolerance ||
+        Math.abs(point.x - rect.right) <= tolerance
+      ))
+    );
+  };
+
+  const numericAttribute = (element, name) => {
+    const value = Number.parseFloat(element.getAttribute(name) || "");
+    return Number.isFinite(value) ? value : null;
+  };
+
+  const parseColor = (value) => {
+    const match = value.match(
+      /rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*(\d*(?:\.\d+)?))?\s*\)/
+    );
+    if (!match) return null;
+    return {
+      red: Number(match[1]) / 255,
+      green: Number(match[2]) / 255,
+      blue: Number(match[3]) / 255,
+      alpha: match[4] === undefined || match[4] === "" ? 1 : Number(match[4])
+    };
+  };
+
+  const pointOnScreen = (path, distance) => {
+    const point = path.getPointAtLength(distance);
+    const matrix = path.getScreenCTM();
+    if (!matrix) return null;
+    const transformed = new DOMPoint(point.x, point.y).matrixTransform(matrix);
+    return { x: transformed.x, y: transformed.y };
+  };
+
+  const auditDetailLinks = (canvas, addIssue) => {
+    const documentRoot = canvas.ownerDocument;
+    canvas.querySelectorAll(detailTriggerSelector).forEach((trigger) => {
+      const detailId = trigger.dataset.detailFor || "";
+      const detail = detailId
+        ? documentRoot.querySelector(`[data-diagram-detail="${CSS.escape(detailId)}"]`)
+        : null;
+      if (!detail) {
+        addIssue("detail-target-missing", detailId || "unnamed-trigger");
+        return;
+      }
+      if (trigger.tagName !== "A" || trigger.getAttribute("href") !== `#${detailId}`) {
+        addIssue("detail-trigger-not-native-link", detailId);
+      }
+      if (detail.tagName !== "DETAILS" || detail.id !== detailId) {
+        addIssue("detail-target-not-native-details", detailId);
+      }
+    });
+  };
+
+  const auditNodeGeometry = (canvas, addIssue) => {
+    const nodes = Array.from(canvas.querySelectorAll("[data-diagram-node-id]")).filter(isVisible);
+    for (let leftIndex = 0; leftIndex < nodes.length; leftIndex += 1) {
+      const left = nodes[leftIndex];
+      const leftRect = left.getBoundingClientRect();
+      for (let rightIndex = leftIndex + 1; rightIndex < nodes.length; rightIndex += 1) {
+        const right = nodes[rightIndex];
+        if (left.contains(right) || right.contains(left)) continue;
+        if (overlaps(leftRect, right.getBoundingClientRect(), 2)) {
+          addIssue(
+            "node-overlap",
+            `${left.dataset.diagramNodeId || leftIndex}:${right.dataset.diagramNodeId || rightIndex}`
+          );
+        }
+      }
+    }
+    canvas.querySelectorAll("foreignObject > *, [data-node-title], [data-node-summary]").forEach(
+      (content) => {
+        if (!isVisible(content)) return;
+        if (
+          content.scrollWidth > content.clientWidth + epsilon ||
+          content.scrollHeight > content.clientHeight + epsilon
+        ) {
+          addIssue(
+            "node-content-overflow",
+            content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || content.tagName
+          );
+        }
+      }
+    );
+    canvas.querySelectorAll("[data-diagram-detail-trigger='auxiliary']").forEach((trigger) => {
+      if (!isVisible(trigger)) return;
+      const color = parseColor(getComputedStyle(trigger).backgroundColor);
+      if (!color || color.alpha < 0.85) {
+        addIssue("auxiliary-node-background-transparent", trigger.dataset.detailFor || "unknown");
+        return;
+      }
+      const luminance = color.red * 0.2126 + color.green * 0.7152 + color.blue * 0.0722;
+      if (luminance < 0.72) {
+        addIssue("auxiliary-node-background-too-dark", trigger.dataset.detailFor || "unknown");
+      }
+    });
+  };
+
+  const auditRoutes = (canvas, addIssue) => {
+    const nodeRects = new Map(
+      Array.from(canvas.querySelectorAll("[data-diagram-node-id]"))
+        .filter(isVisible)
+        .map((node) => [node.dataset.diagramNodeId, node.getBoundingClientRect()])
+    );
+    const labels = Array.from(canvas.querySelectorAll("svg text")).filter(isVisible);
+    canvas.querySelectorAll("path[data-diagram-visible-relation-id]").forEach((path) => {
+      if (typeof path.getTotalLength !== "function") return;
+      const relationId = path.dataset.diagramVisibleRelationId || "unknown";
+      const length = path.getTotalLength();
+      if (!Number.isFinite(length) || length < 24) {
+        addIssue("route-too-short", relationId);
+        return;
+      }
+      if (!path.getAttribute("marker-end")) {
+        addIssue("route-arrowhead-missing", relationId);
+      }
+      const sourceId = path.dataset.from || "";
+      const targetId = path.dataset.to || "";
+      const sourceRect = nodeRects.get(sourceId);
+      const targetRect = nodeRects.get(targetId);
+      const startPoint = pointOnScreen(path, 0);
+      const endPoint = pointOnScreen(path, length);
+      if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
+        addIssue("route-source-not-anchored", relationId);
+      }
+      if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
+        addIssue("route-target-not-anchored", relationId);
+      }
+      const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
+      for (let index = 1; index < sampleCount; index += 1) {
+        const progress = index / sampleCount;
+        const point = pointOnScreen(path, length * progress);
+        if (!point) break;
+        for (const [nodeId, rect] of nodeRects) {
+          if (
+            (nodeId === sourceId && progress < 0.08) ||
+            (nodeId === targetId && progress > 0.92)
+          ) {
+            continue;
+          }
+          if (containsPoint(rect, point, 3)) {
+            addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+          }
+        }
+        for (const label of labels) {
+          if (label.dataset.routeLabelFor === relationId) continue;
+          if (containsPoint(label.getBoundingClientRect(), point, 1)) {
+            addIssue("route-crosses-label", relationId);
+            break;
+          }
+        }
+      }
+    });
+  };
+
+  const auditUtilization = (canvas, addIssue) => {
+    const svg = canvas.querySelector("svg[data-architecture-canvas]");
+    if (!svg?.viewBox?.baseVal) return;
+    const boundaries = Array.from(
+      svg.querySelectorAll("rect[data-architecture-boundary]")
+    ).map((rect) => ({
+      x: numericAttribute(rect, "x"),
+      y: numericAttribute(rect, "y"),
+      width: numericAttribute(rect, "width"),
+      height: numericAttribute(rect, "height")
+    })).filter((item) => Object.values(item).every((value) => value !== null));
+    if (!boundaries.length) return;
+    const viewBox = svg.viewBox.baseVal;
+    const left = Math.min(...boundaries.map((item) => item.x));
+    const top = Math.min(...boundaries.map((item) => item.y));
+    const right = Math.max(...boundaries.map((item) => item.x + item.width));
+    const bottom = Math.max(...boundaries.map((item) => item.y + item.height));
+    const ratios = {
+      top: (top - viewBox.y) / viewBox.height,
+      bottom: (viewBox.y + viewBox.height - bottom) / viewBox.height,
+      horizontal: (right - left) / viewBox.width
+    };
+    const thresholds = {
+      top: numericAttribute(canvas, "data-max-top-whitespace-ratio"),
+      bottom: numericAttribute(canvas, "data-max-bottom-whitespace-ratio"),
+      horizontal: numericAttribute(canvas, "data-min-horizontal-utilization-ratio")
+    };
+    if (thresholds.top !== null && ratios.top > thresholds.top + 0.0001) {
+      addIssue("canvas-top-whitespace", ratios.top.toFixed(4));
+    }
+    if (thresholds.bottom !== null && ratios.bottom > thresholds.bottom + 0.0001) {
+      addIssue("canvas-bottom-whitespace", ratios.bottom.toFixed(4));
+    }
+    if (thresholds.horizontal !== null && ratios.horizontal < thresholds.horizontal - 0.0001) {
+      addIssue("canvas-horizontal-underuse", ratios.horizontal.toFixed(4));
+    }
+  };
+
+  const auditControls = (canvas, addIssue) => {
+    const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
+    const controls = document.querySelector(
+      `[data-diagram-controls="${CSS.escape(canvasId)}"], [data-sequence-controls="${CSS.escape(canvasId)}"]`
+    );
+    if (!controls) {
+      addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    const controlRegion = controls.closest("[data-reading-guide-controls]");
+    const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
+    if (!controlRegion || !interaction) {
+      addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    const interactionRect = interaction.getBoundingClientRect();
+    const controlsRect = controls.getBoundingClientRect();
+    if (
+      isVisible(interaction) &&
+      isVisible(controls) &&
+      interactionRect.bottom > controlsRect.top + epsilon
+    ) {
+      addIssue("interaction-not-above-controls", canvasId || "unnamed-canvas");
+    }
+  };
+
+  const audit = (canvas) => {
+    const issues = new Set();
+    const addIssue = (code, target) => issues.add(`${code}:${target}`);
+    auditDetailLinks(canvas, addIssue);
+    auditNodeGeometry(canvas, addIssue);
+    auditRoutes(canvas, addIssue);
+    auditUtilization(canvas, addIssue);
+    auditControls(canvas, addIssue);
+    if (document.documentElement.scrollWidth > document.documentElement.clientWidth + epsilon) {
+      addIssue("page-horizontal-overflow", document.documentElement.scrollWidth);
+    }
+    const ordered = Array.from(issues).sort();
+    canvas.setAttribute(
+      "data-computed-layout-audit",
+      ordered.length ? "failed" : "passed"
+    );
+    canvas.setAttribute("data-computed-layout-issue-count", String(ordered.length));
+    if (ordered.length) {
+      canvas.dataset.computedLayoutIssues = ordered.join("|").slice(0, 2048);
+    } else {
+      delete canvas.dataset.computedLayoutIssues;
+    }
+    canvas.dispatchEvent(
+      new CustomEvent("vibe-diagram:layout-audit", {
+        bubbles: true,
+        detail: { issues: ordered, passed: ordered.length === 0 }
+      })
+    );
+    return ordered;
+  };
+
+  const auditAll = (root = document) => {
+    const results = new Map();
+    root.querySelectorAll(auditRoots).forEach((canvas) => {
+      results.set(canvas.dataset.diagramId || canvas.dataset.sequenceId || "canvas", audit(canvas));
+    });
+    const failures = Array.from(results.values()).reduce(
+      (total, issues) => total + issues.length,
+      0
+    );
+    document.documentElement.dataset.computedLayoutAudit = failures ? "failed" : "passed";
+    document.documentElement.dataset.computedLayoutIssueCount = String(failures);
+    return results;
+  };
+
+  let auditQueued = false;
+  const scheduleAudit = () => {
+    if (auditQueued) return;
+    auditQueued = true;
+    requestAnimationFrame(() => {
+      auditQueued = false;
+      auditAll();
+    });
+  };
+
+  const enhance = () => {
+    document
+      .querySelectorAll(auditRoots)
+      .forEach(suppressUnfilledCanvasText);
+    globalThis.VibeDiagramQuality = Object.freeze({ audit, auditAll, scheduleAudit });
+    scheduleAudit();
+    document.fonts?.ready.then(scheduleAudit, scheduleAudit);
+    if ("ResizeObserver" in globalThis) {
+      const observer = new ResizeObserver(scheduleAudit);
+      document.querySelectorAll(`${auditRoots}, [data-diagram-reading-guide="1"]`).forEach(
+        (element) => observer.observe(element)
+      );
+    } else {
+      addEventListener("resize", scheduleAudit);
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enhance, { once: true });
   } else {
     enhance();
   }

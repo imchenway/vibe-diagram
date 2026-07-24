@@ -10,7 +10,7 @@ import shutil
 import stat
 import sys
 import tempfile
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 from typing import Any, Callable, Dict, List, Mapping, Optional, Sequence, Tuple
@@ -161,6 +161,8 @@ REFERENCE_PATHS: Tuple[str, ...] = (
 RUNTIME_WORKFLOW_PATH = "runtime-workflow.md"
 ADAPTIVE_REFERENCE_PATH = "adaptive-readability.md"
 CONTRACT_ASSET_PATHS: Tuple[str, ...] = (
+    "assets/contracts/artifact-shell/v1.css",
+    "assets/contracts/artifact-shell/v1.js",
     "assets/contracts/adaptive-viewport/v1.css",
     "assets/contracts/adaptive-viewport/v1.js",
     "assets/contracts/progressive-disclosure/v1.css",
@@ -170,7 +172,7 @@ CONTRACT_ASSET_PATHS: Tuple[str, ...] = (
     "contracts/family-policies.json",
 )
 UPDATE_MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
-CANONICAL_FILE_COUNT = 85
+CANONICAL_FILE_COUNT = 87
 ADAPTER_IDENTITIES = {
     "codex": (
         "README.md",
@@ -301,6 +303,27 @@ FAMILY_POLICY_TEMPLATE_OPTIONAL_KEYS = frozenset(
         "requires_node_detail_hint_in_reading_guide",
         "requires_localized_node_labels",
         "evidence_placement",
+        "quality",
+    }
+)
+QUALITY_POLICY_KEYS = frozenset(
+    {
+        "requires_node_icons",
+        "requires_auxiliary_details",
+        "requires_node_nonoverlap",
+        "requires_boundary_anchors",
+        "requires_routes_clear_nodes",
+        "max_top_whitespace_ratio",
+        "max_bottom_whitespace_ratio",
+        "min_horizontal_utilization_ratio",
+        "uniform_width_regions",
+        "uniform_gap_regions",
+        "full_width_regions",
+        "min_full_width_ratio",
+        "min_relation_length",
+        "min_distinct_relation_colors",
+        "min_arrowhead_size",
+        "max_arrowhead_size",
     }
 )
 FAMILY_POLICY_TEMPLATE_KEYS = (
@@ -322,6 +345,7 @@ SVG_NUMBER_SOURCE = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
 SVG_NUMBER_RE = re.compile(rf"^{SVG_NUMBER_SOURCE}$")
 SVG_PATH_TOKEN_RE = re.compile(rf"[MLHV]|{SVG_NUMBER_SOURCE}")
 HAN_CHARACTER_RE = re.compile(r"[\u3400-\u9fff]")
+EMOJI_RE = re.compile(r"[\u2600-\u27bf\U0001f1e6-\U0001faff]")
 ASCII_LETTER_RE = re.compile(r"[A-Za-z]")
 VISIBLE_PLACEHOLDER_RE = re.compile(r"\{\{[^{}]+\}\}")
 VISIBLE_STABLE_ID_RE = re.compile(
@@ -906,6 +930,7 @@ def load_interaction_contract(root: Path) -> Dict[str, Any]:
     if type(contract["schema_version"]) is not int or contract["schema_version"] != 1:
         raise _fail("interaction contract schema_version must be integer 1")
     if contract["contracts"] != {
+        "artifact_shell": "1",
         "adaptive_viewport": "1",
         "semantic_relations": "1",
         "progressive_disclosure": "1",
@@ -913,12 +938,18 @@ def load_interaction_contract(root: Path) -> Dict[str, Any]:
         raise _fail("interaction contract versions are invalid")
     scope = contract["scope"]
     if not isinstance(scope, dict) or set(scope) != {
+        "artifact_shell_template_count",
         "generic_template_count",
         "sequence_template_count",
         "completed_batches",
         "completed_templates",
     }:
         raise _fail("interaction contract scope is invalid")
+    if (
+        type(scope["artifact_shell_template_count"]) is not int
+        or scope["artifact_shell_template_count"] != 59
+    ):
+        raise _fail("interaction contract artifact shell template count is invalid")
     if type(scope["generic_template_count"]) is not int or scope["generic_template_count"] != 53:
         raise _fail("interaction contract generic template count is invalid")
     if type(scope["sequence_template_count"]) is not int or scope["sequence_template_count"] != 6:
@@ -949,6 +980,13 @@ def load_interaction_contract(root: Path) -> Dict[str, Any]:
         "client_runtime",
     }:
         raise _fail("interaction contract evidence scope is invalid")
+    if evidence != {
+        "synthetic_contracts": "required",
+        "canonical_templates": "complete",
+        "browser_runtime": "computed-layout-audit-pending",
+        "client_runtime": "unverified",
+    }:
+        raise _fail("interaction contract evidence values are invalid")
     return contract
 
 
@@ -1221,6 +1259,94 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
                     "family policy geometric direction currently requires north-to-south: "
                     f"{family}/{template_id}"
                 )
+            quality = template.get("quality")
+            if quality is not None:
+                if not isinstance(quality, Mapping) or set(quality) - QUALITY_POLICY_KEYS:
+                    raise _fail(
+                        f"family policy quality contract is invalid: {family}/{template_id}"
+                    )
+                for flag in (
+                    "requires_node_icons",
+                    "requires_auxiliary_details",
+                    "requires_node_nonoverlap",
+                    "requires_boundary_anchors",
+                    "requires_routes_clear_nodes",
+                ):
+                    if flag in quality and type(quality[flag]) is not bool:
+                        raise _fail(
+                            f"family policy quality flag {flag} is invalid: "
+                            f"{family}/{template_id}"
+                        )
+                for ratio in (
+                    "max_top_whitespace_ratio",
+                    "max_bottom_whitespace_ratio",
+                    "min_horizontal_utilization_ratio",
+                    "min_full_width_ratio",
+                ):
+                    value = quality.get(ratio)
+                    if value is not None and (
+                        isinstance(value, bool)
+                        or not isinstance(value, (int, float))
+                        or not 0 <= value <= 1
+                    ):
+                        raise _fail(
+                            f"family policy quality ratio {ratio} is invalid: "
+                            f"{family}/{template_id}"
+                        )
+                for length in (
+                    "min_relation_length",
+                    "min_arrowhead_size",
+                    "max_arrowhead_size",
+                ):
+                    value = quality.get(length)
+                    if value is not None and (
+                        isinstance(value, bool)
+                        or not isinstance(value, (int, float))
+                        or value <= 0
+                    ):
+                        raise _fail(
+                            f"family policy quality length {length} is invalid: "
+                            f"{family}/{template_id}"
+                        )
+                color_count = quality.get("min_distinct_relation_colors")
+                if color_count is not None and (
+                    type(color_count) is not int or color_count < 1
+                ):
+                    raise _fail(
+                        "family policy distinct relation color count is invalid: "
+                        f"{family}/{template_id}"
+                    )
+                known_regions = set(regions or [])
+                for region_key in (
+                    "uniform_width_regions",
+                    "uniform_gap_regions",
+                    "full_width_regions",
+                ):
+                    configured = quality.get(region_key)
+                    if configured is not None and (
+                        not isinstance(configured, list)
+                        or not configured
+                        or len(configured) != len(set(configured))
+                        or any(
+                            not isinstance(region, str)
+                            or region not in known_regions
+                            for region in configured
+                        )
+                    ):
+                        raise _fail(
+                            f"family policy quality regions {region_key} are invalid: "
+                            f"{family}/{template_id}"
+                        )
+                minimum_arrow = quality.get("min_arrowhead_size")
+                maximum_arrow = quality.get("max_arrowhead_size")
+                if (
+                    minimum_arrow is not None
+                    and maximum_arrow is not None
+                    and minimum_arrow > maximum_arrow
+                ):
+                    raise _fail(
+                        f"family policy arrowhead range is invalid: {family}/{template_id}"
+                    )
             covered.add(f"{family}/{template_id}.html")
     expected = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
     if covered != expected:
@@ -1258,6 +1384,22 @@ class _RelationBindingRecord:
     kind: str
 
 
+@dataclass(frozen=True)
+class _DetailTriggerRecord:
+    kind: str
+    detail_for: str
+    element_tag: str
+    href: str
+    owner_node_id: str
+
+
+@dataclass(frozen=True)
+class _VisiblePathQualityRecord:
+    path_data: str
+    stroke: str
+    marker_end: str
+
+
 @dataclass
 class _GenericCanvasRecord:
     attrs: Dict[str, str]
@@ -1272,6 +1414,22 @@ class _GenericCanvasRecord:
     visible_relations: List[_RelationBindingRecord]
     node_bounds: Dict[str, Tuple[float, float, float, float]]
     visible_paths: Dict[str, str]
+    detail_triggers: List[_DetailTriggerRecord] = field(default_factory=list)
+    runtime_detail_ids: List[str] = field(default_factory=list)
+    node_icon_counts: Dict[str, int] = field(default_factory=dict)
+    node_title_counts: Dict[str, int] = field(default_factory=dict)
+    node_summary_counts: Dict[str, int] = field(default_factory=dict)
+    node_icon_texts: Dict[str, List[str]] = field(default_factory=dict)
+    node_title_texts: Dict[str, List[str]] = field(default_factory=dict)
+    node_summary_texts: Dict[str, List[str]] = field(default_factory=dict)
+    viewbox: Optional[Tuple[float, float, float, float]] = None
+    boundary_bounds: Dict[str, Tuple[float, float, float, float]] = field(
+        default_factory=dict
+    )
+    visible_path_quality: Dict[str, _VisiblePathQualityRecord] = field(
+        default_factory=dict
+    )
+    marker_sizes: Dict[str, Tuple[float, float]] = field(default_factory=dict)
 
     @property
     def node_ids(self) -> List[str]:
@@ -1323,7 +1481,11 @@ class _GenericContractParser(HTMLParser):
         self._interaction_group_depth = 0
         self._svg_depth = 0
         self._active_node_ids: List[str] = []
-        self._stack: List[Tuple[str, bool, bool, bool, bool, str, bool, bool]] = []
+        self._active_group_regions: List[str] = []
+        self._active_node_text_targets: List[Tuple[str, str]] = []
+        self._stack: List[
+            Tuple[str, bool, bool, bool, bool, str, str, str, bool, bool]
+        ] = []
 
     def handle_starttag(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
@@ -1339,6 +1501,8 @@ class _GenericContractParser(HTMLParser):
         )
         starts_svg = tag == "svg"
         starts_node_id = ""
+        starts_group_region = ""
+        starts_node_text_kind = ""
         if tag == "html":
             self.document_lang = values.get("lang", "").strip().lower()
         if starts_canvas:
@@ -1442,6 +1606,20 @@ class _GenericContractParser(HTMLParser):
                 self._active_node_ids.append(starts_node_id)
                 if not node.semantic_role:
                     self.errors.append("Every diagram node must declare data-semantic-role.")
+            for marker, kind, counts in (
+                ("data-node-icon", "icon", self._canvas.node_icon_counts),
+                ("data-node-title", "title", self._canvas.node_title_counts),
+                ("data-node-summary", "summary", self._canvas.node_summary_counts),
+            ):
+                if marker not in values:
+                    continue
+                if not self._active_node_ids:
+                    self.errors.append(f"{marker} must be inside a diagram node.")
+                    continue
+                node_id = self._active_node_ids[-1]
+                counts[node_id] = counts.get(node_id, 0) + 1
+                starts_node_text_kind = kind
+                self._active_node_text_targets.append((node_id, kind))
             if "data-diagram-group-id" in values:
                 group = _GenericObjectRecord(
                     values["data-diagram-group-id"].strip(),
@@ -1454,8 +1632,20 @@ class _GenericContractParser(HTMLParser):
                     "",
                 )
                 self._canvas.groups.append(group)
+                starts_group_region = group.region
+                self._active_group_regions.append(group.region)
                 if not group.semantic_role:
                     self.errors.append("Every diagram group must declare data-semantic-role.")
+            if "data-diagram-detail-trigger" in values:
+                self._canvas.detail_triggers.append(
+                    _DetailTriggerRecord(
+                        values["data-diagram-detail-trigger"].strip(),
+                        values.get("data-detail-for", "").strip(),
+                        tag,
+                        values.get("href", "").strip(),
+                        self._active_node_ids[-1] if self._active_node_ids else "",
+                    )
+                )
             if "data-diagram-relation-id" in values:
                 self._canvas.relations.append(
                     _GenericRelationRecord(
@@ -1478,6 +1668,15 @@ class _GenericContractParser(HTMLParser):
                         values.get("data-matrix-col", "").strip(),
                     )
                 )
+            if "data-diagram-detail" in values:
+                runtime_detail_id = values["data-diagram-detail"].strip()
+                self._canvas.runtime_detail_ids.append(runtime_detail_id)
+                if tag != "details":
+                    self.errors.append("Diagram details must use native details elements.")
+                if not runtime_detail_id or values.get("id", "").strip() != runtime_detail_id:
+                    self.errors.append(
+                        "Every runtime diagram detail id must match its native details id."
+                    )
             if "data-diagram-detail-id" in values:
                 detail_id = values["data-diagram-detail-id"].strip()
                 self._canvas.detail_ids.append(detail_id)
@@ -1510,9 +1709,30 @@ class _GenericContractParser(HTMLParser):
                     )
                 )
                 if tag == "path":
-                    self._canvas.visible_paths[
-                        values["data-diagram-visible-relation-id"].strip()
-                    ] = values.get("d", "").strip()
+                    relation_id = values["data-diagram-visible-relation-id"].strip()
+                    path_data = values.get("d", "").strip()
+                    self._canvas.visible_paths[relation_id] = path_data
+                    self._canvas.visible_path_quality[relation_id] = (
+                        _VisiblePathQualityRecord(
+                            path_data,
+                            values.get("stroke", "").strip(),
+                            values.get("marker-end", "").strip(),
+                        )
+                    )
+            if tag == "svg" and "data-architecture-canvas" in values:
+                viewbox = _parse_svg_viewbox(values.get("viewbox", ""))
+                if viewbox is None:
+                    self.errors.append(
+                        "Architecture canvases require a numeric positive SVG viewBox."
+                    )
+                else:
+                    self._canvas.viewbox = viewbox
+            if tag == "marker":
+                marker_id = values.get("id", "").strip()
+                marker_width = _parse_svg_number(values.get("markerwidth", ""))
+                marker_height = _parse_svg_number(values.get("markerheight", ""))
+                if marker_id and marker_width is not None and marker_height is not None:
+                    self._canvas.marker_sizes[marker_id] = (marker_width, marker_height)
             if tag == "rect" and self._active_node_ids:
                 node_id = self._active_node_ids[-1]
                 bounds = _parse_svg_rect_bounds(values)
@@ -1526,6 +1746,23 @@ class _GenericContractParser(HTMLParser):
                     )
                 else:
                     self._canvas.node_bounds[node_id] = bounds
+            if (
+                tag == "rect"
+                and "data-architecture-boundary" in values
+                and self._active_group_regions
+            ):
+                bounds = _parse_svg_rect_bounds(values)
+                region = self._active_group_regions[-1]
+                if bounds is None:
+                    self.errors.append(
+                        f"Architecture boundary {region or '<missing>'} requires numeric bounds."
+                    )
+                elif region in self._canvas.boundary_bounds:
+                    self.errors.append(
+                        f"Architecture region {region or '<missing>'} requires one boundary."
+                    )
+                else:
+                    self._canvas.boundary_bounds[region] = bounds
         if starts_interaction_group:
             self._interaction_group_depth += 1
         if starts_svg:
@@ -1539,6 +1776,8 @@ class _GenericContractParser(HTMLParser):
                     starts_evidence_slot,
                     starts_ledger,
                     starts_node_id,
+                    starts_group_region,
+                    starts_node_text_kind,
                     starts_interaction_group,
                     starts_svg,
                 )
@@ -1561,14 +1800,32 @@ class _GenericContractParser(HTMLParser):
             closes_evidence_slot,
             closes_ledger,
             closes_node_id,
+            closes_group_region,
+            closes_node_text_kind,
             closes_interaction_group,
             closes_svg,
         ) = self._stack.pop()
+        if closes_node_text_kind:
+            if (
+                self._active_node_text_targets
+                and self._active_node_text_targets[-1][1] == closes_node_text_kind
+            ):
+                self._active_node_text_targets.pop()
+            else:
+                self.errors.append("Diagram node text marker nesting is inconsistent.")
         if closes_node_id:
             if self._active_node_ids and self._active_node_ids[-1] == closes_node_id:
                 self._active_node_ids.pop()
             else:
                 self.errors.append("Diagram node geometry stack is inconsistent.")
+        if closes_group_region:
+            if (
+                self._active_group_regions
+                and self._active_group_regions[-1] == closes_group_region
+            ):
+                self._active_group_regions.pop()
+            else:
+                self.errors.append("Diagram group geometry stack is inconsistent.")
         if closes_ledger:
             self._ledger_active = False
         if closes_evidence_slot:
@@ -1581,6 +1838,17 @@ class _GenericContractParser(HTMLParser):
             self._interaction_group_depth -= 1
         if closes_svg:
             self._svg_depth -= 1
+
+    def handle_data(self, data: str) -> None:
+        if self._canvas is None or not self._active_node_text_targets or not data.strip():
+            return
+        node_id, kind = self._active_node_text_targets[-1]
+        targets = {
+            "icon": self._canvas.node_icon_texts,
+            "title": self._canvas.node_title_texts,
+            "summary": self._canvas.node_summary_texts,
+        }[kind]
+        targets.setdefault(node_id, []).append(data.strip())
 
 
 def _is_template_placeholder(value: str) -> bool:
@@ -1602,6 +1870,20 @@ def _parse_svg_rect_bounds(
     if any(value is None for value in values):
         return None
     x, y, width, height = values
+    assert x is not None and y is not None and width is not None and height is not None
+    if width <= 0 or height <= 0:
+        return None
+    return x, y, width, height
+
+
+def _parse_svg_viewbox(value: str) -> Optional[Tuple[float, float, float, float]]:
+    parts = re.split(r"[\s,]+", value.strip())
+    if len(parts) != 4:
+        return None
+    numbers = [_parse_svg_number(part) for part in parts]
+    if any(number is None for number in numbers):
+        return None
+    x, y, width, height = numbers
     assert x is not None and y is not None and width is not None and height is not None
     if width <= 0 or height <= 0:
         return None
@@ -1888,6 +2170,333 @@ def _point_on_north_edge(
     return left - tolerance <= x <= left + width + tolerance and abs(y - top) <= tolerance
 
 
+def _bounds_overlap(
+    first: Tuple[float, float, float, float],
+    second: Tuple[float, float, float, float],
+    tolerance: float = 0.001,
+) -> bool:
+    first_x, first_y, first_width, first_height = first
+    second_x, second_y, second_width, second_height = second
+    return (
+        min(first_x + first_width, second_x + second_width)
+        - max(first_x, second_x)
+        > tolerance
+        and min(first_y + first_height, second_y + second_height)
+        - max(first_y, second_y)
+        > tolerance
+    )
+
+
+def _orthogonal_segment_crosses_bounds(
+    start: Tuple[float, float],
+    end: Tuple[float, float],
+    bounds: Tuple[float, float, float, float],
+    tolerance: float = 0.001,
+) -> bool:
+    left, top, width, height = bounds
+    right, bottom = left + width, top + height
+    if abs(start[0] - end[0]) <= tolerance:
+        x = start[0]
+        low, high = sorted((start[1], end[1]))
+        return (
+            left + tolerance < x < right - tolerance
+            and max(low, top + tolerance) < min(high, bottom - tolerance)
+        )
+    if abs(start[1] - end[1]) <= tolerance:
+        y = start[1]
+        low, high = sorted((start[0], end[0]))
+        return (
+            top + tolerance < y < bottom - tolerance
+            and max(low, left + tolerance) < min(high, right - tolerance)
+        )
+    return True
+
+
+def _node_text(
+    values: Mapping[str, List[str]],
+    node_id: str,
+) -> str:
+    return " ".join(values.get(node_id, [])).strip()
+
+
+def _validate_quality_contract(
+    canvas: _GenericCanvasRecord,
+    definition: Mapping[str, Any],
+) -> List[str]:
+    quality = definition.get("quality")
+    if not quality:
+        return []
+    errors: List[str] = []
+    tolerance = 0.001
+
+    runtime_detail_ids = canvas.runtime_detail_ids
+    if len(runtime_detail_ids) != len(set(runtime_detail_ids)):
+        errors.append("Runtime diagram detail ids must be unique within a canvas.")
+    trigger_targets = [trigger.detail_for for trigger in canvas.detail_triggers]
+    if len(trigger_targets) != len(set(trigger_targets)):
+        errors.append("Every diagram detail trigger requires one unique detail target.")
+    for trigger in canvas.detail_triggers:
+        if trigger.kind not in {"primary", "auxiliary"}:
+            errors.append("Diagram detail trigger kind must be primary or auxiliary.")
+        if (
+            trigger.element_tag != "a"
+            or not trigger.detail_for
+            or trigger.href != f"#{trigger.detail_for}"
+        ):
+            errors.append(
+                "Every diagram detail trigger must remain a native link to its detail block."
+            )
+        if trigger.detail_for not in set(runtime_detail_ids):
+            errors.append("Every diagram detail trigger must target one native detail block.")
+
+    if quality.get("requires_node_icons"):
+        for node in canvas.nodes:
+            node_id = node.object_id
+            if canvas.node_icon_counts.get(node_id, 0) != 1:
+                errors.append(f"Diagram node {node_id} requires exactly one icon marker.")
+            if canvas.node_title_counts.get(node_id, 0) != 1:
+                errors.append(f"Diagram node {node_id} requires exactly one title marker.")
+            if canvas.node_summary_counts.get(node_id, 0) != 1:
+                errors.append(f"Diagram node {node_id} requires exactly one summary marker.")
+            icon = _node_text(canvas.node_icon_texts, node_id)
+            title = _node_text(canvas.node_title_texts, node_id)
+            summary = _node_text(canvas.node_summary_texts, node_id)
+            if not icon or not title or not summary:
+                errors.append(
+                    f"Diagram node {node_id} requires non-empty icon, title, and summary content."
+                )
+            elif icon == title or icon == summary:
+                errors.append(
+                    f"Diagram node {node_id} icon must not replace its title or summary."
+                )
+            if icon and not _is_template_placeholder(icon) and EMOJI_RE.search(icon) is None:
+                errors.append(
+                    f"Diagram node {node_id} icon must resolve to an emoji or pictographic symbol."
+                )
+
+    if quality.get("requires_auxiliary_details"):
+        auxiliary = [
+            trigger
+            for trigger in canvas.detail_triggers
+            if trigger.kind == "auxiliary"
+        ]
+        if not auxiliary:
+            errors.append("This template requires independently detailed auxiliary nodes.")
+        auxiliary_targets = {trigger.detail_for for trigger in auxiliary}
+        primary_targets = set(canvas.detail_ids)
+        expected_auxiliary = set(runtime_detail_ids) - primary_targets
+        if auxiliary_targets != expected_auxiliary:
+            errors.append(
+                "Auxiliary node links and native detail blocks must form a one-to-one mapping."
+            )
+        if len(auxiliary) > 64:
+            errors.append(
+                "Auxiliary node details exceed the bounded interaction budget of 64."
+            )
+
+    if quality.get("requires_node_nonoverlap"):
+        bounded_nodes = [
+            (node.object_id, canvas.node_bounds[node.object_id])
+            for node in canvas.nodes
+            if node.object_id in canvas.node_bounds
+        ]
+        for index, (first_id, first_bounds) in enumerate(bounded_nodes):
+            for second_id, second_bounds in bounded_nodes[index + 1 :]:
+                if _bounds_overlap(first_bounds, second_bounds):
+                    errors.append(
+                        f"Diagram nodes must not overlap: {first_id}, {second_id}."
+                    )
+
+    relation_bindings = {
+        binding.relation_id: binding for binding in canvas.visible_relations
+    }
+    if quality.get("requires_boundary_anchors") or quality.get(
+        "requires_routes_clear_nodes"
+    ):
+        for relation_id, path_data in canvas.visible_paths.items():
+            points = _parse_absolute_orthogonal_path_points(path_data)
+            binding = relation_bindings.get(relation_id)
+            if points is None or binding is None:
+                errors.append(
+                    f"Quality-checked relation requires an authored orthogonal path: {relation_id}."
+                )
+                continue
+            if quality.get("requires_boundary_anchors"):
+                source_bounds = canvas.node_bounds.get(binding.source)
+                target_bounds = canvas.node_bounds.get(binding.target)
+                if source_bounds is None or target_bounds is None:
+                    errors.append(
+                        f"Quality-checked relation endpoints require node bounds: {relation_id}."
+                    )
+                else:
+                    if not _point_on_bounds_edge(points[0], source_bounds):
+                        errors.append(
+                            f"Relation must start on its source node boundary: {relation_id}."
+                        )
+                    if not _point_on_bounds_edge(points[-1], target_bounds):
+                        errors.append(
+                            f"Relation must end on its target node boundary: {relation_id}."
+                        )
+            if quality.get("requires_routes_clear_nodes"):
+                for node_id, bounds in canvas.node_bounds.items():
+                    if node_id in {binding.source, binding.target}:
+                        continue
+                    if any(
+                        _orthogonal_segment_crosses_bounds(start, end, bounds)
+                        for start, end in zip(points, points[1:])
+                    ):
+                        errors.append(
+                            f"Relation route must not cross diagram node {node_id}: {relation_id}."
+                        )
+
+    if canvas.viewbox is not None and canvas.boundary_bounds:
+        view_x, view_y, view_width, view_height = canvas.viewbox
+        left = min(bounds[0] for bounds in canvas.boundary_bounds.values())
+        top = min(bounds[1] for bounds in canvas.boundary_bounds.values())
+        right = max(
+            bounds[0] + bounds[2] for bounds in canvas.boundary_bounds.values()
+        )
+        bottom = max(
+            bounds[1] + bounds[3] for bounds in canvas.boundary_bounds.values()
+        )
+        measured_ratios = {
+            "max_top_whitespace_ratio": max(0.0, top - view_y) / view_height,
+            "max_bottom_whitespace_ratio": max(
+                0.0, view_y + view_height - bottom
+            )
+            / view_height,
+            "min_horizontal_utilization_ratio": max(0.0, right - left)
+            / view_width,
+        }
+        canvas_attributes = {
+            "max_top_whitespace_ratio": "data-max-top-whitespace-ratio",
+            "max_bottom_whitespace_ratio": "data-max-bottom-whitespace-ratio",
+            "min_horizontal_utilization_ratio": "data-min-horizontal-utilization-ratio",
+        }
+        for key, measured in measured_ratios.items():
+            configured = quality.get(key)
+            if configured is None:
+                continue
+            authored = _parse_svg_number(
+                canvas.attrs.get(canvas_attributes[key], "")
+            )
+            if authored is None or abs(authored - float(configured)) > tolerance:
+                errors.append(
+                    f"Canvas runtime threshold {canvas_attributes[key]} must match policy."
+                )
+            if key.startswith("max_") and measured > float(configured) + tolerance:
+                errors.append(f"Canvas exceeds the policy threshold {key}.")
+            if key.startswith("min_") and measured + tolerance < float(configured):
+                errors.append(f"Canvas does not meet the policy threshold {key}.")
+    elif any(
+        key in quality
+        for key in (
+            "max_top_whitespace_ratio",
+            "max_bottom_whitespace_ratio",
+            "min_horizontal_utilization_ratio",
+            "full_width_regions",
+        )
+    ):
+        errors.append(
+            "Canvas utilization quality requires an SVG viewBox and authored region boundaries."
+        )
+
+    for region in quality.get("uniform_width_regions", []):
+        widths = [
+            canvas.node_bounds[node.object_id][2]
+            for node in canvas.nodes
+            if node.region == region and node.object_id in canvas.node_bounds
+        ]
+        if len(widths) < 2 or max(widths) - min(widths) > tolerance:
+            errors.append(
+                f"Diagram nodes in region {region} must use one uniform width."
+            )
+
+    for region in quality.get("uniform_gap_regions", []):
+        bounds = sorted(
+            (
+                canvas.node_bounds[node.object_id]
+                for node in canvas.nodes
+                if node.region == region and node.object_id in canvas.node_bounds
+            ),
+            key=lambda item: item[1],
+        )
+        gaps = [
+            current[1] - (previous[1] + previous[3])
+            for previous, current in zip(bounds, bounds[1:])
+        ]
+        if (
+            len(gaps) < 2
+            or any(gap <= 0 for gap in gaps)
+            or max(gaps) - min(gaps) > tolerance
+        ):
+            errors.append(
+                f"Diagram nodes in region {region} must use one positive vertical gap."
+            )
+
+    full_width_ratio = float(quality.get("min_full_width_ratio", 1.0))
+    if canvas.viewbox is not None:
+        for region in quality.get("full_width_regions", []):
+            bounds = canvas.boundary_bounds.get(region)
+            if bounds is None or bounds[2] / canvas.viewbox[2] + tolerance < full_width_ratio:
+                errors.append(
+                    f"Diagram region {region} must meet the full-width ratio policy."
+                )
+
+    minimum_relation_length = quality.get("min_relation_length")
+    if minimum_relation_length is not None:
+        for relation_id, path_data in canvas.visible_paths.items():
+            points = _parse_absolute_orthogonal_path_points(path_data)
+            if points is None:
+                continue
+            path_length = sum(
+                abs(end[0] - start[0]) + abs(end[1] - start[1])
+                for start, end in zip(points, points[1:])
+            )
+            if path_length + tolerance < float(minimum_relation_length):
+                errors.append(
+                    f"Relation path is shorter than the readable minimum: {relation_id}."
+                )
+
+    minimum_colors = quality.get("min_distinct_relation_colors")
+    if minimum_colors is not None:
+        colors = {
+            record.stroke.lower()
+            for record in canvas.visible_path_quality.values()
+            if record.stroke
+        }
+        if len(colors) < int(minimum_colors):
+            errors.append(
+                "Relation paths do not provide the required number of distinct colors."
+            )
+
+    minimum_arrow = quality.get("min_arrowhead_size")
+    maximum_arrow = quality.get("max_arrowhead_size")
+    if minimum_arrow is not None or maximum_arrow is not None:
+        for relation_id, record in canvas.visible_path_quality.items():
+            match = re.fullmatch(r"url\(#([^)]+)\)", record.marker_end)
+            marker = canvas.marker_sizes.get(match.group(1)) if match else None
+            if marker is None:
+                errors.append(
+                    f"Relation requires a resolvable SVG arrowhead marker: {relation_id}."
+                )
+                continue
+            if minimum_arrow is not None and min(marker) + tolerance < float(
+                minimum_arrow
+            ):
+                errors.append(
+                    f"Relation arrowhead is smaller than the readable minimum: {relation_id}."
+                )
+            if maximum_arrow is not None and max(marker) - tolerance > float(
+                maximum_arrow
+            ):
+                errors.append(
+                    f"Relation arrowhead exceeds the readable maximum: {relation_id}."
+                )
+
+    return list(dict.fromkeys(errors))
+
+
 def _validate_north_to_south_geometry(
     canvas: _GenericCanvasRecord,
     primary_relations: Sequence[_GenericRelationRecord],
@@ -2062,6 +2671,11 @@ def _validate_directional_graph(
         detail_ids = canvas.detail_ids
         detail_targets = canvas.detail_targets
         node_targets = [node.detail_for for node in canvas.nodes]
+        primary_triggers = [
+            trigger
+            for trigger in canvas.detail_triggers
+            if trigger.kind == "primary"
+        ]
         if len(detail_ids) != len(set(detail_ids)):
             errors.append("Diagram node detail ids must be unique within a canvas.")
         if any(SEMANTIC_SLUG_RE.fullmatch(value) is None for value in node_targets):
@@ -2072,11 +2686,29 @@ def _validate_directional_graph(
             errors.append("Diagram nodes and native detail blocks must form a one-to-one mapping.")
         if set(detail_targets) != set(canvas.node_ids) or len(detail_targets) != len(canvas.nodes):
             errors.append("Native detail blocks and diagram nodes must form a reverse one-to-one mapping.")
+        if (
+            len(primary_triggers) != len(canvas.nodes)
+            or {trigger.owner_node_id for trigger in primary_triggers}
+            != set(canvas.node_ids)
+        ):
+            errors.append(
+                "Every detailed diagram node requires exactly one owned primary detail trigger."
+            )
         reverse_targets = dict(zip(detail_ids, detail_targets))
         for node in canvas.nodes:
-            if node.element_tag != "a" or node.href != f"#{node.detail_for}":
+            triggers = [
+                trigger
+                for trigger in primary_triggers
+                if trigger.owner_node_id == node.object_id
+            ]
+            if (
+                len(triggers) != 1
+                or triggers[0].detail_for != node.detail_for
+                or triggers[0].element_tag != "a"
+                or triggers[0].href != f"#{node.detail_for}"
+            ):
                 errors.append(
-                    "Every detailed diagram node must remain a native link to its detail block."
+                    "Every detailed diagram node must own one native link to its detail block."
                 )
             if reverse_targets.get(node.detail_for) != node.object_id:
                 errors.append(
@@ -2217,6 +2849,7 @@ def generic_contract_errors(
                     "Visible relation endpoints and kind must match the authored diagram relation."
                 )
         errors.extend(_validate_directional_graph(canvas, definition, parser.document_lang))
+        errors.extend(_validate_quality_contract(canvas, definition))
         if definition["profile"] == "matrix":
             rows, columns = set(canvas.row_ids), set(canvas.col_ids)
             if not rows or not columns or not canvas.cells:
@@ -2281,6 +2914,354 @@ def generic_contract_errors(
         )
     )
     return list(dict.fromkeys(errors))
+
+
+class _ArtifactShellParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.title_count = 0
+        self.guide_count = 0
+        self.title_copy_count = 0
+        self.controls_container_count = 0
+        self.title_order = -1
+        self.guide_order = -1
+        self.canvas_orders: List[int] = []
+        self.guide_groups: List[str] = []
+        self.interaction_groups_in_controls = 0
+        self.evidence_entries: List[Tuple[str, str, str]] = []
+        self.control_sets: List[Tuple[str, List[str]]] = []
+        self.controls_outside_guide: List[str] = []
+        self.controls_inside_title = 0
+        self.content_text: List[str] = []
+        self.content_attributes: List[Tuple[str, str]] = []
+        self.content_identifiers: List[Tuple[str, str]] = []
+        self.content_slots: List[str] = []
+        self._order = 0
+        self._stack: List[Tuple[str, bool, bool, bool, bool, bool, int]] = []
+
+    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, int]:
+        if not self._stack:
+            return False, False, False, False, False, -1
+        _, title, guide, controls, main, content, control_set = self._stack[-1]
+        return title, guide, controls, main, content, control_set
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self._order += 1
+        values = {name.lower(): value or "" for name, value in attrs}
+        (
+            parent_title,
+            parent_guide,
+            parent_controls,
+            parent_main,
+            parent_content,
+            parent_control_set,
+        ) = self._flags()
+        starts_title = values.get("data-artifact-shell-title", "").strip() == "1"
+        starts_guide = values.get("data-diagram-reading-guide", "").strip() == "1"
+        starts_controls_container = "data-reading-guide-controls" in values
+        in_title = parent_title or starts_title
+        in_guide = parent_guide or starts_guide
+        in_controls = parent_controls or starts_controls_container
+        in_main = parent_main or tag.lower() == "main"
+        in_content = parent_content or (parent_main and not (in_title or in_guide))
+        control_set = parent_control_set
+
+        if starts_title:
+            self.title_count += 1
+            self.title_order = self._order
+            if tag.lower() != "header":
+                self.content_attributes.append(("artifact-shell-title-tag", tag.lower()))
+        if starts_guide:
+            self.guide_count += 1
+            self.guide_order = self._order
+            if (
+                tag.lower() != "section"
+                or values.get("data-slot", "").strip() != "evidence-and-notes"
+                or values.get("data-evidence-ledger", "").strip() != "1"
+            ):
+                self.content_attributes.append(("artifact-shell-guide-tag", tag.lower()))
+        if "data-diagram-title-copy" in values and in_title:
+            self.title_copy_count += 1
+        if starts_controls_container:
+            self.controls_container_count += 1
+        if "data-reading-guide-group" in values and in_guide:
+            guide_group = values["data-reading-guide-group"].strip()
+            self.guide_groups.append(guide_group)
+            if guide_group == "interaction" and in_controls:
+                self.interaction_groups_in_controls += 1
+        if "data-evidence-id" in values and in_guide:
+            self.evidence_entries.append(
+                (
+                    values["data-evidence-id"].strip(),
+                    values.get("data-evidence-status", "").strip(),
+                    values.get("data-evidence-source-kind", "").strip(),
+                )
+            )
+        if "data-diagram-canvas" in values or "data-sequence-canvas" in values:
+            self.canvas_orders.append(self._order)
+
+        control_kind = ""
+        if "data-diagram-controls" in values:
+            control_kind = "diagram"
+        elif "data-sequence-toolbar" in values:
+            control_kind = "sequence"
+        if control_kind:
+            self.control_sets.append((control_kind, []))
+            control_set = len(self.control_sets) - 1
+            if not (in_guide and in_controls):
+                self.controls_outside_guide.append(control_kind)
+            if in_title:
+                self.controls_inside_title += 1
+        if "data-diagram-zoom-control" in values and control_set >= 0:
+            self.control_sets[control_set][1].append(
+                values["data-diagram-zoom-control"].strip()
+            )
+        if "data-sequence-scale" in values and control_set >= 0:
+            self.control_sets[control_set][1].append(
+                values["data-sequence-scale"].strip()
+            )
+
+        if in_content:
+            slot = values.get("data-slot", "").strip()
+            if slot:
+                self.content_slots.append(slot)
+            for name in (
+                "aria-label",
+                "aria-description",
+                "title",
+                "alt",
+                "data-node-primary-label",
+                "data-detail-close-label",
+                "data-label",
+                "data-description",
+                "data-semantic",
+                "data-semantic-role",
+                "data-relation-kind",
+                "data-reading-guide",
+            ):
+                value = values.get(name, "").strip()
+                if value:
+                    self.content_attributes.append((name, value))
+            for name in (
+                "data-diagram-node-id",
+                "data-diagram-group-id",
+                "data-diagram-detail",
+                "data-diagram-detail-id",
+                "data-diagram-visible-relation-id",
+                "data-diagram-relation-id",
+                "data-fallback-relation-id",
+                "data-from",
+                "data-to",
+                "data-detail-for",
+                "data-architecture-landmark-for",
+                "data-architecture-supporting-content-for",
+                "data-participant-id",
+                "data-participant-group-id",
+                "data-sequence-id",
+                "data-sequence-controls",
+                "data-sequence-phase-id",
+                "data-sequence-fragment-id",
+                "data-sequence-comparison-id",
+                "data-sequence-risk-id",
+                "data-sequence-evidence-id",
+                "data-sequence-evidence-for",
+                "data-matrix-row-id",
+                "data-matrix-row",
+                "data-matrix-col-id",
+                "data-matrix-col",
+                "data-architecture-rank-id",
+                "data-architecture-branch-id",
+                "data-architecture-merge-id",
+                "data-architecture-peer-group",
+                "data-architecture-boundary",
+            ):
+                value = values.get(name, "").strip()
+                if value:
+                    self.content_identifiers.append((name, value))
+            if any(
+                name in values
+                for name in (
+                    "data-diagram-node-id",
+                    "data-diagram-detail",
+                    "data-sequence-evidence-id",
+                )
+            ):
+                value = values.get("id", "").strip()
+                if value:
+                    self.content_identifiers.append(("id", value))
+            href = values.get("href", "").strip()
+            if href.startswith("#"):
+                self.content_identifiers.append(("href", href))
+
+        if tag.lower() not in VOID_ELEMENTS:
+            self._stack.append(
+                (
+                    tag.lower(),
+                    in_title,
+                    in_guide,
+                    in_controls,
+                    in_main,
+                    in_content,
+                    control_set,
+                )
+            )
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self.handle_starttag(tag, attrs)
+        if tag.lower() not in VOID_ELEMENTS:
+            self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if self._stack:
+            self._stack.pop()
+
+    def handle_data(self, data: str) -> None:
+        if self._stack and self._stack[-1][5] and data.strip():
+            self.content_text.append(data)
+
+
+def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -> List[str]:
+    parser = _ArtifactShellParser()
+    parser.feed(html)
+    parser.close()
+    errors: List[str] = []
+    if parser.title_count != 1 or parser.title_copy_count != 1:
+        errors.append("artifact shell requires exactly one title and summary region")
+    if parser.guide_count != 1:
+        errors.append("artifact shell requires exactly one reading guide")
+    if parser.controls_container_count != 1:
+        errors.append("artifact shell requires exactly one right-side guide control region")
+    if (
+        parser.title_order < 0
+        or parser.guide_order < 0
+        or not parser.canvas_orders
+        or not parser.title_order < parser.guide_order < min(parser.canvas_orders)
+    ):
+        errors.append("artifact shell order must be title, reading guide, then primary canvas")
+    if sorted(parser.guide_groups) != ["evidence", "interaction", "relations"]:
+        errors.append(
+            "reading guide requires exactly the relations, evidence, and interaction groups"
+        )
+    if parser.interaction_groups_in_controls != 1:
+        errors.append(
+            "reading guide interaction hint must sit above zoom controls in the right-side control region"
+        )
+    expected_evidence = {
+        ("evidence-observed", "observed", "file"),
+        ("evidence-check", "observed", "test"),
+        ("evidence-unresolved", "unresolved", "runtime"),
+    }
+    if set(parser.evidence_entries) != expected_evidence or len(parser.evidence_entries) != 3:
+        errors.append(
+            "reading guide requires the fixed observed, checked, and unresolved evidence states"
+        )
+    if not parser.control_sets:
+        errors.append("reading guide requires at least one zoom control set")
+    expected_modes = ["fit", "0.75", "0.9", "1"]
+    for kind, modes in parser.control_sets:
+        if modes != expected_modes:
+            errors.append(
+                f"every {kind} zoom control set must expose Fit, 75%, 90%, and 100%"
+            )
+    if parser.controls_outside_guide or parser.controls_inside_title:
+        errors.append("all zoom controls must live at the right side of the reading guide")
+    if any(
+        name == "artifact-shell-title-tag" for name, _value in parser.content_attributes
+    ):
+        errors.append("artifact shell title marker must be on a header")
+    if any(
+        name == "artifact-shell-guide-tag" for name, _value in parser.content_attributes
+    ):
+        errors.append(
+            "artifact shell reading guide must be a version-1 evidence-and-notes section"
+        )
+    if require_content_neutral:
+        if any(
+            re.fullmatch(r"\s*\{\{canvas-text-\d{3}\}\}\s*", text) is None
+            for text in parser.content_text
+        ):
+            errors.append(
+                "canonical template content surfaces may contain only neutral canvas-text placeholders"
+            )
+        if any(
+            re.fullmatch(r"\{\{canvas-attribute-\d{3}\}\}", value) is None
+            for name, value in parser.content_attributes
+            if not name.startswith("artifact-shell-")
+        ):
+            errors.append(
+                "canonical template content attributes may contain only neutral canvas-attribute placeholders"
+            )
+        if any(re.fullmatch(r"layout-slot-\d{3}", slot) is None for slot in parser.content_slots):
+            errors.append(
+                "canonical template content slots must use neutral layout-slot identifiers"
+            )
+        identifier_patterns = {
+            "data-diagram-node-id": r"layout-node-\d{3}",
+            "data-diagram-group-id": r"layout-group-\d{3}",
+            "data-diagram-detail": r"layout-detail-\d{3}",
+            "data-diagram-detail-id": r"layout-detail-\d{3}",
+            "data-diagram-visible-relation-id": r"layout-relation-\d{3}",
+            "data-diagram-relation-id": r"layout-relation-\d{3}",
+            "data-fallback-relation-id": r"layout-relation-\d{3}",
+            "data-from": r"layout-(?:node|participant|group)-\d{3}",
+            "data-to": r"layout-(?:node|participant|group)-\d{3}",
+            "data-detail-for": r"layout-(?:node|detail)-\d{3}",
+            "data-architecture-landmark-for": r"layout-node-\d{3}",
+            "data-architecture-supporting-content-for": r"layout-node-\d{3}",
+            "data-participant-id": r"layout-participant-\d{3}",
+            "data-participant-group-id": r"layout-participant-group-\d{3}",
+            "data-sequence-id": r"layout-sequence-\d{3}",
+            "data-sequence-controls": r"layout-sequence-\d{3}",
+            "data-sequence-phase-id": r"layout-phase-\d{3}",
+            "data-sequence-fragment-id": r"layout-fragment-\d{3}",
+            "data-sequence-comparison-id": r"layout-comparison-\d{3}",
+            "data-sequence-risk-id": r"layout-risk-\d{3}",
+            "data-sequence-evidence-id": r"layout-evidence-\d{3}",
+            "data-sequence-evidence-for": r"layout-evidence-\d{3}",
+            "data-matrix-row-id": r"layout-row-\d{3}",
+            "data-matrix-row": r"layout-row-\d{3}",
+            "data-matrix-col-id": r"layout-col-\d{3}",
+            "data-matrix-col": r"layout-col-\d{3}",
+            "data-architecture-rank-id": r"layout-rank-\d{3}",
+            "data-architecture-branch-id": r"layout-branch-\d{3}",
+            "data-architecture-merge-id": r"layout-merge-\d{3}",
+            "data-architecture-peer-group": r"layout-peer-group-\d{3}",
+            "data-architecture-boundary": r"layout-boundary-\d{3}",
+            "id": r"layout-(?:node|detail|evidence)-\d{3}",
+            "href": r"#layout-(?:node|detail|evidence)-\d{3}",
+        }
+        if any(
+            re.fullmatch(identifier_patterns[name], value) is None
+            for name, value in parser.content_identifiers
+        ):
+            errors.append(
+                "canonical template identifiers and references must use neutral layout identifiers"
+            )
+    return list(dict.fromkeys(errors))
+
+
+def artifact_shell_kernel_errors(html: str, css: str, script: str) -> List[str]:
+    errors = []
+    for tag, marker, expected in (
+        ("style", "data-artifact-shell-kernel", css),
+        ("script", "data-artifact-shell-preview-kernel", script),
+    ):
+        matches = re.findall(
+            rf'<{tag} {marker}="1">\n(.*?)\n</{tag}>',
+            html,
+            flags=re.DOTALL,
+        )
+        if len(matches) != 1:
+            errors.append(
+                f"every template requires exactly one artifact shell {tag} kernel"
+            )
+        elif matches[0] != expected.rstrip("\n"):
+            errors.append(f"artifact shell {tag} kernel has drifted")
+    return errors
 
 
 def adaptive_kernel_errors(html: str, css: str, script: str) -> List[str]:
@@ -2917,6 +3898,21 @@ def validate_canonical(root: Path) -> None:
         raise _fail("interaction baseline differs from the trusted migration batches")
 
     asset_requirements = {
+        "assets/contracts/artifact-shell/v1.css": (
+            "data-diagram-reading-guide",
+            "data-reading-guide-controls",
+            "data-sequence-toolbar",
+        ),
+        "assets/contracts/artifact-shell/v1.js": (
+            "canvas-text",
+            "data-template-preview",
+            "NodeFilter.SHOW_TEXT",
+            "VibeDiagramQuality",
+            "data-computed-layout-audit",
+            "route-crosses-node",
+            "route-target-not-anchored",
+            "ResizeObserver",
+        ),
         "assets/contracts/adaptive-viewport/v1.css": ("data-diagram-canvas", "--diagram-scale"),
         "assets/contracts/adaptive-viewport/v1.js": ("VibeDiagramViewport", "0.75", "reset"),
         "assets/contracts/progressive-disclosure/v1.css": ("data-diagram-detail", "@media print"),
@@ -2935,6 +3931,12 @@ def validate_canonical(root: Path) -> None:
         text = files[PurePosixPath(relative)].read_text(encoding="utf-8")
         if any(token not in text for token in required_tokens):
             raise _fail(f"canonical interaction asset is incomplete: {relative}")
+        if relative == "assets/contracts/artifact-shell/v1.js" and any(
+            token in text for token in ("toDataURL(", "html2canvas", "pixelmatch")
+        ):
+            raise _fail(
+                "canonical artifact shell must use computed geometry, not screenshot comparison"
+            )
 
     reference_contract = load_reference_contract(root)
     reference_texts = []
@@ -2966,6 +3968,22 @@ def validate_canonical(root: Path) -> None:
         path = files[PurePosixPath("assets/templates") / relative]
         html = path.read_text(encoding="utf-8")
         _validate_template_html(relative, html)
+        shell_errors = artifact_shell_errors(html, require_content_neutral=True)
+        shell_errors.extend(
+            artifact_shell_kernel_errors(
+                html,
+                files[
+                    PurePosixPath("assets/contracts/artifact-shell/v1.css")
+                ].read_text(encoding="utf-8"),
+                files[
+                    PurePosixPath("assets/contracts/artifact-shell/v1.js")
+                ].read_text(encoding="utf-8"),
+            )
+        )
+        if shell_errors:
+            raise _fail(
+                f"invalid global artifact shell {relative}: {'; '.join(shell_errors)}"
+            )
         snapshot = _canonical_snapshot(path, html)
         if snapshot != template_contract["templates"][relative]["canonical"]:
             raise _fail(f"canonical template snapshot drifted: {relative}")
@@ -2984,8 +4002,11 @@ def validate_canonical(root: Path) -> None:
             sequence_digests.add(_sequence_kernel_digest(html))
             if re.search(r"2040px|repeat\(\s*12\b", html, re.IGNORECASE):
                 raise _fail(f"sequence template contains a fixed oversized layout: {relative}")
+            sequence_script = _sequence_kernel_body(html, "script")
             if re.search(
-                r"match\(.+→|seq-route.+match|route.+match", html, re.IGNORECASE | re.DOTALL
+                r"match\(.+→|seq-route.+match|route.+match",
+                sequence_script,
+                re.IGNORECASE | re.DOTALL,
             ):
                 raise _fail(f"sequence template parses visible route text: {relative}")
         elif relative in completed_templates:

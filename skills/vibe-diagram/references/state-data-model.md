@@ -1,5 +1,9 @@
 # State and data model reference
 
+## Content-neutral template boundary
+
+This template family defines only topology, relative placement, layering or lanes, complexity ceilings, connection anchors, responsive transformations, and interaction capabilities. Every visible title, icon, node, relation, note, evidence item, and detail must be filled from facts established for the current task. `layout-slot-NNN`, `canvas-text-NNN`, and `canvas-attribute-NNN` are positional placeholders without domain semantics. Never treat a template filename, structural identifier, prior example, or visual position as a system fact.
+
 Use this family for state transitions, entity relationships, lifecycle stages, data movement, and state/event behavior.
 
 ## Templates

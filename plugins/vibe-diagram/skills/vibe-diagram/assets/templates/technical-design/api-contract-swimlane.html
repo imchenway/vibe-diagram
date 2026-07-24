@@ -5,6 +5,328 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{{title}}</title>
   <style>:root{--ink:#102033;--muted:#5a6c80;--paper:#fbfdff;--panel:rgba(255,255,255,.9);--line:#8db3d8;--blue:#1f6fb2;--blue-soft:#e8f3ff;--green:#17785a;--green-soft:#e9f8f2;--amber:#986506;--amber-soft:#fff6de;--red:#a63a3a;--red-soft:#fff0f0;--violet:#6254ad;--violet-soft:#f1efff;--shadow:0 16px 42px rgba(20,57,92,.085);--radius:20px}*{box-sizing:border-box}body{margin:0;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transparent 30rem),radial-gradient(circle at 78% 6%,rgba(228,246,239,.8),transparent 28rem),linear-gradient(rgba(93,133,173,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(93,133,173,.045) 1px,transparent 1px),linear-gradient(180deg,#fff 0%,#f7fbff 54%,#fbfdff 100%);background-size:auto,auto,28px 28px,28px 28px,auto;overflow-x:clip}main{width:min(1280px,calc(100vw - 32px));margin:0 auto;padding:20px 0}h1{font-size:clamp(24px,2.8vw,32px);line-height:1.18;letter-spacing:-.025em;margin:0 0 10px}.summary{margin:0 0 14px;color:var(--muted);line-height:1.65}.template-layout{border:1px solid rgba(141,179,216,.48);border-radius:24px;background:rgba(255,255,255,.78);box-shadow:var(--shadow);padding:18px;min-height:360px;gap:12px}.slot{display:grid;grid-template-rows:auto auto;align-content:center;justify-items:center;gap:4px;text-align:center;min-height:58px;border:1px solid rgba(141,179,216,.58);border-radius:16px;background:rgba(255,255,255,.95);padding:10px 12px;overflow-wrap:anywhere}.slot b{display:block;max-width:100%;font-size:13px;line-height:1.2}.slot span{display:block;max-width:100%;margin-top:0;color:var(--muted);font-size:12px;line-height:1.45}.core{border-color:rgba(31,111,178,.56);background:linear-gradient(180deg,#fff,var(--blue-soft))}.support{border-color:rgba(98,84,173,.45);background:linear-gradient(180deg,#fff,var(--violet-soft))}.data{border-color:rgba(23,120,90,.45);background:linear-gradient(180deg,#fff,var(--green-soft))}.risk{border-color:rgba(166,58,58,.42);background:linear-gradient(180deg,#fff,var(--red-soft))}.ops{border-color:rgba(152,101,6,.42);background:linear-gradient(180deg,#fff,var(--amber-soft))}.edge,.arrow{min-height:2px;background:var(--blue);align-self:center;position:relative}.edge:after,.arrow:after{content:"";position:absolute;right:-1px;top:-5px;border-left:10px solid var(--blue);border-top:6px solid transparent;border-bottom:6px solid transparent}.v-edge{width:2px;min-height:30px;background:var(--blue);justify-self:center}.boundary,.lane,.phase,.board-col,.artboard,.matrix,.cluster,.rail,.ring,.lifeline,.ledger-row,.quadrant{border:1px solid rgba(141,179,216,.42);border-radius:18px;background:rgba(255,255,255,.66);padding:12px;display:grid;gap:10px}.event{border-radius:999px}.gateway,.diamond{transform:rotate(45deg);aspect-ratio:1/1}.gateway>.slot,.diamond>.slot{transform:rotate(-45deg);height:100%}.line-label{font-size:12px;color:var(--muted);font-weight:800;text-align:center}.capability-domain-map{display:grid;grid-template-columns:.8fr 1.2fr 1.25fr;grid-template-rows:auto auto;align-items:stretch}.capability-domain-map .participant-rail{grid-row:1/3}.capability-domain-map .rule-strip{grid-column:2/4;grid-template-columns:repeat(3,1fr)}.participant-boundary{display:grid;place-items:center}.participant-boundary .outer-ring{width:min(920px,100%);border:2px dashed rgba(31,111,178,.38);border-radius:34px;padding:22px;display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:14px}.participant-boundary .inner-ring{border:1px solid rgba(23,120,90,.45);border-radius:26px;padding:16px;display:grid;gap:12px}.rule-constraint-heatmap{display:grid;grid-template-columns:1fr 2fr;align-items:stretch}.rule-constraint-heatmap .heatmap{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:8px}.value-chain-map{display:grid;grid-template-rows:1fr auto}.value-chain-map ol{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:0;margin:0;list-style:none}.value-chain-map .feedback-loop{display:grid;grid-template-columns:1fr 2fr 1fr}.bpmn-light-flow{display:grid;grid-template-columns:.6fr 1fr .72fr 1fr .6fr;align-items:center}.swimlane-flow{display:grid;grid-template-rows:repeat(3,1fr)}.swimlane-flow .lane{grid-template-columns:.28fr repeat(3,1fr);align-items:center}.stage-track{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto}.stage-track .checkpoint-strip{grid-column:1/5;grid-template-columns:repeat(5,1fr)}.exception-branch-flow{display:grid;grid-template-rows:1fr .7fr}.exception-branch-flow .main-line{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.exception-branch-flow .branch-line{display:grid;grid-template-columns:1fr 1fr 2fr;gap:10px;border-style:dashed}.participant-timeline{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto 1fr}.participant-timeline .message-stack{grid-column:1/5;display:grid;gap:8px}.async-callback-sequence{display:grid;grid-template-columns:1fr .8fr 1.4fr .8fr 1fr}.async-callback-sequence .event-bus{grid-column:3;grid-row:1/4;border:2px solid rgba(98,84,173,.42);border-radius:999px}.transaction-boundary-sequence{display:grid;grid-template-columns:1fr 2fr 1fr}.transaction-boundary-sequence .tx-box{border:2px dashed rgba(152,101,6,.5);border-radius:24px;padding:16px;display:grid;gap:10px}.retry-exception-sequence{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto}.retry-exception-sequence .retry-loop{grid-column:1/4;border:1px dashed rgba(166,58,58,.5);border-radius:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:12px}.state-machine{display:grid;grid-template-columns:repeat(5,1fr);align-items:center}.er-lite{display:grid;grid-template-columns:1fr 1fr 1fr}.er-lite .entity{grid-template-rows:auto repeat(3,1fr)}.lifecycle-track{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:auto 1fr}.lifecycle-track .milestones{grid-column:1/6;grid-template-columns:repeat(5,1fr)}.data-flow-model{display:grid;grid-template-columns:.9fr 1.4fr 1fr}.data-flow-model .process-box{grid-template-columns:1fr 1fr}.state-event-matrix{display:grid;grid-template-columns:.7fr repeat(3,1fr);grid-template-rows:.5fr repeat(3,1fr)}.debugging-sequence{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto 1fr}.debugging-sequence .evidence-steps{grid-column:1/5;grid-template-columns:repeat(5,1fr)}.causal-chain{display:grid;grid-template-columns:repeat(5,1fr);align-items:center}.causal-chain .cause{border-radius:50% 18px 18px 50%}.bpmn-debug-flow{display:grid;grid-template-columns:.6fr 1fr .8fr 1fr .6fr;align-items:center}.before-after-flow{display:grid;grid-template-columns:1fr .18fr 1fr}.before-after-flow .before,.before-after-flow .after{grid-template-rows:repeat(4,1fr)}.state-data-breakpoint{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto}.state-data-breakpoint .breakpoint{grid-column:1/4;border:2px dashed rgba(166,58,58,.5)}.current-target-flow{display:grid;grid-template-columns:1fr .18fr 1fr}.current-target-flow .current,.current-target-flow .target{grid-template-rows:repeat(4,1fr)}.current-target-sequence{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto}.current-target-sequence .compare-band{grid-column:1/5;grid-template-columns:1fr 1fr}.diff-heatmap{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr)}.release-rollback-track{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:1fr auto}.release-rollback-track .rollback-lane{grid-column:1/6;border-style:dashed;grid-template-columns:repeat(3,1fr)}.artboard-wireframe{display:grid;grid-template-columns:.8fr 1.6fr .8fr}.artboard-wireframe .viewport{min-height:290px;grid-template-rows:.7fr 1.3fr .7fr}.artboard-filmstrip{display:grid;grid-template-columns:repeat(3,1fr) .8fr}.responsive-state-board{display:grid;grid-template-columns:1.4fr 1fr .7fr;grid-template-rows:auto auto}.responsive-state-board .state-strip{grid-column:1/4;grid-template-columns:repeat(3,1fr)}.primary-path-page-flow{display:grid;grid-template-columns:repeat(5,1fr);align-items:center}.module-contract-data-topology{display:grid;grid-template-columns:1fr 1.1fr 1fr;grid-template-rows:auto auto}.module-contract-data-topology .ops-row{grid-column:1/4;grid-template-columns:repeat(4,1fr)}.api-contract-swimlane{display:grid;grid-template-rows:repeat(4,1fr)}.api-contract-swimlane .lane{grid-template-columns:.35fr repeat(4,1fr)}.data-consistency-boundary{display:grid;grid-template-columns:1fr 1.4fr 1fr}.data-consistency-boundary .consistency-box{border:2px dashed rgba(23,120,90,.5)}.release-switch-track{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:auto auto}.release-switch-track .switch-gate{grid-column:2/5;border-style:dashed}.decision-tree{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto}.decision-tree .root{grid-column:2}.decision-tree .branches{grid-column:1/4;grid-template-columns:repeat(3,1fr)}.decision-tree .recommend{grid-column:2}.option-matrix-path{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto 1fr auto}.option-matrix-path .matrix{grid-column:1/4;grid-template-columns:repeat(3,1fr)}.tradeoff-quadrant{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}.recommended-path{display:grid;grid-template-columns:.8fr 1fr 1fr 1fr .8fr;grid-template-rows:1fr auto}.recommended-path .risk-branch{grid-column:2/5;border-style:dashed;grid-template-columns:repeat(3,1fr)}.acceptance-ledger{display:grid;grid-template-rows:auto repeat(3,1fr)}.acceptance-ledger .ledger-row{grid-template-columns:repeat(5,1fr)}.evidence-swimlane{display:grid;grid-template-rows:repeat(3,1fr)}.evidence-swimlane .lane{grid-template-columns:.35fr repeat(4,1fr)}.risk-action-board{display:grid;grid-template-columns:repeat(4,1fr)}.delivery-timeline{display:grid;grid-template-columns:repeat(5,1fr);align-items:center}@media(max-width:780px){main{width:min(100vw - 20px,760px)}.template-layout{display:grid!important;grid-template-columns:1fr!important;grid-template-rows:auto!important}.template-layout>*{grid-column:auto!important;grid-row:auto!important}.edge,.arrow{height:28px;width:2px;margin:auto}.edge:after,.arrow:after{right:-5px;top:22px;border-left:6px solid transparent;border-right:6px solid transparent;border-top:10px solid var(--blue);border-bottom:0}}</style>
+  <style data-artifact-shell-kernel="1">
+[data-diagram-title-region] {
+  display: block;
+  max-inline-size: 100%;
+}
+
+[data-diagram-title-copy] {
+  min-inline-size: 0;
+}
+
+[data-diagram-reading-guide="1"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "heading controls"
+    "groups controls";
+  align-items: start;
+  gap: .55rem 1rem;
+  margin-block: .5rem 1rem;
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .9);
+}
+
+[data-reading-guide-heading] {
+  grid-area: heading;
+  display: flex;
+  align-items: baseline;
+  gap: .35rem .75rem;
+  min-inline-size: 0;
+}
+
+[data-reading-guide-heading] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+
+[data-reading-guide-heading] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+
+[data-reading-guide-groups] {
+  grid-area: groups;
+  display: flex;
+  align-items: center;
+  gap: .55rem 1rem;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+[data-reading-guide-group] {
+  display: flex;
+  align-items: center;
+  gap: .4rem .65rem;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+[data-reading-guide-group] + [data-reading-guide-group] {
+  padding-inline-start: 1rem;
+  border-inline-start: 1px solid rgba(141, 179, 216, .45);
+}
+
+[data-reading-guide-group-title] {
+  color: #17324d;
+  font-size: .7rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+[data-reading-guide-item],
+[data-diagram-reading-guide="1"] [data-evidence-id] {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+[data-reading-guide-item] b,
+[data-diagram-reading-guide="1"] [data-evidence-id] b {
+  margin: 0;
+  color: #38546f;
+  font-size: .7rem;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-id] span {
+  max-inline-size: 18rem;
+  color: #5a6c80;
+  font-size: .68rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+[data-line-swatch] {
+  position: relative;
+  display: inline-block;
+  inline-size: 2rem;
+  block-size: .75rem;
+  flex: 0 0 auto;
+}
+
+[data-line-swatch]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0 .32rem;
+  inset-block-start: .3rem;
+  border-block-start: 3px solid #0877ff;
+}
+
+[data-line-swatch]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: .06rem;
+  border-inline-start: .5rem solid #0877ff;
+  border-block: .34rem solid transparent;
+}
+
+[data-line-kind="line-02"] [data-line-swatch]::before {
+  border-color: #00a56a;
+}
+
+[data-line-kind="line-02"] [data-line-swatch]::after {
+  border-inline-start-color: #00a56a;
+}
+
+[data-line-kind="line-03"] [data-line-swatch]::before {
+  border-color: #7c3aed;
+  border-block-start-style: dashed;
+}
+
+[data-line-kind="line-03"] [data-line-swatch]::after {
+  border-inline-start-color: #7c3aed;
+}
+
+[data-line-kind="line-04"] [data-line-swatch]::before {
+  border-color: #f59e0b;
+  border-block-start-style: dotted;
+}
+
+[data-line-kind="line-04"] [data-line-swatch]::after {
+  border-inline-start-color: #f59e0b;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-id]::before {
+  content: "";
+  inline-size: .68rem;
+  block-size: .68rem;
+  flex: 0 0 auto;
+  border: 2px solid;
+  border-radius: .3rem;
+  background: #fff;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-source-kind="file"]::before {
+  border-color: #2787df;
+  background: #e8f3ff;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-source-kind="test"]::before {
+  border-color: #20a476;
+  background: #e9f8f2;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-status="unresolved"]::before {
+  border-color: #e49a10;
+  border-style: dashed;
+  background: #fff6de;
+}
+
+[data-reading-guide-controls] {
+  grid-area: controls;
+  display: flex;
+  min-inline-size: max-content;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: .45rem;
+}
+
+[data-reading-guide-controls] [data-reading-guide-group="interaction"] {
+  justify-content: flex-start;
+  padding: .1rem .35rem 0;
+  border-inline-start: 0;
+}
+
+[data-diagram-controls],
+[data-sequence-toolbar] {
+  position: relative;
+  display: none;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin: 0;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+
+[data-diagram-controls][data-diagram-controls-visible="true"],
+[data-sequence-toolbar]:not([hidden]) {
+  display: inline-flex;
+}
+
+[data-diagram-controls] button,
+[data-sequence-toolbar] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+[data-diagram-controls] button:hover,
+[data-sequence-toolbar] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+
+[data-diagram-controls] button[aria-pressed="true"],
+[data-sequence-toolbar] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+
+[data-diagram-controls] button:focus-visible,
+[data-sequence-toolbar] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+
+[data-diagram-controls] button:disabled,
+[data-sequence-toolbar] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+[data-diagram-zoom-status],
+[data-sequence-scale-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 64rem) {
+  [data-diagram-reading-guide="1"] {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "groups"
+      "controls";
+  }
+
+  [data-reading-guide-controls] {
+    min-inline-size: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  [data-reading-guide-group] + [data-reading-guide-group] {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+}
+
+@media (max-width: 48rem) {
+  [data-reading-guide-heading],
+  [data-reading-guide-groups] {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  [data-reading-guide-group] {
+    align-items: flex-start;
+  }
+
+  [data-diagram-reading-guide="1"] [data-evidence-id] span {
+    max-inline-size: none;
+  }
+}
+
+@media print {
+  [data-diagram-reading-guide="1"] {
+    break-inside: avoid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "groups";
+    background: #fff;
+  }
+
+  [data-reading-guide-controls] {
+    display: none !important;
+  }
+}
+</style>
   <style data-adaptive-viewport-kernel="1">
 [data-diagram-canvas][data-diagram-contract="1"] {
   --diagram-scale: 1;
@@ -24,141 +346,9 @@
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-title-region] {
-  display: flex;
-  max-inline-size: 100%;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: .75rem 1rem;
-}
-[data-diagram-title-copy] {
-  flex: 1 1 24rem;
-  min-inline-size: 0;
-}
-[data-diagram-title-region] > [data-diagram-controls] {
-  flex: 0 0 auto;
-  margin-block: 0;
-}
-[data-diagram-controls] {
-  position: relative;
-  display: none;
-  max-inline-size: 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .375rem;
-  margin-block: 0 1rem;
-  padding: .35rem;
-  border: 1px solid rgba(141, 179, 216, .72);
-  border-radius: .9rem;
-  background: rgba(255, 255, 255, .92);
-  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
-}
-[data-diagram-controls][data-diagram-controls-visible="true"] {
-  display: inline-flex;
-}
-[data-diagram-controls] button {
-  appearance: none;
-  min-block-size: 2.75rem;
-  padding-inline: .9rem;
-  border: 1px solid rgba(141, 179, 216, .78);
-  border-radius: .7rem;
-  background: #f7fbff;
-  color: #17324d;
-  font: inherit;
-  font-size: .8125rem;
-  font-weight: 750;
-  line-height: 1;
-  cursor: pointer;
-  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
-}
-[data-diagram-controls] button:hover {
-  border-color: #5f96c8;
-  background: #e8f3ff;
-}
-[data-diagram-controls] button[aria-pressed="true"] {
-  border-color: #1f6fb2;
-  background: #1f6fb2;
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
-}
-[data-diagram-controls] button:focus-visible {
-  outline: 3px solid #77b8f2;
-  outline-offset: 2px;
-}
-[data-diagram-controls] button:disabled {
-  opacity: .48;
-  cursor: not-allowed;
-}
-[data-diagram-zoom-status] {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
 .diagram-fallback { display: none; }
-[data-evidence-ledger="1"] {
-  padding: .75rem;
-  border: 1px solid rgba(141, 179, 216, .5);
-  border-radius: 1rem;
-  background: rgba(247, 251, 255, .84);
-}
-[data-evidence-summary] {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: .35rem 1rem;
-  padding: 0 .125rem .125rem;
-}
-[data-evidence-summary] strong {
-  color: #17324d;
-  font-size: .875rem;
-}
-[data-evidence-summary] span {
-  color: #5a6c80;
-  font-size: .75rem;
-}
-[data-evidence-ledger="1"] {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .625rem;
-  margin-block: .5rem 1rem;
-}
-[data-evidence-id] {
-  display: grid;
-  align-content: start;
-  gap: .35rem;
-  min-inline-size: 0;
-  padding: .75rem .875rem;
-  border: 1px solid rgba(141, 179, 216, .58);
-  border-radius: .8rem;
-  background: rgba(255, 255, 255, .9);
-  overflow-wrap: anywhere;
-}
-[data-evidence-status="observed"] {
-  border-color: rgba(23, 120, 90, .38);
-  background: rgba(238, 249, 245, .94);
-}
-[data-evidence-source-kind="test"] {
-  border-color: rgba(31, 111, 178, .4);
-  background: rgba(237, 246, 255, .94);
-}
-[data-evidence-status="unresolved"] {
-  border-color: rgba(152, 101, 6, .38);
-  background: rgba(255, 248, 232, .96);
-}
 
 @media (max-width: 48rem) {
-  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
-  [data-diagram-title-copy] { flex: 0 1 auto; }
-  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
-  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
-  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
   [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
@@ -166,8 +356,6 @@
 
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
-  [data-diagram-controls] { display: none !important; }
-  [data-evidence-ledger="1"] { break-inside: avoid; }
   .diagram-fallback { display: block; }
 }
 
@@ -262,37 +450,45 @@
       data-template-id="api-contract-swimlane"
       data-template-layout="api-contract-swimlane"
       data-template-contract-version="2">
-  <header data-diagram-title-region>
+    <header data-diagram-title-region data-artifact-shell-title="1">
     <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
-    <div data-diagram-controls="api-contract-swimlane" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
   </header>
-  <section data-slot="evidence-and-notes" data-evidence-ledger="1" aria-label="Evidence ledger"><div data-evidence-summary><strong>Evidence boundary</strong><span>Observed · checked · unresolved</span></div><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Checked</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Unresolved</b><span>{{evidence-unresolved}}</span></article></section>
-  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="api-contract-swimlane" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack">
-    <section data-diagram-stage class="template-layout api-contract-swimlane" aria-label="API contract swimlane template canvas">
-    <div class="lane" data-diagram-group-id="api-lane-1" data-semantic-role="api-lane" data-reading-guide="api lane 1"><div class="line-label">Caller</div><div id="api-1-request" class="slot support" data-diagram-node-id="api-1-request" data-semantic-role="technical-object" data-slot="api-1-request"><b>API 1 request</b><span>{{api-1-request}}</span></div><div id="api-1-contract" class="slot data" data-diagram-node-id="api-1-contract" data-semantic-role="technical-object" data-slot="api-1-contract"><b>API 1 contract</b><span>{{api-1-contract}}</span></div><div id="api-1-error" class="slot risk" data-diagram-node-id="api-1-error" data-semantic-role="technical-object" data-slot="api-1-error"><b>API 1 error</b><span>{{api-1-error}}</span></div><div id="api-1-compat" class="slot ops" data-diagram-node-id="api-1-compat" data-semantic-role="technical-object" data-slot="api-1-compat"><b>API 1 compat</b><span>{{api-1-compat}}</span></div></div><div class="lane" data-diagram-group-id="api-lane-2" data-semantic-role="api-lane" data-reading-guide="api lane 2"><div class="line-label">Interface layer</div><div id="api-2-request" class="slot data" data-diagram-node-id="api-2-request" data-semantic-role="technical-object" data-slot="api-2-request"><b>API 2 request</b><span>{{api-2-request}}</span></div><div id="api-2-contract" class="slot risk" data-diagram-node-id="api-2-contract" data-semantic-role="technical-object" data-slot="api-2-contract"><b>API 2 contract</b><span>{{api-2-contract}}</span></div><div id="api-2-error" class="slot ops" data-diagram-node-id="api-2-error" data-semantic-role="technical-object" data-slot="api-2-error"><b>API 2 error</b><span>{{api-2-error}}</span></div><div id="api-2-compat" class="slot" data-diagram-node-id="api-2-compat" data-semantic-role="technical-object" data-slot="api-2-compat"><b>API 2 compat</b><span>{{api-2-compat}}</span></div></div><div class="lane" data-diagram-group-id="api-lane-3" data-semantic-role="api-lane" data-reading-guide="api lane 3"><div class="line-label">Service layer</div><div id="api-3-request" class="slot risk" data-diagram-node-id="api-3-request" data-semantic-role="technical-object" data-slot="api-3-request"><b>API 3 request</b><span>{{api-3-request}}</span></div><div id="api-3-contract" class="slot ops" data-diagram-node-id="api-3-contract" data-semantic-role="technical-object" data-slot="api-3-contract"><b>API 3 contract</b><span>{{api-3-contract}}</span></div><div id="api-3-error" class="slot" data-diagram-node-id="api-3-error" data-semantic-role="technical-object" data-slot="api-3-error"><b>API 3 error</b><span>{{api-3-error}}</span></div><div id="api-3-compat" class="slot core" data-diagram-node-id="api-3-compat" data-semantic-role="technical-object" data-slot="api-3-compat"><b>API 3 compat</b><span>{{api-3-compat}}</span></div></div><div class="lane" data-diagram-group-id="api-lane-4" data-semantic-role="api-lane" data-reading-guide="api lane 4"><div class="line-label">Observability layer</div><div id="api-4-request" class="slot ops" data-diagram-node-id="api-4-request" data-semantic-role="technical-object" data-slot="api-4-request"><b>API 4 request</b><span>{{api-4-request}}</span></div><div id="api-4-contract" class="slot" data-diagram-node-id="api-4-contract" data-semantic-role="technical-object" data-slot="api-4-contract"><b>API 4 contract</b><span>{{api-4-contract}}</span></div><div id="api-4-error" class="slot core" data-diagram-node-id="api-4-error" data-semantic-role="technical-object" data-slot="api-4-error"><b>API 4 error</b><span>{{api-4-error}}</span></div><div id="api-4-compat" class="slot support" data-diagram-node-id="api-4-compat" data-semantic-role="technical-object" data-slot="api-4-compat"><b>API 4 compat</b><span>{{api-4-compat}}</span></div></div>
-    <section data-semantic-edge-ledger aria-label="Visible relationship paths">
-    <h2>Relationship paths</h2>
+  <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide">
+    <div data-reading-guide-heading><strong>Reading guide</strong><span>How to read this artifact</span></div>
+    <div data-reading-guide-groups>
+      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
+      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b><span>{{evidence-unresolved}}</span></article></div>
+    </div>
+    <div data-reading-guide-controls aria-label="Diagram scale controls">
+      <div data-reading-guide-group="interaction"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item>☝️ <b>{{interaction-hint}}</b></span></div>
+      <div data-diagram-controls="api-contract-swimlane" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div></div>
+  </section>
+<div data-diagram-canvas data-diagram-contract="1" data-diagram-id="api-contract-swimlane" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack">
+    <section data-diagram-stage class="template-layout api-contract-swimlane" aria-label="{{canvas-attribute-001}}">
+    <div class="lane" data-diagram-group-id="layout-group-001" data-semantic-role="{{canvas-attribute-033}}" data-reading-guide="{{canvas-attribute-034}}"><div class="line-label">{{canvas-text-001}}</div><div id="layout-node-001" class="slot support" data-diagram-node-id="layout-node-001" data-semantic-role="{{canvas-attribute-035}}" data-slot="layout-slot-001"><b>{{canvas-text-002}}</b><span>{{canvas-text-003}}</span></div><div id="layout-node-002" class="slot data" data-diagram-node-id="layout-node-002" data-semantic-role="{{canvas-attribute-036}}" data-slot="layout-slot-002"><b>{{canvas-text-004}}</b><span>{{canvas-text-005}}</span></div><div id="layout-node-003" class="slot risk" data-diagram-node-id="layout-node-003" data-semantic-role="{{canvas-attribute-037}}" data-slot="layout-slot-003"><b>{{canvas-text-006}}</b><span>{{canvas-text-007}}</span></div><div id="layout-node-004" class="slot ops" data-diagram-node-id="layout-node-004" data-semantic-role="{{canvas-attribute-038}}" data-slot="layout-slot-004"><b>{{canvas-text-008}}</b><span>{{canvas-text-009}}</span></div></div><div class="lane" data-diagram-group-id="layout-group-002" data-semantic-role="{{canvas-attribute-039}}" data-reading-guide="{{canvas-attribute-040}}"><div class="line-label">{{canvas-text-010}}</div><div id="layout-node-005" class="slot data" data-diagram-node-id="layout-node-005" data-semantic-role="{{canvas-attribute-041}}" data-slot="layout-slot-005"><b>{{canvas-text-011}}</b><span>{{canvas-text-012}}</span></div><div id="layout-node-006" class="slot risk" data-diagram-node-id="layout-node-006" data-semantic-role="{{canvas-attribute-042}}" data-slot="layout-slot-006"><b>{{canvas-text-013}}</b><span>{{canvas-text-014}}</span></div><div id="layout-node-007" class="slot ops" data-diagram-node-id="layout-node-007" data-semantic-role="{{canvas-attribute-043}}" data-slot="layout-slot-007"><b>{{canvas-text-015}}</b><span>{{canvas-text-016}}</span></div><div id="layout-node-008" class="slot" data-diagram-node-id="layout-node-008" data-semantic-role="{{canvas-attribute-044}}" data-slot="layout-slot-008"><b>{{canvas-text-017}}</b><span>{{canvas-text-018}}</span></div></div><div class="lane" data-diagram-group-id="layout-group-003" data-semantic-role="{{canvas-attribute-045}}" data-reading-guide="{{canvas-attribute-046}}"><div class="line-label">{{canvas-text-019}}</div><div id="layout-node-009" class="slot risk" data-diagram-node-id="layout-node-009" data-semantic-role="{{canvas-attribute-047}}" data-slot="layout-slot-009"><b>{{canvas-text-020}}</b><span>{{canvas-text-021}}</span></div><div id="layout-node-010" class="slot ops" data-diagram-node-id="layout-node-010" data-semantic-role="{{canvas-attribute-048}}" data-slot="layout-slot-010"><b>{{canvas-text-022}}</b><span>{{canvas-text-023}}</span></div><div id="layout-node-011" class="slot" data-diagram-node-id="layout-node-011" data-semantic-role="{{canvas-attribute-049}}" data-slot="layout-slot-011"><b>{{canvas-text-024}}</b><span>{{canvas-text-025}}</span></div><div id="layout-node-012" class="slot core" data-diagram-node-id="layout-node-012" data-semantic-role="{{canvas-attribute-050}}" data-slot="layout-slot-012"><b>{{canvas-text-026}}</b><span>{{canvas-text-027}}</span></div></div><div class="lane" data-diagram-group-id="layout-group-004" data-semantic-role="{{canvas-attribute-051}}" data-reading-guide="{{canvas-attribute-052}}"><div class="line-label">{{canvas-text-028}}</div><div id="layout-node-013" class="slot ops" data-diagram-node-id="layout-node-013" data-semantic-role="{{canvas-attribute-053}}" data-slot="layout-slot-013"><b>{{canvas-text-029}}</b><span>{{canvas-text-030}}</span></div><div id="layout-node-014" class="slot" data-diagram-node-id="layout-node-014" data-semantic-role="{{canvas-attribute-054}}" data-slot="layout-slot-014"><b>{{canvas-text-031}}</b><span>{{canvas-text-032}}</span></div><div id="layout-node-015" class="slot core" data-diagram-node-id="layout-node-015" data-semantic-role="{{canvas-attribute-055}}" data-slot="layout-slot-015"><b>{{canvas-text-033}}</b><span>{{canvas-text-034}}</span></div><div id="layout-node-016" class="slot support" data-diagram-node-id="layout-node-016" data-semantic-role="{{canvas-attribute-056}}" data-slot="layout-slot-016"><b>{{canvas-text-035}}</b><span>{{canvas-text-036}}</span></div></div>
+    <section data-semantic-edge-ledger aria-label="{{canvas-attribute-002}}">
+    <h2>{{canvas-text-037}}</h2>
     <div data-semantic-edge-grid>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-1-request-api-1-contract" data-visible-relation-kind="edge" data-from="api-1-request" data-to="api-1-contract" data-relation-kind="flow"><span data-semantic-edge-route><b>api-1-request</b><i aria-hidden="true"></i><b>api-1-contract</b></span><span data-semantic-edge-label>api-1-request flow api-1-contract</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-1-contract-api-1-error" data-visible-relation-kind="edge" data-from="api-1-contract" data-to="api-1-error" data-relation-kind="flow"><span data-semantic-edge-route><b>api-1-contract</b><i aria-hidden="true"></i><b>api-1-error</b></span><span data-semantic-edge-label>api-1-contract flow api-1-error</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-1-error-api-1-compat" data-visible-relation-kind="edge" data-from="api-1-error" data-to="api-1-compat" data-relation-kind="flow"><span data-semantic-edge-route><b>api-1-error</b><i aria-hidden="true"></i><b>api-1-compat</b></span><span data-semantic-edge-label>api-1-error flow api-1-compat</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-2-request-api-2-contract" data-visible-relation-kind="edge" data-from="api-2-request" data-to="api-2-contract" data-relation-kind="flow"><span data-semantic-edge-route><b>api-2-request</b><i aria-hidden="true"></i><b>api-2-contract</b></span><span data-semantic-edge-label>api-2-request flow api-2-contract</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-2-contract-api-2-error" data-visible-relation-kind="edge" data-from="api-2-contract" data-to="api-2-error" data-relation-kind="flow"><span data-semantic-edge-route><b>api-2-contract</b><i aria-hidden="true"></i><b>api-2-error</b></span><span data-semantic-edge-label>api-2-contract flow api-2-error</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-2-error-api-2-compat" data-visible-relation-kind="edge" data-from="api-2-error" data-to="api-2-compat" data-relation-kind="flow"><span data-semantic-edge-route><b>api-2-error</b><i aria-hidden="true"></i><b>api-2-compat</b></span><span data-semantic-edge-label>api-2-error flow api-2-compat</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-3-request-api-3-contract" data-visible-relation-kind="edge" data-from="api-3-request" data-to="api-3-contract" data-relation-kind="flow"><span data-semantic-edge-route><b>api-3-request</b><i aria-hidden="true"></i><b>api-3-contract</b></span><span data-semantic-edge-label>api-3-request flow api-3-contract</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-3-contract-api-3-error" data-visible-relation-kind="edge" data-from="api-3-contract" data-to="api-3-error" data-relation-kind="flow"><span data-semantic-edge-route><b>api-3-contract</b><i aria-hidden="true"></i><b>api-3-error</b></span><span data-semantic-edge-label>api-3-contract flow api-3-error</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-3-error-api-3-compat" data-visible-relation-kind="edge" data-from="api-3-error" data-to="api-3-compat" data-relation-kind="flow"><span data-semantic-edge-route><b>api-3-error</b><i aria-hidden="true"></i><b>api-3-compat</b></span><span data-semantic-edge-label>api-3-error flow api-3-compat</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-4-request-api-4-contract" data-visible-relation-kind="edge" data-from="api-4-request" data-to="api-4-contract" data-relation-kind="flow"><span data-semantic-edge-route><b>api-4-request</b><i aria-hidden="true"></i><b>api-4-contract</b></span><span data-semantic-edge-label>api-4-request flow api-4-contract</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-4-contract-api-4-error" data-visible-relation-kind="edge" data-from="api-4-contract" data-to="api-4-error" data-relation-kind="flow"><span data-semantic-edge-route><b>api-4-contract</b><i aria-hidden="true"></i><b>api-4-error</b></span><span data-semantic-edge-label>api-4-contract flow api-4-error</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-4-error-api-4-compat" data-visible-relation-kind="edge" data-from="api-4-error" data-to="api-4-compat" data-relation-kind="flow"><span data-semantic-edge-route><b>api-4-error</b><i aria-hidden="true"></i><b>api-4-compat</b></span><span data-semantic-edge-label>api-4-error flow api-4-compat</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-1-handoff" data-visible-relation-kind="edge" data-from="api-1-contract" data-to="api-2-request" data-relation-kind="handoff"><span data-semantic-edge-route><b>api-1-contract</b><i aria-hidden="true"></i><b>api-2-request</b></span><span data-semantic-edge-label>api-1-contract handoff api-2-request</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-2-handoff" data-visible-relation-kind="edge" data-from="api-2-contract" data-to="api-3-request" data-relation-kind="handoff"><span data-semantic-edge-route><b>api-2-contract</b><i aria-hidden="true"></i><b>api-3-request</b></span><span data-semantic-edge-label>api-2-contract handoff api-3-request</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="api-3-handoff" data-visible-relation-kind="edge" data-from="api-3-contract" data-to="api-4-request" data-relation-kind="handoff"><span data-semantic-edge-route><b>api-3-contract</b><i aria-hidden="true"></i><b>api-4-request</b></span><span data-semantic-edge-label>api-3-contract handoff api-4-request</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-001" data-visible-relation-kind="edge" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-018}}"><span data-semantic-edge-route><b>{{canvas-text-038}}</b><i aria-hidden="true"></i><b>{{canvas-text-039}}</b></span><span data-semantic-edge-label>{{canvas-text-040}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-002" data-visible-relation-kind="edge" data-from="layout-node-002" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-019}}"><span data-semantic-edge-route><b>{{canvas-text-041}}</b><i aria-hidden="true"></i><b>{{canvas-text-042}}</b></span><span data-semantic-edge-label>{{canvas-text-043}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-003" data-visible-relation-kind="edge" data-from="layout-node-003" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-020}}"><span data-semantic-edge-route><b>{{canvas-text-044}}</b><i aria-hidden="true"></i><b>{{canvas-text-045}}</b></span><span data-semantic-edge-label>{{canvas-text-046}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-004" data-visible-relation-kind="edge" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-021}}"><span data-semantic-edge-route><b>{{canvas-text-047}}</b><i aria-hidden="true"></i><b>{{canvas-text-048}}</b></span><span data-semantic-edge-label>{{canvas-text-049}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-005" data-visible-relation-kind="edge" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-022}}"><span data-semantic-edge-route><b>{{canvas-text-050}}</b><i aria-hidden="true"></i><b>{{canvas-text-051}}</b></span><span data-semantic-edge-label>{{canvas-text-052}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-006" data-visible-relation-kind="edge" data-from="layout-node-007" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-023}}"><span data-semantic-edge-route><b>{{canvas-text-053}}</b><i aria-hidden="true"></i><b>{{canvas-text-054}}</b></span><span data-semantic-edge-label>{{canvas-text-055}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-007" data-visible-relation-kind="edge" data-from="layout-node-009" data-to="layout-node-010" data-relation-kind="{{canvas-attribute-024}}"><span data-semantic-edge-route><b>{{canvas-text-056}}</b><i aria-hidden="true"></i><b>{{canvas-text-057}}</b></span><span data-semantic-edge-label>{{canvas-text-058}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-008" data-visible-relation-kind="edge" data-from="layout-node-010" data-to="layout-node-011" data-relation-kind="{{canvas-attribute-025}}"><span data-semantic-edge-route><b>{{canvas-text-059}}</b><i aria-hidden="true"></i><b>{{canvas-text-060}}</b></span><span data-semantic-edge-label>{{canvas-text-061}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-009" data-visible-relation-kind="edge" data-from="layout-node-011" data-to="layout-node-012" data-relation-kind="{{canvas-attribute-026}}"><span data-semantic-edge-route><b>{{canvas-text-062}}</b><i aria-hidden="true"></i><b>{{canvas-text-063}}</b></span><span data-semantic-edge-label>{{canvas-text-064}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-010" data-visible-relation-kind="edge" data-from="layout-node-013" data-to="layout-node-014" data-relation-kind="{{canvas-attribute-027}}"><span data-semantic-edge-route><b>{{canvas-text-065}}</b><i aria-hidden="true"></i><b>{{canvas-text-066}}</b></span><span data-semantic-edge-label>{{canvas-text-067}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-011" data-visible-relation-kind="edge" data-from="layout-node-014" data-to="layout-node-015" data-relation-kind="{{canvas-attribute-028}}"><span data-semantic-edge-route><b>{{canvas-text-068}}</b><i aria-hidden="true"></i><b>{{canvas-text-069}}</b></span><span data-semantic-edge-label>{{canvas-text-070}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-012" data-visible-relation-kind="edge" data-from="layout-node-015" data-to="layout-node-016" data-relation-kind="{{canvas-attribute-029}}"><span data-semantic-edge-route><b>{{canvas-text-071}}</b><i aria-hidden="true"></i><b>{{canvas-text-072}}</b></span><span data-semantic-edge-label>{{canvas-text-073}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-013" data-visible-relation-kind="edge" data-from="layout-node-002" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-030}}"><span data-semantic-edge-route><b>{{canvas-text-074}}</b><i aria-hidden="true"></i><b>{{canvas-text-075}}</b></span><span data-semantic-edge-label>{{canvas-text-076}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-014" data-visible-relation-kind="edge" data-from="layout-node-006" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-031}}"><span data-semantic-edge-route><b>{{canvas-text-077}}</b><i aria-hidden="true"></i><b>{{canvas-text-078}}</b></span><span data-semantic-edge-label>{{canvas-text-079}}</span></article>
+      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-015" data-visible-relation-kind="edge" data-from="layout-node-010" data-to="layout-node-013" data-relation-kind="{{canvas-attribute-032}}"><span data-semantic-edge-route><b>{{canvas-text-080}}</b><i aria-hidden="true"></i><b>{{canvas-text-081}}</b></span><span data-semantic-edge-label>{{canvas-text-082}}</span></article>
     </div>
   </section>
-<span class="semantic-relation" data-diagram-relation-id="api-1-request-api-1-contract" data-from="api-1-request" data-to="api-1-contract" data-relation-kind="flow" data-semantic="api-1-request flow api-1-contract">api-1-request flow api-1-contract</span><span class="semantic-relation" data-diagram-relation-id="api-1-contract-api-1-error" data-from="api-1-contract" data-to="api-1-error" data-relation-kind="flow" data-semantic="api-1-contract flow api-1-error">api-1-contract flow api-1-error</span><span class="semantic-relation" data-diagram-relation-id="api-1-error-api-1-compat" data-from="api-1-error" data-to="api-1-compat" data-relation-kind="flow" data-semantic="api-1-error flow api-1-compat">api-1-error flow api-1-compat</span><span class="semantic-relation" data-diagram-relation-id="api-2-request-api-2-contract" data-from="api-2-request" data-to="api-2-contract" data-relation-kind="flow" data-semantic="api-2-request flow api-2-contract">api-2-request flow api-2-contract</span><span class="semantic-relation" data-diagram-relation-id="api-2-contract-api-2-error" data-from="api-2-contract" data-to="api-2-error" data-relation-kind="flow" data-semantic="api-2-contract flow api-2-error">api-2-contract flow api-2-error</span><span class="semantic-relation" data-diagram-relation-id="api-2-error-api-2-compat" data-from="api-2-error" data-to="api-2-compat" data-relation-kind="flow" data-semantic="api-2-error flow api-2-compat">api-2-error flow api-2-compat</span><span class="semantic-relation" data-diagram-relation-id="api-3-request-api-3-contract" data-from="api-3-request" data-to="api-3-contract" data-relation-kind="flow" data-semantic="api-3-request flow api-3-contract">api-3-request flow api-3-contract</span><span class="semantic-relation" data-diagram-relation-id="api-3-contract-api-3-error" data-from="api-3-contract" data-to="api-3-error" data-relation-kind="flow" data-semantic="api-3-contract flow api-3-error">api-3-contract flow api-3-error</span><span class="semantic-relation" data-diagram-relation-id="api-3-error-api-3-compat" data-from="api-3-error" data-to="api-3-compat" data-relation-kind="flow" data-semantic="api-3-error flow api-3-compat">api-3-error flow api-3-compat</span><span class="semantic-relation" data-diagram-relation-id="api-4-request-api-4-contract" data-from="api-4-request" data-to="api-4-contract" data-relation-kind="flow" data-semantic="api-4-request flow api-4-contract">api-4-request flow api-4-contract</span><span class="semantic-relation" data-diagram-relation-id="api-4-contract-api-4-error" data-from="api-4-contract" data-to="api-4-error" data-relation-kind="flow" data-semantic="api-4-contract flow api-4-error">api-4-contract flow api-4-error</span><span class="semantic-relation" data-diagram-relation-id="api-4-error-api-4-compat" data-from="api-4-error" data-to="api-4-compat" data-relation-kind="flow" data-semantic="api-4-error flow api-4-compat">api-4-error flow api-4-compat</span><span class="semantic-relation" data-diagram-relation-id="api-1-handoff" data-from="api-1-contract" data-to="api-2-request" data-relation-kind="handoff" data-semantic="api-1-contract handoff api-2-request">api-1-contract handoff api-2-request</span><span class="semantic-relation" data-diagram-relation-id="api-2-handoff" data-from="api-2-contract" data-to="api-3-request" data-relation-kind="handoff" data-semantic="api-2-contract handoff api-3-request">api-2-contract handoff api-3-request</span><span class="semantic-relation" data-diagram-relation-id="api-3-handoff" data-from="api-3-contract" data-to="api-4-request" data-relation-kind="handoff" data-semantic="api-3-contract handoff api-4-request">api-3-contract handoff api-4-request</span></section>
+<span class="semantic-relation" data-diagram-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-018}}" data-semantic="{{canvas-attribute-003}}">{{canvas-text-083}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-019}}" data-semantic="{{canvas-attribute-004}}">{{canvas-text-084}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-020}}" data-semantic="{{canvas-attribute-005}}">{{canvas-text-085}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-004" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-021}}" data-semantic="{{canvas-attribute-006}}">{{canvas-text-086}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-005" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-022}}" data-semantic="{{canvas-attribute-007}}">{{canvas-text-087}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-006" data-from="layout-node-007" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-023}}" data-semantic="{{canvas-attribute-008}}">{{canvas-text-088}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-007" data-from="layout-node-009" data-to="layout-node-010" data-relation-kind="{{canvas-attribute-024}}" data-semantic="{{canvas-attribute-009}}">{{canvas-text-089}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-008" data-from="layout-node-010" data-to="layout-node-011" data-relation-kind="{{canvas-attribute-025}}" data-semantic="{{canvas-attribute-010}}">{{canvas-text-090}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-009" data-from="layout-node-011" data-to="layout-node-012" data-relation-kind="{{canvas-attribute-026}}" data-semantic="{{canvas-attribute-011}}">{{canvas-text-091}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-010" data-from="layout-node-013" data-to="layout-node-014" data-relation-kind="{{canvas-attribute-027}}" data-semantic="{{canvas-attribute-012}}">{{canvas-text-092}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-011" data-from="layout-node-014" data-to="layout-node-015" data-relation-kind="{{canvas-attribute-028}}" data-semantic="{{canvas-attribute-013}}">{{canvas-text-093}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-012" data-from="layout-node-015" data-to="layout-node-016" data-relation-kind="{{canvas-attribute-029}}" data-semantic="{{canvas-attribute-014}}">{{canvas-text-094}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-013" data-from="layout-node-002" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-030}}" data-semantic="{{canvas-attribute-015}}">{{canvas-text-095}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-014" data-from="layout-node-006" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-031}}" data-semantic="{{canvas-attribute-016}}">{{canvas-text-096}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-015" data-from="layout-node-010" data-to="layout-node-013" data-relation-kind="{{canvas-attribute-032}}" data-semantic="{{canvas-attribute-017}}">{{canvas-text-097}}</span></section>
   </div>
-  <details class="diagram-fallback" data-fallback-for="api-contract-swimlane"><summary>Api Contract Swimlane reading order</summary><ol><li>api-1-request</li><li>api-1-contract</li><li>api-1-error</li><li>api-1-compat</li><li>api-2-request</li><li>api-2-contract</li><li>api-2-error</li><li>api-2-compat</li><li>api-3-request</li><li>api-3-contract</li><li>api-3-error</li><li>api-3-compat</li><li>api-4-request</li><li>api-4-contract</li><li>api-4-error</li><li>api-4-compat</li></ol></details>
+  <details class="diagram-fallback" data-fallback-for="api-contract-swimlane"><summary>{{canvas-text-098}}</summary><ol><li>{{canvas-text-099}}</li><li>{{canvas-text-100}}</li><li>{{canvas-text-101}}</li><li>{{canvas-text-102}}</li><li>{{canvas-text-103}}</li><li>{{canvas-text-104}}</li><li>{{canvas-text-105}}</li><li>{{canvas-text-106}}</li><li>{{canvas-text-107}}</li><li>{{canvas-text-108}}</li><li>{{canvas-text-109}}</li><li>{{canvas-text-110}}</li><li>{{canvas-text-111}}</li><li>{{canvas-text-112}}</li><li>{{canvas-text-113}}</li><li>{{canvas-text-114}}</li></ol></details>
 </main>
 <script data-adaptive-viewport-kernel="1">
 (() => {
@@ -437,6 +633,362 @@
   globalThis.VibeDiagramViewport = Object.freeze({ apply, bind, enhance, reset, retest });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
+<script data-artifact-shell-preview-kernel="1">
+(() => {
+  "use strict";
+
+  const unresolvedCanvasText = /^\s*\{\{canvas-text-\d{3}\}\}\s*$/;
+  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
+  const auditRoots = "[data-diagram-canvas], [data-sequence-canvas]";
+  const epsilon = 1;
+
+  const suppressUnfilledCanvasText = (root) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const unresolvedNodes = [];
+    while (walker.nextNode()) {
+      if (unresolvedCanvasText.test(walker.currentNode.nodeValue || "")) {
+        unresolvedNodes.push(walker.currentNode);
+      }
+    }
+    unresolvedNodes.forEach((node) => {
+      node.nodeValue = "";
+    });
+    if (unresolvedNodes.length) {
+      root.setAttribute("data-template-preview", "unfilled");
+    }
+  };
+
+  const isVisible = (element) => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return (
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") > 0 &&
+      rect.width > epsilon &&
+      rect.height > epsilon
+    );
+  };
+
+  const overlaps = (left, right, inset = epsilon) => (
+    left.left + inset < right.right &&
+    left.right - inset > right.left &&
+    left.top + inset < right.bottom &&
+    left.bottom - inset > right.top
+  );
+
+  const containsPoint = (rect, point, inset = 2) => (
+    point.x > rect.left + inset &&
+    point.x < rect.right - inset &&
+    point.y > rect.top + inset &&
+    point.y < rect.bottom - inset
+  );
+
+  const pointOnBoundary = (rect, point, tolerance = 6) => {
+    const withinHorizontal = point.x >= rect.left - tolerance && point.x <= rect.right + tolerance;
+    const withinVertical = point.y >= rect.top - tolerance && point.y <= rect.bottom + tolerance;
+    return (
+      (withinHorizontal && (
+        Math.abs(point.y - rect.top) <= tolerance ||
+        Math.abs(point.y - rect.bottom) <= tolerance
+      )) ||
+      (withinVertical && (
+        Math.abs(point.x - rect.left) <= tolerance ||
+        Math.abs(point.x - rect.right) <= tolerance
+      ))
+    );
+  };
+
+  const numericAttribute = (element, name) => {
+    const value = Number.parseFloat(element.getAttribute(name) || "");
+    return Number.isFinite(value) ? value : null;
+  };
+
+  const parseColor = (value) => {
+    const match = value.match(
+      /rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*(\d*(?:\.\d+)?))?\s*\)/
+    );
+    if (!match) return null;
+    return {
+      red: Number(match[1]) / 255,
+      green: Number(match[2]) / 255,
+      blue: Number(match[3]) / 255,
+      alpha: match[4] === undefined || match[4] === "" ? 1 : Number(match[4])
+    };
+  };
+
+  const pointOnScreen = (path, distance) => {
+    const point = path.getPointAtLength(distance);
+    const matrix = path.getScreenCTM();
+    if (!matrix) return null;
+    const transformed = new DOMPoint(point.x, point.y).matrixTransform(matrix);
+    return { x: transformed.x, y: transformed.y };
+  };
+
+  const auditDetailLinks = (canvas, addIssue) => {
+    const documentRoot = canvas.ownerDocument;
+    canvas.querySelectorAll(detailTriggerSelector).forEach((trigger) => {
+      const detailId = trigger.dataset.detailFor || "";
+      const detail = detailId
+        ? documentRoot.querySelector(`[data-diagram-detail="${CSS.escape(detailId)}"]`)
+        : null;
+      if (!detail) {
+        addIssue("detail-target-missing", detailId || "unnamed-trigger");
+        return;
+      }
+      if (trigger.tagName !== "A" || trigger.getAttribute("href") !== `#${detailId}`) {
+        addIssue("detail-trigger-not-native-link", detailId);
+      }
+      if (detail.tagName !== "DETAILS" || detail.id !== detailId) {
+        addIssue("detail-target-not-native-details", detailId);
+      }
+    });
+  };
+
+  const auditNodeGeometry = (canvas, addIssue) => {
+    const nodes = Array.from(canvas.querySelectorAll("[data-diagram-node-id]")).filter(isVisible);
+    for (let leftIndex = 0; leftIndex < nodes.length; leftIndex += 1) {
+      const left = nodes[leftIndex];
+      const leftRect = left.getBoundingClientRect();
+      for (let rightIndex = leftIndex + 1; rightIndex < nodes.length; rightIndex += 1) {
+        const right = nodes[rightIndex];
+        if (left.contains(right) || right.contains(left)) continue;
+        if (overlaps(leftRect, right.getBoundingClientRect(), 2)) {
+          addIssue(
+            "node-overlap",
+            `${left.dataset.diagramNodeId || leftIndex}:${right.dataset.diagramNodeId || rightIndex}`
+          );
+        }
+      }
+    }
+    canvas.querySelectorAll("foreignObject > *, [data-node-title], [data-node-summary]").forEach(
+      (content) => {
+        if (!isVisible(content)) return;
+        if (
+          content.scrollWidth > content.clientWidth + epsilon ||
+          content.scrollHeight > content.clientHeight + epsilon
+        ) {
+          addIssue(
+            "node-content-overflow",
+            content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || content.tagName
+          );
+        }
+      }
+    );
+    canvas.querySelectorAll("[data-diagram-detail-trigger='auxiliary']").forEach((trigger) => {
+      if (!isVisible(trigger)) return;
+      const color = parseColor(getComputedStyle(trigger).backgroundColor);
+      if (!color || color.alpha < 0.85) {
+        addIssue("auxiliary-node-background-transparent", trigger.dataset.detailFor || "unknown");
+        return;
+      }
+      const luminance = color.red * 0.2126 + color.green * 0.7152 + color.blue * 0.0722;
+      if (luminance < 0.72) {
+        addIssue("auxiliary-node-background-too-dark", trigger.dataset.detailFor || "unknown");
+      }
+    });
+  };
+
+  const auditRoutes = (canvas, addIssue) => {
+    const nodeRects = new Map(
+      Array.from(canvas.querySelectorAll("[data-diagram-node-id]"))
+        .filter(isVisible)
+        .map((node) => [node.dataset.diagramNodeId, node.getBoundingClientRect()])
+    );
+    const labels = Array.from(canvas.querySelectorAll("svg text")).filter(isVisible);
+    canvas.querySelectorAll("path[data-diagram-visible-relation-id]").forEach((path) => {
+      if (typeof path.getTotalLength !== "function") return;
+      const relationId = path.dataset.diagramVisibleRelationId || "unknown";
+      const length = path.getTotalLength();
+      if (!Number.isFinite(length) || length < 24) {
+        addIssue("route-too-short", relationId);
+        return;
+      }
+      if (!path.getAttribute("marker-end")) {
+        addIssue("route-arrowhead-missing", relationId);
+      }
+      const sourceId = path.dataset.from || "";
+      const targetId = path.dataset.to || "";
+      const sourceRect = nodeRects.get(sourceId);
+      const targetRect = nodeRects.get(targetId);
+      const startPoint = pointOnScreen(path, 0);
+      const endPoint = pointOnScreen(path, length);
+      if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
+        addIssue("route-source-not-anchored", relationId);
+      }
+      if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
+        addIssue("route-target-not-anchored", relationId);
+      }
+      const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
+      for (let index = 1; index < sampleCount; index += 1) {
+        const progress = index / sampleCount;
+        const point = pointOnScreen(path, length * progress);
+        if (!point) break;
+        for (const [nodeId, rect] of nodeRects) {
+          if (
+            (nodeId === sourceId && progress < 0.08) ||
+            (nodeId === targetId && progress > 0.92)
+          ) {
+            continue;
+          }
+          if (containsPoint(rect, point, 3)) {
+            addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+          }
+        }
+        for (const label of labels) {
+          if (label.dataset.routeLabelFor === relationId) continue;
+          if (containsPoint(label.getBoundingClientRect(), point, 1)) {
+            addIssue("route-crosses-label", relationId);
+            break;
+          }
+        }
+      }
+    });
+  };
+
+  const auditUtilization = (canvas, addIssue) => {
+    const svg = canvas.querySelector("svg[data-architecture-canvas]");
+    if (!svg?.viewBox?.baseVal) return;
+    const boundaries = Array.from(
+      svg.querySelectorAll("rect[data-architecture-boundary]")
+    ).map((rect) => ({
+      x: numericAttribute(rect, "x"),
+      y: numericAttribute(rect, "y"),
+      width: numericAttribute(rect, "width"),
+      height: numericAttribute(rect, "height")
+    })).filter((item) => Object.values(item).every((value) => value !== null));
+    if (!boundaries.length) return;
+    const viewBox = svg.viewBox.baseVal;
+    const left = Math.min(...boundaries.map((item) => item.x));
+    const top = Math.min(...boundaries.map((item) => item.y));
+    const right = Math.max(...boundaries.map((item) => item.x + item.width));
+    const bottom = Math.max(...boundaries.map((item) => item.y + item.height));
+    const ratios = {
+      top: (top - viewBox.y) / viewBox.height,
+      bottom: (viewBox.y + viewBox.height - bottom) / viewBox.height,
+      horizontal: (right - left) / viewBox.width
+    };
+    const thresholds = {
+      top: numericAttribute(canvas, "data-max-top-whitespace-ratio"),
+      bottom: numericAttribute(canvas, "data-max-bottom-whitespace-ratio"),
+      horizontal: numericAttribute(canvas, "data-min-horizontal-utilization-ratio")
+    };
+    if (thresholds.top !== null && ratios.top > thresholds.top + 0.0001) {
+      addIssue("canvas-top-whitespace", ratios.top.toFixed(4));
+    }
+    if (thresholds.bottom !== null && ratios.bottom > thresholds.bottom + 0.0001) {
+      addIssue("canvas-bottom-whitespace", ratios.bottom.toFixed(4));
+    }
+    if (thresholds.horizontal !== null && ratios.horizontal < thresholds.horizontal - 0.0001) {
+      addIssue("canvas-horizontal-underuse", ratios.horizontal.toFixed(4));
+    }
+  };
+
+  const auditControls = (canvas, addIssue) => {
+    const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
+    const controls = document.querySelector(
+      `[data-diagram-controls="${CSS.escape(canvasId)}"], [data-sequence-controls="${CSS.escape(canvasId)}"]`
+    );
+    if (!controls) {
+      addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    const controlRegion = controls.closest("[data-reading-guide-controls]");
+    const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
+    if (!controlRegion || !interaction) {
+      addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    const interactionRect = interaction.getBoundingClientRect();
+    const controlsRect = controls.getBoundingClientRect();
+    if (
+      isVisible(interaction) &&
+      isVisible(controls) &&
+      interactionRect.bottom > controlsRect.top + epsilon
+    ) {
+      addIssue("interaction-not-above-controls", canvasId || "unnamed-canvas");
+    }
+  };
+
+  const audit = (canvas) => {
+    const issues = new Set();
+    const addIssue = (code, target) => issues.add(`${code}:${target}`);
+    auditDetailLinks(canvas, addIssue);
+    auditNodeGeometry(canvas, addIssue);
+    auditRoutes(canvas, addIssue);
+    auditUtilization(canvas, addIssue);
+    auditControls(canvas, addIssue);
+    if (document.documentElement.scrollWidth > document.documentElement.clientWidth + epsilon) {
+      addIssue("page-horizontal-overflow", document.documentElement.scrollWidth);
+    }
+    const ordered = Array.from(issues).sort();
+    canvas.setAttribute(
+      "data-computed-layout-audit",
+      ordered.length ? "failed" : "passed"
+    );
+    canvas.setAttribute("data-computed-layout-issue-count", String(ordered.length));
+    if (ordered.length) {
+      canvas.dataset.computedLayoutIssues = ordered.join("|").slice(0, 2048);
+    } else {
+      delete canvas.dataset.computedLayoutIssues;
+    }
+    canvas.dispatchEvent(
+      new CustomEvent("vibe-diagram:layout-audit", {
+        bubbles: true,
+        detail: { issues: ordered, passed: ordered.length === 0 }
+      })
+    );
+    return ordered;
+  };
+
+  const auditAll = (root = document) => {
+    const results = new Map();
+    root.querySelectorAll(auditRoots).forEach((canvas) => {
+      results.set(canvas.dataset.diagramId || canvas.dataset.sequenceId || "canvas", audit(canvas));
+    });
+    const failures = Array.from(results.values()).reduce(
+      (total, issues) => total + issues.length,
+      0
+    );
+    document.documentElement.dataset.computedLayoutAudit = failures ? "failed" : "passed";
+    document.documentElement.dataset.computedLayoutIssueCount = String(failures);
+    return results;
+  };
+
+  let auditQueued = false;
+  const scheduleAudit = () => {
+    if (auditQueued) return;
+    auditQueued = true;
+    requestAnimationFrame(() => {
+      auditQueued = false;
+      auditAll();
+    });
+  };
+
+  const enhance = () => {
+    document
+      .querySelectorAll(auditRoots)
+      .forEach(suppressUnfilledCanvasText);
+    globalThis.VibeDiagramQuality = Object.freeze({ audit, auditAll, scheduleAudit });
+    scheduleAudit();
+    document.fonts?.ready.then(scheduleAudit, scheduleAudit);
+    if ("ResizeObserver" in globalThis) {
+      const observer = new ResizeObserver(scheduleAudit);
+      document.querySelectorAll(`${auditRoots}, [data-diagram-reading-guide="1"]`).forEach(
+        (element) => observer.observe(element)
+      );
+    } else {
+      addEventListener("resize", scheduleAudit);
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enhance, { once: true });
   } else {
     enhance();
   }

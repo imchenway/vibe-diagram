@@ -1,11 +1,13 @@
 {
   "schema_version": 1,
   "contracts": {
+    "artifact_shell": "1",
     "adaptive_viewport": "1",
     "semantic_relations": "1",
     "progressive_disclosure": "1"
   },
   "scope": {
+    "artifact_shell_template_count": 59,
     "generic_template_count": 53,
     "sequence_template_count": 6,
     "completed_batches": ["B00", "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13"],
@@ -68,7 +70,7 @@
   "evidence": {
     "synthetic_contracts": "required",
     "canonical_templates": "complete",
-    "browser_runtime": "pending",
+    "browser_runtime": "computed-layout-audit-pending",
     "client_runtime": "unverified"
   }
 }

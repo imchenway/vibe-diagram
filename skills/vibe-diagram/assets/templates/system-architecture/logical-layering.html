@@ -24,7 +24,7 @@
 .layer-node-head b{display:block;color:#102033;font-size:.88rem;line-height:1.16}
 .layer-node-head small{display:block;margin-block-start:.12rem;color:#5a6c80;font-size:.7rem;line-height:1.28}
 .layer-module-grid{display:grid;grid-template-columns:repeat(var(--module-cols,4),minmax(0,1fr));gap:.45rem}
-.layer-module{display:flex;min-inline-size:0;align-items:center;justify-content:center;padding:.48rem .4rem;border:1px solid rgba(141,179,216,.58);border-radius:.66rem;background:rgba(255,255,255,.96);box-shadow:0 .2rem .65rem rgba(20,57,92,.05);color:#294963;font-size:.7rem;font-weight:780;line-height:1.18;text-align:center;overflow-wrap:anywhere}
+.layer-module{display:flex;text-decoration:none;min-inline-size:0;align-items:center;justify-content:center;padding:.48rem .4rem;border:1px solid rgba(141,179,216,.58);border-radius:.66rem;background:rgba(255,255,255,.96);box-shadow:0 .2rem .65rem rgba(20,57,92,.05);color:#294963;font-size:.7rem;font-weight:780;line-height:1.18;text-align:center;overflow-wrap:anywhere}
 .layer-module.checked{border-color:rgba(32,164,118,.48);background:#f0fbf7}
 .layer-module.pending{border-color:rgba(228,154,16,.58);border-style:dashed;background:#fff9ec}
 .architecture-map .arch-node{fill:#fff;stroke-width:1.6;filter:url(#logical-layering-soft-shadow);transition:stroke-width .15s ease,filter .15s ease}
@@ -35,25 +35,329 @@
 .fallback-region-index{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:.5rem;margin:.8rem 0}
 .fallback-region-index span{padding:.55rem .65rem;border:1px solid rgba(141,179,216,.45);border-radius:.75rem;background:#fff;color:#5a6c80;font-size:.75rem;line-height:1.4}
 .fallback-region-index b{display:block;color:#17324d}
-main [data-evidence-ledger="1"]{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;align-items:start;gap:.6rem 1rem;margin:.55rem 0 1rem;padding:.72rem .85rem!important;border-radius:1rem!important;background:rgba(255,255,255,.86)!important}
-main [data-evidence-summary]{display:block!important;padding:.08rem 0!important}
-main [data-evidence-summary] strong{font-size:.78rem!important;white-space:nowrap}
-main [data-evidence-summary] span{display:none}
-[data-reading-guide-groups]{display:flex;align-items:center;justify-content:space-between;gap:.55rem 1rem;min-inline-size:0}
-[data-reading-guide-group]{display:flex;align-items:center;gap:.42rem .72rem;min-inline-size:0;flex-wrap:wrap}
-[data-reading-guide-group]+[data-reading-guide-group]{padding-inline-start:1rem;border-inline-start:1px solid rgba(141,179,216,.45)}
-[data-reading-guide-group-title]{color:#17324d;font-size:.7rem;font-weight:850;white-space:nowrap}
-[data-reading-guide-item],main [data-evidence-id]{display:inline-flex!important;align-items:center;gap:.36rem;min-width:0;padding:0!important;border:0!important;background:transparent!important}
-[data-reading-guide-item] b,main [data-evidence-id] b{margin:0!important;color:#38546f;font-size:.7rem!important;line-height:1.2;white-space:nowrap}
-[data-line-swatch]{position:relative;display:inline-block;inline-size:2rem;block-size:.75rem;flex:0 0 auto}
-[data-line-swatch]::before{content:"";position:absolute;inset-inline:0 .32rem;inset-block-start:.3rem;border-block-start:3px solid #0877ff}
-[data-line-swatch]::after{content:"";position:absolute;inset-inline-end:0;inset-block-start:.06rem;border-inline-start:.5rem solid #0877ff;border-block:.34rem solid transparent}
-main [data-evidence-id]::before{content:"";inline-size:.68rem;block-size:.68rem;flex:0 0 auto;border:2px solid;border-radius:.3rem;background:#fff}
-main [data-evidence-id][data-evidence-source-kind="file"]::before{border-color:#2787df;background:#e8f3ff}
-main [data-evidence-id][data-evidence-source-kind="test"]::before{border-color:#20a476;background:#e9f8f2}
-main [data-evidence-id][data-evidence-status="unresolved"]::before{border-color:#e49a10;border-style:dashed;background:#fff6de}
-@media(max-width:64rem){[data-reading-guide-groups]{align-items:flex-start;flex-direction:column}[data-reading-guide-group]+[data-reading-guide-group]{padding-inline-start:0;border-inline-start:0}}
-@media(max-width:48rem){[data-diagram-title-region]{align-items:flex-start;flex-direction:column;gap:0}[data-diagram-mobile="summary"]>.template-layout{display:none!important}main [data-evidence-ledger="1"]{grid-template-columns:1fr!important}[data-evidence-summary]{inline-size:100%}}
+@media(max-width:48rem){[data-diagram-title-region]{align-items:flex-start;flex-direction:column;gap:0}[data-diagram-mobile="summary"]>.template-layout{display:none!important}}
+</style>
+  <style data-artifact-shell-kernel="1">
+[data-diagram-title-region] {
+  display: block;
+  max-inline-size: 100%;
+}
+
+[data-diagram-title-copy] {
+  min-inline-size: 0;
+}
+
+[data-diagram-reading-guide="1"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "heading controls"
+    "groups controls";
+  align-items: start;
+  gap: .55rem 1rem;
+  margin-block: .5rem 1rem;
+  padding: .75rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .9);
+}
+
+[data-reading-guide-heading] {
+  grid-area: heading;
+  display: flex;
+  align-items: baseline;
+  gap: .35rem .75rem;
+  min-inline-size: 0;
+}
+
+[data-reading-guide-heading] strong {
+  color: #17324d;
+  font-size: .875rem;
+}
+
+[data-reading-guide-heading] span {
+  color: #5a6c80;
+  font-size: .75rem;
+}
+
+[data-reading-guide-groups] {
+  grid-area: groups;
+  display: flex;
+  align-items: center;
+  gap: .55rem 1rem;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+[data-reading-guide-group] {
+  display: flex;
+  align-items: center;
+  gap: .4rem .65rem;
+  min-inline-size: 0;
+  flex-wrap: wrap;
+}
+
+[data-reading-guide-group] + [data-reading-guide-group] {
+  padding-inline-start: 1rem;
+  border-inline-start: 1px solid rgba(141, 179, 216, .45);
+}
+
+[data-reading-guide-group-title] {
+  color: #17324d;
+  font-size: .7rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+[data-reading-guide-item],
+[data-diagram-reading-guide="1"] [data-evidence-id] {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+[data-reading-guide-item] b,
+[data-diagram-reading-guide="1"] [data-evidence-id] b {
+  margin: 0;
+  color: #38546f;
+  font-size: .7rem;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-id] span {
+  max-inline-size: 18rem;
+  color: #5a6c80;
+  font-size: .68rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+[data-line-swatch] {
+  position: relative;
+  display: inline-block;
+  inline-size: 2rem;
+  block-size: .75rem;
+  flex: 0 0 auto;
+}
+
+[data-line-swatch]::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0 .32rem;
+  inset-block-start: .3rem;
+  border-block-start: 3px solid #0877ff;
+}
+
+[data-line-swatch]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: .06rem;
+  border-inline-start: .5rem solid #0877ff;
+  border-block: .34rem solid transparent;
+}
+
+[data-line-kind="line-02"] [data-line-swatch]::before {
+  border-color: #00a56a;
+}
+
+[data-line-kind="line-02"] [data-line-swatch]::after {
+  border-inline-start-color: #00a56a;
+}
+
+[data-line-kind="line-03"] [data-line-swatch]::before {
+  border-color: #7c3aed;
+  border-block-start-style: dashed;
+}
+
+[data-line-kind="line-03"] [data-line-swatch]::after {
+  border-inline-start-color: #7c3aed;
+}
+
+[data-line-kind="line-04"] [data-line-swatch]::before {
+  border-color: #f59e0b;
+  border-block-start-style: dotted;
+}
+
+[data-line-kind="line-04"] [data-line-swatch]::after {
+  border-inline-start-color: #f59e0b;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-id]::before {
+  content: "";
+  inline-size: .68rem;
+  block-size: .68rem;
+  flex: 0 0 auto;
+  border: 2px solid;
+  border-radius: .3rem;
+  background: #fff;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-source-kind="file"]::before {
+  border-color: #2787df;
+  background: #e8f3ff;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-source-kind="test"]::before {
+  border-color: #20a476;
+  background: #e9f8f2;
+}
+
+[data-diagram-reading-guide="1"] [data-evidence-status="unresolved"]::before {
+  border-color: #e49a10;
+  border-style: dashed;
+  background: #fff6de;
+}
+
+[data-reading-guide-controls] {
+  grid-area: controls;
+  display: flex;
+  min-inline-size: max-content;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: .45rem;
+}
+
+[data-reading-guide-controls] [data-reading-guide-group="interaction"] {
+  justify-content: flex-start;
+  padding: .1rem .35rem 0;
+  border-inline-start: 0;
+}
+
+[data-diagram-controls],
+[data-sequence-toolbar] {
+  position: relative;
+  display: none;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .375rem;
+  margin: 0;
+  padding: .35rem;
+  border: 1px solid rgba(141, 179, 216, .72);
+  border-radius: .9rem;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+}
+
+[data-diagram-controls][data-diagram-controls-visible="true"],
+[data-sequence-toolbar]:not([hidden]) {
+  display: inline-flex;
+}
+
+[data-diagram-controls] button,
+[data-sequence-toolbar] button {
+  appearance: none;
+  min-block-size: 2.75rem;
+  padding-inline: .9rem;
+  border: 1px solid rgba(141, 179, 216, .78);
+  border-radius: .7rem;
+  background: #f7fbff;
+  color: #17324d;
+  font: inherit;
+  font-size: .8125rem;
+  font-weight: 750;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+[data-diagram-controls] button:hover,
+[data-sequence-toolbar] button:hover {
+  border-color: #5f96c8;
+  background: #e8f3ff;
+}
+
+[data-diagram-controls] button[aria-pressed="true"],
+[data-sequence-toolbar] button[aria-pressed="true"] {
+  border-color: #1f6fb2;
+  background: #1f6fb2;
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
+}
+
+[data-diagram-controls] button:focus-visible,
+[data-sequence-toolbar] button:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+
+[data-diagram-controls] button:disabled,
+[data-sequence-toolbar] button:disabled {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+[data-diagram-zoom-status],
+[data-sequence-scale-status] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 64rem) {
+  [data-diagram-reading-guide="1"] {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "groups"
+      "controls";
+  }
+
+  [data-reading-guide-controls] {
+    min-inline-size: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  [data-reading-guide-group] + [data-reading-guide-group] {
+    padding-inline-start: 0;
+    border-inline-start: 0;
+  }
+}
+
+@media (max-width: 48rem) {
+  [data-reading-guide-heading],
+  [data-reading-guide-groups] {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  [data-reading-guide-group] {
+    align-items: flex-start;
+  }
+
+  [data-diagram-reading-guide="1"] [data-evidence-id] span {
+    max-inline-size: none;
+  }
+}
+
+@media print {
+  [data-diagram-reading-guide="1"] {
+    break-inside: avoid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "groups";
+    background: #fff;
+  }
+
+  [data-reading-guide-controls] {
+    display: none !important;
+  }
+}
 </style>
   <style data-adaptive-viewport-kernel="1">
 [data-diagram-canvas][data-diagram-contract="1"] {
@@ -74,141 +378,9 @@ main [data-evidence-id][data-evidence-status="unresolved"]::before{border-color:
   transform: scale(var(--diagram-scale));
   transform-origin: top left;
 }
-[data-diagram-title-region] {
-  display: flex;
-  max-inline-size: 100%;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: .75rem 1rem;
-}
-[data-diagram-title-copy] {
-  flex: 1 1 24rem;
-  min-inline-size: 0;
-}
-[data-diagram-title-region] > [data-diagram-controls] {
-  flex: 0 0 auto;
-  margin-block: 0;
-}
-[data-diagram-controls] {
-  position: relative;
-  display: none;
-  max-inline-size: 100%;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: .375rem;
-  margin-block: 0 1rem;
-  padding: .35rem;
-  border: 1px solid rgba(141, 179, 216, .72);
-  border-radius: .9rem;
-  background: rgba(255, 255, 255, .92);
-  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
-}
-[data-diagram-controls][data-diagram-controls-visible="true"] {
-  display: inline-flex;
-}
-[data-diagram-controls] button {
-  appearance: none;
-  min-block-size: 2.75rem;
-  padding-inline: .9rem;
-  border: 1px solid rgba(141, 179, 216, .78);
-  border-radius: .7rem;
-  background: #f7fbff;
-  color: #17324d;
-  font: inherit;
-  font-size: .8125rem;
-  font-weight: 750;
-  line-height: 1;
-  cursor: pointer;
-  transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
-}
-[data-diagram-controls] button:hover {
-  border-color: #5f96c8;
-  background: #e8f3ff;
-}
-[data-diagram-controls] button[aria-pressed="true"] {
-  border-color: #1f6fb2;
-  background: #1f6fb2;
-  color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .28);
-}
-[data-diagram-controls] button:focus-visible {
-  outline: 3px solid #77b8f2;
-  outline-offset: 2px;
-}
-[data-diagram-controls] button:disabled {
-  opacity: .48;
-  cursor: not-allowed;
-}
-[data-diagram-zoom-status] {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
 .diagram-fallback { display: none; }
-[data-evidence-ledger="1"] {
-  padding: .75rem;
-  border: 1px solid rgba(141, 179, 216, .5);
-  border-radius: 1rem;
-  background: rgba(247, 251, 255, .84);
-}
-[data-evidence-summary] {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: .35rem 1rem;
-  padding: 0 .125rem .125rem;
-}
-[data-evidence-summary] strong {
-  color: #17324d;
-  font-size: .875rem;
-}
-[data-evidence-summary] span {
-  color: #5a6c80;
-  font-size: .75rem;
-}
-[data-evidence-ledger="1"] {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: .625rem;
-  margin-block: .5rem 1rem;
-}
-[data-evidence-id] {
-  display: grid;
-  align-content: start;
-  gap: .35rem;
-  min-inline-size: 0;
-  padding: .75rem .875rem;
-  border: 1px solid rgba(141, 179, 216, .58);
-  border-radius: .8rem;
-  background: rgba(255, 255, 255, .9);
-  overflow-wrap: anywhere;
-}
-[data-evidence-status="observed"] {
-  border-color: rgba(23, 120, 90, .38);
-  background: rgba(238, 249, 245, .94);
-}
-[data-evidence-source-kind="test"] {
-  border-color: rgba(31, 111, 178, .4);
-  background: rgba(237, 246, 255, .94);
-}
-[data-evidence-status="unresolved"] {
-  border-color: rgba(152, 101, 6, .38);
-  background: rgba(255, 248, 232, .96);
-}
 
 @media (max-width: 48rem) {
-  [data-diagram-title-region] { align-items: stretch; flex-direction: column; }
-  [data-diagram-title-copy] { flex: 0 1 auto; }
-  [data-diagram-title-region] > [data-diagram-controls] { align-self: flex-start; }
-  [data-evidence-summary] { align-items: flex-start; flex-direction: column; }
-  [data-evidence-ledger="1"] { grid-template-columns: 1fr; }
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
   [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
   [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
@@ -216,8 +388,6 @@ main [data-evidence-id][data-evidence-status="unresolved"]::before{border-color:
 
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
-  [data-diagram-controls] { display: none !important; }
-  [data-evidence-ledger="1"] { break-inside: avoid; }
   .diagram-fallback { display: block; }
 }
 
@@ -229,13 +399,13 @@ main [data-evidence-id][data-evidence-status="unresolved"]::before{border-color:
 [data-diagram-detail][hidden] { display: none; }
 [data-diagram-detail]:target { display: block; }
 
-[data-diagram-node-id][data-detail-for] {
+[data-diagram-detail-trigger][data-detail-for] {
   cursor: pointer;
 }
 
-[data-diagram-node-id][data-detail-for]:focus-visible rect {
-  stroke-width: 3;
-  filter: drop-shadow(0 0 6px rgba(31, 111, 178, .34));
+[data-diagram-detail-trigger][data-detail-for]:focus-visible {
+  outline: 3px solid #0877ff;
+  outline-offset: 2px;
 }
 
 [data-node-detail-region] {
@@ -571,15 +741,23 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
       data-template-contract-version="2"
       data-system-arch-view="logical"
       data-routing-confidence="{{routing_confidence}}">
-  <header data-diagram-title-region>
+    <header data-diagram-title-region data-artifact-shell-title="1">
     <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
-    <div data-diagram-controls="logical-layering" data-diagram-status-fit="Fit width" data-diagram-status-fits="Fits at 100%" data-diagram-status-scroll="Scroll" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
   </header>
-  <section data-slot="evidence-and-notes" data-evidence-ledger="1" aria-label="Diagram reading guide"><div data-evidence-summary><strong>Reading guide</strong></div><div data-reading-guide-groups><div data-reading-guide-group="relations" aria-label="Line types"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="layer-dependency"><i data-line-swatch aria-hidden="true"></i><b>{{primary-relation-label}}</b></span></div><div data-reading-guide-group="evidence" aria-label="Node evidence colors"><span data-reading-guide-group-title>Node colors</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed checks</b></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b></article></div><div data-reading-guide-group="interaction" aria-label="Interaction hint"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item data-interaction-hint="node-detail"><span aria-hidden="true">👆</span><b>{{node-detail-canvas-hint}}</b></span></div></div></section>
-  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="logical-layering" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent" data-diagram-topology="layered-architecture" data-primary-direction="north-to-south"><section data-diagram-stage data-reading-guide="north-to-south architecture ranks" class="template-layout north-south-layers" aria-label="North-to-south logical layering template canvas">
+  <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide">
+    <div data-reading-guide-heading><strong>Reading guide</strong><span>How to read this artifact</span></div>
+    <div data-reading-guide-groups>
+      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
+      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b><span>{{evidence-unresolved}}</span></article></div>
+    </div>
+    <div data-reading-guide-controls aria-label="Diagram scale controls">
+      <div data-reading-guide-group="interaction"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item data-interaction-hint="node-detail">☝️ <b>{{interaction-hint}}</b></span></div>
+      <div data-diagram-controls="logical-layering" data-diagram-status-fit="Fit width" data-diagram-status-fits="Fits at 100%" data-diagram-status-scroll="Scroll" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div></div>
+  </section>
+<div data-diagram-canvas data-diagram-contract="1" data-diagram-id="logical-layering" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent" data-max-top-whitespace-ratio="0.04" data-max-bottom-whitespace-ratio="0.02" data-min-horizontal-utilization-ratio="0.9" data-diagram-topology="north-south-layered-dag" data-primary-direction="north-to-south"><section data-diagram-stage data-reading-guide="{{canvas-attribute-035}}" class="template-layout north-south-layers" aria-label="{{canvas-attribute-001}}">
     <svg class="architecture-map" data-architecture-canvas="1" data-architecture-topology="layered-dag" viewBox="0 0 1500 1650" role="img" aria-labelledby="logical-layering-map-title logical-layering-map-description">
-      <title id="logical-layering-map-title">North-to-south logical layering dependency DAG</title>
-      <desc id="logical-layering-map-description">Six semantic ranks flow north to south. Same-rank peers are parallel; primary dependencies visibly branch and merge across ranks.</desc>
+      <title id="logical-layering-map-title">{{canvas-text-001}}</title>
+      <desc id="logical-layering-map-description">{{canvas-text-002}}</desc>
       <defs>
         <marker id="logical-layering-architecture-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#0877ff"></path></marker>
         <filter id="logical-layering-soft-shadow" x="-20%" y="-30%" width="140%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#14395c" flood-opacity=".10"></feDropShadow></filter>
@@ -590,70 +768,124 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
         <linearGradient id="logical-layering-amber-head" x1="0" x2="1"><stop offset="0" stop-color="#c78a24"></stop><stop offset="1" stop-color="#a56712"></stop></linearGradient>
       </defs>
       <rect x="24" y="12" width="1452" height="1626" rx="28" fill="rgba(255,255,255,.56)" stroke="#d6e4f1"></rect>
-      <g aria-label="Semantic layer ranks">
-        <g data-diagram-group-id="presentation-region" data-semantic-role="architecture-rank" data-diagram-rank="0" data-diagram-region="presentation" data-architecture-rank-id="rank-0-presentation"><rect x="70" y="60" width="1360" height="190" rx="22" fill="#f3f8ff" stroke="#9cc1e4" data-architecture-boundary="presentation"></rect><rect x="70" y="60" width="1360" height="38" rx="20" fill="url(#logical-layering-blue-head)"></rect><text x="750" y="85" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{presentation-region-title}}</text><text x="1400" y="85" text-anchor="end" fill="#dcecff" font-size="11.5" font-weight="750">NORTH · ENTRY</text></g>
-        <g data-diagram-group-id="application-region" data-semantic-role="architecture-rank" data-diagram-rank="1" data-diagram-region="application" data-architecture-rank-id="rank-1-application"><rect x="70" y="280" width="1360" height="240" rx="22" fill="#f7f5ff" stroke="#b8b0e8" data-architecture-boundary="application"></rect><rect x="70" y="280" width="1360" height="38" rx="20" fill="url(#logical-layering-violet-head)"></rect><text x="750" y="305" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{application-region-title}}</text></g>
-        <g data-diagram-group-id="business-region" data-semantic-role="architecture-rank" data-diagram-rank="2" data-diagram-region="business" data-architecture-rank-id="rank-2-business"><rect x="70" y="550" width="1360" height="260" rx="22" fill="#f3f8ff" stroke="#9cc1e4" data-architecture-boundary="business"></rect><rect x="70" y="550" width="1360" height="38" rx="20" fill="url(#logical-layering-blue-head)"></rect><text x="750" y="575" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{business-region-title}}</text></g>
-        <g data-diagram-group-id="integration-region" data-semantic-role="architecture-rank" data-diagram-rank="3" data-diagram-region="integration" data-architecture-rank-id="rank-3-integration"><rect x="70" y="840" width="1360" height="230" rx="22" fill="#eef9f5" stroke="#98d3be" data-architecture-boundary="integration"></rect><rect x="70" y="840" width="1360" height="38" rx="20" fill="url(#logical-layering-green-head)"></rect><text x="750" y="865" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{integration-region-title}}</text></g>
-        <g data-diagram-group-id="platform-region" data-semantic-role="architecture-rank" data-diagram-rank="4" data-diagram-region="platform" data-architecture-rank-id="rank-4-platform"><rect x="70" y="1100" width="1360" height="260" rx="22" fill="#eef9f5" stroke="#98d3be" data-architecture-boundary="platform"></rect><rect x="70" y="1100" width="1360" height="38" rx="20" fill="url(#logical-layering-green-head)"></rect><text x="750" y="1125" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{platform-region-title}}</text></g>
-        <g data-diagram-group-id="operations-region" data-semantic-role="architecture-rank" data-diagram-rank="5" data-diagram-region="operations" data-architecture-rank-id="rank-5-operations"><rect x="70" y="1390" width="1360" height="230" rx="22" fill="#fff9ed" stroke="#e4bf7b" data-architecture-boundary="operations"></rect><rect x="70" y="1390" width="1360" height="38" rx="20" fill="url(#logical-layering-amber-head)"></rect><text x="750" y="1415" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{operations-region-title}}</text><text x="1400" y="1415" text-anchor="end" fill="#fff4da" font-size="11.5" font-weight="750">SOUTH · EVIDENCE FOUNDATION</text></g>
+      <g aria-label="{{canvas-attribute-002}}">
+        <g data-diagram-group-id="layout-group-001" data-semantic-role="{{canvas-attribute-036}}" data-diagram-rank="0" data-diagram-region="rank-01" data-architecture-rank-id="layout-rank-001"><rect x="70" y="60" width="1360" height="190" rx="22" fill="#f3f8ff" stroke="#9cc1e4" data-architecture-boundary="layout-boundary-001"></rect><rect x="70" y="60" width="1360" height="38" rx="20" fill="url(#logical-layering-blue-head)"></rect><text x="750" y="85" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{canvas-text-003}}</text><text x="1400" y="85" text-anchor="end" fill="#dcecff" font-size="11.5" font-weight="750">{{canvas-text-004}}</text></g>
+        <g data-diagram-group-id="layout-group-002" data-semantic-role="{{canvas-attribute-037}}" data-diagram-rank="1" data-diagram-region="rank-02" data-architecture-rank-id="layout-rank-002"><rect x="70" y="280" width="1360" height="240" rx="22" fill="#f7f5ff" stroke="#b8b0e8" data-architecture-boundary="layout-boundary-002"></rect><rect x="70" y="280" width="1360" height="38" rx="20" fill="url(#logical-layering-violet-head)"></rect><text x="750" y="305" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{canvas-text-005}}</text></g>
+        <g data-diagram-group-id="layout-group-003" data-semantic-role="{{canvas-attribute-038}}" data-diagram-rank="2" data-diagram-region="rank-03" data-architecture-rank-id="layout-rank-003"><rect x="70" y="550" width="1360" height="260" rx="22" fill="#f3f8ff" stroke="#9cc1e4" data-architecture-boundary="layout-boundary-003"></rect><rect x="70" y="550" width="1360" height="38" rx="20" fill="url(#logical-layering-blue-head)"></rect><text x="750" y="575" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{canvas-text-006}}</text></g>
+        <g data-diagram-group-id="layout-group-004" data-semantic-role="{{canvas-attribute-039}}" data-diagram-rank="3" data-diagram-region="rank-04" data-architecture-rank-id="layout-rank-004"><rect x="70" y="840" width="1360" height="230" rx="22" fill="#eef9f5" stroke="#98d3be" data-architecture-boundary="layout-boundary-004"></rect><rect x="70" y="840" width="1360" height="38" rx="20" fill="url(#logical-layering-green-head)"></rect><text x="750" y="865" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{canvas-text-007}}</text></g>
+        <g data-diagram-group-id="layout-group-005" data-semantic-role="{{canvas-attribute-040}}" data-diagram-rank="4" data-diagram-region="rank-05" data-architecture-rank-id="layout-rank-005"><rect x="70" y="1100" width="1360" height="260" rx="22" fill="#eef9f5" stroke="#98d3be" data-architecture-boundary="layout-boundary-005"></rect><rect x="70" y="1100" width="1360" height="38" rx="20" fill="url(#logical-layering-green-head)"></rect><text x="750" y="1125" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{canvas-text-008}}</text></g>
+        <g data-diagram-group-id="layout-group-006" data-semantic-role="{{canvas-attribute-041}}" data-diagram-rank="5" data-diagram-region="rank-06" data-architecture-rank-id="layout-rank-006"><rect x="70" y="1390" width="1360" height="230" rx="22" fill="#fff9ed" stroke="#e4bf7b" data-architecture-boundary="layout-boundary-006"></rect><rect x="70" y="1390" width="1360" height="38" rx="20" fill="url(#logical-layering-amber-head)"></rect><text x="750" y="1415" text-anchor="middle" fill="#fff" font-size="13.5" font-weight="850">{{canvas-text-009}}</text><text x="1400" y="1415" text-anchor="end" fill="#fff4da" font-size="11.5" font-weight="750">{{canvas-text-010}}</text></g>
       </g>
       <g data-architecture-relations="1" fill="none" stroke="#0877ff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
-        <g data-architecture-branch-id="presentation-branch">
-          <path d="M750 224V280H420V332" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="presentation-layer-application-layer" data-from="presentation-layer" data-to="application-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
-          <path d="M750 224V280H1080V332" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="presentation-layer-policy-layer" data-from="presentation-layer" data-to="policy-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
+        <g data-architecture-branch-id="layout-branch-001">
+          <path d="M750 224V280H420V332" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-025}}" data-primary-relation="true"></path>
+          <path d="M750 224V280H1080V332" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-002" data-from="layout-node-001" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-026}}" data-primary-relation="true"></path>
         </g>
-        <path d="M420 492V602" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="application-layer-domain-layer" data-from="application-layer" data-to="domain-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
-        <path d="M1080 492V602" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="policy-layer-workflow-layer" data-from="policy-layer" data-to="workflow-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
-        <g data-architecture-merge-id="integration-merge">
-          <path d="M420 782V840H620V892" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="domain-layer-integration-layer" data-from="domain-layer" data-to="integration-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
-          <path d="M1080 782V840H880V892" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="workflow-layer-integration-layer" data-from="workflow-layer" data-to="integration-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
+        <path d="M420 492V602" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-003" data-from="layout-node-002" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-027}}" data-primary-relation="true"></path>
+        <path d="M1080 492V602" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-004" data-from="layout-node-003" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-028}}" data-primary-relation="true"></path>
+        <g data-architecture-merge-id="layout-merge-001">
+          <path d="M420 782V840H620V892" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-005" data-from="layout-node-004" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-029}}" data-primary-relation="true"></path>
+          <path d="M1080 782V840H880V892" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-006" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-030}}" data-primary-relation="true"></path>
         </g>
-        <g data-architecture-branch-id="integration-branch">
-          <path d="M750 1042V1100H420V1152" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="integration-layer-data-layer" data-from="integration-layer" data-to="data-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
-          <path d="M750 1042V1100H1080V1152" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="integration-layer-platform-layer" data-from="integration-layer" data-to="platform-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
+        <g data-architecture-branch-id="layout-branch-002">
+          <path d="M750 1042V1100H420V1152" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-007" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-031}}" data-primary-relation="true"></path>
+          <path d="M750 1042V1100H1080V1152" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-008" data-from="layout-node-006" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-032}}" data-primary-relation="true"></path>
         </g>
-        <g data-architecture-merge-id="operations-merge">
-          <path d="M420 1332V1390H620V1442" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="data-layer-ops-layer" data-from="data-layer" data-to="ops-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
-          <path d="M1080 1332V1390H880V1442" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="platform-layer-ops-layer" data-from="platform-layer" data-to="ops-layer" data-relation-kind="layer-dependency" data-primary-relation="true"></path>
+        <g data-architecture-merge-id="layout-merge-002">
+          <path d="M420 1332V1390H620V1442" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-009" data-from="layout-node-007" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-033}}" data-primary-relation="true"></path>
+          <path d="M1080 1332V1390H880V1442" marker-end="url(#logical-layering-architecture-arrow)" data-diagram-visible-relation-id="layout-relation-010" data-from="layout-node-008" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-034}}" data-primary-relation="true"></path>
         </g>
       </g>
       <g data-architecture-landmarks="1">
-        <a id="presentation-layer" data-architecture-landmark-for="presentation-layer" data-diagram-node-id="presentation-layer" data-semantic-role="architecture-object" data-diagram-rank="0" data-diagram-region="presentation" data-evidence-visual="observed" href="#presentation-layer-detail" data-detail-for="presentation-layer-detail" data-node-primary-label="{{presentation-layer-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="130" y="112" width="1240" height="112" rx="18"></rect><foreignObject x="138" y="120" width="1224" height="96"><div class="layer-node" style="--module-cols:6"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">👤</span><span><b data-slot="presentation-layer-title">{{presentation-layer-title}}</b><small data-slot="presentation-layer">{{presentation-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module">User intent</span><span class="layer-module">Primary host</span><span class="layer-module">Secondary host</span><span class="layer-module">CLI host</span><span class="layer-module">IDE host</span><span class="layer-module">Artifact request</span></div></div></foreignObject></a>
-        <a id="application-layer" data-architecture-landmark-for="application-layer" data-architecture-peer-group="application-peers" data-diagram-node-id="application-layer" data-semantic-role="architecture-object" data-diagram-rank="1" data-diagram-region="application" data-evidence-visual="observed" href="#application-layer-detail" data-detail-for="application-layer-detail" data-node-primary-label="{{application-layer-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="110" y="332" width="620" height="160" rx="18"></rect><foreignObject x="118" y="340" width="604" height="144"><div class="layer-node" style="--module-cols:2"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">🧭</span><span><b data-slot="application-layer-title">{{application-layer-title}}</b><small data-slot="application-layer">{{application-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module">Update gate</span><span class="layer-module">Runtime workflow</span><span class="layer-module">Diagram router</span><span class="layer-module">Delivery handoff</span></div></div></foreignObject></a>
-        <a id="policy-layer" data-architecture-landmark-for="policy-layer" data-architecture-peer-group="application-peers" data-diagram-node-id="policy-layer" data-semantic-role="architecture-object" data-diagram-rank="1" data-diagram-region="application" data-evidence-visual="observed" href="#policy-layer-detail" data-detail-for="policy-layer-detail" data-node-primary-label="{{policy-layer-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="770" y="332" width="620" height="160" rx="18"></rect><foreignObject x="778" y="340" width="604" height="144"><div class="layer-node" style="--module-cols:2"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">🧩</span><span><b data-slot="policy-layer-title">{{policy-layer-title}}</b><small data-slot="policy-layer">{{policy-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module">Manifest template</span><span class="layer-module">Output path</span><span class="layer-module">Host notes</span><span class="layer-module">File allowlist</span></div></div></foreignObject></a>
-        <a id="domain-layer" data-architecture-landmark-for="domain-layer" data-architecture-peer-group="business-peers" data-diagram-node-id="domain-layer" data-semantic-role="architecture-object" data-diagram-rank="2" data-diagram-region="business" data-evidence-visual="observed" href="#domain-layer-detail" data-detail-for="domain-layer-detail" data-node-primary-label="{{domain-layer-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="110" y="602" width="620" height="180" rx="18"></rect><foreignObject x="118" y="610" width="604" height="164"><div class="layer-node" style="--module-cols:3"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">🧠</span><span><b data-slot="domain-layer-title">{{domain-layer-title}}</b><small data-slot="domain-layer">{{domain-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module">59 templates</span><span class="layer-module">11 families</span><span class="layer-module">13 references</span><span class="layer-module">Semantic relations</span><span class="layer-module">Family policies</span><span class="layer-module">Language guard</span></div></div></foreignObject></a>
-        <a id="workflow-layer" data-architecture-landmark-for="workflow-layer" data-architecture-peer-group="business-peers" data-diagram-node-id="workflow-layer" data-semantic-role="architecture-object" data-diagram-rank="2" data-diagram-region="business" data-evidence-visual="observed" href="#workflow-layer-detail" data-detail-for="workflow-layer-detail" data-node-primary-label="{{workflow-layer-title}}" aria-expanded="false"><rect class="arch-node node-observed" x="770" y="602" width="620" height="180" rx="18"></rect><foreignObject x="778" y="610" width="604" height="164"><div class="layer-node" style="--module-cols:3"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">🏗️</span><span><b data-slot="workflow-layer-title">{{workflow-layer-title}}</b><small data-slot="workflow-layer">{{workflow-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module">Scaffold</span><span class="layer-module">Template filling</span><span class="layer-module">Strict lint</span><span class="layer-module">Package build</span><span class="layer-module">CI checks</span><span class="layer-module">Release orchestration</span></div></div></foreignObject></a>
-        <a id="integration-layer" data-architecture-landmark-for="integration-layer" data-diagram-node-id="integration-layer" data-semantic-role="architecture-object" data-diagram-rank="3" data-diagram-region="integration" data-evidence-visual="checked" href="#integration-layer-detail" data-detail-for="integration-layer-detail" data-node-primary-label="{{integration-layer-title}}" aria-expanded="false"><rect class="arch-node node-checked" x="110" y="892" width="1280" height="150" rx="18"></rect><foreignObject x="118" y="900" width="1264" height="134"><div class="layer-node" style="--module-cols:4"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">✅</span><span><b data-slot="integration-layer-title">{{integration-layer-title}}</b><small data-slot="integration-layer">{{integration-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module checked">DOM structure</span><span class="layer-module checked">Visible geometry</span><span class="layer-module checked">Relation endpoints</span><span class="layer-module checked">Collision checks</span><span class="layer-module checked">Canonical hash</span><span class="layer-module checked">Manifest schema</span><span class="layer-module checked">Package allowlist</span><span class="layer-module checked">Evidence status</span></div></div></foreignObject></a>
-        <a id="data-layer" data-architecture-landmark-for="data-layer" data-architecture-peer-group="platform-peers" data-diagram-node-id="data-layer" data-semantic-role="architecture-object" data-diagram-rank="4" data-diagram-region="platform" data-evidence-visual="checked" href="#data-layer-detail" data-detail-for="data-layer-detail" data-node-primary-label="{{data-layer-title}}" aria-expanded="false"><rect class="arch-node node-checked" x="110" y="1152" width="620" height="180" rx="18"></rect><foreignObject x="118" y="1160" width="604" height="164"><div class="layer-node" style="--module-cols:3"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">📄</span><span><b data-slot="data-layer-title">{{data-layer-title}}</b><small data-slot="data-layer">{{data-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module checked">Self-contained HTML</span><span class="layer-module checked">Desktop SVG</span><span class="layer-module checked">Mobile fallback</span><span class="layer-module checked">Node details</span><span class="layer-module checked">Evidence ledger</span><span class="layer-module checked">Print / no-JS</span></div></div></foreignObject></a>
-        <a id="platform-layer" data-architecture-landmark-for="platform-layer" data-architecture-peer-group="platform-peers" data-diagram-node-id="platform-layer" data-semantic-role="architecture-object" data-diagram-rank="4" data-diagram-region="platform" data-evidence-visual="unverified" href="#platform-layer-detail" data-detail-for="platform-layer-detail" data-node-primary-label="{{platform-layer-title}}" aria-expanded="false"><rect class="arch-node node-unverified" x="770" y="1152" width="620" height="180" rx="18"></rect><foreignObject x="778" y="1160" width="604" height="164"><div class="layer-node" style="--module-cols:3"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">📦</span><span><b data-slot="platform-layer-title">{{platform-layer-title}}</b><small data-slot="platform-layer">{{platform-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module">Primary package</span><span class="layer-module">Secondary package</span><span class="layer-module">CLI package</span><span class="layer-module">IDE package</span><span class="layer-module pending">Stable channel</span><span class="layer-module pending">Publication projection</span></div></div></foreignObject></a>
-        <a id="ops-layer" data-architecture-landmark-for="ops-layer" data-diagram-node-id="ops-layer" data-semantic-role="architecture-object" data-diagram-rank="5" data-diagram-region="operations" data-evidence-visual="unverified" href="#ops-layer-detail" data-detail-for="ops-layer-detail" data-node-primary-label="{{ops-layer-title}}" aria-expanded="false"><rect class="arch-node node-unverified" x="110" y="1442" width="1280" height="160" rx="18"></rect><foreignObject x="118" y="1450" width="1264" height="144"><div class="layer-node" style="--module-cols:4"><div class="layer-node-head"><span class="svg-node-icon" aria-hidden="true">🔎</span><span><b data-slot="ops-layer-title">{{ops-layer-title}}</b><small data-slot="ops-layer">{{ops-layer}}</small></span></div><div class="layer-module-grid"><span class="layer-module checked">Package static valid</span><span class="layer-module checked">Deterministic check</span><span class="layer-module checked">Archive validation</span><span class="layer-module checked">Projection diff</span><span class="layer-module pending">Client install</span><span class="layer-module pending">Discovery / invoke</span><span class="layer-module pending">Upgrade / uninstall</span><span class="layer-module pending">Runtime verified</span></div></div></foreignObject></a>
+        <g id="layout-node-001" data-architecture-landmark-for="layout-node-001" data-diagram-node-id="layout-node-001" data-semantic-role="{{canvas-attribute-042}}" data-diagram-rank="0" data-diagram-region="rank-01" data-evidence-visual="observed" data-detail-for="layout-detail-001" data-node-primary-label="{{canvas-attribute-003}}"><rect class="arch-node node-observed" x="130" y="112" width="1240" height="112" rx="18"></rect><foreignObject x="138" y="120" width="1224" height="96"><div class="layer-node" style="--module-cols:6"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-001" href="#layout-detail-001" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-011}}</span><span><b data-node-title data-slot="layout-slot-001">{{canvas-text-012}}</b><small data-node-summary data-slot="layout-slot-002">{{canvas-text-013}}</small></span></a><div class="layer-module-grid"><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-010" href="#layout-detail-010" aria-expanded="false">{{canvas-text-014}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-011" href="#layout-detail-011" aria-expanded="false">{{canvas-text-015}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-012" href="#layout-detail-012" aria-expanded="false">{{canvas-text-016}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-013" href="#layout-detail-013" aria-expanded="false">{{canvas-text-017}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-014" href="#layout-detail-014" aria-expanded="false">{{canvas-text-018}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-015" href="#layout-detail-015" aria-expanded="false">{{canvas-text-019}}</a></div></div></foreignObject></g>
+        <g id="layout-node-002" data-architecture-landmark-for="layout-node-002" data-architecture-peer-group="layout-peer-group-001" data-diagram-node-id="layout-node-002" data-semantic-role="{{canvas-attribute-043}}" data-diagram-rank="1" data-diagram-region="rank-02" data-evidence-visual="observed" data-detail-for="layout-detail-002" data-node-primary-label="{{canvas-attribute-004}}"><rect class="arch-node node-observed" x="110" y="332" width="620" height="160" rx="18"></rect><foreignObject x="118" y="340" width="604" height="144"><div class="layer-node" style="--module-cols:2"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-002" href="#layout-detail-002" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-020}}</span><span><b data-node-title data-slot="layout-slot-003">{{canvas-text-021}}</b><small data-node-summary data-slot="layout-slot-004">{{canvas-text-022}}</small></span></a><div class="layer-module-grid"><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-016" href="#layout-detail-016" aria-expanded="false">{{canvas-text-023}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-017" href="#layout-detail-017" aria-expanded="false">{{canvas-text-024}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-018" href="#layout-detail-018" aria-expanded="false">{{canvas-text-025}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-019" href="#layout-detail-019" aria-expanded="false">{{canvas-text-026}}</a></div></div></foreignObject></g>
+        <g id="layout-node-003" data-architecture-landmark-for="layout-node-003" data-architecture-peer-group="layout-peer-group-001" data-diagram-node-id="layout-node-003" data-semantic-role="{{canvas-attribute-044}}" data-diagram-rank="1" data-diagram-region="rank-02" data-evidence-visual="observed" data-detail-for="layout-detail-003" data-node-primary-label="{{canvas-attribute-005}}"><rect class="arch-node node-observed" x="770" y="332" width="620" height="160" rx="18"></rect><foreignObject x="778" y="340" width="604" height="144"><div class="layer-node" style="--module-cols:2"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-003" href="#layout-detail-003" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-027}}</span><span><b data-node-title data-slot="layout-slot-005">{{canvas-text-028}}</b><small data-node-summary data-slot="layout-slot-006">{{canvas-text-029}}</small></span></a><div class="layer-module-grid"><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-020" href="#layout-detail-020" aria-expanded="false">{{canvas-text-030}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-021" href="#layout-detail-021" aria-expanded="false">{{canvas-text-031}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-022" href="#layout-detail-022" aria-expanded="false">{{canvas-text-032}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-023" href="#layout-detail-023" aria-expanded="false">{{canvas-text-033}}</a></div></div></foreignObject></g>
+        <g id="layout-node-004" data-architecture-landmark-for="layout-node-004" data-architecture-peer-group="layout-peer-group-002" data-diagram-node-id="layout-node-004" data-semantic-role="{{canvas-attribute-045}}" data-diagram-rank="2" data-diagram-region="rank-03" data-evidence-visual="observed" data-detail-for="layout-detail-004" data-node-primary-label="{{canvas-attribute-006}}"><rect class="arch-node node-observed" x="110" y="602" width="620" height="180" rx="18"></rect><foreignObject x="118" y="610" width="604" height="164"><div class="layer-node" style="--module-cols:3"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-004" href="#layout-detail-004" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-034}}</span><span><b data-node-title data-slot="layout-slot-007">{{canvas-text-035}}</b><small data-node-summary data-slot="layout-slot-008">{{canvas-text-036}}</small></span></a><div class="layer-module-grid"><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-024" href="#layout-detail-024" aria-expanded="false">{{canvas-text-037}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-025" href="#layout-detail-025" aria-expanded="false">{{canvas-text-038}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-026" href="#layout-detail-026" aria-expanded="false">{{canvas-text-039}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-027" href="#layout-detail-027" aria-expanded="false">{{canvas-text-040}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-028" href="#layout-detail-028" aria-expanded="false">{{canvas-text-041}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-029" href="#layout-detail-029" aria-expanded="false">{{canvas-text-042}}</a></div></div></foreignObject></g>
+        <g id="layout-node-005" data-architecture-landmark-for="layout-node-005" data-architecture-peer-group="layout-peer-group-002" data-diagram-node-id="layout-node-005" data-semantic-role="{{canvas-attribute-046}}" data-diagram-rank="2" data-diagram-region="rank-03" data-evidence-visual="observed" data-detail-for="layout-detail-005" data-node-primary-label="{{canvas-attribute-007}}"><rect class="arch-node node-observed" x="770" y="602" width="620" height="180" rx="18"></rect><foreignObject x="778" y="610" width="604" height="164"><div class="layer-node" style="--module-cols:3"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-005" href="#layout-detail-005" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-043}}</span><span><b data-node-title data-slot="layout-slot-009">{{canvas-text-044}}</b><small data-node-summary data-slot="layout-slot-010">{{canvas-text-045}}</small></span></a><div class="layer-module-grid"><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-030" href="#layout-detail-030" aria-expanded="false">{{canvas-text-046}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-031" href="#layout-detail-031" aria-expanded="false">{{canvas-text-047}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-032" href="#layout-detail-032" aria-expanded="false">{{canvas-text-048}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-033" href="#layout-detail-033" aria-expanded="false">{{canvas-text-049}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-034" href="#layout-detail-034" aria-expanded="false">{{canvas-text-050}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-035" href="#layout-detail-035" aria-expanded="false">{{canvas-text-051}}</a></div></div></foreignObject></g>
+        <g id="layout-node-006" data-architecture-landmark-for="layout-node-006" data-diagram-node-id="layout-node-006" data-semantic-role="{{canvas-attribute-047}}" data-diagram-rank="3" data-diagram-region="rank-04" data-evidence-visual="checked" data-detail-for="layout-detail-006" data-node-primary-label="{{canvas-attribute-008}}"><rect class="arch-node node-checked" x="110" y="892" width="1280" height="150" rx="18"></rect><foreignObject x="118" y="900" width="1264" height="134"><div class="layer-node" style="--module-cols:4"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-006" href="#layout-detail-006" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-052}}</span><span><b data-node-title data-slot="layout-slot-011">{{canvas-text-053}}</b><small data-node-summary data-slot="layout-slot-012">{{canvas-text-054}}</small></span></a><div class="layer-module-grid"><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-036" href="#layout-detail-036" aria-expanded="false">{{canvas-text-055}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-037" href="#layout-detail-037" aria-expanded="false">{{canvas-text-056}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-038" href="#layout-detail-038" aria-expanded="false">{{canvas-text-057}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-039" href="#layout-detail-039" aria-expanded="false">{{canvas-text-058}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-040" href="#layout-detail-040" aria-expanded="false">{{canvas-text-059}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-041" href="#layout-detail-041" aria-expanded="false">{{canvas-text-060}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-042" href="#layout-detail-042" aria-expanded="false">{{canvas-text-061}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-043" href="#layout-detail-043" aria-expanded="false">{{canvas-text-062}}</a></div></div></foreignObject></g>
+        <g id="layout-node-007" data-architecture-landmark-for="layout-node-007" data-architecture-peer-group="layout-peer-group-003" data-diagram-node-id="layout-node-007" data-semantic-role="{{canvas-attribute-048}}" data-diagram-rank="4" data-diagram-region="rank-05" data-evidence-visual="checked" data-detail-for="layout-detail-007" data-node-primary-label="{{canvas-attribute-009}}"><rect class="arch-node node-checked" x="110" y="1152" width="620" height="180" rx="18"></rect><foreignObject x="118" y="1160" width="604" height="164"><div class="layer-node" style="--module-cols:3"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-007" href="#layout-detail-007" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-063}}</span><span><b data-node-title data-slot="layout-slot-013">{{canvas-text-064}}</b><small data-node-summary data-slot="layout-slot-014">{{canvas-text-065}}</small></span></a><div class="layer-module-grid"><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-044" href="#layout-detail-044" aria-expanded="false">{{canvas-text-066}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-045" href="#layout-detail-045" aria-expanded="false">{{canvas-text-067}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-046" href="#layout-detail-046" aria-expanded="false">{{canvas-text-068}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-047" href="#layout-detail-047" aria-expanded="false">{{canvas-text-069}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-048" href="#layout-detail-048" aria-expanded="false">{{canvas-text-070}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-049" href="#layout-detail-049" aria-expanded="false">{{canvas-text-071}}</a></div></div></foreignObject></g>
+        <g id="layout-node-008" data-architecture-landmark-for="layout-node-008" data-architecture-peer-group="layout-peer-group-003" data-diagram-node-id="layout-node-008" data-semantic-role="{{canvas-attribute-049}}" data-diagram-rank="4" data-diagram-region="rank-05" data-evidence-visual="unverified" data-detail-for="layout-detail-008" data-node-primary-label="{{canvas-attribute-010}}"><rect class="arch-node node-unverified" x="770" y="1152" width="620" height="180" rx="18"></rect><foreignObject x="778" y="1160" width="604" height="164"><div class="layer-node" style="--module-cols:3"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-008" href="#layout-detail-008" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-072}}</span><span><b data-node-title data-slot="layout-slot-015">{{canvas-text-073}}</b><small data-node-summary data-slot="layout-slot-016">{{canvas-text-074}}</small></span></a><div class="layer-module-grid"><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-050" href="#layout-detail-050" aria-expanded="false">{{canvas-text-075}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-051" href="#layout-detail-051" aria-expanded="false">{{canvas-text-076}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-052" href="#layout-detail-052" aria-expanded="false">{{canvas-text-077}}</a><a class="layer-module" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-053" href="#layout-detail-053" aria-expanded="false">{{canvas-text-078}}</a><a class="layer-module pending" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-054" href="#layout-detail-054" aria-expanded="false">{{canvas-text-079}}</a><a class="layer-module pending" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-055" href="#layout-detail-055" aria-expanded="false">{{canvas-text-080}}</a></div></div></foreignObject></g>
+        <g id="layout-node-009" data-architecture-landmark-for="layout-node-009" data-diagram-node-id="layout-node-009" data-semantic-role="{{canvas-attribute-050}}" data-diagram-rank="5" data-diagram-region="rank-06" data-evidence-visual="unverified" data-detail-for="layout-detail-009" data-node-primary-label="{{canvas-attribute-011}}"><rect class="arch-node node-unverified" x="110" y="1442" width="1280" height="160" rx="18"></rect><foreignObject x="118" y="1450" width="1264" height="144"><div class="layer-node" style="--module-cols:4"><a class="layer-node-head" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-009" href="#layout-detail-009" aria-expanded="false"><span class="svg-node-icon" data-node-icon aria-hidden="true">{{canvas-text-081}}</span><span><b data-node-title data-slot="layout-slot-017">{{canvas-text-082}}</b><small data-node-summary data-slot="layout-slot-018">{{canvas-text-083}}</small></span></a><div class="layer-module-grid"><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-056" href="#layout-detail-056" aria-expanded="false">{{canvas-text-084}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-057" href="#layout-detail-057" aria-expanded="false">{{canvas-text-085}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-058" href="#layout-detail-058" aria-expanded="false">{{canvas-text-086}}</a><a class="layer-module checked" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-059" href="#layout-detail-059" aria-expanded="false">{{canvas-text-087}}</a><a class="layer-module pending" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-060" href="#layout-detail-060" aria-expanded="false">{{canvas-text-088}}</a><a class="layer-module pending" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-061" href="#layout-detail-061" aria-expanded="false">{{canvas-text-089}}</a><a class="layer-module pending" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-062" href="#layout-detail-062" aria-expanded="false">{{canvas-text-090}}</a><a class="layer-module pending" data-diagram-detail-trigger="auxiliary" data-detail-for="layout-detail-063" href="#layout-detail-063" aria-expanded="false">{{canvas-text-091}}</a></div></div></foreignObject></g>
       </g>
     </svg>
-    <span class="semantic-relation" data-diagram-relation-id="presentation-layer-application-layer" data-from="presentation-layer" data-to="application-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="presentation-layer depends southward on application-layer">presentation-layer depends southward on application-layer</span><span class="semantic-relation" data-diagram-relation-id="presentation-layer-policy-layer" data-from="presentation-layer" data-to="policy-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="presentation-layer depends southward on policy-layer">presentation-layer depends southward on policy-layer</span><span class="semantic-relation" data-diagram-relation-id="application-layer-domain-layer" data-from="application-layer" data-to="domain-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="application-layer depends southward on domain-layer">application-layer depends southward on domain-layer</span><span class="semantic-relation" data-diagram-relation-id="policy-layer-workflow-layer" data-from="policy-layer" data-to="workflow-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="policy-layer depends southward on workflow-layer">policy-layer depends southward on workflow-layer</span><span class="semantic-relation" data-diagram-relation-id="domain-layer-integration-layer" data-from="domain-layer" data-to="integration-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="domain-layer converges on integration-layer">domain-layer converges on integration-layer</span><span class="semantic-relation" data-diagram-relation-id="workflow-layer-integration-layer" data-from="workflow-layer" data-to="integration-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="workflow-layer converges on integration-layer">workflow-layer converges on integration-layer</span><span class="semantic-relation" data-diagram-relation-id="integration-layer-data-layer" data-from="integration-layer" data-to="data-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="integration-layer branches southward to data-layer">integration-layer branches southward to data-layer</span><span class="semantic-relation" data-diagram-relation-id="integration-layer-platform-layer" data-from="integration-layer" data-to="platform-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="integration-layer branches southward to platform-layer">integration-layer branches southward to platform-layer</span><span class="semantic-relation" data-diagram-relation-id="data-layer-ops-layer" data-from="data-layer" data-to="ops-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="data-layer converges on ops-layer">data-layer converges on ops-layer</span><span class="semantic-relation" data-diagram-relation-id="platform-layer-ops-layer" data-from="platform-layer" data-to="ops-layer" data-relation-kind="layer-dependency" data-primary-relation="true" data-semantic="platform-layer converges on ops-layer">platform-layer converges on ops-layer</span>
+    <span class="semantic-relation" data-diagram-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-025}}" data-primary-relation="true" data-semantic="{{canvas-attribute-012}}">{{canvas-text-092}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-002" data-from="layout-node-001" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-026}}" data-primary-relation="true" data-semantic="{{canvas-attribute-013}}">{{canvas-text-093}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-003" data-from="layout-node-002" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-027}}" data-primary-relation="true" data-semantic="{{canvas-attribute-014}}">{{canvas-text-094}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-004" data-from="layout-node-003" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-028}}" data-primary-relation="true" data-semantic="{{canvas-attribute-015}}">{{canvas-text-095}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-005" data-from="layout-node-004" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-029}}" data-primary-relation="true" data-semantic="{{canvas-attribute-016}}">{{canvas-text-096}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-006" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-030}}" data-primary-relation="true" data-semantic="{{canvas-attribute-017}}">{{canvas-text-097}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-007" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-031}}" data-primary-relation="true" data-semantic="{{canvas-attribute-018}}">{{canvas-text-098}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-008" data-from="layout-node-006" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-032}}" data-primary-relation="true" data-semantic="{{canvas-attribute-019}}">{{canvas-text-099}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-009" data-from="layout-node-007" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-033}}" data-primary-relation="true" data-semantic="{{canvas-attribute-020}}">{{canvas-text-100}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-010" data-from="layout-node-008" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-034}}" data-primary-relation="true" data-semantic="{{canvas-attribute-021}}">{{canvas-text-101}}</span>
   </section>
-    <section data-node-detail-region data-detail-close-label="Close node details" aria-label="Node detail disclosure"><header><h2 data-slot="node-detail-heading">{{node-detail-heading}}</h2><p data-slot="node-detail-hint">{{node-detail-hint}}</p></header><div data-node-detail-grid>
-      <details id="presentation-layer-detail" data-diagram-detail="presentation-layer-detail" data-diagram-detail-id="presentation-layer-detail" data-detail-for="presentation-layer"><summary>{{presentation-layer-title}}</summary><p data-slot="presentation-layer-detail">{{presentation-layer-detail}}</p></details>
-      <details id="application-layer-detail" data-diagram-detail="application-layer-detail" data-diagram-detail-id="application-layer-detail" data-detail-for="application-layer"><summary>{{application-layer-title}}</summary><p data-slot="application-layer-detail">{{application-layer-detail}}</p></details>
-      <details id="policy-layer-detail" data-diagram-detail="policy-layer-detail" data-diagram-detail-id="policy-layer-detail" data-detail-for="policy-layer"><summary>{{policy-layer-title}}</summary><p data-slot="policy-layer-detail">{{policy-layer-detail}}</p></details>
-      <details id="domain-layer-detail" data-diagram-detail="domain-layer-detail" data-diagram-detail-id="domain-layer-detail" data-detail-for="domain-layer"><summary>{{domain-layer-title}}</summary><p data-slot="domain-layer-detail">{{domain-layer-detail}}</p></details>
-      <details id="workflow-layer-detail" data-diagram-detail="workflow-layer-detail" data-diagram-detail-id="workflow-layer-detail" data-detail-for="workflow-layer"><summary>{{workflow-layer-title}}</summary><p data-slot="workflow-layer-detail">{{workflow-layer-detail}}</p></details>
-      <details id="integration-layer-detail" data-diagram-detail="integration-layer-detail" data-diagram-detail-id="integration-layer-detail" data-detail-for="integration-layer"><summary>{{integration-layer-title}}</summary><p data-slot="integration-layer-detail">{{integration-layer-detail}}</p></details>
-      <details id="data-layer-detail" data-diagram-detail="data-layer-detail" data-diagram-detail-id="data-layer-detail" data-detail-for="data-layer"><summary>{{data-layer-title}}</summary><p data-slot="data-layer-detail">{{data-layer-detail}}</p></details>
-      <details id="platform-layer-detail" data-diagram-detail="platform-layer-detail" data-diagram-detail-id="platform-layer-detail" data-detail-for="platform-layer"><summary>{{platform-layer-title}}</summary><p data-slot="platform-layer-detail">{{platform-layer-detail}}</p></details>
-      <details id="ops-layer-detail" data-diagram-detail="ops-layer-detail" data-diagram-detail-id="ops-layer-detail" data-detail-for="ops-layer"><summary>{{ops-layer-title}}</summary><p data-slot="ops-layer-detail">{{ops-layer-detail}}</p></details>
+    <section data-node-detail-region data-detail-close-label="{{canvas-attribute-023}}" aria-label="{{canvas-attribute-022}}"><header><h2 data-slot="layout-slot-019">{{canvas-text-102}}</h2><p data-slot="layout-slot-020">{{canvas-text-103}}</p></header><div data-node-detail-grid>
+      <details id="layout-detail-001" data-diagram-detail="layout-detail-001" data-diagram-detail-id="layout-detail-001" data-detail-for="layout-node-001"><summary>{{canvas-text-104}}</summary><p data-slot="layout-slot-021">{{canvas-text-105}}</p></details>
+      <details id="layout-detail-002" data-diagram-detail="layout-detail-002" data-diagram-detail-id="layout-detail-002" data-detail-for="layout-node-002"><summary>{{canvas-text-106}}</summary><p data-slot="layout-slot-022">{{canvas-text-107}}</p></details>
+      <details id="layout-detail-003" data-diagram-detail="layout-detail-003" data-diagram-detail-id="layout-detail-003" data-detail-for="layout-node-003"><summary>{{canvas-text-108}}</summary><p data-slot="layout-slot-023">{{canvas-text-109}}</p></details>
+      <details id="layout-detail-004" data-diagram-detail="layout-detail-004" data-diagram-detail-id="layout-detail-004" data-detail-for="layout-node-004"><summary>{{canvas-text-110}}</summary><p data-slot="layout-slot-024">{{canvas-text-111}}</p></details>
+      <details id="layout-detail-005" data-diagram-detail="layout-detail-005" data-diagram-detail-id="layout-detail-005" data-detail-for="layout-node-005"><summary>{{canvas-text-112}}</summary><p data-slot="layout-slot-025">{{canvas-text-113}}</p></details>
+      <details id="layout-detail-006" data-diagram-detail="layout-detail-006" data-diagram-detail-id="layout-detail-006" data-detail-for="layout-node-006"><summary>{{canvas-text-114}}</summary><p data-slot="layout-slot-026">{{canvas-text-115}}</p></details>
+      <details id="layout-detail-007" data-diagram-detail="layout-detail-007" data-diagram-detail-id="layout-detail-007" data-detail-for="layout-node-007"><summary>{{canvas-text-116}}</summary><p data-slot="layout-slot-027">{{canvas-text-117}}</p></details>
+      <details id="layout-detail-008" data-diagram-detail="layout-detail-008" data-diagram-detail-id="layout-detail-008" data-detail-for="layout-node-008"><summary>{{canvas-text-118}}</summary><p data-slot="layout-slot-028">{{canvas-text-119}}</p></details>
+      <details id="layout-detail-009" data-diagram-detail="layout-detail-009" data-diagram-detail-id="layout-detail-009" data-detail-for="layout-node-009"><summary>{{canvas-text-120}}</summary><p data-slot="layout-slot-029">{{canvas-text-121}}</p></details>
+      <details id="layout-detail-010" data-diagram-detail="layout-detail-010"><summary>{{canvas-text-166}}</summary><p>{{canvas-text-167}}</p></details>
+      <details id="layout-detail-011" data-diagram-detail="layout-detail-011"><summary>{{canvas-text-168}}</summary><p>{{canvas-text-169}}</p></details>
+      <details id="layout-detail-012" data-diagram-detail="layout-detail-012"><summary>{{canvas-text-170}}</summary><p>{{canvas-text-171}}</p></details>
+      <details id="layout-detail-013" data-diagram-detail="layout-detail-013"><summary>{{canvas-text-172}}</summary><p>{{canvas-text-173}}</p></details>
+      <details id="layout-detail-014" data-diagram-detail="layout-detail-014"><summary>{{canvas-text-174}}</summary><p>{{canvas-text-175}}</p></details>
+      <details id="layout-detail-015" data-diagram-detail="layout-detail-015"><summary>{{canvas-text-176}}</summary><p>{{canvas-text-177}}</p></details>
+      <details id="layout-detail-016" data-diagram-detail="layout-detail-016"><summary>{{canvas-text-178}}</summary><p>{{canvas-text-179}}</p></details>
+      <details id="layout-detail-017" data-diagram-detail="layout-detail-017"><summary>{{canvas-text-180}}</summary><p>{{canvas-text-181}}</p></details>
+      <details id="layout-detail-018" data-diagram-detail="layout-detail-018"><summary>{{canvas-text-182}}</summary><p>{{canvas-text-183}}</p></details>
+      <details id="layout-detail-019" data-diagram-detail="layout-detail-019"><summary>{{canvas-text-184}}</summary><p>{{canvas-text-185}}</p></details>
+      <details id="layout-detail-020" data-diagram-detail="layout-detail-020"><summary>{{canvas-text-186}}</summary><p>{{canvas-text-187}}</p></details>
+      <details id="layout-detail-021" data-diagram-detail="layout-detail-021"><summary>{{canvas-text-188}}</summary><p>{{canvas-text-189}}</p></details>
+      <details id="layout-detail-022" data-diagram-detail="layout-detail-022"><summary>{{canvas-text-190}}</summary><p>{{canvas-text-191}}</p></details>
+      <details id="layout-detail-023" data-diagram-detail="layout-detail-023"><summary>{{canvas-text-192}}</summary><p>{{canvas-text-193}}</p></details>
+      <details id="layout-detail-024" data-diagram-detail="layout-detail-024"><summary>{{canvas-text-194}}</summary><p>{{canvas-text-195}}</p></details>
+      <details id="layout-detail-025" data-diagram-detail="layout-detail-025"><summary>{{canvas-text-196}}</summary><p>{{canvas-text-197}}</p></details>
+      <details id="layout-detail-026" data-diagram-detail="layout-detail-026"><summary>{{canvas-text-198}}</summary><p>{{canvas-text-199}}</p></details>
+      <details id="layout-detail-027" data-diagram-detail="layout-detail-027"><summary>{{canvas-text-200}}</summary><p>{{canvas-text-201}}</p></details>
+      <details id="layout-detail-028" data-diagram-detail="layout-detail-028"><summary>{{canvas-text-202}}</summary><p>{{canvas-text-203}}</p></details>
+      <details id="layout-detail-029" data-diagram-detail="layout-detail-029"><summary>{{canvas-text-204}}</summary><p>{{canvas-text-205}}</p></details>
+      <details id="layout-detail-030" data-diagram-detail="layout-detail-030"><summary>{{canvas-text-206}}</summary><p>{{canvas-text-207}}</p></details>
+      <details id="layout-detail-031" data-diagram-detail="layout-detail-031"><summary>{{canvas-text-208}}</summary><p>{{canvas-text-209}}</p></details>
+      <details id="layout-detail-032" data-diagram-detail="layout-detail-032"><summary>{{canvas-text-210}}</summary><p>{{canvas-text-211}}</p></details>
+      <details id="layout-detail-033" data-diagram-detail="layout-detail-033"><summary>{{canvas-text-212}}</summary><p>{{canvas-text-213}}</p></details>
+      <details id="layout-detail-034" data-diagram-detail="layout-detail-034"><summary>{{canvas-text-214}}</summary><p>{{canvas-text-215}}</p></details>
+      <details id="layout-detail-035" data-diagram-detail="layout-detail-035"><summary>{{canvas-text-216}}</summary><p>{{canvas-text-217}}</p></details>
+      <details id="layout-detail-036" data-diagram-detail="layout-detail-036"><summary>{{canvas-text-218}}</summary><p>{{canvas-text-219}}</p></details>
+      <details id="layout-detail-037" data-diagram-detail="layout-detail-037"><summary>{{canvas-text-220}}</summary><p>{{canvas-text-221}}</p></details>
+      <details id="layout-detail-038" data-diagram-detail="layout-detail-038"><summary>{{canvas-text-222}}</summary><p>{{canvas-text-223}}</p></details>
+      <details id="layout-detail-039" data-diagram-detail="layout-detail-039"><summary>{{canvas-text-224}}</summary><p>{{canvas-text-225}}</p></details>
+      <details id="layout-detail-040" data-diagram-detail="layout-detail-040"><summary>{{canvas-text-226}}</summary><p>{{canvas-text-227}}</p></details>
+      <details id="layout-detail-041" data-diagram-detail="layout-detail-041"><summary>{{canvas-text-228}}</summary><p>{{canvas-text-229}}</p></details>
+      <details id="layout-detail-042" data-diagram-detail="layout-detail-042"><summary>{{canvas-text-230}}</summary><p>{{canvas-text-231}}</p></details>
+      <details id="layout-detail-043" data-diagram-detail="layout-detail-043"><summary>{{canvas-text-232}}</summary><p>{{canvas-text-233}}</p></details>
+      <details id="layout-detail-044" data-diagram-detail="layout-detail-044"><summary>{{canvas-text-234}}</summary><p>{{canvas-text-235}}</p></details>
+      <details id="layout-detail-045" data-diagram-detail="layout-detail-045"><summary>{{canvas-text-236}}</summary><p>{{canvas-text-237}}</p></details>
+      <details id="layout-detail-046" data-diagram-detail="layout-detail-046"><summary>{{canvas-text-238}}</summary><p>{{canvas-text-239}}</p></details>
+      <details id="layout-detail-047" data-diagram-detail="layout-detail-047"><summary>{{canvas-text-240}}</summary><p>{{canvas-text-241}}</p></details>
+      <details id="layout-detail-048" data-diagram-detail="layout-detail-048"><summary>{{canvas-text-242}}</summary><p>{{canvas-text-243}}</p></details>
+      <details id="layout-detail-049" data-diagram-detail="layout-detail-049"><summary>{{canvas-text-244}}</summary><p>{{canvas-text-245}}</p></details>
+      <details id="layout-detail-050" data-diagram-detail="layout-detail-050"><summary>{{canvas-text-246}}</summary><p>{{canvas-text-247}}</p></details>
+      <details id="layout-detail-051" data-diagram-detail="layout-detail-051"><summary>{{canvas-text-248}}</summary><p>{{canvas-text-249}}</p></details>
+      <details id="layout-detail-052" data-diagram-detail="layout-detail-052"><summary>{{canvas-text-250}}</summary><p>{{canvas-text-251}}</p></details>
+      <details id="layout-detail-053" data-diagram-detail="layout-detail-053"><summary>{{canvas-text-252}}</summary><p>{{canvas-text-253}}</p></details>
+      <details id="layout-detail-054" data-diagram-detail="layout-detail-054"><summary>{{canvas-text-254}}</summary><p>{{canvas-text-255}}</p></details>
+      <details id="layout-detail-055" data-diagram-detail="layout-detail-055"><summary>{{canvas-text-256}}</summary><p>{{canvas-text-257}}</p></details>
+      <details id="layout-detail-056" data-diagram-detail="layout-detail-056"><summary>{{canvas-text-258}}</summary><p>{{canvas-text-259}}</p></details>
+      <details id="layout-detail-057" data-diagram-detail="layout-detail-057"><summary>{{canvas-text-260}}</summary><p>{{canvas-text-261}}</p></details>
+      <details id="layout-detail-058" data-diagram-detail="layout-detail-058"><summary>{{canvas-text-262}}</summary><p>{{canvas-text-263}}</p></details>
+      <details id="layout-detail-059" data-diagram-detail="layout-detail-059"><summary>{{canvas-text-264}}</summary><p>{{canvas-text-265}}</p></details>
+      <details id="layout-detail-060" data-diagram-detail="layout-detail-060"><summary>{{canvas-text-266}}</summary><p>{{canvas-text-267}}</p></details>
+      <details id="layout-detail-061" data-diagram-detail="layout-detail-061"><summary>{{canvas-text-268}}</summary><p>{{canvas-text-269}}</p></details>
+      <details id="layout-detail-062" data-diagram-detail="layout-detail-062"><summary>{{canvas-text-270}}</summary><p>{{canvas-text-271}}</p></details>
+      <details id="layout-detail-063" data-diagram-detail="layout-detail-063"><summary>{{canvas-text-272}}</summary><p>{{canvas-text-273}}</p></details>
     </div></section></div>
-  <details class="diagram-fallback" open data-fallback-for="logical-layering"><summary>North-to-south ranks and directed dependencies</summary><div class="fallback-region-index"><span><b>Rank 0 · Presentation</b>presentation-layer</span><span><b>Rank 1 · Application peers</b>application-layer · policy-layer</span><span><b>Rank 2 · Business peers</b>domain-layer · workflow-layer</span><span><b>Rank 3 · Integration</b>integration-layer</span><span><b>Rank 4 · Platform peers</b>data-layer · platform-layer</span><span><b>Rank 5 · Operations</b>ops-layer</span></div><section data-semantic-edge-ledger aria-label="Fallback directed dependencies"><h2>Directed dependency ledger</h2><div data-semantic-edge-grid>
-    <article data-semantic-edge data-fallback-relation-id="presentation-layer-application-layer" data-from="presentation-layer" data-to="application-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>presentation-layer</b><i aria-hidden="true"></i><b>application-layer</b></span><span data-semantic-edge-label>Rank 0 → rank 1 branch.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="presentation-layer-policy-layer" data-from="presentation-layer" data-to="policy-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>presentation-layer</b><i aria-hidden="true"></i><b>policy-layer</b></span><span data-semantic-edge-label>Rank 0 → rank 1 branch.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="application-layer-domain-layer" data-from="application-layer" data-to="domain-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>application-layer</b><i aria-hidden="true"></i><b>domain-layer</b></span><span data-semantic-edge-label>Rank 1 → rank 2.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="policy-layer-workflow-layer" data-from="policy-layer" data-to="workflow-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>policy-layer</b><i aria-hidden="true"></i><b>workflow-layer</b></span><span data-semantic-edge-label>Rank 1 → rank 2.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="domain-layer-integration-layer" data-from="domain-layer" data-to="integration-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>domain-layer</b><i aria-hidden="true"></i><b>integration-layer</b></span><span data-semantic-edge-label>Rank 2 → rank 3 merge.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="workflow-layer-integration-layer" data-from="workflow-layer" data-to="integration-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>workflow-layer</b><i aria-hidden="true"></i><b>integration-layer</b></span><span data-semantic-edge-label>Rank 2 → rank 3 merge.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="integration-layer-data-layer" data-from="integration-layer" data-to="data-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>integration-layer</b><i aria-hidden="true"></i><b>data-layer</b></span><span data-semantic-edge-label>Rank 3 → rank 4 branch.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="integration-layer-platform-layer" data-from="integration-layer" data-to="platform-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>integration-layer</b><i aria-hidden="true"></i><b>platform-layer</b></span><span data-semantic-edge-label>Rank 3 → rank 4 branch.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="data-layer-ops-layer" data-from="data-layer" data-to="ops-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>data-layer</b><i aria-hidden="true"></i><b>ops-layer</b></span><span data-semantic-edge-label>Rank 4 → rank 5 merge.</span></article>
-    <article data-semantic-edge data-fallback-relation-id="platform-layer-ops-layer" data-from="platform-layer" data-to="ops-layer" data-relation-kind="layer-dependency" data-primary-relation="true"><span data-semantic-edge-route><b>platform-layer</b><i aria-hidden="true"></i><b>ops-layer</b></span><span data-semantic-edge-label>Rank 4 → rank 5 merge.</span></article>
+  <details class="diagram-fallback" open data-fallback-for="logical-layering"><summary>{{canvas-text-122}}</summary><div class="fallback-region-index"><span><b>{{canvas-text-123}}</b>{{canvas-text-124}}</span><span><b>{{canvas-text-125}}</b>{{canvas-text-126}}</span><span><b>{{canvas-text-127}}</b>{{canvas-text-128}}</span><span><b>{{canvas-text-129}}</b>{{canvas-text-130}}</span><span><b>{{canvas-text-131}}</b>{{canvas-text-132}}</span><span><b>{{canvas-text-133}}</b>{{canvas-text-134}}</span></div><section data-semantic-edge-ledger aria-label="{{canvas-attribute-024}}"><h2>{{canvas-text-135}}</h2><div data-semantic-edge-grid>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-025}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-136}}</b><i aria-hidden="true"></i><b>{{canvas-text-137}}</b></span><span data-semantic-edge-label>{{canvas-text-138}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-002" data-from="layout-node-001" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-026}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-139}}</b><i aria-hidden="true"></i><b>{{canvas-text-140}}</b></span><span data-semantic-edge-label>{{canvas-text-141}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-003" data-from="layout-node-002" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-027}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-142}}</b><i aria-hidden="true"></i><b>{{canvas-text-143}}</b></span><span data-semantic-edge-label>{{canvas-text-144}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-004" data-from="layout-node-003" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-028}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-145}}</b><i aria-hidden="true"></i><b>{{canvas-text-146}}</b></span><span data-semantic-edge-label>{{canvas-text-147}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-005" data-from="layout-node-004" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-029}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-148}}</b><i aria-hidden="true"></i><b>{{canvas-text-149}}</b></span><span data-semantic-edge-label>{{canvas-text-150}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-006" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-030}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-151}}</b><i aria-hidden="true"></i><b>{{canvas-text-152}}</b></span><span data-semantic-edge-label>{{canvas-text-153}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-007" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-031}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-154}}</b><i aria-hidden="true"></i><b>{{canvas-text-155}}</b></span><span data-semantic-edge-label>{{canvas-text-156}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-008" data-from="layout-node-006" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-032}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-157}}</b><i aria-hidden="true"></i><b>{{canvas-text-158}}</b></span><span data-semantic-edge-label>{{canvas-text-159}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-009" data-from="layout-node-007" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-033}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-160}}</b><i aria-hidden="true"></i><b>{{canvas-text-161}}</b></span><span data-semantic-edge-label>{{canvas-text-162}}</span></article>
+    <article data-semantic-edge data-fallback-relation-id="layout-relation-010" data-from="layout-node-008" data-to="layout-node-009" data-relation-kind="{{canvas-attribute-034}}" data-primary-relation="true"><span data-semantic-edge-route><b>{{canvas-text-163}}</b><i aria-hidden="true"></i><b>{{canvas-text-164}}</b></span><span data-semantic-edge-label>{{canvas-text-165}}</span></article>
   </div></section></details>
 </main>
 <script data-adaptive-viewport-kernel="1">
@@ -813,8 +1045,9 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   const isNativeDetails = (detail) => detail.matches("details");
   const documentElementFor = (root) =>
     root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root.ownerDocument.documentElement;
+  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
   const triggersFor = (root, id) =>
-    Array.from(root.querySelectorAll("[data-diagram-node-id][data-detail-for]")).filter(
+    Array.from(root.querySelectorAll(detailTriggerSelector)).filter(
       (trigger) => trigger.dataset.detailFor === id
     );
   const reflect = (root, id, expanded) => {
@@ -976,7 +1209,7 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
     return true;
   };
   const bind = (root = document) => {
-    const triggers = root.querySelectorAll("[data-diagram-node-id][data-detail-for]");
+    const triggers = root.querySelectorAll(detailTriggerSelector);
     if (!triggers.length) return;
     syncDocumentState(root);
     triggers.forEach((trigger) => {
@@ -1028,6 +1261,362 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   globalThis.VibeDiagramDisclosure = Object.freeze({ bind, close, enhance, open, reset });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
+<script data-artifact-shell-preview-kernel="1">
+(() => {
+  "use strict";
+
+  const unresolvedCanvasText = /^\s*\{\{canvas-text-\d{3}\}\}\s*$/;
+  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
+  const auditRoots = "[data-diagram-canvas], [data-sequence-canvas]";
+  const epsilon = 1;
+
+  const suppressUnfilledCanvasText = (root) => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const unresolvedNodes = [];
+    while (walker.nextNode()) {
+      if (unresolvedCanvasText.test(walker.currentNode.nodeValue || "")) {
+        unresolvedNodes.push(walker.currentNode);
+      }
+    }
+    unresolvedNodes.forEach((node) => {
+      node.nodeValue = "";
+    });
+    if (unresolvedNodes.length) {
+      root.setAttribute("data-template-preview", "unfilled");
+    }
+  };
+
+  const isVisible = (element) => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    return (
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") > 0 &&
+      rect.width > epsilon &&
+      rect.height > epsilon
+    );
+  };
+
+  const overlaps = (left, right, inset = epsilon) => (
+    left.left + inset < right.right &&
+    left.right - inset > right.left &&
+    left.top + inset < right.bottom &&
+    left.bottom - inset > right.top
+  );
+
+  const containsPoint = (rect, point, inset = 2) => (
+    point.x > rect.left + inset &&
+    point.x < rect.right - inset &&
+    point.y > rect.top + inset &&
+    point.y < rect.bottom - inset
+  );
+
+  const pointOnBoundary = (rect, point, tolerance = 6) => {
+    const withinHorizontal = point.x >= rect.left - tolerance && point.x <= rect.right + tolerance;
+    const withinVertical = point.y >= rect.top - tolerance && point.y <= rect.bottom + tolerance;
+    return (
+      (withinHorizontal && (
+        Math.abs(point.y - rect.top) <= tolerance ||
+        Math.abs(point.y - rect.bottom) <= tolerance
+      )) ||
+      (withinVertical && (
+        Math.abs(point.x - rect.left) <= tolerance ||
+        Math.abs(point.x - rect.right) <= tolerance
+      ))
+    );
+  };
+
+  const numericAttribute = (element, name) => {
+    const value = Number.parseFloat(element.getAttribute(name) || "");
+    return Number.isFinite(value) ? value : null;
+  };
+
+  const parseColor = (value) => {
+    const match = value.match(
+      /rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*(\d*(?:\.\d+)?))?\s*\)/
+    );
+    if (!match) return null;
+    return {
+      red: Number(match[1]) / 255,
+      green: Number(match[2]) / 255,
+      blue: Number(match[3]) / 255,
+      alpha: match[4] === undefined || match[4] === "" ? 1 : Number(match[4])
+    };
+  };
+
+  const pointOnScreen = (path, distance) => {
+    const point = path.getPointAtLength(distance);
+    const matrix = path.getScreenCTM();
+    if (!matrix) return null;
+    const transformed = new DOMPoint(point.x, point.y).matrixTransform(matrix);
+    return { x: transformed.x, y: transformed.y };
+  };
+
+  const auditDetailLinks = (canvas, addIssue) => {
+    const documentRoot = canvas.ownerDocument;
+    canvas.querySelectorAll(detailTriggerSelector).forEach((trigger) => {
+      const detailId = trigger.dataset.detailFor || "";
+      const detail = detailId
+        ? documentRoot.querySelector(`[data-diagram-detail="${CSS.escape(detailId)}"]`)
+        : null;
+      if (!detail) {
+        addIssue("detail-target-missing", detailId || "unnamed-trigger");
+        return;
+      }
+      if (trigger.tagName !== "A" || trigger.getAttribute("href") !== `#${detailId}`) {
+        addIssue("detail-trigger-not-native-link", detailId);
+      }
+      if (detail.tagName !== "DETAILS" || detail.id !== detailId) {
+        addIssue("detail-target-not-native-details", detailId);
+      }
+    });
+  };
+
+  const auditNodeGeometry = (canvas, addIssue) => {
+    const nodes = Array.from(canvas.querySelectorAll("[data-diagram-node-id]")).filter(isVisible);
+    for (let leftIndex = 0; leftIndex < nodes.length; leftIndex += 1) {
+      const left = nodes[leftIndex];
+      const leftRect = left.getBoundingClientRect();
+      for (let rightIndex = leftIndex + 1; rightIndex < nodes.length; rightIndex += 1) {
+        const right = nodes[rightIndex];
+        if (left.contains(right) || right.contains(left)) continue;
+        if (overlaps(leftRect, right.getBoundingClientRect(), 2)) {
+          addIssue(
+            "node-overlap",
+            `${left.dataset.diagramNodeId || leftIndex}:${right.dataset.diagramNodeId || rightIndex}`
+          );
+        }
+      }
+    }
+    canvas.querySelectorAll("foreignObject > *, [data-node-title], [data-node-summary]").forEach(
+      (content) => {
+        if (!isVisible(content)) return;
+        if (
+          content.scrollWidth > content.clientWidth + epsilon ||
+          content.scrollHeight > content.clientHeight + epsilon
+        ) {
+          addIssue(
+            "node-content-overflow",
+            content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || content.tagName
+          );
+        }
+      }
+    );
+    canvas.querySelectorAll("[data-diagram-detail-trigger='auxiliary']").forEach((trigger) => {
+      if (!isVisible(trigger)) return;
+      const color = parseColor(getComputedStyle(trigger).backgroundColor);
+      if (!color || color.alpha < 0.85) {
+        addIssue("auxiliary-node-background-transparent", trigger.dataset.detailFor || "unknown");
+        return;
+      }
+      const luminance = color.red * 0.2126 + color.green * 0.7152 + color.blue * 0.0722;
+      if (luminance < 0.72) {
+        addIssue("auxiliary-node-background-too-dark", trigger.dataset.detailFor || "unknown");
+      }
+    });
+  };
+
+  const auditRoutes = (canvas, addIssue) => {
+    const nodeRects = new Map(
+      Array.from(canvas.querySelectorAll("[data-diagram-node-id]"))
+        .filter(isVisible)
+        .map((node) => [node.dataset.diagramNodeId, node.getBoundingClientRect()])
+    );
+    const labels = Array.from(canvas.querySelectorAll("svg text")).filter(isVisible);
+    canvas.querySelectorAll("path[data-diagram-visible-relation-id]").forEach((path) => {
+      if (typeof path.getTotalLength !== "function") return;
+      const relationId = path.dataset.diagramVisibleRelationId || "unknown";
+      const length = path.getTotalLength();
+      if (!Number.isFinite(length) || length < 24) {
+        addIssue("route-too-short", relationId);
+        return;
+      }
+      if (!path.getAttribute("marker-end")) {
+        addIssue("route-arrowhead-missing", relationId);
+      }
+      const sourceId = path.dataset.from || "";
+      const targetId = path.dataset.to || "";
+      const sourceRect = nodeRects.get(sourceId);
+      const targetRect = nodeRects.get(targetId);
+      const startPoint = pointOnScreen(path, 0);
+      const endPoint = pointOnScreen(path, length);
+      if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
+        addIssue("route-source-not-anchored", relationId);
+      }
+      if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
+        addIssue("route-target-not-anchored", relationId);
+      }
+      const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
+      for (let index = 1; index < sampleCount; index += 1) {
+        const progress = index / sampleCount;
+        const point = pointOnScreen(path, length * progress);
+        if (!point) break;
+        for (const [nodeId, rect] of nodeRects) {
+          if (
+            (nodeId === sourceId && progress < 0.08) ||
+            (nodeId === targetId && progress > 0.92)
+          ) {
+            continue;
+          }
+          if (containsPoint(rect, point, 3)) {
+            addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+          }
+        }
+        for (const label of labels) {
+          if (label.dataset.routeLabelFor === relationId) continue;
+          if (containsPoint(label.getBoundingClientRect(), point, 1)) {
+            addIssue("route-crosses-label", relationId);
+            break;
+          }
+        }
+      }
+    });
+  };
+
+  const auditUtilization = (canvas, addIssue) => {
+    const svg = canvas.querySelector("svg[data-architecture-canvas]");
+    if (!svg?.viewBox?.baseVal) return;
+    const boundaries = Array.from(
+      svg.querySelectorAll("rect[data-architecture-boundary]")
+    ).map((rect) => ({
+      x: numericAttribute(rect, "x"),
+      y: numericAttribute(rect, "y"),
+      width: numericAttribute(rect, "width"),
+      height: numericAttribute(rect, "height")
+    })).filter((item) => Object.values(item).every((value) => value !== null));
+    if (!boundaries.length) return;
+    const viewBox = svg.viewBox.baseVal;
+    const left = Math.min(...boundaries.map((item) => item.x));
+    const top = Math.min(...boundaries.map((item) => item.y));
+    const right = Math.max(...boundaries.map((item) => item.x + item.width));
+    const bottom = Math.max(...boundaries.map((item) => item.y + item.height));
+    const ratios = {
+      top: (top - viewBox.y) / viewBox.height,
+      bottom: (viewBox.y + viewBox.height - bottom) / viewBox.height,
+      horizontal: (right - left) / viewBox.width
+    };
+    const thresholds = {
+      top: numericAttribute(canvas, "data-max-top-whitespace-ratio"),
+      bottom: numericAttribute(canvas, "data-max-bottom-whitespace-ratio"),
+      horizontal: numericAttribute(canvas, "data-min-horizontal-utilization-ratio")
+    };
+    if (thresholds.top !== null && ratios.top > thresholds.top + 0.0001) {
+      addIssue("canvas-top-whitespace", ratios.top.toFixed(4));
+    }
+    if (thresholds.bottom !== null && ratios.bottom > thresholds.bottom + 0.0001) {
+      addIssue("canvas-bottom-whitespace", ratios.bottom.toFixed(4));
+    }
+    if (thresholds.horizontal !== null && ratios.horizontal < thresholds.horizontal - 0.0001) {
+      addIssue("canvas-horizontal-underuse", ratios.horizontal.toFixed(4));
+    }
+  };
+
+  const auditControls = (canvas, addIssue) => {
+    const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
+    const controls = document.querySelector(
+      `[data-diagram-controls="${CSS.escape(canvasId)}"], [data-sequence-controls="${CSS.escape(canvasId)}"]`
+    );
+    if (!controls) {
+      addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    const controlRegion = controls.closest("[data-reading-guide-controls]");
+    const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
+    if (!controlRegion || !interaction) {
+      addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    const interactionRect = interaction.getBoundingClientRect();
+    const controlsRect = controls.getBoundingClientRect();
+    if (
+      isVisible(interaction) &&
+      isVisible(controls) &&
+      interactionRect.bottom > controlsRect.top + epsilon
+    ) {
+      addIssue("interaction-not-above-controls", canvasId || "unnamed-canvas");
+    }
+  };
+
+  const audit = (canvas) => {
+    const issues = new Set();
+    const addIssue = (code, target) => issues.add(`${code}:${target}`);
+    auditDetailLinks(canvas, addIssue);
+    auditNodeGeometry(canvas, addIssue);
+    auditRoutes(canvas, addIssue);
+    auditUtilization(canvas, addIssue);
+    auditControls(canvas, addIssue);
+    if (document.documentElement.scrollWidth > document.documentElement.clientWidth + epsilon) {
+      addIssue("page-horizontal-overflow", document.documentElement.scrollWidth);
+    }
+    const ordered = Array.from(issues).sort();
+    canvas.setAttribute(
+      "data-computed-layout-audit",
+      ordered.length ? "failed" : "passed"
+    );
+    canvas.setAttribute("data-computed-layout-issue-count", String(ordered.length));
+    if (ordered.length) {
+      canvas.dataset.computedLayoutIssues = ordered.join("|").slice(0, 2048);
+    } else {
+      delete canvas.dataset.computedLayoutIssues;
+    }
+    canvas.dispatchEvent(
+      new CustomEvent("vibe-diagram:layout-audit", {
+        bubbles: true,
+        detail: { issues: ordered, passed: ordered.length === 0 }
+      })
+    );
+    return ordered;
+  };
+
+  const auditAll = (root = document) => {
+    const results = new Map();
+    root.querySelectorAll(auditRoots).forEach((canvas) => {
+      results.set(canvas.dataset.diagramId || canvas.dataset.sequenceId || "canvas", audit(canvas));
+    });
+    const failures = Array.from(results.values()).reduce(
+      (total, issues) => total + issues.length,
+      0
+    );
+    document.documentElement.dataset.computedLayoutAudit = failures ? "failed" : "passed";
+    document.documentElement.dataset.computedLayoutIssueCount = String(failures);
+    return results;
+  };
+
+  let auditQueued = false;
+  const scheduleAudit = () => {
+    if (auditQueued) return;
+    auditQueued = true;
+    requestAnimationFrame(() => {
+      auditQueued = false;
+      auditAll();
+    });
+  };
+
+  const enhance = () => {
+    document
+      .querySelectorAll(auditRoots)
+      .forEach(suppressUnfilledCanvasText);
+    globalThis.VibeDiagramQuality = Object.freeze({ audit, auditAll, scheduleAudit });
+    scheduleAudit();
+    document.fonts?.ready.then(scheduleAudit, scheduleAudit);
+    if ("ResizeObserver" in globalThis) {
+      const observer = new ResizeObserver(scheduleAudit);
+      document.querySelectorAll(`${auditRoots}, [data-diagram-reading-guide="1"]`).forEach(
+        (element) => observer.observe(element)
+      );
+    } else {
+      addEventListener("resize", scheduleAudit);
+    }
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enhance, { once: true });
   } else {
     enhance();
   }

@@ -6,8 +6,9 @@
   const isNativeDetails = (detail) => detail.matches("details");
   const documentElementFor = (root) =>
     root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root.ownerDocument.documentElement;
+  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
   const triggersFor = (root, id) =>
-    Array.from(root.querySelectorAll("[data-diagram-node-id][data-detail-for]")).filter(
+    Array.from(root.querySelectorAll(detailTriggerSelector)).filter(
       (trigger) => trigger.dataset.detailFor === id
     );
   const reflect = (root, id, expanded) => {
@@ -169,7 +170,7 @@
     return true;
   };
   const bind = (root = document) => {
-    const triggers = root.querySelectorAll("[data-diagram-node-id][data-detail-for]");
+    const triggers = root.querySelectorAll(detailTriggerSelector);
     if (!triggers.length) return;
     syncDocumentState(root);
     triggers.forEach((trigger) => {
