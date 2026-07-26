@@ -8,14 +8,16 @@ Use this family to communicate current behavior, target behavior, the change mec
 
 ## Templates
 
-- `../assets/templates/feature-iteration/current-target-flow.html`: compare current and target business or system paths.
+- `../assets/templates/feature-iteration/current-target-flow.html`: the 0.1.10 default current-to-target iteration view, pairing each present condition with its target and change semantics.
 - `../assets/templates/feature-iteration/current-target-sequence.html`: compare current and target calls in execution order.
 - `../assets/templates/feature-iteration/diff-heatmap.html`: map change intensity and risk across areas.
-- `../assets/templates/feature-iteration/release-rollback-track.html`: show build, rollout, observation, rollback triggers, and recovery.
+- `../assets/templates/feature-iteration/release-rollback-track.html`: one-release deprecated compatibility entry; release, observation, gates, and rollback migrate to unified business flow, using a state machine only on an explicit state-machine request.
 
 Copy the selected template. Preserve a direct mapping between each current element and its changed, retained, or removed target counterpart.
 
 ## Iteration rules
+
+- Current and target states align one-to-one, using direct relationships for retained, replaced, removed, or added semantics. Two unrelated card piles do not constitute a comparison view.
 
 - State the current entry point and verified current chain before proposing the target.
 - Mark added, modified, retained, and removed behavior explicitly.

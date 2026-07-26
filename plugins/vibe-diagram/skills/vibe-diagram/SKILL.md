@@ -1,9 +1,18 @@
 ---
 name: vibe-diagram
-description: Use when an agent should create and deliver a self-contained HTML visual artifact for architecture, workflows, sequences, state and data models, debugging evidence, feature iteration, page mockups, technical design, decision communication, or delivery acceptance, including explicit or contextual requests such as “画图”, “画个图”, “画图给我看”, “架构图”, “UML”, “流程图”, and “时序图”; Mermaid alone never satisfies the request.
+description: Use when an agent should create and deliver a self-contained HTML visual artifact for architecture, workflows, sequences, state and data models, debugging evidence, feature iteration, page mockups, technical design, decision communication, or acceptance matrices, including explicit or contextual requests such as “画图”, “画个图”, “画图给我看”, “架构图”, “UML”, “流程图”, and “时序图”; Mermaid alone never satisfies the request.
 ---
 
 # Vibe Diagram
+
+## 0.1.10 drawing principles
+
+Vibe Diagram exists to explain subjects through real diagram geometry. Generation must first select the correct family, establish its primary visual grammar, size nodes for their actual copy, and then draw readable relationships. Scripts efficiently detect regressions; they do not replace drawing judgment, and reducing font size must never turn a failed composition into a pass.
+
+- When the user does not name an external standard, use the native Vibe Diagram family grammar.
+- When the user explicitly requests UML, BPMN, C4, ArchiMate, or another standard, follow that standard strictly. If strict support is unavailable, fail closed instead of silently degrading to a native template.
+- Delivery-acceptance diagrams and release-rollback diagrams are no longer public recommended families. Model ordered acceptance or release work as business flow, model itemized requirement-evidence-conclusion comparisons as matrices, and use a state machine only when the user explicitly requests state semantics.
+- Keep old explicit entry names for one release cycle as migration notices only; they must not become defaults again.
 
 ## Update gate
 
@@ -26,7 +35,7 @@ After the update gate finishes, read [the runtime workflow](references/runtime-w
 - [Business flow](references/business-flow.md)
 - [Code sequence](references/code-sequence.md)
 - [Decision communication](references/decision-communication.md)
-- [Delivery acceptance](references/delivery-acceptance.md)
+- [Delivery acceptance compatibility migration](references/delivery-acceptance.md)
 - [Fault debugging](references/fault-debugging.md)
 - [Feature iteration](references/feature-iteration.md)
 - [Page mockup](references/page-mockup.md)

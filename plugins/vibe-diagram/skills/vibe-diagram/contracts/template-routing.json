@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "families": {
+    "business-architecture": {
+      "default_template": "capability-domain-map",
+      "ready_templates": ["capability-domain-map"],
+      "blocked_templates": ["participant-boundary", "rule-constraint-heatmap", "value-chain-map"]
+    },
+    "business-flow": {
+      "default_template": "logic-flowchart",
+      "ready_templates": ["dual-path-swimlane", "exception-branch-flow", "logic-flowchart"],
+      "blocked_templates": ["bpmn-light-flow", "stage-track", "swimlane-flow"]
+    },
+    "code-sequence": {
+      "default_template": "async-callback-sequence",
+      "ready_templates": ["async-callback-sequence"],
+      "blocked_templates": ["participant-timeline", "retry-exception-sequence", "transaction-boundary-sequence"]
+    },
+    "decision-communication": {
+      "default_template": "option-matrix-path",
+      "ready_templates": ["option-matrix-path"],
+      "blocked_templates": ["decision-tree", "recommended-path", "tradeoff-quadrant"]
+    },
+    "delivery-acceptance": {
+      "default_template": "acceptance-ledger",
+      "ready_templates": ["acceptance-ledger"],
+      "blocked_templates": ["delivery-timeline", "evidence-swimlane", "risk-action-board"]
+    },
+    "fault-debugging": {
+      "default_template": "causal-chain",
+      "ready_templates": ["causal-chain"],
+      "blocked_templates": ["before-after-flow", "bpmn-debug-flow", "debugging-sequence", "state-data-breakpoint"]
+    },
+    "feature-iteration": {
+      "default_template": "current-target-flow",
+      "ready_templates": ["current-target-flow"],
+      "blocked_templates": ["current-target-sequence", "diff-heatmap", "release-rollback-track"]
+    },
+    "page-mockup": {
+      "default_template": "artboard-wireframe",
+      "ready_templates": ["artboard-wireframe"],
+      "blocked_templates": ["artboard-filmstrip", "primary-path-page-flow", "responsive-state-board"]
+    },
+    "state-data-model": {
+      "default_template": "state-machine",
+      "ready_templates": ["state-machine"],
+      "blocked_templates": ["data-flow-model", "er-lite", "lifecycle-track", "state-event-matrix"]
+    },
+    "system-architecture": {
+      "default_template": "workload-overview",
+      "ready_templates": [
+        "api-integration",
+        "component-breakdown",
+        "data-architecture",
+        "data-flow",
+        "delivery-pipeline",
+        "deployment-topology",
+        "event-driven",
+        "identity-access",
+        "logical-layering",
+        "network-topology",
+        "observability-view",
+        "resilience-view",
+        "router-v6",
+        "security-view",
+        "system-context",
+        "workload-overview"
+      ],
+      "blocked_templates": []
+    },
+    "technical-design": {
+      "default_template": "data-consistency-boundary",
+      "ready_templates": ["data-consistency-boundary"],
+      "blocked_templates": ["api-contract-swimlane", "module-contract-data-topology", "release-switch-track"]
+    }
+  }
+}

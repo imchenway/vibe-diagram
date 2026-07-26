@@ -18,24 +18,24 @@
 [data-diagram-reading-guide="1"] {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "heading controls"
-    "groups controls";
-  align-items: start;
-  gap: .55rem 1rem;
-  margin-block: .5rem 1rem;
-  padding: .75rem;
-  border: 1px solid rgba(141, 179, 216, .5);
-  border-radius: 1rem;
-  background: rgba(247, 251, 255, .9);
+  grid-template-areas: "groups controls";
+  align-items: center;
+  gap: .5rem 1rem;
+  inline-size: 100%;
+  margin-block: .5rem .75rem;
+  padding: .625rem .75rem;
+  border: 1px solid #b8cde1;
+  border-radius: .625rem;
+  background: #f8fbfe;
+}
+
+[data-diagram-reading-guide="1"][data-reading-guide-controls-state="empty"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "groups";
 }
 
 [data-reading-guide-heading] {
-  grid-area: heading;
-  display: flex;
-  align-items: baseline;
-  gap: .35rem .75rem;
-  min-inline-size: 0;
+  display: none;
 }
 
 [data-reading-guide-heading] strong {
@@ -44,8 +44,7 @@
 }
 
 [data-reading-guide-heading] span {
-  color: #5a6c80;
-  font-size: .75rem;
+  display: none;
 }
 
 [data-reading-guide-groups] {
@@ -66,8 +65,8 @@
 }
 
 [data-reading-guide-group] + [data-reading-guide-group] {
-  padding-inline-start: 1rem;
-  border-inline-start: 1px solid rgba(141, 179, 216, .45);
+  padding-inline-start: 0;
+  border-inline-start: 0;
 }
 
 [data-reading-guide-group-title] {
@@ -98,11 +97,7 @@
 }
 
 [data-diagram-reading-guide="1"] [data-evidence-id] span {
-  max-inline-size: 18rem;
-  color: #5a6c80;
-  font-size: .68rem;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
+  display: none;
 }
 
 [data-line-swatch] {
@@ -192,6 +187,20 @@
   gap: .45rem;
 }
 
+[data-reading-guide-controls][data-interaction-capability="none"] {
+  display: none;
+}
+
+[data-reading-guide-controls][data-interaction-capability="details"] {
+  min-inline-size: 0;
+  max-inline-size: min(100%, 24rem);
+  justify-self: end;
+}
+
+[data-reading-guide-controls][data-interaction-capability="details"] [data-reading-guide-group="interaction"] {
+  padding-block-end: .1rem;
+}
+
 [data-reading-guide-controls] [data-reading-guide-group="interaction"] {
   justify-content: flex-start;
   padding: .1rem .35rem 0;
@@ -209,9 +218,9 @@
   margin: 0;
   padding: .35rem;
   border: 1px solid rgba(141, 179, 216, .72);
-  border-radius: .9rem;
-  background: rgba(255, 255, 255, .92);
-  box-shadow: 0 .45rem 1.25rem rgba(20, 57, 92, .08);
+  border-radius: .625rem;
+  background: #fff;
+  box-shadow: 0 .25rem .75rem rgba(20, 57, 92, .08);
 }
 
 [data-diagram-controls][data-diagram-controls-visible="true"],
@@ -225,7 +234,7 @@
   min-block-size: 2.75rem;
   padding-inline: .9rem;
   border: 1px solid rgba(141, 179, 216, .78);
-  border-radius: .7rem;
+  border-radius: .5rem;
   background: #f7fbff;
   color: #17324d;
   font: inherit;
@@ -286,8 +295,10 @@
 
   [data-reading-guide-controls] {
     min-inline-size: 0;
+    max-inline-size: 100%;
     align-items: flex-start;
     justify-content: flex-start;
+    justify-self: stretch;
   }
 
   [data-reading-guide-group] + [data-reading-guide-group] {
@@ -307,9 +318,6 @@
     align-items: flex-start;
   }
 
-  [data-diagram-reading-guide="1"] [data-evidence-id] span {
-    max-inline-size: none;
-  }
 }
 
 @media print {
@@ -336,9 +344,9 @@
   transform-origin: top left;
 }
 
-[data-diagram-width="contained"] { inline-size: min(100%, 72rem); margin-inline: auto; }
+[data-diagram-width="contained"] { inline-size: 100%; margin-inline: 0; }
 [data-diagram-width="auto"] { inline-size: 100%; }
-[data-diagram-width="wide"] { inline-size: max-content; min-inline-size: 100%; }
+[data-diagram-width="wide"] { inline-size: 100%; overflow-x: auto; overflow-y: hidden; }
 [data-diagram-height="flow"] { block-size: auto; }
 [data-diagram-height="auto"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
 [data-diagram-height="scroll"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
@@ -348,14 +356,28 @@
 }
 .diagram-fallback { display: none; }
 
+html:not(.vibe-js) [data-diagram-canvas] > [data-diagram-stage] {
+  display: none;
+}
+
+html:not(.vibe-js) [data-fallback-for] {
+  display: block;
+}
+
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
-  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
-  [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
+  [data-diagram-mobile="summary"] {
+    overflow: auto;
+  }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] {
+    display: block;
+    min-inline-size: max(var(--diagram-mobile-stage-min, 60rem), 100%) !important;
+  }
 }
 
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
+  [data-diagram-canvas] > [data-diagram-stage] { display: none; }
   .diagram-fallback { display: block; }
 }
 
@@ -371,66 +393,71 @@
 [data-semantic-edge-ledger] {
   grid-column: 1 / -1;
   display: grid;
-  gap: .65rem;
-  margin-block-start: .5rem;
-  padding: .85rem;
-  border: 1px solid rgba(141, 179, 216, .5);
-  border-radius: 1rem;
-  background: rgba(247, 251, 255, .88);
+  gap: .45rem;
+  margin-block-start: 1rem;
+  padding: .75rem 0 0;
+  border: 0;
+  border-block-start: 1px dashed rgba(90, 108, 128, .38);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #5a6c80;
 }
 [data-semantic-edge-ledger] > h2 {
   margin: 0;
-  color: #38546f;
-  font-size: .75rem;
-  font-weight: 800;
-  letter-spacing: .06em;
+  color: #6b7c8e;
+  font-size: .68rem;
+  font-weight: 750;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
 [data-semantic-edge-grid] {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
-  gap: .55rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: .25rem 1rem;
 }
 [data-semantic-edge] {
   display: grid;
-  gap: .35rem;
+  gap: .15rem;
   min-inline-size: 0;
-  padding: .65rem .7rem;
-  border: 1px solid rgba(141, 179, 216, .48);
-  border-radius: .8rem;
-  background: #fff;
+  padding: .25rem 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 [data-semantic-edge-route] {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2.5rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 1.25rem minmax(0, 1fr);
   align-items: center;
-  gap: .4rem;
+  gap: .25rem;
 }
 [data-semantic-edge-route] b {
   min-inline-size: 0;
-  color: #17324d;
-  font-size: .72rem;
+  color: #52677b;
+  font-size: .68rem;
+  font-weight: 700;
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
 [data-semantic-edge-route] b:last-child { text-align: end; }
 [data-semantic-edge-route] i {
-  position: relative;
-  display: block;
-  block-size: 2px;
-  background: #1f6fb2;
+  display: grid;
+  min-block-size: 1rem;
+  place-items: center;
+  color: #8293a5;
+  font-style: normal;
+  line-height: 1;
+}
+[data-semantic-edge-route] i::before {
+  content: "↪";
 }
 [data-semantic-edge-route] i::after {
-  content: "";
-  position: absolute;
-  inset-inline-end: -1px;
-  inset-block-start: -4px;
-  border-inline-start: 8px solid #1f6fb2;
-  border-block: 5px solid transparent;
+  content: none;
 }
 [data-semantic-edge-label] {
-  color: #5a6c80;
-  font-size: .7rem;
+  color: #738497;
+  font-size: .66rem;
   line-height: 1.35;
 }
 
@@ -439,10 +466,339 @@
 }
 
 @media print {
-  [data-semantic-edge-ledger] { break-inside: avoid; background: #fff; }
+  [data-semantic-edge-ledger] { break-inside: avoid; background: transparent; }
 }
 </style>
-  <style data-template-contract="1">[data-diagram-id="current-target-flow"]>[data-diagram-stage]{min-inline-size:60rem}.semantic-relation{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}@media(max-width:48rem){[data-diagram-id="current-target-flow"]>[data-diagram-stage]{min-inline-size:0}}</style>
+  <style data-progressive-disclosure-kernel="1">
+[data-diagram-detail][hidden] { display: none; }
+[data-diagram-detail]:target { display: block; }
+
+[data-diagram-detail-trigger][data-detail-for] {
+  cursor: pointer;
+}
+
+[data-diagram-detail-trigger][data-detail-for]:focus-visible {
+  outline: 3px solid #0877ff;
+  outline-offset: 2px;
+}
+
+[data-node-detail-region] {
+  margin-block-start: .875rem;
+  padding: .875rem;
+  border: 1px solid rgba(141, 179, 216, .5);
+  border-radius: 1rem;
+  background: rgba(247, 251, 255, .84);
+}
+
+[data-node-detail-region] > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .4rem 1rem;
+  margin-block-end: .7rem;
+}
+
+[data-node-detail-region] h2 {
+  margin: 0;
+  color: #17324d;
+  font-size: .95rem;
+}
+
+[data-node-detail-region] header p {
+  margin: 0;
+  color: #5a6c80;
+  font-size: .75rem;
+}
+
+[data-node-detail-grid] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: .55rem;
+}
+
+details[data-diagram-detail] {
+  position: relative;
+  display: block;
+  min-inline-size: 0;
+  border: 1px solid rgba(141, 179, 216, .54);
+  border-radius: .8rem;
+  background: rgba(255, 255, 255, .96);
+  overflow: clip;
+}
+
+details[data-diagram-detail] > summary {
+  cursor: pointer;
+  padding: .7rem .8rem;
+  color: #17324d;
+  font-size: .8125rem;
+  font-weight: 780;
+}
+
+details[data-diagram-detail] > summary:focus-visible {
+  outline: 3px solid color-mix(in srgb, currentColor 58%, transparent);
+  outline-offset: 4px;
+}
+
+details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+  margin: 0;
+  padding: 0 .8rem .8rem;
+  color: #52677d;
+  font-size: .8rem;
+  line-height: 1.6;
+}
+
+[data-diagram-detail-close] {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region][data-runtime-active="true"] {
+  display: block;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] > header {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+  position: fixed;
+  inset-block-start: var(--detail-top, 1rem);
+  inset-inline-start: var(--detail-left, 1rem);
+  z-index: 1;
+  display: block;
+  inline-size: var(--detail-width, min(22rem, calc(100vw - 1.5rem)));
+  max-block-size: min(26rem, calc(100vh - 1.5rem));
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid rgba(94, 151, 207, .72);
+  border-radius: .75rem;
+  background: #fff;
+  box-shadow: 0 1rem 2.5rem rgba(20, 57, 92, .22);
+  pointer-events: auto;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::before {
+  content: "";
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  display: block;
+  block-size: .24rem;
+  background: #0877ff;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] {
+  display: none;
+  min-block-size: 0;
+  padding: .95rem 1rem 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail][data-runtime-open="true"] {
+  display: block;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > summary {
+  padding: .15rem 2.65rem .7rem .1rem;
+  border-block-end: 1px solid rgba(141, 179, 216, .48);
+  color: #102033;
+  font-size: 1rem;
+  font-weight: 850;
+  list-style: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > summary::-webkit-details-marker {
+  display: none;
+}
+
+html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+  padding: .8rem .1rem .05rem;
+  color: #38546f;
+  font-size: .84rem;
+  line-height: 1.68;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close] {
+  position: absolute;
+  inset-block-start: .72rem;
+  inset-inline-end: .72rem;
+  display: grid;
+  inline-size: 2rem;
+  block-size: 2rem;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(94, 151, 207, .68);
+  border-radius: 999px;
+  background: #fff;
+  color: #17324d;
+  font: inherit;
+  font-size: 1.12rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 .3rem .8rem rgba(20, 57, 92, .1);
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:hover {
+  border-color: #0877ff;
+  background: #e8f3ff;
+}
+
+html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:focus-visible {
+  outline: 3px solid #77b8f2;
+  outline-offset: 2px;
+}
+
+@media (max-width: 48rem) {
+  [data-node-detail-region] > header { align-items: flex-start; flex-direction: column; }
+  [data-node-detail-grid] { grid-template-columns: 1fr; }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    inline-size: var(--detail-width, min(21rem, calc(100vw - 1.25rem)));
+    max-block-size: min(22rem, calc(100vh - 1.25rem));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    scroll-behavior: auto;
+  }
+}
+
+@media print {
+  [data-node-detail-region],
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] {
+    position: static;
+    display: block;
+    margin-block-start: .875rem;
+    padding: .875rem;
+    border: 1px solid #b9cfe2;
+    background: #fff;
+    pointer-events: auto;
+  }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-region] > header {
+    display: flex;
+  }
+  [data-node-detail-grid],
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
+    position: static;
+    display: grid;
+    inline-size: auto;
+    max-block-size: none;
+    grid-template-columns: 1fr 1fr;
+    overflow: visible;
+    border: 0;
+    box-shadow: none;
+  }
+  html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::before {
+    display: none;
+  }
+  [data-diagram-detail][hidden],
+  html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail],
+  html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail][data-runtime-open="true"] {
+    display: block !important;
+    min-block-size: 0;
+    padding: 0;
+    border: 1px solid #b9cfe2;
+    border-radius: .8rem;
+  }
+  details[data-diagram-detail] > :not(summary, [data-diagram-detail-close]) {
+    display: block !important;
+  }
+  [data-diagram-detail-close] { display: none !important; }
+}
+</style>
+<style data-template-contract="1">
+    [data-diagram-id="current-target-flow"] > [data-diagram-stage] { min-inline-size: 60rem; }
+    .current-target-flow {
+      padding: .7rem;
+      border: 1px solid #b9cfe2;
+      border-radius: 1rem;
+      background: #fff;
+    }
+    .current-target-flow .flow-map {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+      border-radius: .75rem;
+      background:
+        linear-gradient(rgba(111,157,202,.065) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(111,157,202,.065) 1px, transparent 1px),
+        #fbfdff;
+      background-size: 24px 24px;
+    }
+    .current-target-flow .state-boundary {
+      fill: #f7f9fc;
+      stroke: #9cb7d1;
+      stroke-width: 1.8;
+    }
+    .current-target-flow .target-boundary {
+      fill: #f3fbf7;
+      stroke: #7abda4;
+    }
+    .current-target-flow .boundary-label {
+      fill: #304f6d;
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: .06em;
+    }
+    .current-target-flow .evolution-node {
+      fill: #fff;
+      stroke: #729cc5;
+      stroke-width: 2;
+    }
+    .current-target-flow .target-node { stroke: #299268; }
+    .current-target-flow .node-link {
+      display: flex;
+      box-sizing: border-box;
+      inline-size: 100%;
+      block-size: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .22rem;
+      padding: .45rem .7rem;
+      color: #17324d;
+      text-align: center;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+    .current-target-flow .node-link b { font-size: .88rem; line-height: 1.22; }
+    .current-target-flow .node-link small { color: #5a6c80; font-size: .69rem; line-height: 1.32; }
+    .current-target-flow .transition-label {
+      fill: #38546f;
+      font-size: 11.5px;
+      font-weight: 780;
+      paint-order: stroke;
+      stroke: #fbfdff;
+      stroke-width: 6px;
+      stroke-linejoin: round;
+    }
+    .current-target-flow .semantic-relation {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    @media(max-width:48rem) {
+      [data-diagram-id="current-target-flow"] > [data-diagram-stage] { min-inline-size: 0; }
+    }
+  </style>
 </head>
 <body>
 <main data-diagram-type="feature-iteration"
@@ -454,31 +810,98 @@
     <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
   </header>
   <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide">
-    <div data-reading-guide-heading><strong>Reading guide</strong><span>How to read this artifact</span></div>
+    <div data-reading-guide-heading><strong>Reading guide</strong></div>
     <div data-reading-guide-groups>
       <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
-      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b><span>{{evidence-observed}}</span></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b><span>{{evidence-check}}</span></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b><span>{{evidence-unresolved}}</span></article></div>
+      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b></article></div>
     </div>
     <div data-reading-guide-controls aria-label="Diagram scale controls">
-      <div data-reading-guide-group="interaction"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item>☝️ <b>{{interaction-hint}}</b></span></div>
-      <div data-diagram-controls="current-target-flow" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Fit width</button><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div></div>
+      <div data-reading-guide-group="interaction" data-interaction-hint="node-detail" data-node-detail-interaction-hint="1"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item>☝️ <b>{{interaction-hint}}</b></span></div>
+      <div data-diagram-controls="current-target-flow" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Auto</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div></div>
   </section>
-<div data-diagram-canvas data-diagram-contract="1" data-diagram-id="current-target-flow" data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto" data-diagram-mobile="stack"><section data-diagram-stage data-reading-guide="{{canvas-attribute-017}}" class="template-layout current-target-flow" aria-label="{{canvas-attribute-001}}">
-    <div class="current boundary"><div id="layout-node-001" class="slot risk" data-diagram-node-id="layout-node-001" data-semantic-role="{{canvas-attribute-018}}" data-slot="layout-slot-001"><b>{{canvas-text-001}}</b><span>{{canvas-text-002}}</span></div><div id="layout-node-002" class="slot risk" data-diagram-node-id="layout-node-002" data-semantic-role="{{canvas-attribute-019}}" data-slot="layout-slot-002"><b>{{canvas-text-003}}</b><span>{{canvas-text-004}}</span></div><div id="layout-node-003" class="slot risk" data-diagram-node-id="layout-node-003" data-semantic-role="{{canvas-attribute-020}}" data-slot="layout-slot-003"><b>{{canvas-text-005}}</b><span>{{canvas-text-006}}</span></div><div id="layout-node-004" class="slot ops" data-diagram-node-id="layout-node-004" data-semantic-role="{{canvas-attribute-021}}" data-slot="layout-slot-004"><b>{{canvas-text-007}}</b><span>{{canvas-text-008}}</span></div></div><div class="line-label">{{canvas-text-009}}</div><div class="target boundary"><div id="layout-node-005" class="slot core" data-diagram-node-id="layout-node-005" data-semantic-role="{{canvas-attribute-022}}" data-slot="layout-slot-005"><b>{{canvas-text-010}}</b><span>{{canvas-text-011}}</span></div><div id="layout-node-006" class="slot support" data-diagram-node-id="layout-node-006" data-semantic-role="{{canvas-attribute-023}}" data-slot="layout-slot-006"><b>{{canvas-text-012}}</b><span>{{canvas-text-013}}</span></div><div id="layout-node-007" class="slot data" data-diagram-node-id="layout-node-007" data-semantic-role="{{canvas-attribute-024}}" data-slot="layout-slot-007"><b>{{canvas-text-014}}</b><span>{{canvas-text-015}}</span></div><div id="layout-node-008" class="slot ops" data-diagram-node-id="layout-node-008" data-semantic-role="{{canvas-attribute-025}}" data-slot="layout-slot-008"><b>{{canvas-text-016}}</b><span>{{canvas-text-017}}</span></div></div>
-    <section data-semantic-edge-ledger aria-label="{{canvas-attribute-002}}">
-    <h2>{{canvas-text-018}}</h2>
-    <div data-semantic-edge-grid>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-001" data-visible-relation-kind="edge" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-010}}"><span data-semantic-edge-route><b>{{canvas-text-019}}</b><i aria-hidden="true"></i><b>{{canvas-text-020}}</b></span><span data-semantic-edge-label>{{canvas-text-021}}</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-002" data-visible-relation-kind="edge" data-from="layout-node-002" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-011}}"><span data-semantic-edge-route><b>{{canvas-text-022}}</b><i aria-hidden="true"></i><b>{{canvas-text-023}}</b></span><span data-semantic-edge-label>{{canvas-text-024}}</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-003" data-visible-relation-kind="edge" data-from="layout-node-003" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-012}}"><span data-semantic-edge-route><b>{{canvas-text-025}}</b><i aria-hidden="true"></i><b>{{canvas-text-026}}</b></span><span data-semantic-edge-label>{{canvas-text-027}}</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-004" data-visible-relation-kind="edge" data-from="layout-node-004" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-013}}"><span data-semantic-edge-route><b>{{canvas-text-028}}</b><i aria-hidden="true"></i><b>{{canvas-text-029}}</b></span><span data-semantic-edge-label>{{canvas-text-030}}</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-005" data-visible-relation-kind="edge" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-014}}"><span data-semantic-edge-route><b>{{canvas-text-031}}</b><i aria-hidden="true"></i><b>{{canvas-text-032}}</b></span><span data-semantic-edge-label>{{canvas-text-033}}</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-006" data-visible-relation-kind="edge" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-015}}"><span data-semantic-edge-route><b>{{canvas-text-034}}</b><i aria-hidden="true"></i><b>{{canvas-text-035}}</b></span><span data-semantic-edge-label>{{canvas-text-036}}</span></article>
-      <article data-semantic-edge data-diagram-visible-relation-id="layout-relation-007" data-visible-relation-kind="edge" data-from="layout-node-007" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-016}}"><span data-semantic-edge-route><b>{{canvas-text-037}}</b><i aria-hidden="true"></i><b>{{canvas-text-038}}</b></span><span data-semantic-edge-label>{{canvas-text-039}}</span></article>
+<div data-diagram-canvas data-diagram-contract="1" data-diagram-id="current-target-flow"
+     data-diagram-profile="graph" data-diagram-width="wide" data-diagram-height="auto"
+     data-diagram-mobile="scroll" data-diagram-controls-mode="persistent"
+     data-diagram-topology="current-target-paired-evolution" data-primary-direction="west-to-east"
+     data-max-top-whitespace-ratio="0.08" data-max-bottom-whitespace-ratio="0.08"
+     data-min-horizontal-utilization-ratio="0.9">
+  <section data-diagram-stage data-reading-guide="{{canvas-attribute-017}}"
+           class="template-layout current-target-flow" aria-label="{{canvas-attribute-001}}">
+    <svg class="flow-map" data-architecture-canvas="1" viewBox="0 0 1200 610"
+         role="img" aria-labelledby="current-target-title current-target-description">
+      <title id="current-target-title">{{canvas-text-018}}</title>
+      <desc id="current-target-description">{{canvas-text-009}}</desc>
+      <defs>
+        <marker id="current-target-arrow" viewBox="0 0 10 10" refX="9.2" refY="5"
+                markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M1 1L9 5L1 9Z" fill="#17785a"></path>
+        </marker>
+      </defs>
+      <g data-diagram-group-id="layout-group-001" data-diagram-rank="0"
+         data-diagram-region="current" data-semantic-role="{{canvas-attribute-026}}">
+        <rect class="state-boundary" data-architecture-boundary="layout-boundary-001"
+              x="20" y="35" width="480" height="550" rx="14"></rect>
+        <text class="boundary-label" x="50" y="68">{{canvas-text-056}}</text>
+      </g>
+      <g data-diagram-group-id="layout-group-002" data-diagram-rank="1"
+         data-diagram-region="target" data-semantic-role="{{canvas-attribute-027}}">
+        <rect class="state-boundary target-boundary" data-architecture-boundary="layout-boundary-002"
+              x="700" y="35" width="480" height="550" rx="14"></rect>
+        <text class="boundary-label" x="730" y="68">{{canvas-text-057}}</text>
+      </g>
+
+      <g id="layout-node-001" data-diagram-node-id="layout-node-001" data-diagram-rank="0" data-diagram-region="current" data-semantic-role="{{canvas-attribute-018}}" data-detail-for="layout-detail-001" data-node-primary-label="{{canvas-attribute-028}}"><rect class="evolution-node" x="70" y="90" width="380" height="84" rx="12"></rect><foreignObject x="78" y="98" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-001" href="#layout-detail-001" aria-expanded="false"><b data-slot="layout-slot-001">{{canvas-text-001}}</b><small>{{canvas-text-002}}</small></a></div></foreignObject></g>
+      <g id="layout-node-002" data-diagram-node-id="layout-node-002" data-diagram-rank="0" data-diagram-region="current" data-semantic-role="{{canvas-attribute-019}}" data-detail-for="layout-detail-002" data-node-primary-label="{{canvas-attribute-029}}"><rect class="evolution-node" x="70" y="210" width="380" height="84" rx="12"></rect><foreignObject x="78" y="218" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-002" href="#layout-detail-002" aria-expanded="false"><b data-slot="layout-slot-002">{{canvas-text-003}}</b><small>{{canvas-text-004}}</small></a></div></foreignObject></g>
+      <g id="layout-node-003" data-diagram-node-id="layout-node-003" data-diagram-rank="0" data-diagram-region="current" data-semantic-role="{{canvas-attribute-020}}" data-detail-for="layout-detail-003" data-node-primary-label="{{canvas-attribute-030}}"><rect class="evolution-node" x="70" y="330" width="380" height="84" rx="12"></rect><foreignObject x="78" y="338" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-003" href="#layout-detail-003" aria-expanded="false"><b data-slot="layout-slot-003">{{canvas-text-005}}</b><small>{{canvas-text-006}}</small></a></div></foreignObject></g>
+      <g id="layout-node-004" data-diagram-node-id="layout-node-004" data-diagram-rank="0" data-diagram-region="current" data-semantic-role="{{canvas-attribute-021}}" data-detail-for="layout-detail-004" data-node-primary-label="{{canvas-attribute-031}}"><rect class="evolution-node" x="70" y="450" width="380" height="84" rx="12"></rect><foreignObject x="78" y="458" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-004" href="#layout-detail-004" aria-expanded="false"><b data-slot="layout-slot-004">{{canvas-text-007}}</b><small>{{canvas-text-008}}</small></a></div></foreignObject></g>
+
+      <g id="layout-node-005" data-diagram-node-id="layout-node-005" data-diagram-rank="1" data-diagram-region="target" data-semantic-role="{{canvas-attribute-022}}" data-detail-for="layout-detail-005" data-node-primary-label="{{canvas-attribute-032}}"><rect class="evolution-node target-node" x="750" y="90" width="380" height="84" rx="12"></rect><foreignObject x="758" y="98" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-005" href="#layout-detail-005" aria-expanded="false"><b data-slot="layout-slot-005">{{canvas-text-010}}</b><small>{{canvas-text-011}}</small></a></div></foreignObject></g>
+      <g id="layout-node-006" data-diagram-node-id="layout-node-006" data-diagram-rank="1" data-diagram-region="target" data-semantic-role="{{canvas-attribute-023}}" data-detail-for="layout-detail-006" data-node-primary-label="{{canvas-attribute-033}}"><rect class="evolution-node target-node" x="750" y="210" width="380" height="84" rx="12"></rect><foreignObject x="758" y="218" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-006" href="#layout-detail-006" aria-expanded="false"><b data-slot="layout-slot-006">{{canvas-text-012}}</b><small>{{canvas-text-013}}</small></a></div></foreignObject></g>
+      <g id="layout-node-007" data-diagram-node-id="layout-node-007" data-diagram-rank="1" data-diagram-region="target" data-semantic-role="{{canvas-attribute-024}}" data-detail-for="layout-detail-007" data-node-primary-label="{{canvas-attribute-034}}"><rect class="evolution-node target-node" x="750" y="330" width="380" height="84" rx="12"></rect><foreignObject x="758" y="338" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-007" href="#layout-detail-007" aria-expanded="false"><b data-slot="layout-slot-007">{{canvas-text-014}}</b><small>{{canvas-text-015}}</small></a></div></foreignObject></g>
+      <g id="layout-node-008" data-diagram-node-id="layout-node-008" data-diagram-rank="1" data-diagram-region="target" data-semantic-role="{{canvas-attribute-025}}" data-detail-for="layout-detail-008" data-node-primary-label="{{canvas-attribute-035}}"><rect class="evolution-node target-node" x="750" y="450" width="380" height="84" rx="12"></rect><foreignObject x="758" y="458" width="364" height="68"><div><a class="node-link" data-diagram-detail-trigger="primary" data-detail-for="layout-detail-008" href="#layout-detail-008" aria-expanded="false"><b data-slot="layout-slot-008">{{canvas-text-016}}</b><small>{{canvas-text-017}}</small></a></div></foreignObject></g>
+
+      <g fill="none" stroke="#17785a" stroke-width="3.5" stroke-linecap="round">
+        <path d="M450 132H750" marker-end="url(#current-target-arrow)" data-route-intent="direct" data-diagram-visible-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-010}}"></path>
+        <path d="M450 252H750" marker-end="url(#current-target-arrow)" data-route-intent="direct" data-diagram-visible-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-011}}"></path>
+        <path d="M450 372H750" marker-end="url(#current-target-arrow)" data-route-intent="direct" data-diagram-visible-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-012}}"></path>
+        <path d="M450 492H750" marker-end="url(#current-target-arrow)" data-route-intent="direct" data-diagram-visible-relation-id="layout-relation-004" data-from="layout-node-004" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-013}}"></path>
+      </g>
+      <g class="transition-label" text-anchor="middle">
+        <text x="600" y="119">{{canvas-text-021}}</text>
+        <text x="600" y="239">{{canvas-text-024}}</text>
+        <text x="600" y="359">{{canvas-text-027}}</text>
+        <text x="600" y="479">{{canvas-text-030}}</text>
+      </g>
+    </svg>
+    <span class="semantic-relation" data-diagram-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-010}}" data-primary-relation="true" data-semantic="{{canvas-attribute-003}}">{{canvas-text-040}}</span>
+    <span class="semantic-relation" data-diagram-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-011}}" data-primary-relation="true" data-semantic="{{canvas-attribute-004}}">{{canvas-text-041}}</span>
+    <span class="semantic-relation" data-diagram-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-012}}" data-primary-relation="true" data-semantic="{{canvas-attribute-005}}">{{canvas-text-042}}</span>
+    <span class="semantic-relation" data-diagram-relation-id="layout-relation-004" data-from="layout-node-004" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-013}}" data-primary-relation="true" data-semantic="{{canvas-attribute-006}}">{{canvas-text-043}}</span>
+  </section>
+  <section data-node-detail-region>
+    <header><h2>{{canvas-text-058}}</h2><p>{{canvas-text-059}}</p></header>
+    <div data-node-detail-grid>
+      <details id="layout-detail-001" data-diagram-detail="layout-detail-001" data-diagram-detail-id="layout-detail-001" data-detail-for="layout-node-001"><summary>{{canvas-text-001}}</summary><p>{{canvas-text-060}}</p></details>
+      <details id="layout-detail-002" data-diagram-detail="layout-detail-002" data-diagram-detail-id="layout-detail-002" data-detail-for="layout-node-002"><summary>{{canvas-text-003}}</summary><p>{{canvas-text-061}}</p></details>
+      <details id="layout-detail-003" data-diagram-detail="layout-detail-003" data-diagram-detail-id="layout-detail-003" data-detail-for="layout-node-003"><summary>{{canvas-text-005}}</summary><p>{{canvas-text-062}}</p></details>
+      <details id="layout-detail-004" data-diagram-detail="layout-detail-004" data-diagram-detail-id="layout-detail-004" data-detail-for="layout-node-004"><summary>{{canvas-text-007}}</summary><p>{{canvas-text-063}}</p></details>
+      <details id="layout-detail-005" data-diagram-detail="layout-detail-005" data-diagram-detail-id="layout-detail-005" data-detail-for="layout-node-005"><summary>{{canvas-text-010}}</summary><p>{{canvas-text-064}}</p></details>
+      <details id="layout-detail-006" data-diagram-detail="layout-detail-006" data-diagram-detail-id="layout-detail-006" data-detail-for="layout-node-006"><summary>{{canvas-text-012}}</summary><p>{{canvas-text-065}}</p></details>
+      <details id="layout-detail-007" data-diagram-detail="layout-detail-007" data-diagram-detail-id="layout-detail-007" data-detail-for="layout-node-007"><summary>{{canvas-text-014}}</summary><p>{{canvas-text-066}}</p></details>
+      <details id="layout-detail-008" data-diagram-detail="layout-detail-008" data-diagram-detail-id="layout-detail-008" data-detail-for="layout-node-008"><summary>{{canvas-text-016}}</summary><p>{{canvas-text-067}}</p></details>
     </div>
   </section>
-<span class="semantic-relation" data-diagram-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-002" data-relation-kind="{{canvas-attribute-010}}" data-semantic="{{canvas-attribute-003}}">{{canvas-text-040}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-003" data-relation-kind="{{canvas-attribute-011}}" data-semantic="{{canvas-attribute-004}}">{{canvas-text-041}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-004" data-relation-kind="{{canvas-attribute-012}}" data-semantic="{{canvas-attribute-005}}">{{canvas-text-042}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-004" data-from="layout-node-004" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-013}}" data-semantic="{{canvas-attribute-006}}">{{canvas-text-043}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-005" data-from="layout-node-005" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-014}}" data-semantic="{{canvas-attribute-007}}">{{canvas-text-044}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-006" data-from="layout-node-006" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-015}}" data-semantic="{{canvas-attribute-008}}">{{canvas-text-045}}</span><span class="semantic-relation" data-diagram-relation-id="layout-relation-007" data-from="layout-node-007" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-016}}" data-semantic="{{canvas-attribute-009}}">{{canvas-text-046}}</span></section></div>
-  <details class="diagram-fallback" data-fallback-for="current-target-flow"><summary>{{canvas-text-047}}</summary><ol><li>{{canvas-text-048}}</li><li>{{canvas-text-049}}</li><li>{{canvas-text-050}}</li><li>{{canvas-text-051}}</li><li>{{canvas-text-052}}</li><li>{{canvas-text-053}}</li><li>{{canvas-text-054}}</li><li>{{canvas-text-055}}</li></ol></details>
+</div>
+  <details class="diagram-fallback" data-fallback-for="current-target-flow">
+    <summary>{{canvas-text-047}}</summary>
+    <ol><li>{{canvas-text-048}}</li><li>{{canvas-text-049}}</li><li>{{canvas-text-050}}</li><li>{{canvas-text-051}}</li><li>{{canvas-text-052}}</li><li>{{canvas-text-053}}</li><li>{{canvas-text-054}}</li><li>{{canvas-text-055}}</li></ol>
+    <section data-semantic-edge-ledger>
+      <article data-semantic-edge data-fallback-relation-id="layout-relation-001" data-from="layout-node-001" data-to="layout-node-005" data-relation-kind="{{canvas-attribute-010}}"><span data-semantic-edge-route><b>{{canvas-text-001}}</b><i aria-hidden="true"></i><b>{{canvas-text-010}}</b></span><span data-semantic-edge-label>{{canvas-text-021}}</span></article>
+      <article data-semantic-edge data-fallback-relation-id="layout-relation-002" data-from="layout-node-002" data-to="layout-node-006" data-relation-kind="{{canvas-attribute-011}}"><span data-semantic-edge-route><b>{{canvas-text-003}}</b><i aria-hidden="true"></i><b>{{canvas-text-012}}</b></span><span data-semantic-edge-label>{{canvas-text-024}}</span></article>
+      <article data-semantic-edge data-fallback-relation-id="layout-relation-003" data-from="layout-node-003" data-to="layout-node-007" data-relation-kind="{{canvas-attribute-012}}"><span data-semantic-edge-route><b>{{canvas-text-005}}</b><i aria-hidden="true"></i><b>{{canvas-text-014}}</b></span><span data-semantic-edge-label>{{canvas-text-027}}</span></article>
+      <article data-semantic-edge data-fallback-relation-id="layout-relation-004" data-from="layout-node-004" data-to="layout-node-008" data-relation-kind="{{canvas-attribute-013}}"><span data-semantic-edge-route><b>{{canvas-text-007}}</b><i aria-hidden="true"></i><b>{{canvas-text-016}}</b></span><span data-semantic-edge-label>{{canvas-text-030}}</span></article>
+    </section>
+  </details>
 </main>
 <script data-adaptive-viewport-kernel="1">
 (() => {
@@ -628,14 +1051,337 @@
   }
 })();
 </script>
+<script data-progressive-disclosure-kernel="1">
+(() => {
+  "use strict";
+  const activeByRoot = new WeakMap();
+  const returnFocusByRoot = new WeakMap();
+  const boundRoots = new WeakSet();
+  const isNativeDetails = (detail) => detail.matches("details");
+  const documentElementFor = (root) =>
+    root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root.ownerDocument.documentElement;
+  const viewFor = (root) =>
+    root.nodeType === Node.DOCUMENT_NODE
+      ? root.defaultView
+      : root.ownerDocument.defaultView;
+  const decodedHashFor = (view) => {
+    try {
+      return decodeURIComponent(view?.location.hash.slice(1) || "");
+    } catch (_error) {
+      return "";
+    }
+  };
+  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
+  const triggersFor = (root, id) =>
+    Array.from(root.querySelectorAll(detailTriggerSelector)).filter(
+      (trigger) => trigger.dataset.detailFor === id
+    );
+  const reflect = (root, id, expanded) => {
+    triggersFor(root, id).forEach((trigger) => {
+      trigger.setAttribute("aria-expanded", String(expanded));
+    });
+  };
+  const regionFor = (detail) => detail.closest("[data-node-detail-region]");
+  const gridFor = (detail) => detail.closest("[data-node-detail-grid]");
+  const syncDocumentState = (root) => {
+    const documentElement = documentElementFor(root);
+    documentElement.setAttribute("data-progressive-disclosure-enhanced", "true");
+    documentElement.toggleAttribute(
+      "data-progressive-disclosure-open",
+      Boolean(root.querySelector("[data-node-detail-region][data-runtime-active='true']"))
+    );
+  };
+  const ensureCloseButton = (root, detail) => {
+    let button = detail.querySelector(":scope > [data-diagram-detail-close]");
+    if (button) return button;
+    const region = regionFor(detail);
+    button = detail.ownerDocument.createElement("button");
+    button.type = "button";
+    button.dataset.diagramDetailClose = "true";
+    button.setAttribute(
+      "aria-label",
+      region?.dataset.detailCloseLabel || "Close node details"
+    );
+    button.textContent = "×";
+    button.addEventListener("click", () => close(root, true));
+    detail.append(button);
+    return button;
+  };
+  const clamp = (value, minimum, maximum) =>
+    Math.min(Math.max(value, minimum), Math.max(minimum, maximum));
+  const place = (detail, trigger) => {
+    const grid = gridFor(detail);
+    const view = detail.ownerDocument.defaultView;
+    if (!grid || !view) return;
+    const margin = 12;
+    const gap = 10;
+    const viewportWidth = Math.max(0, view.innerWidth);
+    const viewportHeight = Math.max(0, view.innerHeight);
+    const width = Math.min(352, Math.max(240, viewportWidth - margin * 2));
+    grid.style.setProperty("--detail-width", `${width}px`);
+    grid.style.setProperty("--detail-left", `${margin}px`);
+    grid.style.setProperty("--detail-top", `${margin}px`);
+    const popupRect = grid.getBoundingClientRect();
+    const popupWidth = Math.min(width, popupRect.width || width);
+    const popupHeight = Math.min(
+      popupRect.height || 240,
+      Math.max(160, viewportHeight - margin * 2)
+    );
+    const triggerRect = trigger?.getBoundingClientRect();
+    let left = clamp((viewportWidth - popupWidth) / 2, margin, viewportWidth - popupWidth - margin);
+    let top = clamp((viewportHeight - popupHeight) / 2, margin, viewportHeight - popupHeight - margin);
+    let side = "center";
+    if (triggerRect) {
+      if (triggerRect.right + gap + popupWidth <= viewportWidth - margin) {
+        left = triggerRect.right + gap;
+        side = "right";
+      } else if (triggerRect.left - gap - popupWidth >= margin) {
+        left = triggerRect.left - gap - popupWidth;
+        side = "left";
+      } else {
+        left = clamp(
+          triggerRect.left + triggerRect.width / 2 - popupWidth / 2,
+          margin,
+          viewportWidth - popupWidth - margin
+        );
+        side = "center";
+      }
+      top = clamp(
+        triggerRect.top + triggerRect.height / 2 - popupHeight / 2,
+        margin,
+        viewportHeight - popupHeight - margin
+      );
+    }
+    grid.style.setProperty("--detail-left", `${Math.round(left)}px`);
+    grid.style.setProperty("--detail-top", `${Math.round(top)}px`);
+    grid.dataset.popupSide = side;
+  };
+  const restoreDetail = (root, detail) => {
+    const id = detail.dataset.diagramDetail;
+    if (isNativeDetails(detail)) {
+      const wasOpen = detail.getAttribute("data-runtime-was-open") === "true";
+      detail.open = wasOpen;
+      detail.removeAttribute("data-runtime-was-open");
+    } else {
+      const wasHidden = detail.getAttribute("data-runtime-was-hidden") === "true";
+      detail.hidden = wasHidden;
+      detail.removeAttribute("data-runtime-was-hidden");
+    }
+    detail.removeAttribute("data-runtime-open");
+    detail.removeAttribute("role");
+    detail.removeAttribute("aria-modal");
+    const grid = gridFor(detail);
+    if (grid) {
+      grid.style.removeProperty("--detail-width");
+      grid.style.removeProperty("--detail-left");
+      grid.style.removeProperty("--detail-top");
+      delete grid.dataset.popupSide;
+    }
+    regionFor(detail)?.removeAttribute("data-runtime-active");
+    reflect(root, id, isNativeDetails(detail) && detail.open);
+  };
+  const close = (root = document, restoreFocus = true, clearHash = true) => {
+    const detail = activeByRoot.get(root);
+    if (!detail) return false;
+    const id = detail.dataset.diagramDetail;
+    restoreDetail(root, detail);
+    activeByRoot.delete(root);
+    syncDocumentState(root);
+    const view = viewFor(root);
+    if (
+      clearHash
+      && view
+      && decodedHashFor(view) === id
+    ) {
+      view.history.replaceState(
+        view.history.state,
+        "",
+        `${view.location.pathname}${view.location.search}`
+      );
+    }
+    if (restoreFocus) {
+      const trigger = returnFocusByRoot.get(root);
+      if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+    }
+    returnFocusByRoot.delete(root);
+    return true;
+  };
+  const reset = (root = document) => {
+    close(root, false);
+    root.querySelectorAll("[data-diagram-detail][data-runtime-open]").forEach((detail) => {
+      restoreDetail(root, detail);
+    });
+    root.querySelectorAll("[data-node-detail-region][data-runtime-active]").forEach((region) => {
+      region.removeAttribute("data-runtime-active");
+    });
+    syncDocumentState(root);
+  };
+  const open = (root, id, trigger = null, updateHash = true) => {
+    const detail = root.querySelector(`[data-diagram-detail="${CSS.escape(id)}"]`);
+    if (!detail) return false;
+    const previous = activeByRoot.get(root);
+    if (previous && previous !== detail) restoreDetail(root, previous);
+    if (!detail.hasAttribute("data-runtime-open")) {
+      if (isNativeDetails(detail)) {
+        detail.setAttribute("data-runtime-was-open", String(detail.open));
+      } else {
+        detail.setAttribute("data-runtime-was-hidden", String(detail.hidden));
+      }
+    }
+    if (isNativeDetails(detail)) {
+      detail.open = true;
+    } else {
+      detail.hidden = false;
+    }
+    detail.setAttribute("data-runtime-open", "true");
+    detail.setAttribute("role", "dialog");
+    detail.setAttribute("aria-modal", "false");
+    regionFor(detail)?.setAttribute("data-runtime-active", "true");
+    activeByRoot.set(root, detail);
+    returnFocusByRoot.set(root, trigger || detail.ownerDocument.activeElement);
+    ensureCloseButton(root, detail);
+    reflect(root, id, true);
+    syncDocumentState(root);
+    place(detail, trigger);
+    const view = viewFor(root);
+    if (updateHash && view) {
+      const nextHash = `#${encodeURIComponent(id)}`;
+      if (view.location.hash !== nextHash) {
+        view.history.pushState(view.history.state, "", nextHash);
+      }
+    }
+    const focusTarget = detail.querySelector("summary") || detail;
+    focusTarget.focus({ preventScroll: true });
+    return true;
+  };
+  const bind = (root = document) => {
+    const triggers = root.querySelectorAll(detailTriggerSelector);
+    if (!triggers.length) return;
+    syncDocumentState(root);
+    triggers.forEach((trigger) => {
+      const id = trigger.dataset.detailFor;
+      const detail = id
+        ? root.querySelector(`[data-diagram-detail="${CSS.escape(id)}"]`)
+        : null;
+      if (!detail || trigger.dataset.diagramDetailBound === "true") return;
+      trigger.dataset.diagramDetailBound = "true";
+      trigger.setAttribute("aria-controls", detail.id);
+      reflect(root, id, false);
+      trigger.addEventListener("click", (event) => {
+        event.preventDefault();
+        open(root, id, trigger);
+      });
+      if (isNativeDetails(detail) && detail.dataset.diagramToggleBound !== "true") {
+        detail.dataset.diagramToggleBound = "true";
+        detail.addEventListener("toggle", () => {
+          const runtimeOpen = detail.getAttribute("data-runtime-open") === "true";
+          if (runtimeOpen && !detail.open) close(root, true);
+          else reflect(root, id, detail.open);
+        });
+      }
+    });
+    if (boundRoots.has(root)) return;
+    boundRoots.add(root);
+    root.addEventListener("pointerdown", (event) => {
+      const detail = activeByRoot.get(root);
+      if (!detail) return;
+      const trigger = returnFocusByRoot.get(root);
+      if (!detail.contains(event.target) && !trigger?.contains(event.target)) {
+        close(root, false);
+      }
+    });
+    root.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && close(root, true)) event.preventDefault();
+    });
+    const view = viewFor(root);
+    const openFromHash = () => {
+      if (!view?.location.hash) return false;
+      const id = decodedHashFor(view);
+      return open(root, id, null, false);
+    };
+    view?.addEventListener("hashchange", () => {
+      if (!openFromHash()) close(root, false, false);
+    });
+    const reposition = () => {
+      const detail = activeByRoot.get(root);
+      if (detail) place(detail, returnFocusByRoot.get(root));
+    };
+    view?.addEventListener("resize", reposition);
+    view?.addEventListener("scroll", reposition, true);
+    openFromHash();
+  };
+  const enhance = (root = document) => bind(root);
+  globalThis.VibeDiagramDisclosure = Object.freeze({ bind, close, enhance, open, reset });
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
+  } else {
+    enhance();
+  }
+})();
+</script>
 <script data-artifact-shell-preview-kernel="1">
 (() => {
   "use strict";
+  document.documentElement.classList.add("vibe-js");
 
   const unresolvedCanvasText = /^\s*\{\{canvas-text-\d{3}\}\}\s*$/;
-  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
+  const detailTriggerSelector = "[data-diagram-detail-trigger]";
+  const declaredRelationSelector = "[data-diagram-relation-id]";
+  const geometricCarrierSelector = [
+    "svg path[data-diagram-visible-relation-id]",
+    "svg line[data-diagram-visible-relation-id]",
+    "svg polyline[data-diagram-visible-relation-id]",
+    "svg polygon[data-diagram-visible-relation-id]"
+  ].join(", ");
+  const fallbackCarrierSelector = [
+    "[data-fallback-relation-id]",
+    '[data-visible-relation-kind="edge"][data-diagram-visible-relation-id]'
+  ].join(", ");
   const auditRoots = "[data-diagram-canvas], [data-sequence-canvas]";
   const epsilon = 1;
+  const permitsOverflow = (element, axis) => {
+    const owner = element.closest?.("[data-diagram-overflow-intent]");
+    const intent = owner?.dataset.diagramOverflowIntent || "";
+    return intent === "both-scroll" || intent === `${axis}-scroll`;
+  };
+
+  const localizeShell = () => {
+    const language = (document.documentElement.lang || "").toLowerCase();
+    const isChinese = language === "zh" || language.startsWith("zh-");
+    document.querySelectorAll("[data-reading-guide-heading]").forEach((heading) => {
+      heading.remove();
+    });
+    const groupLabels = {
+      relations: isChinese ? "\u5173\u7cfb\u7c7b\u578b" : "Line types",
+      evidence: isChinese ? "\u8bc1\u636e\u72b6\u6001" : "Evidence states",
+      interaction: isChinese ? "\u4ea4\u4e92\u65b9\u5f0f" : "Interaction"
+    };
+    document.querySelectorAll("[data-reading-guide-group]").forEach((group) => {
+      const label = group.querySelector(":scope > [data-reading-guide-group-title]");
+      const text = groupLabels[group.dataset.readingGuideGroup];
+      if (label && text) label.textContent = text;
+    });
+    const evidenceLabels = {
+      "evidence-observed": isChinese ? "\u7528\u6237\u63d0\u4f9b\u4e8b\u5b9e" : "Observed implementation",
+      "evidence-check": isChinese ? "\u5df2\u5b8c\u6210\u68c0\u67e5" : "Completed check",
+      "evidence-unresolved": isChinese ? "\u5c1a\u672a\u9a8c\u8bc1" : "Not yet verified"
+    };
+    document.querySelectorAll("[data-evidence-id] > b").forEach((label) => {
+      const text = evidenceLabels[label.parentElement?.dataset.evidenceId];
+      if (text) label.textContent = text;
+    });
+    document.querySelectorAll(
+      "[data-interaction-hint='node-detail'] [data-reading-guide-item] b"
+    ).forEach((label) => {
+      label.textContent =
+        "\u70b9\u51fb\u4efb\u4e00\u4e3b\u8282\u70b9\u67e5\u770b\u5bf9\u5e94\u8be6\u60c5";
+    });
+    document.querySelectorAll(
+      "[data-diagram-zoom-control='fit'], [data-sequence-scale='fit']"
+    ).forEach((button) => {
+      button.textContent = "\u81ea\u9002\u5e94";
+    });
+  };
 
   const suppressUnfilledCanvasText = (root) => {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -665,6 +1411,20 @@
     );
   };
 
+  const isRendered = (element) => {
+    const style = getComputedStyle(element);
+    return (
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") > 0 &&
+      element.getClientRects().length > 0
+    );
+  };
+
+  const localNameOf = (element) => (
+    element.localName || element.tagName || ""
+  ).toLowerCase();
+
   const overlaps = (left, right, inset = epsilon) => (
     left.left + inset < right.right &&
     left.right - inset > right.left &&
@@ -677,6 +1437,13 @@
     point.x < rect.right - inset &&
     point.y > rect.top + inset &&
     point.y < rect.bottom - inset
+  );
+
+  const escapesBounds = (outer, inner, tolerance = epsilon) => (
+    inner.left < outer.left - tolerance ||
+    inner.right > outer.right + tolerance ||
+    inner.top < outer.top - tolerance ||
+    inner.bottom > outer.bottom + tolerance
   );
 
   const pointOnBoundary = (rect, point, tolerance = 6) => {
@@ -700,7 +1467,28 @@
   };
 
   const parseColor = (value) => {
-    const match = value.match(
+    const normalized = (value || "").trim();
+    if (normalized === "transparent" || normalized === "none") {
+      return { red: 0, green: 0, blue: 0, alpha: 0 };
+    }
+    const hex = normalized.match(/^#([\da-f]{3,8})$/i);
+    if (hex) {
+      let payload = hex[1];
+      if (payload.length === 3 || payload.length === 4) {
+        payload = Array.from(payload, (part) => part + part).join("");
+      }
+      if (payload.length === 6 || payload.length === 8) {
+        return {
+          red: Number.parseInt(payload.slice(0, 2), 16) / 255,
+          green: Number.parseInt(payload.slice(2, 4), 16) / 255,
+          blue: Number.parseInt(payload.slice(4, 6), 16) / 255,
+          alpha: payload.length === 8
+            ? Number.parseInt(payload.slice(6, 8), 16) / 255
+            : 1
+        };
+      }
+    }
+    const match = normalized.match(
       /rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*(\d*(?:\.\d+)?))?\s*\)/
     );
     if (!match) return null;
@@ -723,18 +1511,36 @@
   const auditDetailLinks = (canvas, addIssue) => {
     const documentRoot = canvas.ownerDocument;
     canvas.querySelectorAll(detailTriggerSelector).forEach((trigger) => {
-      const detailId = trigger.dataset.detailFor || "";
-      const detail = detailId
-        ? documentRoot.querySelector(`[data-diagram-detail="${CSS.escape(detailId)}"]`)
-        : null;
-      if (!detail) {
-        addIssue("detail-target-missing", detailId || "unnamed-trigger");
+      const detailId = (trigger.dataset.detailFor || "").trim();
+      const triggerIdentity = (
+        trigger.getAttribute("aria-label") ||
+        trigger.getAttribute("data-node-primary-label") ||
+        trigger.textContent ||
+        ""
+      ).trim();
+      if (!detailId) {
+        addIssue(
+          "detail-trigger-target-empty",
+          triggerIdentity || trigger.dataset.diagramDetailTrigger || "unnamed-trigger"
+        );
         return;
       }
-      if (trigger.tagName !== "A" || trigger.getAttribute("href") !== `#${detailId}`) {
+      if (!triggerIdentity) {
+        addIssue("detail-trigger-empty", detailId);
+      }
+      const detail = documentRoot.getElementById(detailId);
+      if (!detail) {
+        addIssue("detail-target-missing", detailId);
+        return;
+      }
+      if (localNameOf(trigger) !== "a" || trigger.getAttribute("href") !== `#${detailId}`) {
         addIssue("detail-trigger-not-native-link", detailId);
       }
-      if (detail.tagName !== "DETAILS" || detail.id !== detailId) {
+      if (
+        localNameOf(detail) !== "details" ||
+        detail.id !== detailId ||
+        detail.dataset.diagramDetail !== detailId
+      ) {
         addIssue("detail-target-not-native-details", detailId);
       }
     });
@@ -756,23 +1562,111 @@
         }
       }
     }
-    canvas.querySelectorAll("foreignObject > *, [data-node-title], [data-node-summary]").forEach(
-      (content) => {
-        if (!isVisible(content)) return;
-        if (
-          content.scrollWidth > content.clientWidth + epsilon ||
-          content.scrollHeight > content.clientHeight + epsilon
-        ) {
-          addIssue(
-            "node-content-overflow",
-            content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || content.tagName
-          );
-        }
+
+    nodes.forEach((node) => {
+      const nodeId = node.dataset.diagramNodeId || "unnamed-node";
+      if (
+        "scrollWidth" in node &&
+        "clientWidth" in node &&
+        (
+          (
+            node.scrollWidth > node.clientWidth + epsilon &&
+            !permitsOverflow(node, "horizontal")
+          ) ||
+          (
+            node.scrollHeight > node.clientHeight + epsilon &&
+            !permitsOverflow(node, "vertical")
+          )
+        )
+      ) {
+        addIssue("node-content-overflow", nodeId);
       }
-    );
+
+      node.querySelectorAll("*").forEach((content) => {
+        if (!isRendered(content)) return;
+        if (
+          "scrollWidth" in content &&
+          "clientWidth" in content &&
+          (
+            (
+              content.scrollWidth > content.clientWidth + epsilon &&
+              !permitsOverflow(content, "horizontal")
+            ) ||
+            (
+              content.scrollHeight > content.clientHeight + epsilon &&
+              !permitsOverflow(content, "vertical")
+            )
+          )
+        ) {
+          addIssue("node-content-overflow", nodeId);
+        }
+      });
+
+      const svgSurface = Array.from(node.children).find(
+        (child) => localNameOf(child) === "rect" && isRendered(child)
+      );
+      if (!svgSurface) return;
+      const surfaceRect = svgSurface.getBoundingClientRect();
+      node.querySelectorAll("text, foreignObject").forEach((content) => {
+        if (!isRendered(content)) return;
+        const contentRect = content.getBoundingClientRect();
+        if (escapesBounds(surfaceRect, contentRect, 2)) {
+          addIssue("node-content-overflow", nodeId);
+        }
+      });
+    });
+
+    canvas.querySelectorAll("[data-architecture-landmark-for]").forEach((landmark) => {
+      if (!isRendered(landmark)) return;
+      const nodeId = (landmark.dataset.architectureLandmarkFor || "").trim();
+      const surface = Array.from(landmark.children).find(
+        (child) => localNameOf(child) === "rect" && isRendered(child)
+      );
+      if (!surface) return;
+      const surfaceRect = surface.getBoundingClientRect();
+      landmark.querySelectorAll("text, foreignObject").forEach((content) => {
+        if (!isRendered(content)) return;
+        if (escapesBounds(surfaceRect, content.getBoundingClientRect(), 2)) {
+          addIssue("node-content-overflow", nodeId || "unnamed-landmark");
+        }
+      });
+    });
+
+    canvas.querySelectorAll("foreignObject > *").forEach((content) => {
+      if (!isRendered(content)) return;
+      if (
+        "scrollWidth" in content &&
+        "clientWidth" in content &&
+        "scrollHeight" in content &&
+        "clientHeight" in content &&
+        (
+          (
+            content.scrollWidth > content.clientWidth + epsilon &&
+            !permitsOverflow(content, "horizontal")
+          ) ||
+          (
+            content.scrollHeight > content.clientHeight + epsilon &&
+            !permitsOverflow(content, "vertical")
+          )
+        )
+      ) {
+        addIssue(
+          "node-content-overflow",
+          content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || localNameOf(content)
+        );
+      }
+    });
+
     canvas.querySelectorAll("[data-diagram-detail-trigger='auxiliary']").forEach((trigger) => {
-      if (!isVisible(trigger)) return;
-      const color = parseColor(getComputedStyle(trigger).backgroundColor);
+      if (!isRendered(trigger)) return;
+      const svgSurface = trigger.querySelector("rect, path, polygon, circle, ellipse");
+      const surface = svgSurface || trigger;
+      const surfaceStyle = getComputedStyle(surface);
+      const color = parseColor(
+        svgSurface
+          ? surfaceStyle.fill || svgSurface.getAttribute("fill") || ""
+          : surfaceStyle.backgroundColor
+      );
       if (!color || color.alpha < 0.85) {
         addIssue("auxiliary-node-background-transparent", trigger.dataset.detailFor || "unknown");
         return;
@@ -790,53 +1684,154 @@
         .filter(isVisible)
         .map((node) => [node.dataset.diagramNodeId, node.getBoundingClientRect()])
     );
+    canvas.querySelectorAll("[data-architecture-landmark-for]").forEach((landmark) => {
+      if (!isRendered(landmark)) return;
+      const nodeId = (landmark.dataset.architectureLandmarkFor || "").trim();
+      if (!nodeId) return;
+      const surface = Array.from(landmark.children).find(
+        (child) => localNameOf(child) === "rect" && isRendered(child)
+      );
+      nodeRects.set(nodeId, (surface || landmark).getBoundingClientRect());
+    });
     const labels = Array.from(canvas.querySelectorAll("svg text")).filter(isVisible);
-    canvas.querySelectorAll("path[data-diagram-visible-relation-id]").forEach((path) => {
-      if (typeof path.getTotalLength !== "function") return;
-      const relationId = path.dataset.diagramVisibleRelationId || "unknown";
-      const length = path.getTotalLength();
-      if (!Number.isFinite(length) || length < 24) {
-        addIssue("route-too-short", relationId);
-        return;
-      }
-      if (!path.getAttribute("marker-end")) {
-        addIssue("route-arrowhead-missing", relationId);
-      }
-      const sourceId = path.dataset.from || "";
-      const targetId = path.dataset.to || "";
-      const sourceRect = nodeRects.get(sourceId);
-      const targetRect = nodeRects.get(targetId);
-      const startPoint = pointOnScreen(path, 0);
-      const endPoint = pointOnScreen(path, length);
-      if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
-        addIssue("route-source-not-anchored", relationId);
-      }
-      if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
-        addIssue("route-target-not-anchored", relationId);
-      }
-      const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
-      for (let index = 1; index < sampleCount; index += 1) {
-        const progress = index / sampleCount;
-        const point = pointOnScreen(path, length * progress);
-        if (!point) break;
-        for (const [nodeId, rect] of nodeRects) {
-          if (
-            (nodeId === sourceId && progress < 0.08) ||
-            (nodeId === targetId && progress > 0.92)
-          ) {
-            continue;
+    const declaredRelations = Array.from(canvas.querySelectorAll(declaredRelationSelector));
+    const declaredById = new Map(
+      declaredRelations
+        .map((relation) => [(relation.dataset.diagramRelationId || "").trim(), relation])
+        .filter(([relationId]) => Boolean(relationId))
+    );
+    const declaredRelationIds = new Set(declaredById.keys());
+    const primaryStage = canvas.querySelector(":scope > [data-diagram-stage]") || canvas;
+    if (!isRendered(primaryStage)) {
+      const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
+      const fallbackRoot = canvasId
+        ? canvas.ownerDocument.querySelector(
+          `[data-fallback-for="${CSS.escape(canvasId)}"]`
+        )
+        : null;
+      const fallbackByRelation = new Map();
+      if (fallbackRoot && isRendered(fallbackRoot)) {
+        fallbackRoot.querySelectorAll(fallbackCarrierSelector).forEach((carrier) => {
+          const relationId = (
+            carrier.dataset.fallbackRelationId ||
+            carrier.dataset.diagramVisibleRelationId ||
+            ""
+          ).trim();
+          if (!relationId) {
+            addIssue("fallback-relation-id-missing", canvasId || "unnamed-canvas");
+            return;
           }
-          if (containsPoint(rect, point, 3)) {
-            addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+          const values = fallbackByRelation.get(relationId) || [];
+          values.push(carrier);
+          fallbackByRelation.set(relationId, values);
+          if (!declaredById.has(relationId)) {
+            addIssue("fallback-relation-not-declared", relationId);
+          }
+        });
+      }
+      declaredById.forEach((declaration, relationId) => {
+        const fallbackCarriers = fallbackByRelation.get(relationId) || [];
+        if (!fallbackCarriers.length) {
+          addIssue("missing-geometric-carrier", relationId);
+          addIssue("declared-route-not-audited", relationId);
+          return;
+        }
+        if (fallbackCarriers.length !== 1) {
+          addIssue("fallback-relation-duplicate", relationId);
+          addIssue("declared-route-not-audited", relationId);
+          return;
+        }
+        const fallback = fallbackCarriers[0];
+        if (
+          (fallback.dataset.from || "") !== (declaration.dataset.from || "") ||
+          (fallback.dataset.to || "") !== (declaration.dataset.to || "") ||
+          (fallback.dataset.relationKind || "") !== (declaration.dataset.relationKind || "")
+        ) {
+          addIssue("fallback-relation-not-equivalent", relationId);
+          addIssue("declared-route-not-audited", relationId);
+        }
+      });
+      return;
+    }
+
+    const carriers = Array.from(primaryStage.querySelectorAll(geometricCarrierSelector))
+      .filter(isRendered);
+    const carriersByRelation = new Map();
+    carriers.forEach((carrier) => {
+      const relationId = (carrier.dataset.diagramVisibleRelationId || "").trim();
+      if (!relationId) return;
+      const values = carriersByRelation.get(relationId) || [];
+      values.push(carrier);
+      carriersByRelation.set(relationId, values);
+    });
+
+    declaredRelationIds.forEach((relationId) => {
+      if (!carriersByRelation.has(relationId)) {
+        addIssue("missing-geometric-carrier", relationId);
+      }
+    });
+
+    const auditedRelationIds = new Set();
+    carriers
+      .filter((carrier) => localNameOf(carrier) === "path")
+      .forEach((path) => {
+        const relationId = path.dataset.diagramVisibleRelationId || "unknown";
+        if (typeof path.getTotalLength !== "function") return;
+        let length = Number.NaN;
+        try {
+          length = path.getTotalLength();
+        } catch (_error) {
+          return;
+        }
+        auditedRelationIds.add(relationId);
+        if (!Number.isFinite(length) || length < 24) {
+          addIssue("route-too-short", relationId);
+          return;
+        }
+        if (!path.getAttribute("marker-end")) {
+          addIssue("route-arrowhead-missing", relationId);
+        }
+        const sourceId = path.dataset.from || "";
+        const targetId = path.dataset.to || "";
+        const sourceRect = nodeRects.get(sourceId);
+        const targetRect = nodeRects.get(targetId);
+        const startPoint = pointOnScreen(path, 0);
+        const endPoint = pointOnScreen(path, length);
+        if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
+          addIssue("route-source-not-anchored", relationId);
+        }
+        if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
+          addIssue("route-target-not-anchored", relationId);
+        }
+        const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
+        for (let index = 1; index < sampleCount; index += 1) {
+          const progress = index / sampleCount;
+          const point = pointOnScreen(path, length * progress);
+          if (!point) break;
+          for (const [nodeId, rect] of nodeRects) {
+            if (
+              (nodeId === sourceId && progress < 0.08) ||
+              (nodeId === targetId && progress > 0.92)
+            ) {
+              continue;
+            }
+            if (containsPoint(rect, point, 3)) {
+              addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+            }
+          }
+          for (const label of labels) {
+            if (label.dataset.routeLabelFor === relationId) continue;
+            if (containsPoint(label.getBoundingClientRect(), point, 1)) {
+              addIssue("route-crosses-label", relationId);
+              break;
+            }
           }
         }
-        for (const label of labels) {
-          if (label.dataset.routeLabelFor === relationId) continue;
-          if (containsPoint(label.getBoundingClientRect(), point, 1)) {
-            addIssue("route-crosses-label", relationId);
-            break;
-          }
-        }
+      });
+
+    declaredRelationIds.forEach((relationId) => {
+      if (!auditedRelationIds.has(relationId)) {
+        addIssue("declared-route-not-audited", relationId);
       }
     });
   };
@@ -879,6 +1874,32 @@
     }
   };
 
+  const controlsAreAvailable = (controls) => {
+    if (!controls) return false;
+    if (controls.hasAttribute("data-diagram-controls")) {
+      return controls.dataset.diagramControlsVisible === "true";
+    }
+    return !controls.hidden;
+  };
+
+  const reflectReadingGuideCapability = (canvas, controls) => {
+    const controlRegion = controls?.closest("[data-reading-guide-controls]");
+    const guide = controlRegion?.closest('[data-diagram-reading-guide="1"]');
+    if (!controlRegion || !guide) return;
+    const hasDetails = Array.from(canvas.querySelectorAll(detailTriggerSelector))
+      .some((trigger) => (trigger.dataset.detailFor || "").trim());
+    const hasZoom = controlsAreAvailable(controls);
+    const capability = hasDetails && hasZoom
+      ? "details-zoom"
+      : hasDetails
+        ? "details"
+        : hasZoom
+          ? "zoom"
+          : "none";
+    controlRegion.dataset.interactionCapability = capability;
+    guide.dataset.readingGuideControlsState = capability === "none" ? "empty" : "active";
+  };
+
   const auditControls = (canvas, addIssue) => {
     const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
     const controls = document.querySelector(
@@ -888,11 +1909,37 @@
       addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
       return;
     }
+    reflectReadingGuideCapability(canvas, controls);
     const controlRegion = controls.closest("[data-reading-guide-controls]");
     const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
     if (!controlRegion || !interaction) {
       addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
       return;
+    }
+    const scaleAttribute = controls.hasAttribute("data-sequence-toolbar")
+      ? "sequenceScale"
+      : "diagramZoomControl";
+    const scaleSelector = controls.hasAttribute("data-sequence-toolbar")
+      ? "[data-sequence-scale]"
+      : "[data-diagram-zoom-control]";
+    const scaleOrder = Array.from(controls.querySelectorAll(scaleSelector))
+      .map((button) => button.dataset[scaleAttribute]);
+    if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
+      addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
+    }
+    const guide = controlRegion.closest("[data-diagram-reading-guide='1']");
+    if (guide && isRendered(guide) && isRendered(canvas)) {
+      const guideRect = guide.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      if (
+        Math.abs(guideRect.left - canvasRect.left) > epsilon ||
+        Math.abs(guideRect.right - canvasRect.right) > epsilon
+      ) {
+        addIssue(
+          "guide-canvas-horizontal-misalignment",
+          `${Math.round(guideRect.left - canvasRect.left)}:${Math.round(guideRect.right - canvasRect.right)}`
+        );
+      }
     }
     const interactionRect = interaction.getBoundingClientRect();
     const controlsRect = controls.getBoundingClientRect();
@@ -950,6 +1997,66 @@
     return results;
   };
 
+  const reflectDetailState = (detail) => {
+    if (!detail?.id) return;
+    document.querySelectorAll(
+      `${detailTriggerSelector}[data-detail-for="${CSS.escape(detail.id)}"]`
+    ).forEach((trigger) => {
+      trigger.setAttribute("aria-expanded", detail.open ? "true" : "false");
+    });
+  };
+
+  const openDetailTarget = (trigger, { focus = true } = {}) => {
+    const detailId = (trigger?.dataset.detailFor || "").trim();
+    const detail = detailId ? document.getElementById(detailId) : null;
+    if (
+      !detail ||
+      localNameOf(detail) !== "details" ||
+      detail.dataset.diagramDetail !== detailId
+    ) {
+      return false;
+    }
+    detail.open = true;
+    reflectDetailState(detail);
+    if (focus) {
+      requestAnimationFrame(() => {
+        detail.querySelector("summary")?.focus({ preventScroll: true });
+      });
+    }
+    return true;
+  };
+
+  const enhanceDetailLinks = () => {
+    document.querySelectorAll("details[data-diagram-detail]").forEach((detail) => {
+      reflectDetailState(detail);
+      detail.addEventListener("toggle", () => reflectDetailState(detail));
+    });
+    document.addEventListener("click", (event) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+      const trigger = event.target.closest?.(detailTriggerSelector);
+      if (trigger) openDetailTarget(trigger);
+    }, { capture: true });
+    const openHashTarget = () => {
+      const detailId = decodeURIComponent(location.hash.slice(1));
+      if (!detailId) return;
+      const trigger = document.querySelector(
+        `${detailTriggerSelector}[data-detail-for="${CSS.escape(detailId)}"]`
+      );
+      if (trigger) openDetailTarget(trigger, { focus: false });
+    };
+    addEventListener("hashchange", openHashTarget);
+    openHashTarget();
+  };
+
   let auditQueued = false;
   const scheduleAudit = () => {
     if (auditQueued) return;
@@ -961,9 +2068,11 @@
   };
 
   const enhance = () => {
+    localizeShell();
     document
       .querySelectorAll(auditRoots)
       .forEach(suppressUnfilledCanvasText);
+    if (!globalThis.VibeDiagramDisclosure) enhanceDetailLinks();
     globalThis.VibeDiagramQuality = Object.freeze({ audit, auditAll, scheduleAudit });
     scheduleAudit();
     document.fonts?.ready.then(scheduleAudit, scheduleAudit);
@@ -974,6 +2083,15 @@
       );
     } else {
       addEventListener("resize", scheduleAudit);
+    }
+    if ("MutationObserver" in globalThis) {
+      const observer = new MutationObserver(scheduleAudit);
+      document.querySelectorAll("[data-diagram-controls], [data-sequence-toolbar]").forEach(
+        (controls) => observer.observe(controls, {
+          attributes: true,
+          attributeFilter: ["hidden", "data-diagram-controls-visible"]
+        })
+      );
     }
   };
 

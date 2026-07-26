@@ -4,9 +4,17 @@ Use `artifact-shell@1` for the document frame, `adaptive-viewport@1` for generic
 
 ## Global artifact shell
 
-All 59 templates declare exactly one `data-artifact-shell-title="1"` header, followed by exactly one `data-diagram-reading-guide="1"` evidence-and-notes section, followed by the first primary canvas. The guide contains exactly the `relations`, `evidence`, and `interaction` groups. Its `data-reading-guide-controls` region stays on the right at desktop widths and wraps below the guide at narrower widths. The interaction group is the first child of that region, directly above every generic `data-diagram-controls` set or sequence `data-sequence-toolbar` set. Each control set exposes Fit, 75%, 90%, and 100%.
+All 60 templates declare exactly one `data-artifact-shell-title="1"` header, followed by exactly one `data-diagram-reading-guide="1"` evidence-and-notes section, followed by the first primary canvas. The guide contains exactly the `relations`, `evidence`, and `interaction` groups. Its `data-reading-guide-controls` region stays on the right at desktop widths and wraps below the guide at narrower widths. The interaction group is the first child of that region, directly above every generic `data-diagram-controls` set or sequence `data-sequence-toolbar` set. Each control set exposes 75%, 90%, 100%, then Auto.
 
 The canonical shell CSS and shared runtime come from `assets/contracts/artifact-shell/v1.css` and `assets/contracts/artifact-shell/v1.js`; both are embedded byte-for-byte in every template. The runtime removes only unresolved `canvas-text-NNN` text nodes from an unfilled preview and no-ops once real task content is present. It also runs the screenshot-free computed layout audit described below. The builder verifies both kernels, DOM order, guide groups, interaction position, evidence states, control ancestry, control modes, runtime-audit tokens, and all-template coverage. Templates do not get an after-canvas evidence exception.
+
+### 0.1.10 reading guide and interaction shell
+
+- The reading guide shows only the relationship legend and three short evidence labels: user-provided facts, completed checks, and not-yet-verified. Remove the old how-to-read caption, evidence prose, and decorative leading separators.
+- Chinese artifacts use one fixed localized node-detail instruction. Controls always appear in the order `75%`, `90%`, `100%`, then Auto.
+- The reading guide and primary canvas share the same horizontal boundaries. Their computed-browser left and right edge differences may not exceed `1 CSS px`. Wide diagrams scroll only inside their canvas and must not create page-level horizontal overflow.
+- In normal browsing, node details open in an anchored popover that flips and clamps to the viewport. It supports a close control, Escape, outside click, focus return, URL deep links, and browser back or forward navigation.
+- Native `details` elements are no-JavaScript and print fallbacks. Once enhancement is active, they must not consume a bottom section in the normal document flow.
 
 Canonical content surfaces outside the title and guide use only neutral `layout-slot-NNN`, `canvas-text-NNN`, and `canvas-attribute-NNN` placeholders. Semantic roles, relation kinds, and local reading hints are also content attributes and therefore use `canvas-attribute-NNN`. Object, group, detail, relation, participant, sequence, matrix, and architecture references use their matching neutral `layout-*-NNN` identifiers. These identifiers describe fill positions and reference integrity, not business roles. Hard-coded canvas copy, semantic metadata, or domain-named identifiers fail the canonical build.
 
@@ -44,11 +52,21 @@ Each canvas exposes `data-computed-layout-audit="passed|failed"`, `data-computed
 
 ## Complexity and disclosure
 
-`contracts/family-policies.json` is the trusted allowlist for the ten generic families and 53 non-sequence templates. Family budgets are hard upper bounds; a template may only narrow them. When a canvas exceeds its budget, author an overview plus linked details instead of hiding semantics in runtime behavior. Progressive disclosure is optional enhancement: the baseline HTML must preserve native navigation, natural document flow, and printable detail content.
+`contracts/family-policies.json` is the trusted allowlist for the ten generic families and 54 non-sequence templates. Family budgets are hard upper bounds; a template may only narrow them. When a canvas exceeds its budget, author an overview plus linked details instead of hiding semantics in runtime behavior. Progressive disclosure is optional enhancement: the baseline HTML must preserve native navigation, natural document flow, and printable detail content.
+
+`contracts/template-routing.json` separately controls delivery readiness. Every family has exactly one routing-ready default, every template is classified as ready or blocked, and the scaffold refuses blocked templates. This keeps unfinished legacy grammars available for controlled migration without allowing them to re-enter normal generation. A ready template with authored relations must render those relations as primary SVG paths; an HTML relation ledger remains a narrow-screen or print fallback and cannot satisfy the geometric carrier contract.
+
+## 0.1.10 straight-first routing contract
+
+- Direct relationships have zero bends. Curves or decorative detours cannot bypass this rule.
+- Branch and merge routes have at most one necessary bend and enter or leave through clear boundary anchors.
+- Feedback loops declare `data-route-reason`, use an independent channel, and never compete with the primary path for the same space.
+- The linter checks declared bend budgets. Computed browser layout separately checks collisions between arrows, nodes, labels, and other visible relationships.
+- Size nodes for their actual copy before layout. Runtime checks text overflow, empty nodes, canvas utilization, and label overlap; never hide a failure by shrinking important text.
 
 ## Scope and evidence boundaries
 
-All 59 canonical templates are registered under `artifact-shell@1`. The 53 generic templates additionally use the adaptive and semantic relation contracts. The six sequence templates remain governed by `sequence-contract@1` for canvas behavior while sharing only the global artifact shell; do not double-parse them as generic canvases.
+All 60 canonical templates are registered under `artifact-shell@1`. The 54 generic templates additionally use the adaptive and semantic relation contracts. The six sequence templates remain governed by `sequence-contract@1` for canvas behavior while sharing only the global artifact shell; do not double-parse them as generic canvases.
 
 Canonical completeness is a source and static-contract statement. A computed-layout result is evidence only for the browser and viewport in which it ran. Neither source completeness nor a passing computed audit proves any client lifecycle. Keep `client_runtime` unverified until installation, discovery, invocation, output delivery, upgrade, and uninstall have actually been exercised.
 

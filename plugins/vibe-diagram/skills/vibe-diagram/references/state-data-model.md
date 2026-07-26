@@ -18,6 +18,10 @@ Copy the selected template and preserve its distinct modeling grammar.
 
 ## Modeling rules
 
+- A state machine has a normative initial state, durable states, events and guards, transition effects, a final state, and only necessary loops. Task steps without state semantics route to business flow.
+- Failure, retry, or manual takeover appears as a state only when it is independently durable. Ordinary exception actions must not be promoted to state nodes.
+- When the user explicitly requests a UML state machine, use strict UML semantics and notation rather than substituting the native Vibe style.
+
 - A state is a durable condition; an event causes evaluation; a transition names its guard and effect.
 - Show invalid transitions and error states, not only the happy path.
 - In entity views, separate identifiers, attributes, relationships, and constraints.

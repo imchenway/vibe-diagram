@@ -1,17 +1,17 @@
 {
-  "schema_version": 1,
-  "source_skill_content_sha256": "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48",
   "references": {
-    "business-architecture.md": "64ecb4e41237df19b36cd5a882f9f72e93d289040af06465302a3ab7fb7b8bd4",
-    "business-flow.md": "3de2d54d3bbf89579bb709620a9fb2e810d229390e24bd3c39fd50d5e7f33f26",
-    "code-sequence.md": "2de9dd7b763c640b0177b1a1f2fe8eca9e23099f3701a7a508002ce2536ecc22",
-    "decision-communication.md": "9ea619c5a1ec0cec6f29339a5619f9baf8f1f832fd605cbafbdf08784ec063ab",
-    "delivery-acceptance.md": "11c5728989ee7abeda89116d09f246b0a5fed4954bf741d4a75b174546400432",
+    "business-architecture.md": "a58339e0c238b91f31affd713a48a264399792083dbe40b8e85f2b2239f3e5fd",
+    "business-flow.md": "1409f68577a298b648132745513af151a3678f58f209f8c5ed7ed171af078ce7",
+    "code-sequence.md": "afc54fbb3c86c32c3678dd3ee8088c932fdaaf0445d475a2b364b6ce349ddeca",
+    "decision-communication.md": "65e05bb5c72b779e7798e316b96702fdf92e92fb78adb836d0c736a0fe529c69",
+    "delivery-acceptance.md": "c58d124e129a212b56718a2d9e91ea269cc6f19ec0367dcdcff17a65a6820365",
     "fault-debugging.md": "45b0acfb3d0778ea5e698916b1055d87ee0927ce0ec83e25e548828a4aac8ca2",
-    "feature-iteration.md": "991a32a95352470846bffef19c808ba124d512b9baf52c2a7d6454b7b3101b7f",
-    "page-mockup.md": "df25b59aef45438a6121956b8a8cb65fdcc8e64fcb94b36a3d69f02cced66aa8",
-    "state-data-model.md": "edf3eb31d240e78dc99a1f65fad2098216581aa465fbaf9fc4abe6bcc0c00598",
-    "system-architecture.md": "070abd3d5ddee4abf9ca139814b4d088d3a2d211ad9c62476eba82fea1f6cbeb",
-    "technical-design.md": "34b9fcc9a615fbd76f7ae88cefda6278b222fbad5684206a712fda235cbc95b0"
-  }
+    "feature-iteration.md": "8395b3e0ea61a57b058b08d0c9da2ac80a794d4559158b62f4cd1c174213b253",
+    "page-mockup.md": "66380feab8161b1dc28fee94db2106219e7c6b47372fce35bf6c4ca11c380047",
+    "state-data-model.md": "682001bfdbbaa35805269a9bdee31449cf045df00ea92d370ee99fb5b60a08ee",
+    "system-architecture.md": "6dd6dc99a079bfd1cee4e75a88c3b7a5e6438c1152b760c595987cd0753584e7",
+    "technical-design.md": "ade41c11dfa2f9777c253e933b3a29913de49cfbd1eede41c49c7ffb0b725e1d"
+  },
+  "schema_version": 1,
+  "source_skill_content_sha256": "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48"
 }

@@ -111,13 +111,9 @@ html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid] {
   overflow: auto;
   overscroll-behavior: contain;
   border: 1px solid rgba(94, 151, 207, .72);
-  border-radius: 1rem;
-  background:
-    radial-gradient(circle at 100% 0, rgba(214, 233, 255, .72), transparent 14rem),
-    linear-gradient(180deg, #fff, #f7fbff);
-  box-shadow:
-    0 1.25rem 3.5rem rgba(20, 57, 92, .24),
-    0 .25rem .8rem rgba(20, 57, 92, .12);
+  border-radius: .75rem;
+  background: #fff;
+  box-shadow: 0 1rem 2.5rem rgba(20, 57, 92, .22);
   pointer-events: auto;
 }
 
@@ -128,7 +124,7 @@ html[data-progressive-disclosure-enhanced="true"] [data-node-detail-grid]::befor
   z-index: 2;
   display: block;
   block-size: .24rem;
-  background: linear-gradient(90deg, #0877ff, #7c3aed, #00a56a);
+  background: #0877ff;
 }
 
 html[data-progressive-disclosure-enhanced="true"] details[data-diagram-detail] {

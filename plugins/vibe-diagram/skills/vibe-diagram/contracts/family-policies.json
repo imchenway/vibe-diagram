@@ -88,16 +88,68 @@
       "system-architecture/observability-view.html",
       "system-architecture/resilience-view.html",
       "system-architecture/security-view.html"
+    ],
+    "B14": [
+      "business-flow/logic-flowchart.html"
     ]
   },
   "families": {
     "business-architecture": {
       "limits": {"nodes": 32, "relations": 40, "groups": 10, "details": 8},
       "templates": {
-        "capability-domain-map": {"profile": "graph", "limits": {}},
+        "capability-domain-map": {
+          "profile": "graph",
+          "limits": {"details": 8},
+          "topology": "actor-domain-capability-object-rule-map",
+          "direction": "north-to-south",
+          "controls_mode": "persistent",
+          "required_regions": ["west", "center", "east", "lower-center", "south"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_geometric_direction": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "requires_localized_node_labels": true,
+          "quality": {
+            "requires_node_icons": true,
+            "requires_auxiliary_details": true,
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "max_top_whitespace_ratio": 0.02,
+            "max_bottom_whitespace_ratio": 0.04,
+            "min_horizontal_utilization_ratio": 0.94,
+            "uniform_width_regions": ["center"],
+            "uniform_gap_regions": ["center"],
+            "full_width_regions": ["south"],
+            "min_full_width_ratio": 0.94,
+            "min_relation_length": 24,
+            "min_distinct_relation_colors": 4,
+            "min_arrowhead_size": 6,
+            "max_arrowhead_size": 16
+          }
+        },
         "participant-boundary": {"profile": "graph", "limits": {}},
         "rule-constraint-heatmap": {"profile": "matrix", "limits": {}},
-        "value-chain-map": {"profile": "graph", "limits": {}}
+        "value-chain-map": {
+          "profile": "graph",
+          "limits": {"nodes": 8, "relations": 8, "groups": 3, "details": 8},
+          "topology": "value-chain-feedback-loop",
+          "direction": "west-to-east",
+          "required_regions": ["primary-chain", "outcome", "feedback"],
+          "requires_branch": false,
+          "requires_merge": false,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "min_relation_length": 28,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        }
       }
     },
     "business-flow": {
@@ -114,7 +166,46 @@
           "requires_branch": true,
           "requires_merge": false
         },
-        "exception-branch-flow": {"profile": "graph", "limits": {}},
+        "exception-branch-flow": {
+          "profile": "graph",
+          "limits": {"nodes": 7, "relations": 8, "groups": 6, "details": 7},
+          "topology": "exception-compensation-rejoin",
+          "direction": "north-to-south",
+          "required_regions": ["entry", "process", "decision", "branches", "merge", "exit"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_geometric_direction": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "min_relation_length": 30,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        },
+        "logic-flowchart": {
+          "profile": "graph",
+          "limits": {"nodes": 7, "relations": 8, "groups": 6, "details": 7},
+          "topology": "decision-branch-merge",
+          "direction": "north-to-south",
+          "required_regions": ["entry", "process", "decision", "branches", "merge", "exit"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_geometric_direction": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "min_relation_length": 32,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        },
         "stage-track": {"profile": "timeline", "limits": {}},
         "swimlane-flow": {"profile": "graph", "limits": {"nodes": 24}}
       }
@@ -123,7 +214,10 @@
       "limits": {"nodes": 28, "relations": 32, "groups": 8, "details": 8},
       "templates": {
         "decision-tree": {"profile": "graph", "limits": {}},
-        "option-matrix-path": {"profile": "matrix", "limits": {}},
+        "option-matrix-path": {
+          "profile": "matrix",
+          "limits": {"nodes": 5, "groups": 3, "details": 5}
+        },
         "recommended-path": {"profile": "graph", "limits": {}},
         "tradeoff-quadrant": {"profile": "matrix", "limits": {}}
       }
@@ -131,7 +225,10 @@
     "delivery-acceptance": {
       "limits": {"nodes": 36, "relations": 42, "groups": 10, "details": 10},
       "templates": {
-        "acceptance-ledger": {"profile": "ledger", "limits": {}},
+        "acceptance-ledger": {
+          "profile": "matrix",
+          "limits": {"nodes": 5, "groups": 3, "details": 5}
+        },
         "delivery-timeline": {"profile": "timeline", "limits": {}},
         "evidence-swimlane": {"profile": "graph", "limits": {}},
         "risk-action-board": {"profile": "ledger", "limits": {}}
@@ -142,16 +239,75 @@
       "templates": {
         "before-after-flow": {"profile": "graph", "limits": {}},
         "bpmn-debug-flow": {"profile": "graph", "limits": {}},
-        "causal-chain": {"profile": "graph", "limits": {}},
+        "causal-chain": {
+          "profile": "graph",
+          "limits": {"nodes": 9, "relations": 10, "groups": 6, "details": 9},
+          "topology": "evidence-root-cause-fix-verification",
+          "direction": "west-to-east",
+          "required_regions": ["observations", "hypotheses", "root-cause", "remediation", "verification", "outcome"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "min_relation_length": 30,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        },
         "state-data-breakpoint": {"profile": "matrix", "limits": {}}
       }
     },
     "feature-iteration": {
       "limits": {"nodes": 30, "relations": 36, "groups": 10, "details": 8},
       "templates": {
-        "current-target-flow": {"profile": "graph", "limits": {}},
+        "current-target-flow": {
+          "profile": "graph",
+          "limits": {"nodes": 8, "relations": 4, "groups": 2, "details": 8},
+          "topology": "current-target-paired-evolution",
+          "direction": "west-to-east",
+          "controls_mode": "persistent",
+          "required_regions": ["current", "target"],
+          "requires_branch": false,
+          "requires_merge": false,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "requires_localized_node_labels": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "max_top_whitespace_ratio": 0.08,
+            "max_bottom_whitespace_ratio": 0.08,
+            "min_horizontal_utilization_ratio": 0.9,
+            "min_relation_length": 120,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        },
         "diff-heatmap": {"profile": "matrix", "limits": {}},
-        "release-rollback-track": {"profile": "timeline", "limits": {}}
+        "release-rollback-track": {
+          "profile": "graph",
+          "limits": {"nodes": 8, "relations": 9, "groups": 6, "details": 8},
+          "topology": "release-observe-threshold-rollback-recovery",
+          "direction": "west-to-east",
+          "required_regions": ["release", "decision", "success", "rollback", "recovery", "outcome"],
+          "requires_branch": true,
+          "requires_merge": true,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "min_relation_length": 30,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        }
       }
     },
     "page-mockup": {
@@ -160,7 +316,10 @@
         "artboard-filmstrip": {"profile": "artboard", "limits": {}},
         "artboard-wireframe": {"profile": "artboard", "limits": {}},
         "primary-path-page-flow": {"profile": "graph", "limits": {}},
-        "responsive-state-board": {"profile": "artboard", "limits": {}}
+        "responsive-state-board": {
+          "profile": "artboard",
+          "limits": {"nodes": 8, "relations": 7, "groups": 4, "details": 8}
+        }
       }
     },
     "state-data-model": {
@@ -170,7 +329,29 @@
         "er-lite": {"profile": "graph", "limits": {}},
         "lifecycle-track": {"profile": "timeline", "limits": {}},
         "state-event-matrix": {"profile": "matrix", "limits": {}},
-        "state-machine": {"profile": "graph", "limits": {}}
+        "state-machine": {
+          "profile": "graph",
+          "limits": {"nodes": 6, "relations": 6, "groups": 5, "details": 6},
+        "topology": "state-transition-with-retry",
+          "direction": "west-to-east",
+          "controls_mode": "persistent",
+          "required_regions": ["initial", "active", "decision", "outcomes", "terminal"],
+          "requires_branch": true,
+        "requires_merge": false,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "max_top_whitespace_ratio": 0.05,
+            "max_bottom_whitespace_ratio": 0.05,
+            "min_horizontal_utilization_ratio": 0.96,
+            "min_relation_length": 60,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        }
       }
     },
     "system-architecture": {
@@ -258,7 +439,30 @@
       "limits": {"nodes": 34, "relations": 44, "groups": 10, "details": 8},
       "templates": {
         "api-contract-swimlane": {"profile": "graph", "limits": {}},
-        "data-consistency-boundary": {"profile": "graph", "limits": {}},
+        "data-consistency-boundary": {
+          "profile": "graph",
+          "limits": {"nodes": 8, "relations": 8, "groups": 5, "details": 8},
+          "topology": "outbox-consistency-boundaries",
+          "direction": "west-to-east",
+          "controls_mode": "persistent",
+          "required_regions": ["transaction", "delivery", "consumption", "recovery", "constraints"],
+          "requires_branch": false,
+          "requires_merge": false,
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "requires_localized_node_labels": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "max_top_whitespace_ratio": 0.06,
+            "max_bottom_whitespace_ratio": 0.04,
+            "min_horizontal_utilization_ratio": 0.97,
+            "min_relation_length": 18,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        },
         "module-contract-data-topology": {"profile": "graph", "limits": {}},
         "release-switch-track": {"profile": "timeline", "limits": {}}
       }

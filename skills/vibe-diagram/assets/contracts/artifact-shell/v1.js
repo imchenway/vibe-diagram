@@ -1,10 +1,65 @@
 (() => {
   "use strict";
+  document.documentElement.classList.add("vibe-js");
 
   const unresolvedCanvasText = /^\s*\{\{canvas-text-\d{3}\}\}\s*$/;
-  const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
+  const detailTriggerSelector = "[data-diagram-detail-trigger]";
+  const declaredRelationSelector = "[data-diagram-relation-id]";
+  const geometricCarrierSelector = [
+    "svg path[data-diagram-visible-relation-id]",
+    "svg line[data-diagram-visible-relation-id]",
+    "svg polyline[data-diagram-visible-relation-id]",
+    "svg polygon[data-diagram-visible-relation-id]"
+  ].join(", ");
+  const fallbackCarrierSelector = [
+    "[data-fallback-relation-id]",
+    '[data-visible-relation-kind="edge"][data-diagram-visible-relation-id]'
+  ].join(", ");
   const auditRoots = "[data-diagram-canvas], [data-sequence-canvas]";
   const epsilon = 1;
+  const permitsOverflow = (element, axis) => {
+    const owner = element.closest?.("[data-diagram-overflow-intent]");
+    const intent = owner?.dataset.diagramOverflowIntent || "";
+    return intent === "both-scroll" || intent === `${axis}-scroll`;
+  };
+
+  const localizeShell = () => {
+    const language = (document.documentElement.lang || "").toLowerCase();
+    const isChinese = language === "zh" || language.startsWith("zh-");
+    document.querySelectorAll("[data-reading-guide-heading]").forEach((heading) => {
+      heading.remove();
+    });
+    const groupLabels = {
+      relations: isChinese ? "\u5173\u7cfb\u7c7b\u578b" : "Line types",
+      evidence: isChinese ? "\u8bc1\u636e\u72b6\u6001" : "Evidence states",
+      interaction: isChinese ? "\u4ea4\u4e92\u65b9\u5f0f" : "Interaction"
+    };
+    document.querySelectorAll("[data-reading-guide-group]").forEach((group) => {
+      const label = group.querySelector(":scope > [data-reading-guide-group-title]");
+      const text = groupLabels[group.dataset.readingGuideGroup];
+      if (label && text) label.textContent = text;
+    });
+    const evidenceLabels = {
+      "evidence-observed": isChinese ? "\u7528\u6237\u63d0\u4f9b\u4e8b\u5b9e" : "Observed implementation",
+      "evidence-check": isChinese ? "\u5df2\u5b8c\u6210\u68c0\u67e5" : "Completed check",
+      "evidence-unresolved": isChinese ? "\u5c1a\u672a\u9a8c\u8bc1" : "Not yet verified"
+    };
+    document.querySelectorAll("[data-evidence-id] > b").forEach((label) => {
+      const text = evidenceLabels[label.parentElement?.dataset.evidenceId];
+      if (text) label.textContent = text;
+    });
+    document.querySelectorAll(
+      "[data-interaction-hint='node-detail'] [data-reading-guide-item] b"
+    ).forEach((label) => {
+      label.textContent =
+        "\u70b9\u51fb\u4efb\u4e00\u4e3b\u8282\u70b9\u67e5\u770b\u5bf9\u5e94\u8be6\u60c5";
+    });
+    document.querySelectorAll(
+      "[data-diagram-zoom-control='fit'], [data-sequence-scale='fit']"
+    ).forEach((button) => {
+      button.textContent = "\u81ea\u9002\u5e94";
+    });
+  };
 
   const suppressUnfilledCanvasText = (root) => {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -34,6 +89,20 @@
     );
   };
 
+  const isRendered = (element) => {
+    const style = getComputedStyle(element);
+    return (
+      style.display !== "none" &&
+      style.visibility !== "hidden" &&
+      Number.parseFloat(style.opacity || "1") > 0 &&
+      element.getClientRects().length > 0
+    );
+  };
+
+  const localNameOf = (element) => (
+    element.localName || element.tagName || ""
+  ).toLowerCase();
+
   const overlaps = (left, right, inset = epsilon) => (
     left.left + inset < right.right &&
     left.right - inset > right.left &&
@@ -46,6 +115,13 @@
     point.x < rect.right - inset &&
     point.y > rect.top + inset &&
     point.y < rect.bottom - inset
+  );
+
+  const escapesBounds = (outer, inner, tolerance = epsilon) => (
+    inner.left < outer.left - tolerance ||
+    inner.right > outer.right + tolerance ||
+    inner.top < outer.top - tolerance ||
+    inner.bottom > outer.bottom + tolerance
   );
 
   const pointOnBoundary = (rect, point, tolerance = 6) => {
@@ -69,7 +145,28 @@
   };
 
   const parseColor = (value) => {
-    const match = value.match(
+    const normalized = (value || "").trim();
+    if (normalized === "transparent" || normalized === "none") {
+      return { red: 0, green: 0, blue: 0, alpha: 0 };
+    }
+    const hex = normalized.match(/^#([\da-f]{3,8})$/i);
+    if (hex) {
+      let payload = hex[1];
+      if (payload.length === 3 || payload.length === 4) {
+        payload = Array.from(payload, (part) => part + part).join("");
+      }
+      if (payload.length === 6 || payload.length === 8) {
+        return {
+          red: Number.parseInt(payload.slice(0, 2), 16) / 255,
+          green: Number.parseInt(payload.slice(2, 4), 16) / 255,
+          blue: Number.parseInt(payload.slice(4, 6), 16) / 255,
+          alpha: payload.length === 8
+            ? Number.parseInt(payload.slice(6, 8), 16) / 255
+            : 1
+        };
+      }
+    }
+    const match = normalized.match(
       /rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*[,/]\s*(\d*(?:\.\d+)?))?\s*\)/
     );
     if (!match) return null;
@@ -92,18 +189,36 @@
   const auditDetailLinks = (canvas, addIssue) => {
     const documentRoot = canvas.ownerDocument;
     canvas.querySelectorAll(detailTriggerSelector).forEach((trigger) => {
-      const detailId = trigger.dataset.detailFor || "";
-      const detail = detailId
-        ? documentRoot.querySelector(`[data-diagram-detail="${CSS.escape(detailId)}"]`)
-        : null;
-      if (!detail) {
-        addIssue("detail-target-missing", detailId || "unnamed-trigger");
+      const detailId = (trigger.dataset.detailFor || "").trim();
+      const triggerIdentity = (
+        trigger.getAttribute("aria-label") ||
+        trigger.getAttribute("data-node-primary-label") ||
+        trigger.textContent ||
+        ""
+      ).trim();
+      if (!detailId) {
+        addIssue(
+          "detail-trigger-target-empty",
+          triggerIdentity || trigger.dataset.diagramDetailTrigger || "unnamed-trigger"
+        );
         return;
       }
-      if (trigger.tagName !== "A" || trigger.getAttribute("href") !== `#${detailId}`) {
+      if (!triggerIdentity) {
+        addIssue("detail-trigger-empty", detailId);
+      }
+      const detail = documentRoot.getElementById(detailId);
+      if (!detail) {
+        addIssue("detail-target-missing", detailId);
+        return;
+      }
+      if (localNameOf(trigger) !== "a" || trigger.getAttribute("href") !== `#${detailId}`) {
         addIssue("detail-trigger-not-native-link", detailId);
       }
-      if (detail.tagName !== "DETAILS" || detail.id !== detailId) {
+      if (
+        localNameOf(detail) !== "details" ||
+        detail.id !== detailId ||
+        detail.dataset.diagramDetail !== detailId
+      ) {
         addIssue("detail-target-not-native-details", detailId);
       }
     });
@@ -125,23 +240,111 @@
         }
       }
     }
-    canvas.querySelectorAll("foreignObject > *, [data-node-title], [data-node-summary]").forEach(
-      (content) => {
-        if (!isVisible(content)) return;
-        if (
-          content.scrollWidth > content.clientWidth + epsilon ||
-          content.scrollHeight > content.clientHeight + epsilon
-        ) {
-          addIssue(
-            "node-content-overflow",
-            content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || content.tagName
-          );
-        }
+
+    nodes.forEach((node) => {
+      const nodeId = node.dataset.diagramNodeId || "unnamed-node";
+      if (
+        "scrollWidth" in node &&
+        "clientWidth" in node &&
+        (
+          (
+            node.scrollWidth > node.clientWidth + epsilon &&
+            !permitsOverflow(node, "horizontal")
+          ) ||
+          (
+            node.scrollHeight > node.clientHeight + epsilon &&
+            !permitsOverflow(node, "vertical")
+          )
+        )
+      ) {
+        addIssue("node-content-overflow", nodeId);
       }
-    );
+
+      node.querySelectorAll("*").forEach((content) => {
+        if (!isRendered(content)) return;
+        if (
+          "scrollWidth" in content &&
+          "clientWidth" in content &&
+          (
+            (
+              content.scrollWidth > content.clientWidth + epsilon &&
+              !permitsOverflow(content, "horizontal")
+            ) ||
+            (
+              content.scrollHeight > content.clientHeight + epsilon &&
+              !permitsOverflow(content, "vertical")
+            )
+          )
+        ) {
+          addIssue("node-content-overflow", nodeId);
+        }
+      });
+
+      const svgSurface = Array.from(node.children).find(
+        (child) => localNameOf(child) === "rect" && isRendered(child)
+      );
+      if (!svgSurface) return;
+      const surfaceRect = svgSurface.getBoundingClientRect();
+      node.querySelectorAll("text, foreignObject").forEach((content) => {
+        if (!isRendered(content)) return;
+        const contentRect = content.getBoundingClientRect();
+        if (escapesBounds(surfaceRect, contentRect, 2)) {
+          addIssue("node-content-overflow", nodeId);
+        }
+      });
+    });
+
+    canvas.querySelectorAll("[data-architecture-landmark-for]").forEach((landmark) => {
+      if (!isRendered(landmark)) return;
+      const nodeId = (landmark.dataset.architectureLandmarkFor || "").trim();
+      const surface = Array.from(landmark.children).find(
+        (child) => localNameOf(child) === "rect" && isRendered(child)
+      );
+      if (!surface) return;
+      const surfaceRect = surface.getBoundingClientRect();
+      landmark.querySelectorAll("text, foreignObject").forEach((content) => {
+        if (!isRendered(content)) return;
+        if (escapesBounds(surfaceRect, content.getBoundingClientRect(), 2)) {
+          addIssue("node-content-overflow", nodeId || "unnamed-landmark");
+        }
+      });
+    });
+
+    canvas.querySelectorAll("foreignObject > *").forEach((content) => {
+      if (!isRendered(content)) return;
+      if (
+        "scrollWidth" in content &&
+        "clientWidth" in content &&
+        "scrollHeight" in content &&
+        "clientHeight" in content &&
+        (
+          (
+            content.scrollWidth > content.clientWidth + epsilon &&
+            !permitsOverflow(content, "horizontal")
+          ) ||
+          (
+            content.scrollHeight > content.clientHeight + epsilon &&
+            !permitsOverflow(content, "vertical")
+          )
+        )
+      ) {
+        addIssue(
+          "node-content-overflow",
+          content.closest("[data-diagram-node-id]")?.dataset.diagramNodeId || localNameOf(content)
+        );
+      }
+    });
+
     canvas.querySelectorAll("[data-diagram-detail-trigger='auxiliary']").forEach((trigger) => {
-      if (!isVisible(trigger)) return;
-      const color = parseColor(getComputedStyle(trigger).backgroundColor);
+      if (!isRendered(trigger)) return;
+      const svgSurface = trigger.querySelector("rect, path, polygon, circle, ellipse");
+      const surface = svgSurface || trigger;
+      const surfaceStyle = getComputedStyle(surface);
+      const color = parseColor(
+        svgSurface
+          ? surfaceStyle.fill || svgSurface.getAttribute("fill") || ""
+          : surfaceStyle.backgroundColor
+      );
       if (!color || color.alpha < 0.85) {
         addIssue("auxiliary-node-background-transparent", trigger.dataset.detailFor || "unknown");
         return;
@@ -159,53 +362,154 @@
         .filter(isVisible)
         .map((node) => [node.dataset.diagramNodeId, node.getBoundingClientRect()])
     );
+    canvas.querySelectorAll("[data-architecture-landmark-for]").forEach((landmark) => {
+      if (!isRendered(landmark)) return;
+      const nodeId = (landmark.dataset.architectureLandmarkFor || "").trim();
+      if (!nodeId) return;
+      const surface = Array.from(landmark.children).find(
+        (child) => localNameOf(child) === "rect" && isRendered(child)
+      );
+      nodeRects.set(nodeId, (surface || landmark).getBoundingClientRect());
+    });
     const labels = Array.from(canvas.querySelectorAll("svg text")).filter(isVisible);
-    canvas.querySelectorAll("path[data-diagram-visible-relation-id]").forEach((path) => {
-      if (typeof path.getTotalLength !== "function") return;
-      const relationId = path.dataset.diagramVisibleRelationId || "unknown";
-      const length = path.getTotalLength();
-      if (!Number.isFinite(length) || length < 24) {
-        addIssue("route-too-short", relationId);
-        return;
-      }
-      if (!path.getAttribute("marker-end")) {
-        addIssue("route-arrowhead-missing", relationId);
-      }
-      const sourceId = path.dataset.from || "";
-      const targetId = path.dataset.to || "";
-      const sourceRect = nodeRects.get(sourceId);
-      const targetRect = nodeRects.get(targetId);
-      const startPoint = pointOnScreen(path, 0);
-      const endPoint = pointOnScreen(path, length);
-      if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
-        addIssue("route-source-not-anchored", relationId);
-      }
-      if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
-        addIssue("route-target-not-anchored", relationId);
-      }
-      const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
-      for (let index = 1; index < sampleCount; index += 1) {
-        const progress = index / sampleCount;
-        const point = pointOnScreen(path, length * progress);
-        if (!point) break;
-        for (const [nodeId, rect] of nodeRects) {
-          if (
-            (nodeId === sourceId && progress < 0.08) ||
-            (nodeId === targetId && progress > 0.92)
-          ) {
-            continue;
+    const declaredRelations = Array.from(canvas.querySelectorAll(declaredRelationSelector));
+    const declaredById = new Map(
+      declaredRelations
+        .map((relation) => [(relation.dataset.diagramRelationId || "").trim(), relation])
+        .filter(([relationId]) => Boolean(relationId))
+    );
+    const declaredRelationIds = new Set(declaredById.keys());
+    const primaryStage = canvas.querySelector(":scope > [data-diagram-stage]") || canvas;
+    if (!isRendered(primaryStage)) {
+      const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
+      const fallbackRoot = canvasId
+        ? canvas.ownerDocument.querySelector(
+          `[data-fallback-for="${CSS.escape(canvasId)}"]`
+        )
+        : null;
+      const fallbackByRelation = new Map();
+      if (fallbackRoot && isRendered(fallbackRoot)) {
+        fallbackRoot.querySelectorAll(fallbackCarrierSelector).forEach((carrier) => {
+          const relationId = (
+            carrier.dataset.fallbackRelationId ||
+            carrier.dataset.diagramVisibleRelationId ||
+            ""
+          ).trim();
+          if (!relationId) {
+            addIssue("fallback-relation-id-missing", canvasId || "unnamed-canvas");
+            return;
           }
-          if (containsPoint(rect, point, 3)) {
-            addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+          const values = fallbackByRelation.get(relationId) || [];
+          values.push(carrier);
+          fallbackByRelation.set(relationId, values);
+          if (!declaredById.has(relationId)) {
+            addIssue("fallback-relation-not-declared", relationId);
+          }
+        });
+      }
+      declaredById.forEach((declaration, relationId) => {
+        const fallbackCarriers = fallbackByRelation.get(relationId) || [];
+        if (!fallbackCarriers.length) {
+          addIssue("missing-geometric-carrier", relationId);
+          addIssue("declared-route-not-audited", relationId);
+          return;
+        }
+        if (fallbackCarriers.length !== 1) {
+          addIssue("fallback-relation-duplicate", relationId);
+          addIssue("declared-route-not-audited", relationId);
+          return;
+        }
+        const fallback = fallbackCarriers[0];
+        if (
+          (fallback.dataset.from || "") !== (declaration.dataset.from || "") ||
+          (fallback.dataset.to || "") !== (declaration.dataset.to || "") ||
+          (fallback.dataset.relationKind || "") !== (declaration.dataset.relationKind || "")
+        ) {
+          addIssue("fallback-relation-not-equivalent", relationId);
+          addIssue("declared-route-not-audited", relationId);
+        }
+      });
+      return;
+    }
+
+    const carriers = Array.from(primaryStage.querySelectorAll(geometricCarrierSelector))
+      .filter(isRendered);
+    const carriersByRelation = new Map();
+    carriers.forEach((carrier) => {
+      const relationId = (carrier.dataset.diagramVisibleRelationId || "").trim();
+      if (!relationId) return;
+      const values = carriersByRelation.get(relationId) || [];
+      values.push(carrier);
+      carriersByRelation.set(relationId, values);
+    });
+
+    declaredRelationIds.forEach((relationId) => {
+      if (!carriersByRelation.has(relationId)) {
+        addIssue("missing-geometric-carrier", relationId);
+      }
+    });
+
+    const auditedRelationIds = new Set();
+    carriers
+      .filter((carrier) => localNameOf(carrier) === "path")
+      .forEach((path) => {
+        const relationId = path.dataset.diagramVisibleRelationId || "unknown";
+        if (typeof path.getTotalLength !== "function") return;
+        let length = Number.NaN;
+        try {
+          length = path.getTotalLength();
+        } catch (_error) {
+          return;
+        }
+        auditedRelationIds.add(relationId);
+        if (!Number.isFinite(length) || length < 24) {
+          addIssue("route-too-short", relationId);
+          return;
+        }
+        if (!path.getAttribute("marker-end")) {
+          addIssue("route-arrowhead-missing", relationId);
+        }
+        const sourceId = path.dataset.from || "";
+        const targetId = path.dataset.to || "";
+        const sourceRect = nodeRects.get(sourceId);
+        const targetRect = nodeRects.get(targetId);
+        const startPoint = pointOnScreen(path, 0);
+        const endPoint = pointOnScreen(path, length);
+        if (!sourceRect || !startPoint || !pointOnBoundary(sourceRect, startPoint)) {
+          addIssue("route-source-not-anchored", relationId);
+        }
+        if (!targetRect || !endPoint || !pointOnBoundary(targetRect, endPoint)) {
+          addIssue("route-target-not-anchored", relationId);
+        }
+        const sampleCount = Math.max(8, Math.min(96, Math.ceil(length / 12)));
+        for (let index = 1; index < sampleCount; index += 1) {
+          const progress = index / sampleCount;
+          const point = pointOnScreen(path, length * progress);
+          if (!point) break;
+          for (const [nodeId, rect] of nodeRects) {
+            if (
+              (nodeId === sourceId && progress < 0.08) ||
+              (nodeId === targetId && progress > 0.92)
+            ) {
+              continue;
+            }
+            if (containsPoint(rect, point, 3)) {
+              addIssue("route-crosses-node", `${relationId}:${nodeId}`);
+            }
+          }
+          for (const label of labels) {
+            if (label.dataset.routeLabelFor === relationId) continue;
+            if (containsPoint(label.getBoundingClientRect(), point, 1)) {
+              addIssue("route-crosses-label", relationId);
+              break;
+            }
           }
         }
-        for (const label of labels) {
-          if (label.dataset.routeLabelFor === relationId) continue;
-          if (containsPoint(label.getBoundingClientRect(), point, 1)) {
-            addIssue("route-crosses-label", relationId);
-            break;
-          }
-        }
+      });
+
+    declaredRelationIds.forEach((relationId) => {
+      if (!auditedRelationIds.has(relationId)) {
+        addIssue("declared-route-not-audited", relationId);
       }
     });
   };
@@ -248,6 +552,32 @@
     }
   };
 
+  const controlsAreAvailable = (controls) => {
+    if (!controls) return false;
+    if (controls.hasAttribute("data-diagram-controls")) {
+      return controls.dataset.diagramControlsVisible === "true";
+    }
+    return !controls.hidden;
+  };
+
+  const reflectReadingGuideCapability = (canvas, controls) => {
+    const controlRegion = controls?.closest("[data-reading-guide-controls]");
+    const guide = controlRegion?.closest('[data-diagram-reading-guide="1"]');
+    if (!controlRegion || !guide) return;
+    const hasDetails = Array.from(canvas.querySelectorAll(detailTriggerSelector))
+      .some((trigger) => (trigger.dataset.detailFor || "").trim());
+    const hasZoom = controlsAreAvailable(controls);
+    const capability = hasDetails && hasZoom
+      ? "details-zoom"
+      : hasDetails
+        ? "details"
+        : hasZoom
+          ? "zoom"
+          : "none";
+    controlRegion.dataset.interactionCapability = capability;
+    guide.dataset.readingGuideControlsState = capability === "none" ? "empty" : "active";
+  };
+
   const auditControls = (canvas, addIssue) => {
     const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
     const controls = document.querySelector(
@@ -257,11 +587,37 @@
       addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
       return;
     }
+    reflectReadingGuideCapability(canvas, controls);
     const controlRegion = controls.closest("[data-reading-guide-controls]");
     const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
     if (!controlRegion || !interaction) {
       addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
       return;
+    }
+    const scaleAttribute = controls.hasAttribute("data-sequence-toolbar")
+      ? "sequenceScale"
+      : "diagramZoomControl";
+    const scaleSelector = controls.hasAttribute("data-sequence-toolbar")
+      ? "[data-sequence-scale]"
+      : "[data-diagram-zoom-control]";
+    const scaleOrder = Array.from(controls.querySelectorAll(scaleSelector))
+      .map((button) => button.dataset[scaleAttribute]);
+    if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
+      addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
+    }
+    const guide = controlRegion.closest("[data-diagram-reading-guide='1']");
+    if (guide && isRendered(guide) && isRendered(canvas)) {
+      const guideRect = guide.getBoundingClientRect();
+      const canvasRect = canvas.getBoundingClientRect();
+      if (
+        Math.abs(guideRect.left - canvasRect.left) > epsilon ||
+        Math.abs(guideRect.right - canvasRect.right) > epsilon
+      ) {
+        addIssue(
+          "guide-canvas-horizontal-misalignment",
+          `${Math.round(guideRect.left - canvasRect.left)}:${Math.round(guideRect.right - canvasRect.right)}`
+        );
+      }
     }
     const interactionRect = interaction.getBoundingClientRect();
     const controlsRect = controls.getBoundingClientRect();
@@ -319,6 +675,66 @@
     return results;
   };
 
+  const reflectDetailState = (detail) => {
+    if (!detail?.id) return;
+    document.querySelectorAll(
+      `${detailTriggerSelector}[data-detail-for="${CSS.escape(detail.id)}"]`
+    ).forEach((trigger) => {
+      trigger.setAttribute("aria-expanded", detail.open ? "true" : "false");
+    });
+  };
+
+  const openDetailTarget = (trigger, { focus = true } = {}) => {
+    const detailId = (trigger?.dataset.detailFor || "").trim();
+    const detail = detailId ? document.getElementById(detailId) : null;
+    if (
+      !detail ||
+      localNameOf(detail) !== "details" ||
+      detail.dataset.diagramDetail !== detailId
+    ) {
+      return false;
+    }
+    detail.open = true;
+    reflectDetailState(detail);
+    if (focus) {
+      requestAnimationFrame(() => {
+        detail.querySelector("summary")?.focus({ preventScroll: true });
+      });
+    }
+    return true;
+  };
+
+  const enhanceDetailLinks = () => {
+    document.querySelectorAll("details[data-diagram-detail]").forEach((detail) => {
+      reflectDetailState(detail);
+      detail.addEventListener("toggle", () => reflectDetailState(detail));
+    });
+    document.addEventListener("click", (event) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+      const trigger = event.target.closest?.(detailTriggerSelector);
+      if (trigger) openDetailTarget(trigger);
+    }, { capture: true });
+    const openHashTarget = () => {
+      const detailId = decodeURIComponent(location.hash.slice(1));
+      if (!detailId) return;
+      const trigger = document.querySelector(
+        `${detailTriggerSelector}[data-detail-for="${CSS.escape(detailId)}"]`
+      );
+      if (trigger) openDetailTarget(trigger, { focus: false });
+    };
+    addEventListener("hashchange", openHashTarget);
+    openHashTarget();
+  };
+
   let auditQueued = false;
   const scheduleAudit = () => {
     if (auditQueued) return;
@@ -330,9 +746,11 @@
   };
 
   const enhance = () => {
+    localizeShell();
     document
       .querySelectorAll(auditRoots)
       .forEach(suppressUnfilledCanvasText);
+    if (!globalThis.VibeDiagramDisclosure) enhanceDetailLinks();
     globalThis.VibeDiagramQuality = Object.freeze({ audit, auditAll, scheduleAudit });
     scheduleAudit();
     document.fonts?.ready.then(scheduleAudit, scheduleAudit);
@@ -343,6 +761,15 @@
       );
     } else {
       addEventListener("resize", scheduleAudit);
+    }
+    if ("MutationObserver" in globalThis) {
+      const observer = new MutationObserver(scheduleAudit);
+      document.querySelectorAll("[data-diagram-controls], [data-sequence-toolbar]").forEach(
+        (controls) => observer.observe(controls, {
+          attributes: true,
+          attributeFilter: ["hidden", "data-diagram-controls-visible"]
+        })
+      );
     }
   };
 

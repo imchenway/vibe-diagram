@@ -6,6 +6,17 @@
   const isNativeDetails = (detail) => detail.matches("details");
   const documentElementFor = (root) =>
     root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root.ownerDocument.documentElement;
+  const viewFor = (root) =>
+    root.nodeType === Node.DOCUMENT_NODE
+      ? root.defaultView
+      : root.ownerDocument.defaultView;
+  const decodedHashFor = (view) => {
+    try {
+      return decodeURIComponent(view?.location.hash.slice(1) || "");
+    } catch (_error) {
+      return "";
+    }
+  };
   const detailTriggerSelector = "[data-diagram-detail-trigger][data-detail-for]";
   const triggersFor = (root, id) =>
     Array.from(root.querySelectorAll(detailTriggerSelector)).filter(
@@ -115,12 +126,25 @@
     regionFor(detail)?.removeAttribute("data-runtime-active");
     reflect(root, id, isNativeDetails(detail) && detail.open);
   };
-  const close = (root = document, restoreFocus = true) => {
+  const close = (root = document, restoreFocus = true, clearHash = true) => {
     const detail = activeByRoot.get(root);
     if (!detail) return false;
+    const id = detail.dataset.diagramDetail;
     restoreDetail(root, detail);
     activeByRoot.delete(root);
     syncDocumentState(root);
+    const view = viewFor(root);
+    if (
+      clearHash
+      && view
+      && decodedHashFor(view) === id
+    ) {
+      view.history.replaceState(
+        view.history.state,
+        "",
+        `${view.location.pathname}${view.location.search}`
+      );
+    }
     if (restoreFocus) {
       const trigger = returnFocusByRoot.get(root);
       if (trigger?.isConnected) trigger.focus({ preventScroll: true });
@@ -138,7 +162,7 @@
     });
     syncDocumentState(root);
   };
-  const open = (root, id, trigger = null) => {
+  const open = (root, id, trigger = null, updateHash = true) => {
     const detail = root.querySelector(`[data-diagram-detail="${CSS.escape(id)}"]`);
     if (!detail) return false;
     const previous = activeByRoot.get(root);
@@ -165,6 +189,13 @@
     reflect(root, id, true);
     syncDocumentState(root);
     place(detail, trigger);
+    const view = viewFor(root);
+    if (updateHash && view) {
+      const nextHash = `#${encodeURIComponent(id)}`;
+      if (view.location.hash !== nextHash) {
+        view.history.pushState(view.history.state, "", nextHash);
+      }
+    }
     const focusTarget = detail.querySelector("summary") || detail;
     focusTarget.focus({ preventScroll: true });
     return true;
@@ -208,15 +239,22 @@
     root.addEventListener("keydown", (event) => {
       if (event.key === "Escape" && close(root, true)) event.preventDefault();
     });
-    const view = root.nodeType === Node.DOCUMENT_NODE
-      ? root.defaultView
-      : root.ownerDocument.defaultView;
+    const view = viewFor(root);
+    const openFromHash = () => {
+      if (!view?.location.hash) return false;
+      const id = decodedHashFor(view);
+      return open(root, id, null, false);
+    };
+    view?.addEventListener("hashchange", () => {
+      if (!openFromHash()) close(root, false, false);
+    });
     const reposition = () => {
       const detail = activeByRoot.get(root);
       if (detail) place(detail, returnFocusByRoot.get(root));
     };
     view?.addEventListener("resize", reposition);
     view?.addEventListener("scroll", reposition, true);
+    openFromHash();
   };
   const enhance = (root = document) => bind(root);
   globalThis.VibeDiagramDisclosure = Object.freeze({ bind, close, enhance, open, reset });

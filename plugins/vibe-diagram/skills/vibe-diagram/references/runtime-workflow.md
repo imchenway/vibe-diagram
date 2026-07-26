@@ -14,7 +14,20 @@ Produce a self-contained single-file HTML document as the primary artifact. Inli
 
 PNG or SVG may be added only when the user explicitly requests an image supplement; either must not replace the HTML artifact. Start from a matching asset template and replace its slots instead of rebuilding a generic card page.
 
-Create the artifact with `python3 <skill-root>/scripts/vibe_diagram_scaffold.py --type <family> --template <id> --output <path>`. Do not hand-create the file. Preserve the canonical style and script blocks, global artifact shell, slot inventory, template contract, and visual grammar. A canonical template is a content-neutral layout contract: it may fix topology, relative position, hierarchy, geometry, connection anchors, complexity budget, responsive transformation, and interaction capability, but it must not prescribe an entry, core, operations area, actor, component, state, module, title, icon, description, relation label, semantic role, relation kind, or evidence claim. Fill every neutral `layout-slot-NNN`, `canvas-text-NNN`, and `canvas-attribute-NNN` placeholder from the current task's facts. Keep canonical object, detail, relation, participant, matrix, and sequence references on their neutral `layout-*-NNN` identifiers; do not rename them to domain assumptions. If the selected layout cannot hold the primary model, choose another template or create mapped overview and detail artifacts.
+Create the artifact with `python3 <skill-root>/scripts/vibe_diagram_scaffold.py --type <family> --template <id> --standard native --output <path>` when no external notation was named. Do not hand-create the file. Preserve the canonical style and script blocks, global artifact shell, slot inventory, template contract, and visual grammar. A canonical template is a content-neutral layout contract: it may fix topology, relative position, hierarchy, geometry, connection anchors, complexity budget, responsive transformation, and interaction capability, but it must not prescribe an entry, core, operations area, actor, component, state, module, title, icon, description, relation label, semantic role, relation kind, or evidence claim. Fill every neutral `layout-slot-NNN`, `canvas-text-NNN`, and `canvas-attribute-NNN` placeholder from the current task's facts. Keep canonical object, detail, relation, participant, matrix, and sequence references on their neutral `layout-*-NNN` identifiers; do not rename them to domain assumptions. If the selected layout cannot hold the primary model, choose another template or create mapped overview and detail artifacts.
+
+`contracts/template-routing.json` is the fail-closed delivery allowlist. Use its family default when the user names only a diagram family or asks for a common view without a more specific topology. The scaffold and delivery linter reject templates whose true-diagram migration is still blocked; never bypass that result by copying a legacy file manually. For a generic request such as “draw a flowchart”, “show the logic”, or “explain this if/else”, select `business-flow/logic-flowchart`. Select exception, swimlane, or stage grammars only when the user's facts actually require compensation, responsibility lanes, or time stages.
+
+Native mode is the default only when the user has not named an external notation. If the user explicitly asks for UML, BPMN, C4, ArchiMate, or another standard, pass that name through `--standard` and apply the standard's real syntax and conformance rules. The scaffold fails closed while no strict canonical implementation exists; never omit `--standard`, silently downgrade to native mode, or route an explicit BPMN request to `bpmn-light-flow`.
+
+### 0.1.10 domain terms and drawing order
+
+- **Native family**: the Vibe Diagram grammar used when the user does not name an external standard. Every family has an independent structure; they do not share one card-grid grammar.
+- **Primary canvas**: the view carrying the main relationship geometry, not a thumbnail preview, relationship list, or explanation card.
+- **Direct route**: a zero-bend relationship between source and target. A **necessary bend** is reserved for one branch or merge. A **feedback loop** has a semantic reason and independent channel.
+- **Static contract**, **computed browser layout**, and **client lifecycle** are independent evidence classes; an earlier class never substitutes for a later one.
+
+The fixed work order is: select the correct family and grammar, size nodes and relationships for real copy, complete a readable primary canvas, then run scripts to detect regressions efficiently. Never assemble a diagram backward merely to pass checks, and never shrink text to conceal structural failure.
 
 ## Invocation completion
 
@@ -47,11 +60,14 @@ Route by the relationship the user must understand:
 - Calls, returns, async callbacks, retries, and time: code sequence.
 - State transitions, entities, lifecycle, or data movement: state/data model.
 - Symptom-to-cause evidence and repair verification: fault debugging.
-- Current-to-target behavior and rollout or rollback: feature iteration.
+- Current-to-target behavior: feature iteration.
 - Screen hierarchy, responsive states, or page journeys: page mockup.
 - Module contracts, consistency, release switching, or detailed engineering constraints: technical design.
 - Options, tradeoffs, recommendations, and decisions: decision communication.
-- Requirements, changes, evidence, risk, and sign-off: delivery acceptance.
+- Requirements, evidence, conclusions, and remaining actions: decision communication using an acceptance matrix view.
+- Release, observation, gates, compensation, or rollback: business flow; use a state machine only when the user explicitly asks for state semantics.
+
+`delivery-acceptance` and `feature-iteration/release-rollback-track` are one-cycle compatibility aliases only. New requests must use the destinations above.
 
 For any of the six sequence templates, read the `Sequence interaction contract` in its owning reference before editing the template.
 
@@ -67,9 +83,11 @@ Copy the selected HTML template, preserve `data-diagram-type`, `data-template-fa
 
 These requirements apply to every diagram family. They define generation discipline, not one universal drawing grammar. A family reference or policy owns family-specific fields and budgets; each template owns its topology, coordinates, slots, and permitted visual primitives.
 
+For every routing-ready template, the primary canvas must carry the meaning geometrically. Every authored relation binds to one visible SVG route anchored to its endpoint shapes; an HTML relation ledger is secondary fallback or evidence and cannot satisfy the primary carrier. A routing-ready graph or timeline gives every semantic node measurable SVG geometry and every directed route a visible arrowhead. Declared relations with zero audited routes are a hard failure, not an empty successful audit.
+
 ### G0 — Global shell and content-neutral templates
 
-Every artifact uses the same fail-closed document order: one title-and-conclusion region, one compact reading guide, then the first primary canvas. The reading guide always contains the line-type group, evidence-state group, and interaction group. The interaction group sits directly above every generic or sequence zoom control set in the guide's right-side control region. Each control set exposes Fit, 75%, 90%, and 100%; at narrower widths that region wraps below the guide without moving back into the title or canvas.
+Every artifact uses the same fail-closed document order: one title-and-conclusion region, one compact reading guide, then the first primary canvas. The reading guide always contains the line-type group, evidence-state group, and interaction group. Do not render “How to read this artifact”, evidence prose, or decorative group separators. The interaction group sits directly above every generic or sequence zoom control set in the guide's right-side control region. Each control set exposes 75%, 90%, 100%, then Auto; at narrower widths that region wraps below the guide without moving back into the title or canvas.
 
 Treat every canonical template as layout, not domain guidance. Never infer visible content from a template filename, CSS class, structural id, former example, position, color, or placeholder order. The canonical source must keep content surfaces neutral; generated artifacts replace those neutral placeholders with language-matched, evidence-backed content. The builder and linter reject a canonical template that restores hard-coded canvas copy, domain-named content slots, a moved guide, or controls outside the guide.
 
@@ -89,7 +107,7 @@ Expose the conclusion and primary reading path first. Place concise evidence bes
 
 For a generic canvas, put complete evidence in one `data-evidence-ledger="1"` container. Each evidence entry declares a unique `data-evidence-id`, one status (`observed`, `inferred`, `proposed`, or `unresolved`), the semantic ids it supports through `data-evidence-for`, and an authored source kind plus source reference. Plain prose in the `evidence-and-notes` slot is a note, not a verifiable evidence ledger, and must not be used as the only evidence carrier.
 
-Place that evidence ledger immediately after the title region and before the first diagram canvas without a template-specific exception. Combine the line-style legend and node evidence-color legend into the same compact reading guide instead of scattering separate legends around the page. When nodes expose mapped details, put one concise interaction hint in that same reading guide; never float the hint inside the SVG canvas. Keep the evidence portion to observed implementation, completed checks, and not-yet-verified claims. Keep detailed provenance in structured attributes and mapped node details instead of repeating it as a paragraph.
+Place that evidence ledger immediately after the title region and before the first diagram canvas without a template-specific exception. Combine the line-style legend and node evidence-color legend into the same compact reading guide instead of scattering separate legends around the page. When nodes expose mapped details, put one concise interaction hint in that same reading guide; Chinese artifacts always render the fixed localized instruction to click any primary node for its details. Never float the hint inside the SVG canvas. Keep the evidence portion to the three short labels observed implementation, completed checks, and not-yet-verified; keep detailed provenance only in structured attributes and mapped node details.
 
 ### G4 — Stable, collision-free visual encoding
 
@@ -99,7 +117,7 @@ Use each shape, line style, and color for one stable meaning. Color must never b
 
 Keep essential text readable. When the viewport or complexity budget is exceeded, prefer reflow, scoped scrolling, or mapped overview/detail views. Keep the zoom component in every template and keep its size, pressed state, focus state, and status treatment consistent. Runtime logic may hide an overflow-mode control set while a measurable canvas already fits, but the canonical component and its no-JavaScript/print-safe placement remain present.
 
-Use `data-diagram-controls-mode="overflow"` for a compact diagram where zoom is only a recovery aid. Use `data-diagram-controls-mode="persistent"` when user-controlled Fit, 75%, 90%, and 100% views are part of the intended viewer. In persistent mode, keep the controls visible whenever the stage is measurable, even when it already fits; manual percentages must still apply. In overflow mode, reveal controls only when the unscaled stage overflows. Re-evaluate both modes after container or viewport resize. Controls always stay in `data-reading-guide-controls` on the reading guide's right; they never return to the title or float over the canvas, and their hidden state never removes the scroll fallback.
+Use `data-diagram-controls-mode="overflow"` for a compact diagram where zoom is only a recovery aid. Use `data-diagram-controls-mode="persistent"` when user-controlled 75%, 90%, 100%, and Auto views are part of the intended viewer. In persistent mode, keep the controls visible whenever the stage is measurable, even when it already fits; manual percentages must still apply. In overflow mode, reveal controls only when the unscaled stage overflows. Re-evaluate both modes after container or viewport resize. Controls always stay in `data-reading-guide-controls` on the reading guide's right; they never return to the title or float over the canvas, and their hidden state never removes the scroll fallback.
 
 ### G6 — Equivalent fallback across environments
 
@@ -117,11 +135,13 @@ Keep the artifact self-contained, free of remote runtime dependencies, and trace
 
 Lay out the main path before secondary evidence. Keep arrows outside label boxes, route branches through explicit junctions, and avoid crossings through nodes. Prefer vertical scrolling on narrow screens; never solve density by shrinking essential text below readable size.
 
+Direct relations declare `data-route-intent="direct"` and have zero bends. Branch and merge routes declare their intent and may use at most one necessary bend. Feedback routes declare `data-route-intent="feedback"` plus a non-empty `data-route-reason`, stay in a dedicated channel, and must not re-enter through an ambiguous shared arrowhead.
+
 Use progressive detail: overview first, local evidence second, full ledger last. A large diagram may use internal navigation, but its default view must still expose the conclusion and primary path.
 
 For graph fallbacks, repeat authored relation ids and their `data-from`, `data-to`, and `data-relation-kind` endpoints. A list of node names or a sentence that merely says “A to B” is not an equivalent directional fallback because its direction cannot be verified without parsing visible prose.
 
-When the selected template supports node details, author one concise, language-matched title and summary on the primary node, then give it one owned native primary link mapped through `data-detail-for` to one native `details[data-diagram-detail]` block. Keep the outer semantic node as a non-link container when it also contains independent small-node links. Give every visible internal module, chip, or supporting card its own native auxiliary link and unique authored detail. With enhancement active, open the detail as a small anchored popover beside the selected trigger; clamp it to the viewport rather than turning it into a side inspector or full-width sheet. Closing it returns focus to the originating trigger. Detail content may contain paths and implementation evidence that would overload the primary canvas. Print must expose every detail block.
+When the selected template supports node details, author one concise, language-matched title and summary on the primary node, then give it one owned native primary link mapped through `data-detail-for` to one native `details[data-diagram-detail]` block. Keep the outer semantic node as a non-link container when it also contains independent small-node links. Give every visible internal module, chip, or supporting card its own native auxiliary link and unique authored detail. With enhancement active, open the detail as a small anchored popover beside the selected trigger; clamp and flip it within the viewport rather than turning it into a side inspector or full-width sheet. Esc, point-outside, the close button, and browser history must close or restore the correct deep-linked detail, and closing returns focus to the originating trigger. Native details stay out of normal layout when enhanced but must remain available without JavaScript and expand for print.
 
 ## Visual quality and accessibility
 
@@ -144,8 +164,10 @@ Before delivery:
 3. Confirm the HTML is self-contained, responsive, keyboard readable, and printable.
 4. Confirm template identity and macros remain valid.
 5. Run `python3 <skill-root>/scripts/vibe_diagram_lint.py <artifact> --type <family>` and fix every reported error.
-6. When computed browser geometry is material, wait for fonts, run `VibeDiagramQuality.auditAll()` at each declared viewport, and require `data-computed-layout-audit="passed"` with zero issues. Do not create screenshots or pixel baselines for this gate.
+6. When computed browser geometry is material, serve the artifact over local HTTP, wait for fonts, and run `VibeDiagramQuality.auditAll()` at `1440×900`, `1280×800`, and `390×844`. Require `data-computed-layout-audit="passed"` with zero issues, guide/canvas horizontal alignment within `1 CSS px`, zero text or node overflow, zero empty components, and zero meaningless bends. Exercise every node detail for positioning, close button, Esc, outside click, focus return, deep linking, browser history, and narrow-screen avoidance. Do not create screenshots or pixel baselines for this gate.
 7. Confirm the final response contains an HTML artifact path or, in text-only mode, one complete HTML code block; Mermaid-only delivery is forbidden.
 8. Return the artifact path plus only the brief context needed to use it.
 
 Static checks establish authored structure and supported SVG coordinates only. The shared browser audit evaluates the real computed layout at the declared desktop and narrow widths: node collisions and overflow, relation endpoints and crossings, group utilization, page-level horizontal overflow, and interaction/zoom order. Record viewport sizes plus the structured audit result. A screenshot is optional communication material only when explicitly requested; it is not acceptance evidence and no visual-diff baseline is maintained.
+
+The 0.1.10 evidence report has three layers. `static-contract-valid` covers only canonical sources and linting. `browser-layout-verified` covers only the actual Chromium build and tested viewports. `client-runtime-verified` requires real installation, discovery, invocation, delivery, upgrade, and uninstall. If the client lifecycle was not exercised in the current run, it remains explicitly unverified.

@@ -6,9 +6,9 @@
   transform-origin: top left;
 }
 
-[data-diagram-width="contained"] { inline-size: min(100%, 72rem); margin-inline: auto; }
+[data-diagram-width="contained"] { inline-size: 100%; margin-inline: 0; }
 [data-diagram-width="auto"] { inline-size: 100%; }
-[data-diagram-width="wide"] { inline-size: max-content; min-inline-size: 100%; }
+[data-diagram-width="wide"] { inline-size: 100%; overflow-x: auto; overflow-y: hidden; }
 [data-diagram-height="flow"] { block-size: auto; }
 [data-diagram-height="auto"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
 [data-diagram-height="scroll"] { max-block-size: clamp(32.5rem, 75vh, 56.25rem); overflow: auto; }
@@ -18,14 +18,28 @@
 }
 .diagram-fallback { display: none; }
 
+html:not(.vibe-js) [data-diagram-canvas] > [data-diagram-stage] {
+  display: none;
+}
+
+html:not(.vibe-js) [data-fallback-for] {
+  display: block;
+}
+
 @media (max-width: 48rem) {
   [data-diagram-mobile="stack"] [data-diagram-group-id] { position: static; }
-  [data-diagram-mobile="summary"] > [data-diagram-stage] { display: none; }
-  [data-diagram-mobile="summary"] + [data-fallback-for] { display: block; }
+  [data-diagram-mobile="summary"] {
+    overflow: auto;
+  }
+  [data-diagram-mobile="summary"] > [data-diagram-stage] {
+    display: block;
+    min-inline-size: max(var(--diagram-mobile-stage-min, 60rem), 100%) !important;
+  }
 }
 
 @media print {
   [data-diagram-canvas] { max-block-size: none; overflow: visible; transform: none; }
+  [data-diagram-canvas] > [data-diagram-stage] { display: none; }
   .diagram-fallback { display: block; }
 }
 

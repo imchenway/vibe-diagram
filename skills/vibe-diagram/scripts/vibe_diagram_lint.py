@@ -19,7 +19,8 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = SKILL_ROOT / "assets" / "templates"
 FAMILY_POLICY_PATH = SKILL_ROOT / "contracts" / "family-policies.json"
-EXPECTED_TEMPLATE_COUNT = 59
+TEMPLATE_ROUTING_PATH = SKILL_ROOT / "contracts" / "template-routing.json"
+EXPECTED_TEMPLATE_COUNT = 60
 RESOURCE_ATTRIBUTES = {"src", "srcset", "poster", "action", "formaction"}
 LINK_ATTRIBUTES = {"href", "xlink:href"}
 VOID_ELEMENTS = {
@@ -113,6 +114,9 @@ GENERIC_MOBILE_MODES = frozenset({"stack", "scroll", "summary"})
 GENERIC_LIMIT_KEYS = frozenset({"nodes", "relations", "groups", "details"})
 GENERIC_PRIMARY_DIRECTIONS = frozenset(
     {"north-to-south", "south-to-north", "west-to-east", "east-to-west"}
+)
+ROUTING_FAMILY_KEYS = frozenset(
+    {"default_template", "ready_templates", "blocked_templates"}
 )
 EVIDENCE_STATUSES = frozenset({"observed", "inferred", "proposed", "unresolved"})
 EVIDENCE_PLACEMENTS = frozenset(
@@ -235,6 +239,7 @@ MUTABLE_STRUCTURE_ATTRIBUTES = frozenset(
         "id",
         "title",
         "alt",
+        "placeholder",
         "href",
         "lang",
         "for",
@@ -256,6 +261,14 @@ MUTABLE_STRUCTURE_ATTRIBUTES = frozenset(
         "data-from",
         "data-to",
         "data-semantic",
+        "data-semantic-role",
+        "data-reading-guide",
+        "data-relation-kind",
+        "data-visible-relation-kind",
+        "data-node-primary-label",
+        "data-message-kind",
+        "data-sequence-outcome",
+        "data-branch-outcome",
         "data-primary-relation",
         "data-diagram-topology",
         "data-primary-direction",
@@ -268,7 +281,11 @@ MUTABLE_STRUCTURE_ATTRIBUTES = frozenset(
         "data-evidence-source",
         "data-routing-confidence",
         "data-sequence-id",
+        "data-sequence-message-id",
         "data-sequence-detail-for",
+        "data-sequence-detail",
+        "data-sequence-detail-trigger",
+        "data-sequence-lifeline-for",
         "data-sequence-step-index",
         "data-sequence-phase-id",
         "data-sequence-fragment-id",
@@ -368,7 +385,7 @@ def _validated_migration_batches(
     seen = set()
     result: Dict[str, List[str]] = {}
     for batch, paths in value.items():
-        if re.fullmatch(r"B(?:0[1-9]|1[0-3])", batch) is None:
+        if re.fullmatch(r"B(?:0[1-9]|1[0-4])", batch) is None:
             raise ValueError(f"family policy migration batch id is invalid: {batch}")
         if (
             not isinstance(paths, list)
@@ -592,7 +609,7 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
     }
     expected = all_templates - set(EXPECTED_SEQUENCE_EXCLUSIONS)
     if covered != expected:
-        raise ValueError("family policy must cover the exact 53 non-sequence templates")
+        raise ValueError("family policy must cover the exact 54 non-sequence templates")
     _validated_migration_batches(policy["migration_batches"], expected)
     return policy
 
@@ -850,6 +867,10 @@ class _GenericContractParser(HTMLParser):
                 self._active_node_ids.append(starts_node_id)
                 if not node.semantic_role:
                     self.errors.append("Every diagram node must declare data-semantic-role.")
+            elif "data-architecture-landmark-for" in values:
+                starts_node_id = values["data-architecture-landmark-for"].strip()
+                if starts_node_id:
+                    self._active_node_ids.append(starts_node_id)
             for marker, kind, counts in (
                 ("data-node-icon", "icon", self._canvas.node_icon_counts),
                 ("data-node-title", "title", self._canvas.node_title_counts),
@@ -2413,10 +2434,12 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
         )
     if not parser.control_sets:
         errors.append("Reading guide requires at least one zoom control set.")
-    expected_modes = ["fit", "0.75", "0.9", "1"]
+    expected_modes = ["0.75", "0.9", "1", "fit"]
     for kind, modes in parser.control_sets:
         if modes != expected_modes:
-            errors.append(f"Every {kind} zoom control set must expose Fit, 75%, 90%, and 100%.")
+            errors.append(
+                f"Every {kind} zoom control set must expose 75%, 90%, 100%, and Auto in that order."
+            )
     if parser.controls_outside_guide or parser.controls_inside_title:
         errors.append("All zoom controls must live at the right side of the reading guide.")
     if any(
@@ -2549,6 +2572,24 @@ def lint_adaptive_kernel(html: str) -> List[str]:
         elif matches[0] != expected:
             errors.append(f"Migrated generic template adaptive {tag} kernel has drifted.")
     return errors
+
+
+def lint_semantic_relations_kernel(html: str) -> List[str]:
+    expected = (
+        SKILL_ROOT / "assets" / "contracts" / "semantic-relations" / "v1.css"
+    ).read_text(encoding="utf-8").rstrip("\n")
+    matches = re.findall(
+        r'<style data-semantic-relations-kernel="1">\n(.*?)\n</style>',
+        html,
+        flags=re.DOTALL,
+    )
+    if len(matches) != 1:
+        return [
+            "Every migrated generic template requires exactly one semantic-relations style kernel."
+        ]
+    if matches[0] != expected:
+        return ["Migrated generic template semantic-relations style kernel has drifted."]
+    return []
 
 
 def lint_progressive_kernel(html: str) -> List[str]:
@@ -2863,6 +2904,133 @@ def load_template_layouts(
     return catalog
 
 
+def load_template_routing(
+    path: Path = TEMPLATE_ROUTING_PATH,
+) -> Dict[str, Any]:
+    """Load the fail-closed routing allowlist used by scaffold and delivery lint."""
+
+    routing = _read_json_unique(path)
+    if set(routing) != {"schema_version", "families"}:
+        raise ValueError("template routing contract has an invalid root schema")
+    if type(routing["schema_version"]) is not int or routing["schema_version"] != 1:
+        raise ValueError("template routing schema_version must be integer 1")
+    catalog = load_template_layouts()
+    families = routing["families"]
+    if not isinstance(families, dict) or set(families) != set(catalog):
+        raise ValueError("template routing must cover the exact diagram family catalog")
+    for family, definition in families.items():
+        if not isinstance(definition, dict) or set(definition) != ROUTING_FAMILY_KEYS:
+            raise ValueError(f"template routing family definition is invalid: {family}")
+        default_template = definition["default_template"]
+        ready = definition["ready_templates"]
+        blocked = definition["blocked_templates"]
+        if (
+            not isinstance(default_template, str)
+            or not isinstance(ready, list)
+            or not isinstance(blocked, list)
+            or ready != sorted(ready)
+            or blocked != sorted(blocked)
+            or len(ready) != len(set(ready))
+            or len(blocked) != len(set(blocked))
+            or set(ready) & set(blocked)
+            or set(ready) | set(blocked) != set(catalog[family])
+            or default_template not in set(ready)
+        ):
+            raise ValueError(f"template routing inventory is invalid: {family}")
+    return routing
+
+
+def template_routing_errors(
+    html: str,
+    diagram_type: str,
+    routing: Optional[Mapping[str, Any]] = None,
+) -> List[str]:
+    """Reject delivery through a template that has not passed the true-diagram gate."""
+
+    trusted = load_template_routing() if routing is None else routing
+    parser = _parse(html)
+    if len(parser.main_attrs) != 1:
+        return []
+    template_id = parser.main_attrs[0].get("data-template-id", "").strip()
+    family = trusted["families"].get(diagram_type)
+    if family is None or template_id in set(family["ready_templates"]):
+        return []
+    default_template = family["default_template"]
+    return [
+        f'Template "{diagram_type}/{template_id}" is blocked from delivery until its '
+        f'true-diagram migration is complete; use the ready default "{default_template}".'
+    ]
+
+
+def true_diagram_errors(
+    html: str,
+    diagram_type: str,
+    routing: Optional[Mapping[str, Any]] = None,
+    policy: Optional[Mapping[str, Any]] = None,
+) -> List[str]:
+    """Require ready non-sequence templates to draw relations on the primary canvas."""
+
+    trusted_routing = load_template_routing() if routing is None else routing
+    identity = _parse(html)
+    if len(identity.main_attrs) != 1:
+        return []
+    template_id = identity.main_attrs[0].get("data-template-id", "").strip()
+    family_routing = trusted_routing["families"].get(diagram_type)
+    if (
+        family_routing is None
+        or template_id not in set(family_routing["ready_templates"])
+        or diagram_type == "code-sequence"
+    ):
+        return []
+    trusted_policy = load_family_policies() if policy is None else policy
+    definition = trusted_policy["families"][diagram_type]["templates"][template_id]
+    parser = _GenericContractParser()
+    parser.feed(html)
+    parser.close()
+    errors: List[str] = []
+    for canvas in parser.canvases:
+        declared = {relation.relation_id for relation in canvas.relations}
+        geometric = set(canvas.visible_paths)
+        missing = sorted(declared - geometric)
+        if missing:
+            errors.append(
+                "Ready templates must bind every authored relation to one primary SVG path: "
+                + ", ".join(missing)
+                + "."
+            )
+        non_path = sorted(
+            binding.relation_id
+            for binding in canvas.visible_relations
+            if binding.relation_id not in geometric
+        )
+        if non_path:
+            errors.append(
+                "HTML relationship ledgers cannot satisfy the primary visible-relation contract: "
+                + ", ".join(non_path)
+                + "."
+            )
+        if definition["profile"] in {"graph", "timeline"}:
+            missing_bounds = sorted(set(canvas.node_ids) - set(canvas.node_bounds))
+            if missing_bounds:
+                errors.append(
+                    "Ready graph and timeline templates require measurable SVG geometry for every node: "
+                    + ", ".join(missing_bounds)
+                    + "."
+                )
+            missing_markers = sorted(
+                relation_id
+                for relation_id, record in canvas.visible_path_quality.items()
+                if not record.marker_end
+            )
+            if missing_markers:
+                errors.append(
+                    "Ready graph and timeline routes require visible arrowhead markers: "
+                    + ", ".join(missing_markers)
+                    + "."
+                )
+    return list(dict.fromkeys(errors))
+
+
 class _StructureSignatureParser(HTMLParser):
     """Record DOM structure while ignoring authored text and semantic identifiers."""
 
@@ -2957,6 +3125,10 @@ class _PrimarySlotTextParser(HTMLParser):
         if not self._stack:
             return
         _tag, primary, in_details, slot = self._stack[-1]
+        # A table is a structured UI/data surface whose aggregate descendant copy is
+        # not a single prose slot. Individual cell fit remains a computed-layout gate.
+        if any(tag == "table" for tag, _primary, _details, _slot in self._stack):
+            return
         if primary and not in_details and slot:
             self.text.setdefault(slot, []).append(data)
 
@@ -3433,6 +3605,107 @@ def lint_sequence_contract(html: str) -> List[str]:
     return _deduplicate(errors)
 
 
+def lint_sequence_visual_contract(html: str) -> List[str]:
+    """Validate the visual carriers and native details of a ready sequence template."""
+
+    signals = _parse(html)
+    errors: List[str] = []
+    participant_ids = [
+        attrs.get("data-participant-id", "").strip()
+        for _tag, attrs in signals.elements
+        if "data-participant-id" in attrs
+    ]
+    message_ids = [
+        attrs.get("data-sequence-message-id", "").strip()
+        for _tag, attrs in signals.elements
+        if "data-sequence-message" in attrs
+    ]
+    object_ids = participant_ids + message_ids
+    if any(not object_id for object_id in object_ids):
+        errors.append("Ready sequence participants and messages require stable object ids.")
+    if len(object_ids) != len(set(object_ids)):
+        errors.append("Ready sequence participant and message object ids must be unique.")
+
+    lifeline_ids = [
+        attrs.get("data-sequence-lifeline-for", "").strip()
+        for _tag, attrs in signals.elements
+        if "data-sequence-lifeline-for" in attrs
+    ]
+    if sorted(lifeline_ids) != sorted(participant_ids):
+        errors.append(
+            "Ready sequences require exactly one explicit lifeline for every participant."
+        )
+    if not re.search(
+        r"\[data-sequence-lifeline-for\]\s*\{[^}]*"
+        r"border-(?:inline-start|left)\s*:\s*(?:2|[3-9]|\d{2,})px\s+dashed\b",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        errors.append(
+            "Ready sequence lifelines must be at least 2px dashed visual carriers."
+        )
+
+    message_fragments = tuple(SEQUENCE_MESSAGE_FRAGMENT_RE.finditer(html))
+    if len(message_fragments) != len(message_ids):
+        errors.append("Ready sequence message elements must be parseable as native articles.")
+    for index, match in enumerate(message_fragments, start=1):
+        arrow_count = sum(
+            "seq-arrow" in class_value.split()
+            for _quote, class_value in re.findall(
+                r"<span\b[^>]*\bclass\s*=\s*([\"'])(.*?)\1",
+                match.group(0),
+                re.IGNORECASE | re.DOTALL,
+            )
+        )
+        if arrow_count != 1:
+            errors.append(
+                f"Ready sequence message {index} must contain exactly one .seq-arrow carrier."
+            )
+    if re.search(
+        r"\[data-sequence-message\][^{,]*::(?:before|after)\s*\{",
+        html,
+        re.IGNORECASE,
+    ):
+        errors.append(
+            "Ready sequence messages must not use legacy pseudo-element arrow renderers."
+        )
+
+    trigger_targets: List[str] = []
+    for tag, attrs in signals.elements:
+        if "data-sequence-detail-trigger" not in attrs:
+            continue
+        target = attrs.get("data-detail-for", "").strip()
+        trigger_targets.append(target)
+        if tag != "a" or not target or attrs.get("href", "").strip() != f"#{target}":
+            errors.append(
+                "Ready sequence detail triggers must be native links to their details target."
+            )
+    detail_targets: List[str] = []
+    detail_object_ids: List[str] = []
+    for tag, attrs in signals.elements:
+        if "data-sequence-detail" not in attrs:
+            continue
+        detail_id = attrs.get("data-sequence-detail", "").strip()
+        detail_targets.append(detail_id)
+        detail_object_ids.append(attrs.get("data-sequence-detail-for", "").strip())
+        if (
+            tag != "details"
+            or not detail_id
+            or attrs.get("id", "").strip() != detail_id
+            or attrs.get("data-diagram-detail", "").strip() != detail_id
+        ):
+            errors.append(
+                "Ready sequence details must use native details with aligned stable ids."
+            )
+    if sorted(trigger_targets) != sorted(detail_targets):
+        errors.append("Every ready sequence detail must have exactly one native trigger.")
+    if sorted(detail_object_ids) != sorted(object_ids):
+        errors.append(
+            "Every ready sequence participant and message must map to exactly one detail."
+        )
+    return _deduplicate(errors)
+
+
 def _sequence_kernel_block(html: str, tag: str) -> str:
     pattern = re.compile(
         rf"<{tag}\b(?P<attrs>[^>]*)>(?P<body>.*?)</{tag}\s*>",
@@ -3503,6 +3776,103 @@ def _deduplicate(items: Iterable[str]) -> List[str]:
     return result
 
 
+class _MarkupIntegrityParser(HTMLParser):
+    """Reject attribute debris that browsers silently accept as empty components."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.errors: List[str] = []
+
+    def _check_attrs(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        numeric = sorted({name for name, _value in attrs if re.fullmatch(r"\d+", name)})
+        if numeric:
+            self.errors.append(
+                f"Malformed numeric attribute on <{tag}>: {', '.join(numeric)}."
+            )
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self._check_attrs(tag, attrs)
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self._check_attrs(tag, attrs)
+
+
+def lint_markup_integrity(html: str) -> List[str]:
+    parser = _MarkupIntegrityParser()
+    parser.feed(html)
+    parser.close()
+    errors = list(parser.errors)
+    if re.search(r"\{\{canvas-(?:text|attribute)-\d{3}\}\}\d+", html):
+        errors.append(
+            "A neutral canvas placeholder has an orphan numeric suffix."
+        )
+    return errors
+
+
+class _RouteContractParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.routes: List[Dict[str, str]] = []
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        values = {name.lower(): value or "" for name, value in attrs}
+        if tag.lower() == "path" and "data-diagram-visible-relation-id" in values:
+            self.routes.append(values)
+
+
+def _orthogonal_turn_count(path_data: str) -> Optional[int]:
+    commands = [
+        token.upper()
+        for token in re.findall(r"[A-Za-z]", path_data)
+        if token.upper() in {"H", "V", "L"}
+    ]
+    if "C" in path_data.upper() or "Q" in path_data.upper() or "A" in path_data.upper():
+        return None
+    if not commands:
+        return 0
+    normalized: List[str] = []
+    for command in commands:
+        if command == "L":
+            return None
+        if not normalized or normalized[-1] != command:
+            normalized.append(command)
+    return max(0, len(normalized) - 1)
+
+
+def lint_route_contract(html: str) -> List[str]:
+    """Enforce bend budgets on routes that opt into the 0.1.10 route contract."""
+
+    parser = _RouteContractParser()
+    parser.feed(html)
+    parser.close()
+    errors: List[str] = []
+    for route in parser.routes:
+        intent = route.get("data-route-intent", "").strip()
+        if not intent:
+            continue
+        relation_id = route.get("data-diagram-visible-relation-id", "unknown")
+        turns = _orthogonal_turn_count(route.get("d", ""))
+        if intent == "direct" and turns != 0:
+            errors.append(f"Direct route {relation_id} must have zero bends.")
+        elif intent in {"branch", "merge"} and turns is not None and turns > 1:
+            errors.append(
+                f"{intent.title()} route {relation_id} may have at most one bend."
+            )
+        elif intent == "feedback" and not route.get("data-route-reason", "").strip():
+            errors.append(
+                f"Feedback route {relation_id} must declare data-route-reason."
+            )
+    return errors
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Validate a self-contained HTML diagram.")
     parser.add_argument("path", type=Path, help="HTML artifact to validate")
@@ -3515,9 +3885,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     try:
         html = args.path.read_text(encoding="utf-8")
-        errors = lint_self_contained_resources(html)
+        errors = lint_markup_integrity(html)
+        errors.extend(lint_route_contract(html))
+        errors.extend(lint_self_contained_resources(html))
         errors.extend(_validate_visible_language(html, ""))
         errors.extend(lint_template_identity(html, args.diagram_type))
+        routing = load_template_routing()
+        errors.extend(template_routing_errors(html, args.diagram_type, routing))
         errors.extend(lint_visual_shell(html))
         errors.extend(artifact_shell_errors(html))
         errors.extend(lint_artifact_shell_kernel(html))
@@ -3538,7 +3912,26 @@ def main(argv: Optional[List[str]] = None) -> int:
         )
         if requires_sequence or identity.attr_values("data-sequence-canvas"):
             errors.extend(lint_sequence_contract(html))
+            ready_sequence = any(
+                attrs.get("data-template-id", "").strip()
+                in set(
+                    routing["families"]
+                    .get(attrs.get("data-template-family", "").strip(), {})
+                    .get("ready_templates", [])
+                )
+                for attrs in identity.main_attrs
+            )
+            if ready_sequence:
+                errors.extend(lint_sequence_visual_contract(html))
         policy = load_family_policies()
+        errors.extend(
+            true_diagram_errors(
+                html,
+                args.diagram_type,
+                routing=routing,
+                policy=policy,
+            )
+        )
         completed = {
             relative
             for paths in policy["migration_batches"].values()
@@ -3550,6 +3943,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             if f"{family}/{template_id}.html" in completed:
                 errors.extend(lint_generic_contract(html, family, template_id, policy))
                 errors.extend(lint_adaptive_kernel(html))
+                errors.extend(lint_semantic_relations_kernel(html))
                 definition = policy["families"][family]["templates"][template_id]
                 if definition.get("requires_node_details"):
                     errors.extend(lint_progressive_kernel(html))
