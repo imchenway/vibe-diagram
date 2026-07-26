@@ -10,6 +10,7 @@ import importlib.util
 import json
 import os
 import re
+import signal
 import shutil
 import subprocess
 import sys
@@ -50,6 +51,7 @@ MAX_REMOTE_BYTES = 64 * 1024 * 1024
 MAX_RELEASE_NOTES_BYTES = 1024 * 1024
 MAX_RUNTIME_ARTIFACT_BYTES = 16 * 1024 * 1024
 MAX_RUNTIME_MARKER_BYTES = 64 * 1024
+RUNTIME_CODEX_TIMEOUT_SECONDS = 10 * 60
 EXPECTED_PUBLICATION_COMMAND = (
     "python3",
     "scripts/build_packages.py",
@@ -93,7 +95,7 @@ ALLOWED_TRANSITIONS = {
     "STABLE_PROMOTED": {"RUNTIME_VERIFIED", "PROMOTED_RUNTIME_FAILED"},
     "PARTIAL_REMOTE": {"TAGGED", "RELEASED", "TAG_VERIFIED"},
     "RUNTIME_VERIFIED": set(),
-    "PROMOTED_RUNTIME_FAILED": set(),
+    "PROMOTED_RUNTIME_FAILED": {"RUNTIME_VERIFIED"},
 }
 
 
@@ -121,25 +123,42 @@ class SubprocessRunner:
         cwd: Path,
         check: bool = True,
         env: Optional[Dict[str, str]] = None,
+        timeout: Optional[float] = None,
     ) -> CommandResult:
         environment = os.environ.copy()
         environment["PYTHONDONTWRITEBYTECODE"] = "1"
         if env:
             environment.update(env)
         try:
-            completed = subprocess.run(
+            process = subprocess.Popen(
                 list(arguments),
                 cwd=cwd,
                 env=environment,
                 text=True,
-                capture_output=True,
-                check=False,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                start_new_session=timeout is not None,
             )
+            try:
+                stdout, stderr = process.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired as exc:
+                os.killpg(process.pid, signal.SIGTERM)
+                try:
+                    stdout, stderr = process.communicate(timeout=5)
+                except subprocess.TimeoutExpired:
+                    os.killpg(process.pid, signal.SIGKILL)
+                    stdout, stderr = process.communicate()
+                detail = stderr.strip() or stdout.strip() or "command timed out"
+                raise ReleaseError(
+                    f"command timed out after {timeout:g}s: "
+                    f"{arguments[0]}: {detail}",
+                    exit_code=7,
+                ) from exc
         except OSError as exc:
             raise ReleaseError(
                 f"could not execute {arguments[0]!r}: {exc}", exit_code=3
             ) from exc
-        result = CommandResult(completed.returncode, completed.stdout, completed.stderr)
+        result = CommandResult(process.returncode, stdout, stderr)
         if check and result.returncode != 0:
             detail = result.stderr.strip() or result.stdout.strip() or "command failed"
             raise ReleaseError(
@@ -1508,8 +1527,10 @@ def _require_runtime_state(
         raise ReleaseError("release state does not match the runtime verification target")
     if state.release_state == "RUNTIME_VERIFIED":
         raise ReleaseError("runtime verification is already complete for this version")
-    if state.release_state != "STABLE_PROMOTED":
-        raise ReleaseError("verify-runtime requires STABLE_PROMOTED state")
+    if state.release_state not in {"STABLE_PROMOTED", "PROMOTED_RUNTIME_FAILED"}:
+        raise ReleaseError(
+            "verify-runtime requires STABLE_PROMOTED or PROMOTED_RUNTIME_FAILED state"
+        )
     commit = state.release_commit
     if not isinstance(commit, str) or SHA_RE.fullmatch(commit) is None:
         raise ReleaseError("release state lacks the promoted release commit")
@@ -1920,6 +1941,7 @@ def _run_codex_runtime_step(
             cwd=workspace,
             check=False,
             env={"CODEX_HOME": str(codex_home)},
+            timeout=RUNTIME_CODEX_TIMEOUT_SECONDS,
         )
         if result.returncode != 0:
             raise ReleaseError("Codex CLI invocation failed", exit_code=7)
@@ -2087,7 +2109,8 @@ def verify_runtime_installed(
             "Use $vibe-diagram to create one evidence-backed, self-contained HTML "
             "system architecture diagram at the exact absolute path "
             f"{artifact}. Write no other files. End the final response with "
-            "VIBE_DIAGRAM_RUNTIME_OK."
+            "VIBE_DIAGRAM_RUNTIME_OK. Do not create a goal, launch a browser, use "
+            "node_repl, spawn subagents, or start any long-running process."
         )
         _run_codex_runtime_step(
             runner,

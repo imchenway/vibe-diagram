@@ -35,10 +35,12 @@ class RecordingRunner:
         cwd: Path,
         check: bool,
         env: dict[str, str],
+        timeout: float | None = None,
     ) -> object:
         del cwd, check
         self.command = command
         self.env = env
+        self.timeout = timeout
         marker = Path(command[command.index("--output-last-message") + 1])
         marker.write_text(f"{self.expected_marker}\n", encoding="utf-8")
         return type("Result", (), {"returncode": 0})()
@@ -64,6 +66,10 @@ class ReleaseRuntimeContractTests(unittest.TestCase):
         command = runner.command or ()
         self.assertLess(command.index("--ask-for-approval"), command.index("exec"))
         self.assertEqual(runner.env, {"CODEX_HOME": str(workspace)})
+        self.assertEqual(
+            runner.timeout,
+            self.release.RUNTIME_CODEX_TIMEOUT_SECONDS,
+        )
 
     def test_explicit_shared_skill_root_is_independent_of_codex_home(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -77,6 +83,36 @@ class ReleaseRuntimeContractTests(unittest.TestCase):
                 installed,
             )
         self.assertEqual(resolved, installed)
+
+    def test_promoted_runtime_failure_can_transition_to_verified(self) -> None:
+        self.assertTrue(
+            self.release.transition_allowed(
+                "PROMOTED_RUNTIME_FAILED",
+                "RUNTIME_VERIFIED",
+            )
+        )
+
+    def test_runner_terminates_timed_out_process_group(self) -> None:
+        runner = self.release.SubprocessRunner()
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaisesRegex(
+                self.release.ReleaseError,
+                "command timed out",
+            ):
+                runner.run(
+                    (
+                        sys.executable,
+                        "-c",
+                        (
+                            "import subprocess, sys, time; "
+                            "subprocess.Popen([sys.executable, '-c', "
+                            "'import time; time.sleep(30)']); "
+                            "time.sleep(30)"
+                        ),
+                    ),
+                    cwd=Path(temporary),
+                    timeout=0.1,
+                )
 
     def test_ambiguous_default_skill_roots_require_explicit_selection(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
