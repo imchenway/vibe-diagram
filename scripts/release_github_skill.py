@@ -1838,6 +1838,44 @@ def _runtime_codex_home(override: Optional[Path]) -> Path:
     return path
 
 
+def _runtime_installed_skill_root(
+    codex_home: Path,
+    override: Optional[Path],
+) -> Path:
+    if override is not None:
+        candidates = [override]
+    else:
+        candidates = [
+            codex_home / "skills" / "vibe-diagram",
+            Path.home() / ".agents" / "skills" / "vibe-diagram",
+        ]
+        candidates = [
+            candidate
+            for candidate in candidates
+            if candidate.exists() or candidate.is_symlink()
+        ]
+        if len(candidates) != 1:
+            raise ReleaseError(
+                "installed-client requires exactly one discoverable vibe-diagram "
+                "Skill or --installed-skill-root"
+            )
+    installed = candidates[0]
+    if not installed.is_absolute():
+        raise ReleaseError("installed Skill root must be absolute")
+    if (
+        installed.name != "vibe-diagram"
+        or installed.parent.name != "skills"
+        or installed.is_symlink()
+        or not installed.is_dir()
+        or installed.parent.is_symlink()
+        or not installed.parent.is_dir()
+        or installed.parent.parent.is_symlink()
+        or not installed.parent.parent.is_dir()
+    ):
+        raise ReleaseError("installed vibe-diagram Skill must be a real Skill directory")
+    return installed
+
+
 def _read_runtime_marker(path: Path, expected: str) -> None:
     if path.is_symlink() or not path.is_file():
         raise ReleaseError("Codex CLI did not produce the runtime marker", exit_code=7)
@@ -1866,12 +1904,12 @@ def _run_codex_runtime_step(
         marker = Path(temporary) / "last-message.txt"
         command = (
             "codex",
+            "--ask-for-approval",
+            "never",
             "exec",
             "--ephemeral",
             "--sandbox",
             "workspace-write",
-            "--ask-for-approval",
-            "never",
             "--skip-git-repo-check",
             "--output-last-message",
             str(marker),
@@ -1957,6 +1995,7 @@ def verify_runtime_installed(
     runner: Any,
     *,
     codex_home: Optional[Path] = None,
+    installed_skill_root: Optional[Path] = None,
     fetch_bytes: Callable[[str], bytes] = _default_fetch_bytes,
 ) -> Dict[str, object]:
     """在显式授权后验证真实 Codex CLI 直装 Skill 生命周期。"""
@@ -1967,15 +2006,11 @@ def verify_runtime_installed(
     _require_isolated_runtime_evidence(state, version, verified_digest)
     artifact = _validate_runtime_artifact(artifact)
     codex_root = _runtime_codex_home(codex_home)
-    skills_root = codex_root / "skills"
-    if skills_root.is_symlink() or not skills_root.is_dir():
-        raise ReleaseError("Codex skills directory must be a real directory")
-    backups_root = codex_root / "backups"
+    installed = _runtime_installed_skill_root(codex_root, installed_skill_root)
+    installation_root = installed.parent.parent
+    backups_root = installation_root / "backups"
     if backups_root.exists() and (backups_root.is_symlink() or not backups_root.is_dir()):
-        raise ReleaseError("Codex backups directory must be a real directory")
-    installed = skills_root / "vibe-diagram"
-    if installed.is_symlink() or not installed.is_dir():
-        raise ReleaseError("installed vibe-diagram Skill must be a real directory")
+        raise ReleaseError("Skill backups directory must be a real directory")
     try:
         installed_version = _read_version(installed / "VERSION")
     except ReleaseError as exc:
@@ -1999,7 +2034,7 @@ def verify_runtime_installed(
     )
 
     recovery_root = Path(
-        tempfile.mkdtemp(prefix=".vibe-diagram-runtime-recovery-", dir=codex_root)
+        tempfile.mkdtemp(prefix=".vibe-diagram-runtime-recovery-", dir=installation_root)
     )
     try:
         canonical_updater = load_updater(root / config.skill_root)
@@ -2080,7 +2115,7 @@ def verify_runtime_installed(
             raise ReleaseError("bundled runtime artifact linter failed", exit_code=7)
 
         phase = "uninstall-isolation"
-        quarantine_parent = codex_root / "backups" / "runtime-verification"
+        quarantine_parent = installation_root / "backups" / "runtime-verification"
         if quarantine_parent.exists() and (
             quarantine_parent.is_symlink() or not quarantine_parent.is_dir()
         ):
@@ -2241,6 +2276,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     runtime.add_argument("--mode", choices=("isolated", "installed-client"), default="isolated")
     runtime.add_argument("--confirm-installed-skill-mutation", action="store_true")
     runtime.add_argument("--artifact")
+    runtime.add_argument("--installed-skill-root")
     return parser.parse_args(argv)
 
 
@@ -2290,6 +2326,14 @@ def execute(
             raise ReleaseError("installed-client requires --artifact")
     if args.command == "verify-runtime" and args.mode == "isolated" and args.artifact:
         raise ReleaseError("--artifact is only valid with --mode installed-client")
+    if (
+        args.command == "verify-runtime"
+        and args.mode == "isolated"
+        and args.installed_skill_root
+    ):
+        raise ReleaseError(
+            "--installed-skill-root is only valid with --mode installed-client"
+        )
     if args.command == "promote-stable" and not args.confirm_stable_promotion:
         raise ReleaseError("promote-stable requires --confirm-stable-promotion")
     if args.command == "publish":
@@ -2429,6 +2473,11 @@ def execute(
                 state,
                 store,
                 runner,
+                installed_skill_root=(
+                    Path(args.installed_skill_root)
+                    if args.installed_skill_root
+                    else None
+                ),
                 fetch_bytes=fetch_bytes,
             )
         return _command_result(args.command, config.repository, result)
