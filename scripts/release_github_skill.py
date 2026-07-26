@@ -1674,6 +1674,16 @@ def _runtime_lanes(state: ReleaseState) -> Dict[str, object]:
     return dict(value) if isinstance(value, dict) else {}
 
 
+def _runtime_validation_status(state: Optional[ReleaseState]) -> str:
+    if state is None:
+        return "unverified"
+    if state.release_state == "RUNTIME_VERIFIED":
+        return "runtime-verified"
+    if state.release_state == "PROMOTED_RUNTIME_FAILED":
+        return "failed"
+    return "unverified"
+
+
 def verify_runtime_isolated(
     root: Path,
     config: ReleaseConfig,
@@ -2444,7 +2454,7 @@ def execute(
                 "version": args.version,
                 "release_state": state.release_state if state else "NEW",
                 "remote_facts": facts,
-                "runtime_validation": "unverified",
+                "runtime_validation": _runtime_validation_status(state),
             },
         )
     if args.command == "publish":

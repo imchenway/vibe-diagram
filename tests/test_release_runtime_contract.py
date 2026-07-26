@@ -92,6 +92,26 @@ class ReleaseRuntimeContractTests(unittest.TestCase):
             )
         )
 
+    def test_status_reports_runtime_state_without_downgrading_evidence(self) -> None:
+        verified = type("State", (), {"release_state": "RUNTIME_VERIFIED"})()
+        failed = type(
+            "State",
+            (),
+            {"release_state": "PROMOTED_RUNTIME_FAILED"},
+        )()
+        self.assertEqual(
+            self.release._runtime_validation_status(verified),
+            "runtime-verified",
+        )
+        self.assertEqual(
+            self.release._runtime_validation_status(failed),
+            "failed",
+        )
+        self.assertEqual(
+            self.release._runtime_validation_status(None),
+            "unverified",
+        )
+
     def test_runner_terminates_timed_out_process_group(self) -> None:
         runner = self.release.SubprocessRunner()
         with tempfile.TemporaryDirectory() as temporary:
