@@ -3,6 +3,7 @@
   const activeByRoot = new WeakMap();
   const returnFocusByRoot = new WeakMap();
   const boundRoots = new WeakSet();
+  const lifecycleAuditByRoot = new WeakMap();
   const isNativeDetails = (detail) => detail.matches("details");
   const documentElementFor = (root) =>
     root.nodeType === Node.DOCUMENT_NODE ? root.documentElement : root.ownerDocument.documentElement;
@@ -29,6 +30,18 @@
   };
   const regionFor = (detail) => detail.closest("[data-node-detail-region]");
   const gridFor = (detail) => detail.closest("[data-node-detail-grid]");
+  const portalRegions = (root) => {
+    const documentRoot = root.nodeType === Node.DOCUMENT_NODE
+      ? root
+      : root.ownerDocument;
+    const host = documentRoot?.body;
+    if (!host) return;
+    Array.from(root.querySelectorAll("[data-node-detail-region]")).forEach((region) => {
+      if (region.parentElement === host) return;
+      region.dataset.runtimeDetailPortal = "true";
+      host.append(region);
+    });
+  };
   const syncDocumentState = (root) => {
     const documentElement = documentElementFor(root);
     documentElement.setAttribute("data-progressive-disclosure-enhanced", "true");
@@ -68,7 +81,7 @@
     grid.style.setProperty("--detail-left", `${margin}px`);
     grid.style.setProperty("--detail-top", `${margin}px`);
     const popupRect = grid.getBoundingClientRect();
-    const popupWidth = Math.min(width, popupRect.width || width);
+    const popupWidth = width;
     const popupHeight = Math.min(
       popupRect.height || 240,
       Math.max(160, viewportHeight - margin * 2)
@@ -78,10 +91,16 @@
     let top = clamp((viewportHeight - popupHeight) / 2, margin, viewportHeight - popupHeight - margin);
     let side = "center";
     if (triggerRect) {
-      if (triggerRect.right + gap + popupWidth <= viewportWidth - margin) {
+      if (
+        viewportWidth >= 768
+        && triggerRect.right + gap + popupWidth <= viewportWidth - margin
+      ) {
         left = triggerRect.right + gap;
         side = "right";
-      } else if (triggerRect.left - gap - popupWidth >= margin) {
+      } else if (
+        viewportWidth >= 768
+        && triggerRect.left - gap - popupWidth >= margin
+      ) {
         left = triggerRect.left - gap - popupWidth;
         side = "left";
       } else {
@@ -98,6 +117,21 @@
         viewportHeight - popupHeight - margin
       );
     }
+    left = clamp(left, margin, viewportWidth - popupWidth - margin);
+    top = clamp(top, margin, viewportHeight - popupHeight - margin);
+    grid.style.setProperty("--detail-left", `${Math.round(left)}px`);
+    grid.style.setProperty("--detail-top", `${Math.round(top)}px`);
+    const renderedRect = grid.getBoundingClientRect();
+    if (renderedRect.left < margin) left += margin - renderedRect.left;
+    if (renderedRect.right > viewportWidth - margin) {
+      left -= renderedRect.right - (viewportWidth - margin);
+    }
+    if (renderedRect.top < margin) top += margin - renderedRect.top;
+    if (renderedRect.bottom > viewportHeight - margin) {
+      top -= renderedRect.bottom - (viewportHeight - margin);
+    }
+    left = clamp(left, margin, viewportWidth - renderedRect.width - margin);
+    top = clamp(top, margin, viewportHeight - renderedRect.height - margin);
     grid.style.setProperty("--detail-left", `${Math.round(left)}px`);
     grid.style.setProperty("--detail-top", `${Math.round(top)}px`);
     grid.dataset.popupSide = side;
@@ -203,6 +237,7 @@
   const bind = (root = document) => {
     const triggers = root.querySelectorAll(detailTriggerSelector);
     if (!triggers.length) return;
+    portalRegions(root);
     syncDocumentState(root);
     triggers.forEach((trigger) => {
       const id = trigger.dataset.detailFor;
@@ -256,8 +291,127 @@
     view?.addEventListener("scroll", reposition, true);
     openFromHash();
   };
+  const auditLifecycle = (root = document) => {
+    const view = viewFor(root);
+    const documentElement = documentElementFor(root);
+    const triggers = Array.from(root.querySelectorAll(detailTriggerSelector));
+    const auditKey = `${view?.innerWidth || 0}x${view?.innerHeight || 0}:${triggers.length}`;
+    const cached = lifecycleAuditByRoot.get(root);
+    if (cached?.key === auditKey) return cached.result;
+    const issues = new Set();
+    const originalHash = view?.location.hash || "";
+    const originalFocus = root.activeElement;
+    const uniqueTriggers = new Map();
+    triggers.forEach((trigger) => {
+      const id = (trigger.dataset.detailFor || "").trim();
+      if (id && !uniqueTriggers.has(id)) uniqueTriggers.set(id, trigger);
+    });
+    const viewportPlacement = (element) => {
+      if (!element || !view) {
+        return { fits: false, trace: "missing" };
+      }
+      const rect = element.getBoundingClientRect();
+      const fits = (
+        rect.left >= -1
+        && rect.top >= -1
+        && rect.right <= view.innerWidth + 1
+        && rect.bottom <= view.innerHeight + 1
+      );
+      return {
+        fits,
+        trace: [
+          Math.round(rect.left),
+          Math.round(rect.top),
+          Math.round(rect.right),
+          Math.round(rect.bottom),
+          view.innerWidth,
+          view.innerHeight
+        ].join(",")
+      };
+    };
+    uniqueTriggers.forEach((trigger, id) => {
+      if (!open(root, id, trigger, false)) {
+        issues.add(`open:${id}`);
+        return;
+      }
+      const detail = activeByRoot.get(root);
+      const grid = gridFor(detail);
+      if (
+        detail?.dataset.diagramDetail !== id
+        || detail.getAttribute("role") !== "dialog"
+        || !regionFor(detail)?.hasAttribute("data-runtime-active")
+        || !detail.querySelector(":scope > [data-diagram-detail-close]")
+      ) {
+        issues.add(`dialog-state:${id}`);
+      }
+      place(detail, trigger);
+      const placement = viewportPlacement(grid);
+      if (!placement.fits) issues.add(`placement:${id}:${placement.trace}`);
+      if (!close(root, true, false)) issues.add(`close:${id}`);
+      if (root.activeElement !== trigger) issues.add(`focus-return:${id}`);
+    });
+    const first = uniqueTriggers.entries().next().value;
+    if (first) {
+      const [id, trigger] = first;
+      open(root, id, trigger, false);
+      root.dispatchEvent(
+        new view.KeyboardEvent("keydown", { key: "Escape", bubbles: true })
+      );
+      if (activeByRoot.has(root) || root.activeElement !== trigger) {
+        issues.add(`escape:${id}`);
+        close(root, true, false);
+      }
+      open(root, id, trigger, false);
+      const pointerTarget = root.body || documentElement;
+      pointerTarget.dispatchEvent(
+        new view.Event("pointerdown", { bubbles: true, cancelable: true })
+      );
+      if (activeByRoot.has(root)) {
+        issues.add(`outside:${id}`);
+        close(root, false, false);
+      }
+      if (view?.history) {
+        view.history.replaceState(view.history.state, "", `#${encodeURIComponent(id)}`);
+        view.dispatchEvent(new view.HashChangeEvent("hashchange"));
+        if (activeByRoot.get(root)?.dataset.diagramDetail !== id) {
+          issues.add(`deep-link:${id}`);
+        }
+        close(root, false, false);
+        view.history.replaceState(
+          view.history.state,
+          "",
+          `${view.location.pathname}${view.location.search}${originalHash}`
+        );
+      }
+    }
+    if (originalFocus?.isConnected && typeof originalFocus.focus === "function") {
+      originalFocus.focus({ preventScroll: true });
+    }
+    const ordered = Array.from(issues).sort();
+    const result = Object.freeze({
+      count: uniqueTriggers.size,
+      issues: Object.freeze(ordered),
+      passed: ordered.length === 0
+    });
+    lifecycleAuditByRoot.set(root, { key: auditKey, result });
+    documentElement.dataset.detailLifecycleAudit = result.passed ? "passed" : "failed";
+    documentElement.dataset.detailLifecycleCount = String(result.count);
+    if (ordered.length) {
+      documentElement.dataset.detailLifecycleIssues = ordered.join("|").slice(0, 2048);
+    } else {
+      delete documentElement.dataset.detailLifecycleIssues;
+    }
+    return result;
+  };
   const enhance = (root = document) => bind(root);
-  globalThis.VibeDiagramDisclosure = Object.freeze({ bind, close, enhance, open, reset });
+  globalThis.VibeDiagramDisclosure = Object.freeze({
+    auditLifecycle,
+    bind,
+    close,
+    enhance,
+    open,
+    reset
+  });
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => enhance(), { once: true });
   } else {

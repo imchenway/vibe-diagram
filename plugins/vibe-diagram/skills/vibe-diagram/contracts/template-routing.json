@@ -69,9 +69,9 @@
       "blocked_templates": []
     },
     "technical-design": {
-      "default_template": "data-consistency-boundary",
-      "ready_templates": ["data-consistency-boundary"],
-      "blocked_templates": ["api-contract-swimlane", "module-contract-data-topology", "release-switch-track"]
+      "default_template": "technical-design-package",
+      "ready_templates": ["technical-design-package"],
+      "blocked_templates": ["api-contract-swimlane", "data-consistency-boundary", "module-contract-data-topology"]
     }
   }
 }

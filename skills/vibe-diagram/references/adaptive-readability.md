@@ -10,7 +10,7 @@ The canonical shell CSS and shared runtime come from `assets/contracts/artifact-
 
 ### 0.1.10 reading guide and interaction shell
 
-- The reading guide shows only the relationship legend and three short evidence labels: user-provided facts, completed checks, and not-yet-verified. Remove the old how-to-read caption, evidence prose, and decorative leading separators.
+- The reading guide shows only the relationship legend and three short evidence labels: user-provided facts, completed checks, and not-yet-verified. Relationship types occupy the first row and evidence states occupy the second row at every viewport; both row titles use a stronger label treatment than their items. Remove the old how-to-read caption, evidence prose, and decorative leading separators.
 - Chinese artifacts use one fixed localized node-detail instruction. Controls always appear in the order `75%`, `90%`, `100%`, then Auto.
 - The reading guide and primary canvas share the same horizontal boundaries. Their computed-browser left and right edge differences may not exceed `1 CSS px`. Wide diagrams scroll only inside their canvas and must not create page-level horizontal overflow.
 - In normal browsing, node details open in an anchored popover that flips and clamps to the viewport. It supports a close control, Escape, outside click, focus return, URL deep links, and browser back or forward navigation.

@@ -26,6 +26,21 @@ def _load_linter():
 LINTER = _load_linter()
 
 
+def _load_regression_generator():
+    path = ROOT / "scripts" / "generate_v0110_regression_atlas.py"
+    spec = importlib.util.spec_from_file_location(
+        "vibe_diagram_v0110_regression_generator_test", path
+    )
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+REGRESSION_GENERATOR = _load_regression_generator()
+
+
 class V0110DrawingContractTest(unittest.TestCase):
     def test_markup_integrity_rejects_numeric_attributes_and_orphan_suffixes(self) -> None:
         errors = LINTER.lint_markup_integrity(
@@ -34,6 +49,24 @@ class V0110DrawingContractTest(unittest.TestCase):
         )
         self.assertTrue(any("Malformed numeric attribute" in error for error in errors))
         self.assertTrue(any("orphan numeric suffix" in error for error in errors))
+
+    def test_markup_integrity_keeps_semantic_relation_carriers_outside_svg(self) -> None:
+        invalid = (
+            '<main><svg><path d="M0 0H10"></path>'
+            '<span class="semantic-relation">关系</span>'
+            '<path d="M10 0H20"></path></svg></main>'
+        )
+        errors = LINTER.lint_markup_integrity(invalid)
+        self.assertTrue(
+            any("must remain outside SVG" in error for error in errors)
+        )
+        self.assertEqual(
+            [],
+            LINTER.lint_markup_integrity(
+                '<main><svg><path d="M0 0H10"></path></svg>'
+                '<span class="semantic-relation">关系</span></main>'
+            ),
+        )
 
     def test_route_contract_enforces_bend_budgets_and_feedback_reason(self) -> None:
         valid = (
@@ -75,6 +108,54 @@ class V0110DrawingContractTest(unittest.TestCase):
                 self.assertNotIn("How to read this artifact", html)
                 self.assertNotIn("如何阅读本图", html)
 
+    def test_every_template_stacks_evidence_below_relations_with_strong_titles(
+        self,
+    ) -> None:
+        for path in sorted(TEMPLATE_ROOT.glob("*/*.html")):
+            html = path.read_text(encoding="utf-8")
+            with self.subTest(path=path.relative_to(TEMPLATE_ROOT)):
+                self.assertIn(
+                    'grid-template-areas:\n    "relations"\n    "evidence";',
+                    html,
+                )
+                self.assertIn(
+                    '[data-reading-guide-group="relations"] {\n'
+                    "  grid-area: relations;\n"
+                    "}",
+                    html,
+                )
+                self.assertIn(
+                    '[data-reading-guide-group="evidence"] {\n'
+                    "  grid-area: evidence;\n"
+                    "}",
+                    html,
+                )
+                self.assertIn(
+                    "[data-reading-guide-groups] [data-reading-guide-group-title]",
+                    html,
+                )
+
+    def test_regression_index_uses_public_families_and_resolvable_links(self) -> None:
+        samples = REGRESSION_GENERATOR.SAMPLES
+        rendered = REGRESSION_GENERATOR.render_index(samples)
+        sample_prefix = "TASK_20260725_002_全图族制图根因整改回归/"
+        self.assertNotIn("delivery-acceptance", {sample.family for sample in samples})
+        self.assertFalse(
+            any("发布回滚" in sample.filename for sample in samples),
+            [sample.filename for sample in samples],
+        )
+        for sample in samples:
+            target = sample_prefix + sample.filename
+            with self.subTest(filename=sample.filename):
+                self.assertIn(
+                    f'href="{target}"',
+                    rendered,
+                )
+                self.assertIn(
+                    f'src="{target}"',
+                    rendered,
+                )
+
     def test_progressive_disclosure_supports_positioning_and_keyboard_close(self) -> None:
         runtime = (
             SKILL_ROOT / "assets" / "contracts" / "progressive-disclosure" / "v1.js"
@@ -86,6 +167,21 @@ class V0110DrawingContractTest(unittest.TestCase):
             "pointerdown",
             "preventScroll",
             "hashchange",
+            "auditLifecycle",
+            "detailLifecycleAudit",
+            "runtimeDetailPortal",
+        ):
+            self.assertIn(token, runtime)
+
+    def test_north_to_south_mobile_scroll_starts_on_the_primary_axis(self) -> None:
+        runtime = (
+            SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport" / "v1.js"
+        ).read_text(encoding="utf-8")
+        for token in (
+            "autoCentered",
+            'canvas.dataset.primaryDirection === "north-to-south"',
+            "canvas.scrollLeft",
+            "(stage.scrollWidth - canvas.clientWidth) / 2",
         ):
             self.assertIn(token, runtime)
 
@@ -186,6 +282,93 @@ class V0110DrawingContractTest(unittest.TestCase):
         )
         self.assertEqual(
             "artboard-wireframe", routing["page-mockup"]["default_template"]
+        )
+
+    def test_technical_design_default_is_the_six_view_package(self) -> None:
+        routing = json.loads(
+            (SKILL_ROOT / "contracts" / "template-routing.json").read_text(
+                encoding="utf-8"
+            )
+        )["families"]["technical-design"]
+        self.assertEqual("technical-design-package", routing["default_template"])
+        self.assertIn("technical-design-package", routing["ready_templates"])
+        self.assertNotIn("data-consistency-boundary", routing["ready_templates"])
+        self.assertIn("data-consistency-boundary", routing["blocked_templates"])
+        self.assertNotIn("release-switch-track", routing["ready_templates"])
+
+        html = (
+            TEMPLATE_ROOT / "technical-design" / "technical-design-package.html"
+        ).read_text(encoding="utf-8")
+        self.assertEqual([], LINTER.lint_technical_design_package(html))
+        self.assertEqual(
+            [
+                "overview",
+                "runtime",
+                "contracts",
+                "consistency",
+                "recovery",
+                "release",
+            ],
+            re.findall(
+                r'<[^>]+\bdata-technical-view-id="([^"]+)"',
+                html,
+            ),
+        )
+        self.assertIn('data-reuse-template="component-breakdown"', html)
+        self.assertIn('data-reuse-template="participant-timeline"', html)
+        self.assertIn('data-reuse-template="state-machine"', html)
+        self.assertIn('data-reuse-template="logic-flowchart"', html)
+        self.assertIn(
+            'data-diagram-composition-root="technical-design-package"',
+            html,
+        )
+        self.assertEqual(
+            1,
+            len(
+                re.findall(
+                    r'<[^>]+\bdata-diagram-control-scope="primary"',
+                    html,
+                )
+            ),
+        )
+        self.assertEqual(
+            3,
+            len(
+                re.findall(
+                    r'<[^>]+\bdata-diagram-control-scope="embedded"',
+                    html,
+                )
+            ),
+        )
+        self.assertEqual(2, len(re.findall(r"<table\b", html)))
+        self.assertNotIn('role="tablist"', html)
+
+    def test_technical_design_package_rejects_hidden_or_reordered_views(self) -> None:
+        html = (
+            TEMPLATE_ROOT / "technical-design" / "technical-design-package.html"
+        ).read_text(encoding="utf-8")
+        hidden = html.replace(
+            'data-technical-design-package="1"',
+            'data-technical-design-package="1" role="tablist"',
+            1,
+        )
+        self.assertTrue(
+            any(
+                "tab-hidden" in error
+                for error in LINTER.lint_technical_design_package(hidden)
+            )
+        )
+
+        reordered = html.replace(
+            '<section class="technical-view" data-technical-view-id="overview"',
+            '<section class="technical-view" data-technical-view-id="runtime"',
+            1,
+        )
+        self.assertTrue(
+            any(
+                "must appear continuously" in error
+                for error in LINTER.lint_technical_design_package(reordered)
+            )
         )
 
 

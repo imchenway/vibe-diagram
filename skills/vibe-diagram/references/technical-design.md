@@ -1,32 +1,54 @@
-# Technical design reference
+# Technical Design Reference
 
-## Content-neutral template boundary
+## Purpose
 
-This template family defines only topology, relative placement, layering or lanes, complexity ceilings, connection anchors, responsive transformations, and interaction capabilities. Every visible title, icon, node, relation, note, evidence item, and detail must be filled from facts established for the current task. `layout-slot-NNN`, `canvas-text-NNN`, and `canvas-attribute-NNN` are positional placeholders without domain semantics. Never treat a template filename, structural identifier, prior example, or visual position as a system fact.
+A technical design is not a magnified implementation path or a canvas filled with module cards. The default deliverable is one continuously visible design package that answers:
 
-Use this family for module boundaries, API contracts, consistency, release switching, implementation constraints, test evidence, and rollback.
+1. What are the system boundaries, module responsibilities, and dependencies?
+2. How do the critical runtime interactions execute?
+3. What are the API, event, and data contracts?
+4. What states, guards, and consistency constraints apply?
+5. How are failures detected, retried, compensated, escalated, and terminated?
+6. How is the change migrated, released, verified, and rolled back?
+
+Use a focused template only when the user explicitly asks about one local concern. A focused view must not be presented as a complete technical design.
 
 ## Templates
 
-- `../assets/templates/technical-design/api-contract-swimlane.html`: caller, interface, service, observation, and contract behavior.
-- `../assets/templates/technical-design/data-consistency-boundary.html`: the 0.1.10 Outbox consistency design, separating transaction, delivery, consumption, failure-recovery, and consistency-constraint boundaries.
-- `../assets/templates/technical-design/module-contract-data-topology.html`: modules, contracts, data, operations, tests, release, and rollback.
-- `../assets/templates/technical-design/release-switch-track.html`: build, gate, rollout, observation, switch, and rollback.
+- `../assets/templates/technical-design/technical-design-package.html`: default. It continuously presents six technical views and reuses the architecture, sequence, state-machine, logic-flow, and semantic-table kernels.
+- `../assets/templates/technical-design/data-consistency-boundary.html`: deprecated migration asset. It must not be scaffolded or delivered as a standalone diagram type. Put Outbox transaction, delivery, consumption, recovery, and consistency concerns into the corresponding views of `technical-design-package`.
+- `../assets/templates/technical-design/api-contract-swimlane.html`: migration-candidate view for callers, APIs, services, observability, and contract behavior.
+- `../assets/templates/technical-design/module-contract-data-topology.html`: migration-candidate view for module, contract, data, and operational relationships.
 
-Copy the selected template and retain its layout identity. Replace slots with evidence-backed design content.
+`release-switch-track` is deprecated for one release cycle and is no longer a public template. Release, observation, gates, and rollback belong in the complete package's release-verification view. If the user requests only a release process, route it to the shared business-flow logic core.
 
-## Design rules
+## Composition and reuse
 
-- The Outbox primary chain identifies local transaction writes, event delivery, broker acknowledgement, consumer idempotency, and result updates. Failure recovery uses an independent feedback channel.
-- Express consistency constraints as a boundary or constraint band rather than scattering constraint prose as cards at the same level as the primary chain.
+The default package has one title, one reading guide, and one detail interaction system. It must not nest complete HTML shells.
 
-- Begin with the current entry point and verified implementation chain.
-- Define changed, retained, and removed behavior plus compatibility impact.
-- Put module ownership, interfaces, schemas, invariants, state transitions, and failure semantics on the main canvas.
-- Include permissions, concurrency, consistency, observability, migration, testing, deployment, and rollback when they affect correctness.
-- Keep code paths and anchors near the claims they support.
-- Distinguish current implementation, proposed design, and unresolved decision.
+| Technical view | Reused source | Required meaning |
+|---|---|---|
+| Design overview | `system-architecture/component-breakdown` | boundaries, responsibilities, modules, dependencies, external systems |
+| Runtime sequence | `code-sequence/participant-timeline` | participants, lifelines, calls, returns, exception fragments |
+| Data contracts | `semantic-table` | inputs, outputs, keys and idempotency keys, provenance, compatibility |
+| State consistency | `state-data-model/state-machine` | states, events, guards, terminal states, consistency feedback |
+| Failure recovery | `business-flow/logic-flowchart` | detection, decision, retry, compensation, human intervention, termination |
+| Release verification | `semantic-table` | migration, switches, gates, observation, rollback, acceptance evidence |
+
+Reuse diagram-family grammar, layout contracts, nodes, relations, interactions, and validation kernels. Do not copy complete templates or fork a second implementation from an older template.
+
+## Content and evidence boundary
+
+- Canonical templates define topology, relative placement, complexity limits, connection anchors, responsive transformation, and interaction capability.
+- Titles, nodes, relations, table cells, evidence states, and details must come from current task facts.
+- Distinguish current implementation, proposed design, and open questions. Static validity is not browser layout verification or client lifecycle evidence.
+- Include security, concurrency, consistency, observability, migration, tests, release, and rollback whenever they affect correctness.
+- Put code paths and evidence anchors in details; do not cover the primary canvas with prose.
 
 ## Layout and interaction
 
-Use directional topology rather than a card inventory. Keep labels off connector paths, expose critical details without hover, and put dense evidence in accessible details or a bottom ledger. Ensure keyboard access, visible focus, mobile reflow, and print expansion.
+- Keep all six views continuously visible; do not hide design content behind tabs.
+- Prefer direct relations. Branches and merges may use at most one necessary bend. Feedback loops require an explicit semantic reason and an independent channel.
+- Size nodes for their real copy. Never conceal overflow by shrinking the font.
+- Node details support a nearby collision-aware popover, Escape, outside-click close, focus return, and deep links. Native `details` elements remain only as no-JavaScript and print fallbacks.
+- Semantic tables may scroll horizontally inside their own viewport on narrow screens; the page itself must not overflow horizontally.

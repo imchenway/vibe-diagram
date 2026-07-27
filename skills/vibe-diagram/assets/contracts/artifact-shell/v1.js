@@ -579,6 +579,26 @@
   };
 
   const auditControls = (canvas, addIssue) => {
+    const controlScope = (canvas.dataset.diagramControlScope || "").trim();
+    if (controlScope === "embedded") {
+      const composition = canvas.closest("[data-diagram-composition-root]");
+      const primary = composition?.querySelector(
+        '[data-diagram-control-scope="primary"]'
+      );
+      const primaryId = primary?.dataset.diagramId || primary?.dataset.sequenceId || "";
+      const primaryControls = primaryId
+        ? document.querySelector(
+            `[data-diagram-controls="${CSS.escape(primaryId)}"], [data-sequence-controls="${CSS.escape(primaryId)}"]`
+          )
+        : null;
+      if (!composition || !primary || !primaryControls) {
+        addIssue(
+          "embedded-control-scope-invalid",
+          canvas.dataset.diagramId || canvas.dataset.sequenceId || "unnamed-canvas"
+        );
+      }
+      return;
+    }
     const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
     const controls = document.querySelector(
       `[data-diagram-controls="${CSS.escape(canvasId)}"], [data-sequence-controls="${CSS.escape(canvasId)}"]`
@@ -666,12 +686,22 @@
     root.querySelectorAll(auditRoots).forEach((canvas) => {
       results.set(canvas.dataset.diagramId || canvas.dataset.sequenceId || "canvas", audit(canvas));
     });
+    const disclosure = globalThis.VibeDiagramDisclosure?.auditLifecycle?.(root);
+    const disclosureIssues = Array.isArray(disclosure?.issues)
+      ? disclosure.issues
+      : [];
     const failures = Array.from(results.values()).reduce(
       (total, issues) => total + issues.length,
       0
-    );
+    ) + disclosureIssues.length;
     document.documentElement.dataset.computedLayoutAudit = failures ? "failed" : "passed";
     document.documentElement.dataset.computedLayoutIssueCount = String(failures);
+    if (disclosureIssues.length) {
+      document.documentElement.dataset.computedLayoutIssues =
+        disclosureIssues.map((issue) => `detail-lifecycle:${issue}`).join("|").slice(0, 2048);
+    } else {
+      delete document.documentElement.dataset.computedLayoutIssues;
+    }
     return results;
   };
 

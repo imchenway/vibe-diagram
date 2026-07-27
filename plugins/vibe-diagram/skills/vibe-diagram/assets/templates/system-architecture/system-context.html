@@ -54,11 +54,22 @@
 
 [data-reading-guide-groups] {
   grid-area: groups;
-  display: flex;
-  align-items: center;
-  gap: .55rem 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "relations"
+    "evidence";
+  align-items: start;
+  gap: .45rem;
   min-inline-size: 0;
-  flex-wrap: wrap;
+}
+
+[data-reading-guide-group="relations"] {
+  grid-area: relations;
+}
+
+[data-reading-guide-group="evidence"] {
+  grid-area: evidence;
 }
 
 [data-reading-guide-group] {
@@ -75,10 +86,22 @@
 }
 
 [data-reading-guide-group-title] {
-  color: #17324d;
-  font-size: .7rem;
-  font-weight: 850;
+  display: inline-flex;
+  min-block-size: 1.35rem;
+  align-items: center;
+  padding: .12rem .38rem;
+  border: 1px solid #a8c4df;
+  border-radius: .3rem;
+  background: #e8f3ff;
+  color: #0c4f83;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .025em;
   white-space: nowrap;
+}
+
+[data-reading-guide-groups] [data-reading-guide-group-title] {
+  box-shadow: 0 .08rem .2rem rgba(20, 57, 92, .08);
 }
 
 [data-reading-guide-item],
@@ -545,6 +568,7 @@ html:not(.vibe-js) [data-fallback-for] {
   "use strict";
   const allowed = new Set(["fit", "0.75", "0.9", "1"]);
   const managed = new Set();
+  const autoCentered = new WeakSet();
   const requestedByCanvas = new WeakMap();
   let resizeFrame = 0;
 
@@ -609,6 +633,13 @@ html:not(.vibe-js) [data-fallback-for] {
     if (applied) {
       canvas.style.setProperty("--diagram-scale", String(scale));
       canvas.setAttribute("data-diagram-scaled", "true");
+    } else if (
+      requested === "fit"
+      && canvas.dataset.primaryDirection === "north-to-south"
+      && !autoCentered.has(canvas)
+    ) {
+      canvas.scrollLeft = Math.max(0, (stage.scrollWidth - canvas.clientWidth) / 2);
+      autoCentered.add(canvas);
     }
     controls.forEach((item) => {
       const message = applied
@@ -628,6 +659,7 @@ html:not(.vibe-js) [data-fallback-for] {
   };
   const apply = (canvas, requested = "fit") => {
     if (!allowed.has(requested)) return false;
+    if (requested === "fit") autoCentered.delete(canvas);
     return retest(canvas, requested);
   };
   const scheduleRetest = () => {
@@ -1270,6 +1302,26 @@ html:not(.vibe-js) [data-fallback-for] {
   };
 
   const auditControls = (canvas, addIssue) => {
+    const controlScope = (canvas.dataset.diagramControlScope || "").trim();
+    if (controlScope === "embedded") {
+      const composition = canvas.closest("[data-diagram-composition-root]");
+      const primary = composition?.querySelector(
+        '[data-diagram-control-scope="primary"]'
+      );
+      const primaryId = primary?.dataset.diagramId || primary?.dataset.sequenceId || "";
+      const primaryControls = primaryId
+        ? document.querySelector(
+            `[data-diagram-controls="${CSS.escape(primaryId)}"], [data-sequence-controls="${CSS.escape(primaryId)}"]`
+          )
+        : null;
+      if (!composition || !primary || !primaryControls) {
+        addIssue(
+          "embedded-control-scope-invalid",
+          canvas.dataset.diagramId || canvas.dataset.sequenceId || "unnamed-canvas"
+        );
+      }
+      return;
+    }
     const canvasId = canvas.dataset.diagramId || canvas.dataset.sequenceId || "";
     const controls = document.querySelector(
       `[data-diagram-controls="${CSS.escape(canvasId)}"], [data-sequence-controls="${CSS.escape(canvasId)}"]`
@@ -1357,12 +1409,22 @@ html:not(.vibe-js) [data-fallback-for] {
     root.querySelectorAll(auditRoots).forEach((canvas) => {
       results.set(canvas.dataset.diagramId || canvas.dataset.sequenceId || "canvas", audit(canvas));
     });
+    const disclosure = globalThis.VibeDiagramDisclosure?.auditLifecycle?.(root);
+    const disclosureIssues = Array.isArray(disclosure?.issues)
+      ? disclosure.issues
+      : [];
     const failures = Array.from(results.values()).reduce(
       (total, issues) => total + issues.length,
       0
-    );
+    ) + disclosureIssues.length;
     document.documentElement.dataset.computedLayoutAudit = failures ? "failed" : "passed";
     document.documentElement.dataset.computedLayoutIssueCount = String(failures);
+    if (disclosureIssues.length) {
+      document.documentElement.dataset.computedLayoutIssues =
+        disclosureIssues.map((issue) => `detail-lifecycle:${issue}`).join("|").slice(0, 2048);
+    } else {
+      delete document.documentElement.dataset.computedLayoutIssues;
+    }
     return results;
   };
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regenerate the 0.1.10 twelve-family review atlas from canonical templates."""
+"""Regenerate the 0.1.10 twelve-scenario review atlas from canonical templates."""
 
 from __future__ import annotations
 
@@ -17,6 +17,14 @@ INDEX_PATH = ROOT / "docs" / "TASK_20260725_002_全图族制图根因整改回�
 TOKEN_RE = re.compile(r"\{\{([^{}]+)\}\}")
 TEXT_TOKEN_RE = re.compile(r"\{\{canvas-text-(\d{3})\}\}")
 ATTRIBUTE_TOKEN_RE = re.compile(r"\{\{canvas-attribute-(\d{3})\}\}")
+OUTPUT_SUBDIRECTORY = "TASK_20260725_002_全图族制图根因整改回归"
+STALE_SAMPLE_FILENAMES = frozenset(
+    {
+        "01_业务架构_会员积分价值链.html",
+        "06_交付验收_SSO接入.html",
+        "08_功能迭代_通知链路发布回滚.html",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -287,9 +295,247 @@ SYSTEM_MAIN = {
 }
 
 
+def technical_package_text() -> Dict[int, str]:
+    values: Dict[int, str] = {}
+
+    def put(start: int, items: List[str]) -> None:
+        values.update(numbered(items, start=start))
+
+    put(
+        1,
+        [
+            "完整技术设计",
+            "订单创建与事件投递",
+            "六个互补视图连续展开同一设计：边界、时序、契约、一致性、恢复与发布验证。",
+        ],
+    )
+    put(20, ["入口与边界", "事务与事件", "异步消费"])
+    put(
+        25,
+        [
+            "创建订单 API",
+            "校验租户与幂等键",
+            "本地事务",
+            "写订单与 Outbox",
+            "事件投递",
+            "发布 OrderCreated",
+            "库存消费者",
+            "幂等更新库存",
+            "调用",
+            "提交",
+            "消费",
+            "总览节点详情",
+            "职责、边界和依赖方向",
+            "入口只做协议适配、租户校验与幂等检查。",
+            "订单与 Outbox 在同一数据库事务中提交。",
+            "投递器只领取可处理事件，收到 broker ack 后推进状态。",
+            "消费者按 eventId 去重，再更新库存投影。",
+            "窄屏总览关系",
+        ],
+    )
+    put(
+        60,
+        [
+            "02 · 运行时序",
+            "订单创建运行时序",
+            "以参与方、生命线、消息、返回和超时片段表达一次真实运行。",
+        ],
+    )
+    put(
+        70,
+        [
+            "客户端",
+            "提交订单",
+            "订单服务",
+            "事务协调",
+            "事件投递器",
+            "发布事件",
+            "消息总线 Kafka",
+            "消息总线",
+            "主事务",
+            "写入并提交",
+            "客户端 → 订单",
+            "同步",
+            "提交订单 POST /orders",
+            "订单 → 投递器",
+            "异步",
+            "唤醒待投递事件",
+            "事件发布",
+            "发布与确认",
+            "投递器 → Kafka",
+            "异步",
+            "订单事件 OrderCreated",
+            "Kafka → 投递器",
+            "返回",
+            "代理确认 broker ack",
+            "异常分支 alt",
+            "发布超时",
+            "投递器 → 订单",
+            "异常",
+            "记录 FAILED",
+            "01",
+            "02",
+            "03",
+            "04",
+            "05",
+        ],
+    )
+    put(
+        108,
+        [
+            "参与方与消息详情",
+            "点击参与方或消息查看职责、输入输出与失败边界。",
+            "客户端生成 orderId 与幂等键，并接收同步受理结果。",
+            "订单服务负责本地事务，不直接承担消息重试。",
+            "事件投递器领取 NEW/FAILED 事件并执行退避重试。",
+            "Kafka 提供 broker ack，不代表下游业务已经完成。",
+            "POST /orders 只在幂等校验通过后进入事务。",
+            "提交成功后才允许投递器观察到 Outbox 事件。",
+            "OrderCreated 使用稳定 eventId 支撑消费端去重。",
+            "broker ack 后事件由 NEW 推进到 SENT。",
+            "超时写入 FAILED 与 next_retry_at，不覆盖订单事实。",
+        ],
+    )
+    put(
+        120,
+        [
+            "03 · 数据契约",
+            "接口、存储与事件契约",
+            "以表格明确输入、约束、输出与失败语义，避免把字段关系画成装饰卡片。",
+            "关键契约表",
+            "契约",
+            "输入",
+            "约束",
+            "输出",
+            "失败语义",
+            "创建订单 CreateOrder",
+            "租户 tenantId，订单 orderId",
+            "幂等键唯一",
+            "订单编号 orderId",
+            "409 重复键",
+            "订单表 orders",
+            "订单聚合",
+            "状态为 CREATED",
+            "事务提交",
+            "数据库回滚",
+            "事件表 outbox_event",
+            "事件编号 eventId",
+            "事件状态 NEW → SENT",
+            "订单事件 OrderCreated",
+            "FAILED 可重试",
+            "库存消费",
+            "事件编号 eventId",
+            "幂等去重",
+            "库存投影",
+            "重放安全",
+        ],
+    )
+    put(
+        150,
+        [
+            "04 · 状态一致性",
+            "订单与事件状态一致性",
+            "状态变化由真实事件驱动，巡检只负责回补，不改写已提交业务事实。",
+            "状态转换与对账反馈",
+            "已接收 RECEIVED",
+            "请求已校验",
+            "已提交 COMMITTED",
+            "订单与 Outbox 已提交",
+            "提交事务",
+            "发布确认",
+            "消费幂等",
+            "巡检回补",
+            "已发布 PUBLISHED",
+            "broker 已确认",
+            "已投影 PROJECTED",
+            "库存投影已更新",
+            "状态节点详情",
+            "状态、触发事件与可恢复边界",
+            "RECEIVED 只表示请求通过基础校验，尚未形成订单事实。",
+            "COMMITTED 表示订单与 Outbox 已在同一事务中落库。",
+            "PUBLISHED 需要 broker ack，不能由发送调用成功替代。",
+            "PROJECTED 表示消费者已幂等更新库存投影。",
+            "窄屏一致性关系",
+        ],
+    )
+    put(
+        180,
+        [
+            "05 · 失败恢复",
+            "失败恢复与重试流程",
+            "自动重试与人工处置在明确汇合点复核，反馈通道有独立语义。",
+            "恢复主流程",
+            "人工介入通道",
+            "发现超时事件",
+            "扫描 NEW / FAILED",
+            "判断是否可重试",
+            "次数、退避与故障类型",
+            "自动重试",
+            "未超过上限",
+            "转人工处置",
+            "进入判断",
+            "可重试",
+            "不可重试",
+            "重试结果",
+            "人工结果",
+            "确认一致",
+            "处置后重判",
+            "超过上限或毒消息",
+            "汇合复核",
+            "核对订单与投影",
+            "恢复完成",
+            "关闭告警",
+            "恢复节点详情",
+            "点击节点查看判定依据、输入输出与责任边界。",
+            "巡检按 next_retry_at 领取超时事件，不扫描全部历史。",
+            "判断同时考虑错误类型、次数上限与指数退避。",
+            "自动重试沿用原 eventId，避免制造重复业务事件。",
+            "人工处置必须记录原因、操作者与修复动作。",
+            "汇合复核同时检查订单、Outbox 与库存投影。",
+            "确认一致后关闭告警并保留完整审计记录。",
+            "窄屏恢复关系",
+        ],
+    )
+    put(
+        220,
+        [
+            "06 · 发布验证",
+            "发布门禁与回滚判据",
+            "用表格固定每个阶段的变更、验证、门禁与失败动作。",
+            "发布与验证清单",
+            "阶段",
+            "变更",
+            "验证",
+            "门禁",
+            "失败动作",
+            "部署前",
+            "迁移与兼容检查",
+            "契约回归",
+            "全部通过",
+            "阻断发布",
+            "灰度 5%",
+            "新旧链路并行",
+            "错误率 ≤ 0.5%",
+            "观察 15 分钟",
+            "切回旧版本",
+            "灰度 25%",
+            "扩大流量",
+            "延迟 P95 ≤ 300ms",
+            "库存一致",
+            "暂停扩量",
+            "全量",
+            "100% 流量",
+            "巡检无积压",
+            "持续观测",
+            "保留回滚窗口",
+        ],
+    )
+    return values
+
+
 SAMPLES = [
     Sample(
-        "01_业务架构_会员积分价值链.html",
+        "01_业务架构_会员积分能力域.html",
         "business-architecture",
         "capability-domain-map",
         "业务架构图｜会员积分能力与业务域",
@@ -505,13 +751,13 @@ SAMPLES = [
         ["事实值来自用户给定场景。", "未提供权重，不生成分数。", "推荐与复评条件同时可见。"],
     ),
     Sample(
-        "06_交付验收_SSO接入.html",
-        "delivery-acceptance",
-        "acceptance-ledger",
+        "06_决策沟通_企业SSO验收矩阵.html",
+        "decision-communication",
+        "option-matrix-path",
         "验收矩阵视图｜企业 SSO 接入",
-        "旧“交付验收图”入口仅用于一版兼容；当前以要求列、证据事实与验收结论矩阵表达，不把它包装成虚构图型。",
+        "要求、验证证据与验收结论按矩阵逐项对齐；这是一种决策沟通视图，不再包装成虚构的“交付验收图”。",
         "企业 SSO 验收矩阵",
-        "兼容入口迁移到要求—证据—结论矩阵",
+        "要求—证据—结论矩阵",
         matrix_text(
             "企业 SSO 接入验收矩阵",
             "每项要求对应验证证据与结论；生产跨域退出保留为条件验收。",
@@ -538,7 +784,7 @@ SAMPLES = [
                 "先上线已验证部分，同时保留补验和回退动作。",
             ],
         ),
-        ["旧入口仅提供迁移兼容。", "逐项要求、证据和结论使用同一矩阵。", "条件验收不得伪装为通过。"],
+        ["逐项要求、证据和结论使用同一矩阵。", "条件验收不得伪装为通过。", "验收矩阵属于决策沟通，不是独立图族。"],
     ),
     Sample(
         "07_故障调试_批处理重复消费.html",
@@ -603,7 +849,7 @@ SAMPLES = [
         ["观测只陈述现场事实。", "候选假设必须被多个观测支持。", "回归失败返回修复动作。"],
     ),
     Sample(
-        "08_功能迭代_通知链路发布回滚.html",
+        "08_功能迭代_订单通知链路.html",
         "feature-iteration",
         "current-target-flow",
         "当前态—目标态迭代图｜订单通知链路",
@@ -834,97 +1080,22 @@ SAMPLES = [
         },
     ),
     Sample(
-        "12_技术设计_Outbox一致性边界.html",
+        "12_技术设计_订单创建完整设计.html",
         "technical-design",
-        "data-consistency-boundary",
-        "技术设计图｜Outbox 最终一致性边界",
-        "按本地事务、投递、消费、失败恢复和一致性约束五个边界解释 Outbox 链路，并保留超时巡检反馈通道。",
-        "Outbox 一致性边界",
-        "五个技术边界与失败恢复",
-        numbered(
-            [
-                "创建订单接口",
-                "校验 tenantId 与 orderId",
-                "orders 行",
-                "写入订单聚合",
-                "outbox_event 行",
-                "同事务写 NEW 事件",
-                "事件投递器",
-                "SKIP LOCKED 拉取 NEW",
-                "Kafka",
-                "发布 OrderCreated",
-                "库存投影消费者",
-                "按 eventId 幂等消费",
-                "更新库存投影",
-                "写入 consumed_event",
-                "巡检与重试",
-                "扫描 NEW / FAILED",
-                "Outbox 最终一致性主链",
-                "订单与事件同事务提交，投递与消费跨边界，失败由巡检回补。",
-                "本地事务边界",
-                "事件投递边界",
-                "消费边界",
-                "失败恢复边界",
-                "校验业务键",
-                "同事务写入",
-                "提交后投递",
-                "代理确认 broker ack",
-                "幂等消费",
-                "更新投影",
-                "超时进入巡检",
-                "重试 NEW / FAILED",
-                "接口进入订单聚合",
-                "订单聚合与 Outbox 同事务",
-                "提交后由投递器拉取",
-                "Kafka 确认发布",
-                "消费者按 eventId 幂等",
-                "消费结果更新投影",
-                "超时事件进入巡检",
-                "巡检回写并重新投递",
-                "窄屏关系",
-                "事务、投递、消费与补偿关系",
-                "创建订单接口",
-                "orders 行",
-                "校验业务键",
-                "orders 行",
-                "outbox_event 行",
-                "同事务写入",
-                "outbox_event 行",
-                "事件投递器",
-                "提交后投递",
-                "事件投递器",
-                "Kafka",
-                "代理确认 broker ack",
-                "Kafka",
-                "库存投影消费者",
-                "幂等消费",
-                "库存投影消费者",
-                "更新库存投影",
-                "更新投影",
-                "更新库存投影",
-                "巡检与重试",
-                "超时进入巡检",
-                "巡检与重试",
-                "outbox_event 行",
-                "重新投递",
-                "节点详情",
-                "点击节点查看事务、幂等、确认与恢复边界。",
-                "接口先校验租户与订单业务键，不直接发布消息。",
-                "orders 行是本地业务聚合的一部分。",
-                "outbox_event 与订单在同一数据库事务中写入。",
-                "投递器使用 SKIP LOCKED 并只处理可领取事件。",
-                "Kafka broker ack 后才把事件推进到 SENT。",
-                "消费者以 eventId 去重，再更新库存投影。",
-                "投影更新与 consumed_event 去重记录同事务提交。",
-                "巡检扫描超时 NEW / FAILED，按退避策略重试。",
-                "一致性约束",
-                "订单与 Outbox 同事务",
-                "eventId 全局幂等",
-                "broker ack 后标记 SENT",
-                "消费失败可重放",
-            ]
-        ),
-        ["本地事务只覆盖 orders 与 outbox_event。", "投递、消费和恢复各有独立边界。", "一致性约束以底部约束带表达。"],
+        "technical-design-package",
+        "完整技术设计｜订单创建与事件投递",
+        "总览、运行时序、数据契约、状态一致性、失败恢复与发布验证连续展开，且分别复用成熟图族内核。",
+        "订单创建技术设计",
+        "六视图完整技术设计",
+        technical_package_text(),
+        [
+            "订单与 Outbox 在同一事务中提交。",
+            "投递器在 broker ack 后推进事件状态。",
+            "消费者按 eventId 幂等更新库存投影。",
+            "失败恢复保留自动重试、人工处置和复核汇合。",
+            "发布验证明确灰度门禁与失败动作。",
+            "六个视图共享同一组设计事实，不相互重复替代。",
+        ],
     ),
 ]
 
@@ -1106,6 +1277,7 @@ def render_sample(sample: Sample) -> str:
 
 
 def render_index(samples: List[Sample]) -> str:
+    family_count = len({sample.family for sample in samples})
     nav = "".join(
         f'<a href="#sample-{index:02d}">{index:02d} {html.escape(sample.short_title)}</a>'
         for index, sample in enumerate(samples, 1)
@@ -1118,10 +1290,10 @@ def render_index(samples: List[Sample]) -> str:
               <h2>{html.escape(sample.short_title)}</h2>
               <p>{html.escape(sample.purpose)}</p>
             </div>
-            <a class="open" href="{html.escape(sample.filename, quote=True)}">打开完整 HTML</a>
+            <a class="open" href="{OUTPUT_SUBDIRECTORY}/{html.escape(sample.filename, quote=True)}">打开完整 HTML</a>
           </header>
           <iframe loading="lazy" title="{html.escape(sample.short_title, quote=True)}"
-                  src="TASK_20260725_002_全图族制图根因整改回归/{html.escape(sample.filename, quote=True)}"></iframe>
+                  src="{OUTPUT_SUBDIRECTORY}/{html.escape(sample.filename, quote=True)}"></iframe>
         </article>"""
         for index, sample in enumerate(samples, 1)
     )
@@ -1165,7 +1337,7 @@ def render_index(samples: List[Sample]) -> str:
   <header class="hero">
     <span>VIBE DIAGRAM / 0.1.10 / CANONICAL REGENERATION</span>
     <h1>十二类真实场景回归</h1>
-    <p>每一页从 0.1.10 canonical template 重新生成。<b>静态契约、真实浏览器布局、客户端生命周期分开记账</b>；本索引只用于逐图人工审阅。</p>
+    <p>{len(samples)} 个真实场景覆盖 {family_count} 个公开图族，均从 0.1.10 canonical template 重新生成。<b>静态契约、真实浏览器布局、客户端生命周期分开记账</b>；本索引只用于逐图人工审阅。</p>
   </header>
   <nav aria-label="样例导航">{nav}</nav>
   <main>{sections}</main>
@@ -1176,6 +1348,10 @@ def render_index(samples: List[Sample]) -> str:
 
 def main() -> int:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for filename in STALE_SAMPLE_FILENAMES:
+        stale_path = OUTPUT_DIR / filename
+        if stale_path.is_file() and not stale_path.is_symlink():
+            stale_path.unlink()
     for sample in SAMPLES:
         (OUTPUT_DIR / sample.filename).write_text(
             render_sample(sample), encoding="utf-8"

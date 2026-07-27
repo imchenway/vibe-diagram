@@ -27,7 +27,7 @@
       "technical-design/api-contract-swimlane.html",
       "technical-design/data-consistency-boundary.html",
       "technical-design/module-contract-data-topology.html",
-      "technical-design/release-switch-track.html"
+      "technical-design/technical-design-package.html"
     ],
     "B06": [
       "fault-debugging/before-after-flow.html",
@@ -128,7 +128,7 @@
           "layout-slot-025",
           "layout-slot-026"
         ],
-        "file_sha256": "f2fe13db5d52506e54c546d4715d27b476ff48d91887bcb62e0ea89321bceac4",
+        "file_sha256": "68f19a08c894f4bd9dcd369c7ea453b983beb510e7d531db78197e0f418cc751",
         "macros": [
           "routing_confidence",
           "title",
@@ -1906,7 +1906,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "b4fd10cb3681e50ed94ce5bb730b7257a007ce325366ebec00d1f3dd981e9e54",
+        "file_sha256": "e527f042dd473c1cc6a730c75ba0bbf3c1cf61d3b1edb64440d35337423a9fe1",
         "macros": [
           "title",
           "title",
@@ -2460,7 +2460,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "47745fca16770ae6ce93fddd7f9fc4ba39afff4e6e8423a7b16c87c193d1eaa3",
+        "file_sha256": "8b5dd0f5b6c0a4630f311bd8bc5a48f86f61d753976c86fc6d9772af10c6077d",
         "macros": [
           "title",
           "title",
@@ -3289,7 +3289,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "46054266afa0222a4827298c65c8ab358d25549fab4f5c1f0a30dd22e09f2de8",
+        "file_sha256": "7365135f8fb72c35ee2d21d763efdd96d7b8b9f01c552e1c8ba9c7d949c547ba",
         "macros": [
           "title",
           "title",
@@ -4112,7 +4112,7 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "7f27a5200795529e1963ce984d35e307510c97c068009e031f2a6cc85c8506ad",
+        "file_sha256": "145abab3057372edef93bb64754962e36b94632478e4dd729170c62fecfda650",
         "macros": [
           "title",
           "title",
@@ -4539,7 +4539,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "72e331c5db8e1c8dd6f39155ac5a84a0e5be15e8aded97bb26b4583ab6dd9e91",
+        "file_sha256": "880d444d7355f744e0f5a883e48649665040341a00c0fa4eb1fba96cb6d3979e",
         "macros": [
           "title",
           "title",
@@ -5262,7 +5262,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "43d8e8fb91667401546538795238d4a342c3e0209d1b72c070544dedb0d7a47e",
+        "file_sha256": "738c782bf1b6fa86a4fda5af4f800e61f40752327e68cbcff9118d4cd8f30383",
         "macros": [
           "title",
           "summary",
@@ -6041,7 +6041,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "29cb7ec4cdd55ed518981c108441967f44facd92c17d2ecdf36ee9bcbc42824a",
+        "file_sha256": "59bd10ffed4927bda02898efde53c7a76528b1e30545c399201c50f574255a81",
         "macros": [
           "title",
           "summary",
@@ -6733,7 +6733,7 @@
           "layout-slot-008",
           "layout-slot-009"
         ],
-        "file_sha256": "c0f0862463ab0694e9ff33044bdac12af37681b40cd3bfb219168ba6dc7cb991",
+        "file_sha256": "ad8f8a27ed63b66e02e6131bc73b7dccbac6cfd2bd2e53aeb0064c7c25dc14a9",
         "macros": [
           "title",
           "title",
@@ -7516,7 +7516,7 @@
           "layout-slot-008",
           "layout-slot-009"
         ],
-        "file_sha256": "4678bfd65c98d29207b8aa4696803a0143f247e40a4ca59dbce6beb756421e18",
+        "file_sha256": "cb4cdeaadfe4f14b82fe5cc8b93cfc57f88ec6a8969a5b5598b97556b1433819",
         "macros": [
           "title",
           "title",
@@ -8187,7 +8187,7 @@
           "layout-slot-017",
           "layout-slot-007"
         ],
-        "file_sha256": "00592bbdd6e8b17dcc25f1e56d2f41ad46982d034bc8a1d4eb34a248a4815071",
+        "file_sha256": "7df7cf2de3e20142d49605012100f257036152ab0584f76ec63829b94f780f41",
         "macros": [
           "title",
           "title",
@@ -8681,7 +8681,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "231d71e97a4c9452788b6d3755bc2156d738594643a0eb3e8a714d40fafb449f",
+        "file_sha256": "43908fb9a72b8d911bfb423d09fb8e4091a309bc403d9feea07f3ee6c3ef3fd1",
         "macros": [
           "title",
           "title",
@@ -9141,7 +9141,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "8de019ca12ff02fa5a8f39a6f551ce7804cb61f7d75dfbaa5265bb7bbc19ad25",
+        "file_sha256": "4e57b4a487bdb2e40a0f00e7a6c4a59a8ccf7260b1de772ee26ed2fab5c92997",
         "macros": [
           "title",
           "title",
@@ -9595,7 +9595,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "7b2b3a4eda2d18d85b11c09efa115fa853389ef09ebcfa5ec09c073e27eb62fe",
+        "file_sha256": "58d60495149fc609c7d0cfa79c7ad65d2a307a7428274f82b321b623fab93fa4",
         "macros": [
           "title",
           "title",
@@ -10009,7 +10009,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "4e13224e3c3da1976399bd36b76297995d42113da247663df44c0cf7ef660330",
+        "file_sha256": "6da702d872b495a6679560871b23db874deb69a87f54bf28e03d7afd80a1a3ba",
         "macros": [
           "title",
           "title",
@@ -10618,7 +10618,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "a1f77c1255ff36ba93cc100e0c34278bd22ae6e90ac8f2e8f9ad173c439be939",
+        "file_sha256": "ab65697dbf54a34527bbabcbc1a159be92ede0cdd666eabb18f61e0ffed57783",
         "macros": [
           "title",
           "title",
@@ -11200,7 +11200,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "b8a5ee2868dd24e97de97f9925f27cebaf1ca6a2f985817c9a44cc9a1fff3e92",
+        "file_sha256": "e3f806ec8d927c7ba31eed06d06b66330c38e364bd75ba1a7dda708ddac61b99",
         "macros": [
           "title",
           "title",
@@ -11741,7 +11741,7 @@
           "layout-slot-003",
           "layout-slot-004"
         ],
-        "file_sha256": "0e65845947972f6486b21334235e1b793ee31a0ebb60d0acc09a1d0b7751f880",
+        "file_sha256": "fea5629fb638962acec9932deb1793eddcb28a6b06154811e6bc8a0d42df87c0",
         "macros": [
           "title",
           "title",
@@ -12126,7 +12126,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "f8094d347a562c43e4e7a3fb9d54b7d9f668fd4a068d425b816a40da54f296f4",
+        "file_sha256": "6396d4e3b0a3f38324eec0b930c7886853f4ec25765ba121596fbbc2269af31a",
         "macros": [
           "title",
           "title",
@@ -12766,7 +12766,7 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "a9d9fb5f10b4c28a563dfaf41ca241be15f3c5b841733bd9e31c7b4579f8b1cb",
+        "file_sha256": "98394f6a8d5bd97e2ebc508ec6ef807a36265f20f032009fe0c3190772fc70c5",
         "macros": [
           "title",
           "title",
@@ -13193,7 +13193,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "ba6a2c1758a0d772af432f21773c193e284ad61ea1fb1659a75c5911db7de4c3",
+        "file_sha256": "9e760442c8fd20438ed077cfebb0897f7ef2867d4f61291d7e9998125c5fbdcf",
         "macros": [
           "title",
           "title",
@@ -14062,7 +14062,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "66960adfda82953785c16d949912976929232cb89551a5e7638ef06de535be1a",
+        "file_sha256": "405f8eb46809f7bb4979b4eb0ae8c2349d686e5725c180375d032d9d8beccf79",
         "macros": [
           "title",
           "title",
@@ -14912,7 +14912,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "76449e3771ca2446da9acb984f950aa6d867880e84071c2f1b6bd495e7529c99",
+        "file_sha256": "a1823c2d39bfa9013fee9334f1a7851901b6907b3b2c9961021d8318888e5cf7",
         "macros": [
           "title",
           "title",
@@ -15520,7 +15520,7 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "b5eb36102761b1b765313bd8fe113b04064a05da53971594952b5327dc4271c3",
+        "file_sha256": "1aea03908624a1eab730d92eb4bcccd3e8259deba94717acc8d285848302dbfb",
         "macros": [
           "title",
           "title",
@@ -15954,7 +15954,7 @@
           "layout-slot-018",
           "layout-slot-019"
         ],
-        "file_sha256": "7d1f9573b85d6169a43e674064bbbf3ace4f16828e4765456b137d009141158e",
+        "file_sha256": "fd113eedc07bc9c13c5ab7c3118ba9f601cece8866f79a3685b7bb71f28e26e3",
         "macros": [
           "title",
           "title",
@@ -16919,7 +16919,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "e6f4d896d17ff871549e4c7641100256f0784c075290bd8111e5c60c53e0e795",
+        "file_sha256": "3c17d3be98f4a62e2b9b50e6f06d6983c534200a78644848d444d786a16d71a5",
         "macros": [
           "title",
           "title",
@@ -17380,7 +17380,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "f3827c0fc4b172f7fdbd0e90e615b346d8943578ee140f80788414a65838f575",
+        "file_sha256": "ab39da9260f3f34bd6506ba06cbc3aebd1b8588638d66b78718285b1dd2ce84e",
         "macros": [
           "title",
           "title",
@@ -17925,7 +17925,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "4a9401d7cc27d9311ae206f026107f2e9a38587a78623b8dde33d8e9186ff9f4",
+        "file_sha256": "61ba65c37220be78359772c026e79b5d8e424028d6f1c41a41b678979c1a440f",
         "macros": [
           "title",
           "title",
@@ -18615,7 +18615,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "6cce06615a9151e72cde9d82107e393504c44842cdef828e8ed8f6d20350038e",
+        "file_sha256": "e26e06c99fb67938d3130f1f91dfd0ef38ac63dec5021e1325c183055d81ccf4",
         "macros": [
           "title",
           "title",
@@ -19025,7 +19025,7 @@
           "layout-slot-008",
           "layout-slot-009"
         ],
-        "file_sha256": "c4e246c16c277545c3db841d1632474ca4f41c4d9b0947845982a1b0dee48cf3",
+        "file_sha256": "22b158bdcb440007dd6f91529e1938153f3a818960c78f6142278923d4ca9418",
         "macros": [
           "title",
           "title",
@@ -19701,7 +19701,7 @@
           "layout-slot-016",
           "layout-slot-017"
         ],
-        "file_sha256": "678a313fcd24d47492c8235672160d8316b5186c627d5684a17f352dcc7d9b9d",
+        "file_sha256": "aba2772036da4fd40b44d3a689d995296dba45375c31c2575111fed0b941a4c6",
         "macros": [
           "title",
           "title",
@@ -20625,7 +20625,7 @@
           "layout-slot-010",
           "layout-slot-011"
         ],
-        "file_sha256": "5640f406a2aea3935830d02384abf985e2bf5272656346d996d0d6857eabbd53",
+        "file_sha256": "8b2081a9acc93488c4931c9142cc79e9f882406a69a8563b9cd573bc140921bc",
         "macros": [
           "title",
           "title",
@@ -21413,7 +21413,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "6aaf9cedcdbe0f8f944154a859c9536752feddf6c2d2a650b13eec7b9b1e3926",
+        "file_sha256": "ee1ebb5b42a7918348130bfb19af5ff93c8da1059dbe3167ec12f2b8da6271f8",
         "macros": [
           "title",
           "title",
@@ -21860,7 +21860,7 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "b14f01515dca425b529338f764c38c8fa40bc0ecebcefe5561e010f95cf86ebe",
+        "file_sha256": "3b7ac6ccda6212bed3a1f6dd895cdae091aefd8a6c6b7b0d6c55198ac8eb04a5",
         "macros": [
           "title",
           "title",
@@ -22291,7 +22291,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "da2a2b7b679fd42dd5f2b31820b70e45d81136a5aa6beb245545cff2bf509619",
+        "file_sha256": "42da37e9511d071562d9c9d323e672edaedaf64927a86a2e07947e5d2c7f9796",
         "macros": [
           "title",
           "title",
@@ -23047,7 +23047,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "36b58e7cbb3a9c1f9150a249ee59865ddecaa642bc2cf03a626aa7b9e84949e1",
+        "file_sha256": "380a905b7b9e12d9ec3533fe1662ff5552274c6352380ac1f920318084de11e7",
         "macros": [
           "title",
           "title",
@@ -23692,7 +23692,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "363b618bfd42c600b242b185d30c2e53f13e2cbd29f5561869144e2f60457f16",
+        "file_sha256": "8a64a8e66fec736a12f5d149da66cddd3727feb3be6f5291df7c4e1586d098cc",
         "macros": [
           "title",
           "title",
@@ -24454,7 +24454,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "bbce673f37b3ecee4d3aa45dc13698d203e8113392c2457d9b4a8a6dea834e1e",
+        "file_sha256": "a58967e0651cf78047bc684c4511b81078a1f3d72620bb2f47fb1573a286cf4b",
         "macros": [
           "title",
           "title",
@@ -25219,7 +25219,7 @@
           "layout-slot-014",
           "layout-slot-015"
         ],
-        "file_sha256": "167bc63a03c13234512ea4d2843d50d218a67e2bbdda11f6b4dbbc7e7848fe23",
+        "file_sha256": "e8d3b2aad48f910809847c5395efbc2cca0cd7bcc93fb0f5a26bf8ba8c900d28",
         "macros": [
           "title",
           "title",
@@ -26091,7 +26091,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "3793cf2d00b529bd762c617bc8ce3e3ebbd7605a89463a903178795669041872",
+        "file_sha256": "dbf431cf71356549aa52c16f29b1c229b0f91ef6611f517f3259f50e0253223a",
         "macros": [
           "title",
           "title",
@@ -26758,7 +26758,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "5fe63f6150253e74d94a0277fcb634bec3b7e81152e2477a3b699ebff9570efc",
+        "file_sha256": "521aa397be756293ab71b6a776a224c28fed536e2fea40d8ef6334345e1c8504",
         "macros": [
           "routing_confidence",
           "title",
@@ -27283,7 +27283,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "af90e482b0d9c24cfb865c3a874af9f917a2df98a44a7359b824765ec73027e1",
+        "file_sha256": "a7cd06cddcfa3b0321cf45b199ca7326faa9dd06fc50e2c55bb8da227561af69",
         "macros": [
           "routing_confidence",
           "title",
@@ -27874,7 +27874,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "fdd177dfe645037a0925fe738280a20cc75b89a8c07e0eb360a305af9f3ce4e0",
+        "file_sha256": "78358d1d4a05a73b2f3f05b60cbbac3370668ab814aac58e0ed4f82c52c59fb3",
         "macros": [
           "routing_confidence",
           "title",
@@ -28455,7 +28455,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "67e2df3c0e42c3675b0b65beef5e875119bbf33c6d7107eb7e9e667be8d275f8",
+        "file_sha256": "9d3f08571884490e87c93af06b24fe405e1f6d5b5b2f0dca0a9eda3c6e969ec9",
         "macros": [
           "routing_confidence",
           "title",
@@ -29044,7 +29044,7 @@
           "layout-slot-005",
           "layout-slot-006"
         ],
-        "file_sha256": "11a0167b409d08a56ebd18663f5133b97793ee70b47186283372e6069ec7cd66",
+        "file_sha256": "f4a372b93dca0c6abefef5d196f758988c7379471d29f51a966b9fc68f18cb8c",
         "macros": [
           "routing_confidence",
           "title",
@@ -29522,7 +29522,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "ecebe76f10d11e73b1d5dcbc7bd6413147805ef55f8b2cf130ea59e9773866ca",
+        "file_sha256": "ed24bce492fb16cdea3bc4ec1c8538c865d5e50b40f99e5d988cc1a446ea13b4",
         "macros": [
           "routing_confidence",
           "title",
@@ -30056,7 +30056,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "560883068a0c07a6fc80f34e4ff73decbfdf11bec02fe200d2f286069a07d014",
+        "file_sha256": "9b3eaf19aae09d9f5edac8c77684ef380691882294aa5aede49871e1c1fd2f8a",
         "macros": [
           "routing_confidence",
           "title",
@@ -30583,7 +30583,7 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "931582fef1bd3ed16b8ce0787b655e771278c517985f5ba74a5038f7c58b2929",
+        "file_sha256": "ad546304730499048341580a3d105b72f1657122cbe7c68c65344c6344c38a78",
         "macros": [
           "routing_confidence",
           "title",
@@ -31007,7 +31007,7 @@
           "layout-slot-028",
           "layout-slot-029"
         ],
-        "file_sha256": "223a72d7bd3514948cff744636ee36be34b5134dd70630f5bc4d6d72290f8beb",
+        "file_sha256": "e5f707822dba2ddaf3941f3f7fddf24ef6b6865291d819abe1bfc95a85262f9a",
         "macros": [
           "routing_confidence",
           "title",
@@ -32904,7 +32904,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "6910125a39720b6d7b7f743ff62674aaa1619a9916f713172d52572c086f3817",
+        "file_sha256": "150a1c7d1bfaac8f10b1a48e1808afd5f58c7d6664469b9cfc950904ceb74715",
         "macros": [
           "routing_confidence",
           "title",
@@ -33492,7 +33492,7 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "df0f39862290eea09d5d3daee733c3ad8a5cb7f3d262632755880c1a2f662026",
+        "file_sha256": "a88c98d6392389422eb7d869a2b4fb592ca10b846c49444dcc2ca7f22bdbb0fb",
         "macros": [
           "routing_confidence",
           "title",
@@ -33903,7 +33903,7 @@
           "layout-slot-005",
           "layout-slot-006"
         ],
-        "file_sha256": "60b22d24cd566a419ca55443ec010addbf2622bec2e34d148db0af699d373ba2",
+        "file_sha256": "4dbaae26a95908f944da17f145005b9bcb63a00886af707d7ce84b7b2ae4b09f",
         "macros": [
           "routing_confidence",
           "title",
@@ -34382,7 +34382,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "55f4f9108d6f3159e5653c0dee8c7b636e12244665c97f05a8e32c2289d5481a",
+        "file_sha256": "d1296c09da64a7460a5a45a8293081823b753a3708731647b1f89ab417936fec",
         "macros": [
           "routing_confidence",
           "title",
@@ -34957,7 +34957,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "50730b79863a77fce9403a3ae3b43fd3f7edeb14f20ff79b9389a5edb8678c6d",
+        "file_sha256": "87768d00073f1474cb3324f3b118d68c2b0c2f699c734d1e56f82b3812419e92",
         "macros": [
           "routing_confidence",
           "title",
@@ -35481,7 +35481,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "07173e5a72933ccfff1b6d7c7ce1ba0df84b7e1ed88cb3b5c0b2eecedf14344e",
+        "file_sha256": "2bea15fee8548e637ae73655f2f424bb13862b838c650b5ca49b1c2397b93d67",
         "macros": [
           "routing_confidence",
           "title",
@@ -36024,7 +36024,7 @@
           "layout-slot-025",
           "layout-slot-026"
         ],
-        "file_sha256": "2e8784f0a4d3c95fd25ac5fc1fc9150f269ea17c59eef8c6170be8e3ebc79f90",
+        "file_sha256": "a5afb9b06445183c104140c4e42c5a678f85f26a5e7282887d87539359f61cc6",
         "macros": [
           "routing_confidence",
           "title",
@@ -37788,7 +37788,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "2ecbdee81d5c61f32957b03b855c3ffc4706a50ad7ae75cca7f1bf1b06ea1cf5",
+        "file_sha256": "744a9945b137628127fb846c1892353b864f6cd72c3f60bebdb80e580289632d",
         "macros": [
           "title",
           "title",
@@ -38945,7 +38945,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "b8b850dab62f2a07ace25b46f0863f285fa7687bac53324d7a167e772ebd8a37",
+        "file_sha256": "c4009bae507b7404e76c5f98255c6c9b834b72063fe27a71e018803e9b7d23f6",
         "macros": [
           "title",
           "title",
@@ -39835,7 +39835,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "35086b74a7db68ae77cd94545afc08ab4f961d18f217de13cd5c3113dddde920",
+        "file_sha256": "57c4ae06c2e5b53423068afb1f99b93160678938a9ed0118ad83da3b2151d935",
         "macros": [
           "title",
           "title",
@@ -40405,7 +40405,7 @@
       },
       "status": "migrated"
     },
-    "technical-design/release-switch-track.html": {
+    "technical-design/technical-design-package.html": {
       "canonical": {
         "data_slots": [
           "title",
@@ -40415,11 +40415,47 @@
           "layout-slot-002",
           "layout-slot-003",
           "layout-slot-004",
+          "layout-slot-301",
+          "layout-slot-302",
+          "layout-slot-303",
+          "layout-slot-304",
+          "layout-slot-041",
+          "layout-slot-042",
+          "layout-slot-043",
+          "layout-slot-044",
+          "layout-slot-315",
+          "layout-slot-316",
+          "layout-slot-317",
+          "layout-slot-318",
+          "layout-slot-319",
+          "layout-slot-320",
+          "layout-slot-321",
+          "layout-slot-322",
+          "layout-slot-323",
+          "layout-slot-120",
           "layout-slot-005",
           "layout-slot-006",
-          "layout-slot-007"
+          "layout-slot-007",
+          "layout-slot-008",
+          "layout-slot-305",
+          "layout-slot-306",
+          "layout-slot-307",
+          "layout-slot-308",
+          "layout-slot-009",
+          "layout-slot-010",
+          "layout-slot-011",
+          "layout-slot-012",
+          "layout-slot-013",
+          "layout-slot-014",
+          "layout-slot-309",
+          "layout-slot-310",
+          "layout-slot-311",
+          "layout-slot-312",
+          "layout-slot-313",
+          "layout-slot-314",
+          "layout-slot-220"
         ],
-        "file_sha256": "9fadf30a5ff392bb9a8782f54f5f170ef2bf04ad27b5d559862e90a016ac00a6",
+        "file_sha256": "a7c17c0958c261911e2ba67526bc740700f0a4db7705b6bbc457ebc29b23594a",
         "macros": [
           "title",
           "title",
@@ -40435,96 +40471,364 @@
           "evidence-unresolved-for",
           "evidence-unresolved-source",
           "interaction-hint",
-          "canvas-attribute-001",
-          "canvas-attribute-019",
           "canvas-text-001",
           "canvas-text-002",
-          "canvas-attribute-020",
           "canvas-text-003",
-          "canvas-text-004",
-          "canvas-attribute-021",
-          "canvas-text-005",
-          "canvas-text-006",
-          "canvas-attribute-022",
-          "canvas-text-007",
-          "canvas-text-008",
-          "canvas-attribute-023",
-          "canvas-text-009",
-          "canvas-text-010",
-          "canvas-attribute-024",
-          "canvas-attribute-025",
-          "canvas-attribute-026",
-          "canvas-text-011",
-          "canvas-text-012",
-          "canvas-attribute-027",
-          "canvas-text-013",
-          "canvas-text-014",
-          "canvas-attribute-002",
-          "canvas-text-015",
-          "canvas-attribute-011",
-          "canvas-text-016",
-          "canvas-text-017",
-          "canvas-text-018",
-          "canvas-attribute-012",
-          "canvas-text-019",
+          "canvas-attribute-001",
+          "canvas-attribute-120",
           "canvas-text-020",
+          "canvas-attribute-121",
           "canvas-text-021",
-          "canvas-attribute-013",
+          "canvas-attribute-122",
           "canvas-text-022",
-          "canvas-text-023",
-          "canvas-text-024",
-          "canvas-attribute-014",
+          "canvas-attribute-101",
+          "canvas-attribute-201",
           "canvas-text-025",
           "canvas-text-026",
+          "canvas-attribute-102",
+          "canvas-attribute-202",
           "canvas-text-027",
-          "canvas-attribute-015",
           "canvas-text-028",
+          "canvas-attribute-103",
+          "canvas-attribute-203",
           "canvas-text-029",
           "canvas-text-030",
-          "canvas-attribute-016",
+          "canvas-attribute-104",
+          "canvas-attribute-204",
           "canvas-text-031",
           "canvas-text-032",
+          "canvas-attribute-021",
           "canvas-text-033",
-          "canvas-attribute-017",
+          "canvas-attribute-022",
           "canvas-text-034",
+          "canvas-attribute-023",
           "canvas-text-035",
+          "canvas-attribute-021",
+          "canvas-attribute-051",
+          "canvas-text-033",
+          "canvas-attribute-022",
+          "canvas-attribute-052",
+          "canvas-text-034",
+          "canvas-attribute-023",
+          "canvas-attribute-053",
+          "canvas-text-035",
+          "canvas-attribute-310",
           "canvas-text-036",
-          "canvas-attribute-018",
           "canvas-text-037",
+          "canvas-text-025",
           "canvas-text-038",
+          "canvas-text-027",
           "canvas-text-039",
-          "canvas-attribute-011",
-          "canvas-attribute-003",
+          "canvas-text-029",
           "canvas-text-040",
-          "canvas-attribute-012",
-          "canvas-attribute-004",
+          "canvas-text-031",
           "canvas-text-041",
-          "canvas-attribute-013",
-          "canvas-attribute-005",
           "canvas-text-042",
-          "canvas-attribute-014",
-          "canvas-attribute-006",
-          "canvas-text-043",
-          "canvas-attribute-015",
-          "canvas-attribute-007",
-          "canvas-text-044",
-          "canvas-attribute-016",
-          "canvas-attribute-008",
-          "canvas-text-045",
-          "canvas-attribute-017",
-          "canvas-attribute-009",
-          "canvas-text-046",
-          "canvas-attribute-018",
-          "canvas-attribute-010",
-          "canvas-text-047",
-          "canvas-text-048",
-          "canvas-text-049",
-          "canvas-text-050",
-          "canvas-text-051",
-          "canvas-text-052",
-          "canvas-text-053",
-          "canvas-text-054",
-          "canvas-text-055"
+          "canvas-attribute-320",
+          "canvas-attribute-021",
+          "canvas-text-033",
+          "canvas-text-033",
+          "canvas-attribute-022",
+          "canvas-text-034",
+          "canvas-text-034",
+          "canvas-attribute-023",
+          "canvas-text-035",
+          "canvas-text-035",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-attribute-002",
+          "canvas-attribute-003",
+          "canvas-text-070",
+          "canvas-text-071",
+          "canvas-text-072",
+          "canvas-text-073",
+          "canvas-text-074",
+          "canvas-text-075",
+          "canvas-text-076",
+          "canvas-text-077",
+          "canvas-text-078",
+          "canvas-text-079",
+          "canvas-attribute-141",
+          "canvas-text-099",
+          "canvas-text-080",
+          "canvas-text-081",
+          "canvas-text-082",
+          "canvas-attribute-142",
+          "canvas-text-100",
+          "canvas-text-083",
+          "canvas-text-084",
+          "canvas-text-085",
+          "canvas-text-086",
+          "canvas-text-087",
+          "canvas-attribute-143",
+          "canvas-text-101",
+          "canvas-text-088",
+          "canvas-text-089",
+          "canvas-text-090",
+          "canvas-attribute-144",
+          "canvas-text-102",
+          "canvas-text-091",
+          "canvas-text-092",
+          "canvas-text-093",
+          "canvas-text-094",
+          "canvas-text-095",
+          "canvas-attribute-145",
+          "canvas-text-103",
+          "canvas-text-096",
+          "canvas-text-097",
+          "canvas-text-098",
+          "canvas-attribute-310",
+          "canvas-text-108",
+          "canvas-text-109",
+          "canvas-text-070",
+          "canvas-text-110",
+          "canvas-text-072",
+          "canvas-text-111",
+          "canvas-text-074",
+          "canvas-text-112",
+          "canvas-text-076",
+          "canvas-text-113",
+          "canvas-text-081",
+          "canvas-text-114",
+          "canvas-text-084",
+          "canvas-text-115",
+          "canvas-text-089",
+          "canvas-text-116",
+          "canvas-text-092",
+          "canvas-text-117",
+          "canvas-text-097",
+          "canvas-text-118",
+          "canvas-text-120",
+          "canvas-text-121",
+          "canvas-text-122",
+          "canvas-text-123",
+          "canvas-text-124",
+          "canvas-text-125",
+          "canvas-text-126",
+          "canvas-text-127",
+          "canvas-text-128",
+          "canvas-text-129",
+          "canvas-text-130",
+          "canvas-text-131",
+          "canvas-text-132",
+          "canvas-text-133",
+          "canvas-text-134",
+          "canvas-text-135",
+          "canvas-text-136",
+          "canvas-text-137",
+          "canvas-text-138",
+          "canvas-text-139",
+          "canvas-text-140",
+          "canvas-text-141",
+          "canvas-text-142",
+          "canvas-text-143",
+          "canvas-text-144",
+          "canvas-text-145",
+          "canvas-text-146",
+          "canvas-text-147",
+          "canvas-text-148",
+          "canvas-text-150",
+          "canvas-text-151",
+          "canvas-text-152",
+          "canvas-attribute-004",
+          "canvas-attribute-123",
+          "canvas-text-153",
+          "canvas-attribute-105",
+          "canvas-attribute-205",
+          "canvas-text-154",
+          "canvas-text-155",
+          "canvas-attribute-106",
+          "canvas-attribute-206",
+          "canvas-text-156",
+          "canvas-text-157",
+          "canvas-attribute-107",
+          "canvas-attribute-207",
+          "canvas-text-162",
+          "canvas-text-163",
+          "canvas-attribute-108",
+          "canvas-attribute-208",
+          "canvas-text-164",
+          "canvas-text-165",
+          "canvas-attribute-024",
+          "canvas-text-158",
+          "canvas-attribute-025",
+          "canvas-text-159",
+          "canvas-attribute-026",
+          "canvas-text-160",
+          "canvas-attribute-027",
+          "canvas-text-161",
+          "canvas-attribute-024",
+          "canvas-attribute-054",
+          "canvas-text-158",
+          "canvas-attribute-025",
+          "canvas-attribute-055",
+          "canvas-text-159",
+          "canvas-attribute-026",
+          "canvas-attribute-056",
+          "canvas-text-160",
+          "canvas-attribute-027",
+          "canvas-attribute-057",
+          "canvas-text-161",
+          "canvas-attribute-310",
+          "canvas-text-166",
+          "canvas-text-167",
+          "canvas-text-154",
+          "canvas-text-168",
+          "canvas-text-156",
+          "canvas-text-169",
+          "canvas-text-162",
+          "canvas-text-170",
+          "canvas-text-164",
+          "canvas-text-171",
+          "canvas-text-172",
+          "canvas-attribute-320",
+          "canvas-attribute-024",
+          "canvas-text-158",
+          "canvas-text-158",
+          "canvas-attribute-025",
+          "canvas-text-159",
+          "canvas-text-159",
+          "canvas-attribute-026",
+          "canvas-text-160",
+          "canvas-text-160",
+          "canvas-attribute-027",
+          "canvas-text-161",
+          "canvas-text-161",
+          "canvas-text-180",
+          "canvas-text-181",
+          "canvas-text-182",
+          "canvas-attribute-005",
+          "canvas-attribute-124",
+          "canvas-text-183",
+          "canvas-attribute-125",
+          "canvas-text-184",
+          "canvas-attribute-109",
+          "canvas-attribute-209",
+          "canvas-text-185",
+          "canvas-text-186",
+          "canvas-attribute-110",
+          "canvas-attribute-210",
+          "canvas-text-187",
+          "canvas-text-188",
+          "canvas-attribute-111",
+          "canvas-attribute-211",
+          "canvas-text-189",
+          "canvas-text-190",
+          "canvas-attribute-112",
+          "canvas-attribute-212",
+          "canvas-text-191",
+          "canvas-text-199",
+          "canvas-attribute-113",
+          "canvas-attribute-213",
+          "canvas-text-200",
+          "canvas-text-201",
+          "canvas-attribute-114",
+          "canvas-attribute-214",
+          "canvas-text-202",
+          "canvas-text-203",
+          "canvas-attribute-028",
+          "canvas-text-192",
+          "canvas-attribute-029",
+          "canvas-text-193",
+          "canvas-attribute-030",
+          "canvas-text-194",
+          "canvas-attribute-031",
+          "canvas-text-195",
+          "canvas-attribute-032",
+          "canvas-text-196",
+          "canvas-attribute-033",
+          "canvas-text-197",
+          "canvas-attribute-034",
+          "canvas-text-198",
+          "canvas-attribute-028",
+          "canvas-attribute-058",
+          "canvas-text-192",
+          "canvas-attribute-029",
+          "canvas-attribute-059",
+          "canvas-text-193",
+          "canvas-attribute-030",
+          "canvas-attribute-060",
+          "canvas-text-194",
+          "canvas-attribute-031",
+          "canvas-attribute-061",
+          "canvas-text-195",
+          "canvas-attribute-032",
+          "canvas-attribute-062",
+          "canvas-text-196",
+          "canvas-attribute-033",
+          "canvas-attribute-063",
+          "canvas-text-197",
+          "canvas-attribute-034",
+          "canvas-attribute-064",
+          "canvas-text-198",
+          "canvas-attribute-310",
+          "canvas-text-204",
+          "canvas-text-211",
+          "canvas-text-185",
+          "canvas-text-205",
+          "canvas-text-187",
+          "canvas-text-206",
+          "canvas-text-189",
+          "canvas-text-207",
+          "canvas-text-191",
+          "canvas-text-208",
+          "canvas-text-200",
+          "canvas-text-209",
+          "canvas-text-202",
+          "canvas-text-210",
+          "canvas-text-212",
+          "canvas-attribute-320",
+          "canvas-attribute-028",
+          "canvas-text-192",
+          "canvas-text-192",
+          "canvas-attribute-029",
+          "canvas-text-193",
+          "canvas-text-193",
+          "canvas-attribute-030",
+          "canvas-text-194",
+          "canvas-text-194",
+          "canvas-attribute-031",
+          "canvas-text-195",
+          "canvas-text-195",
+          "canvas-attribute-032",
+          "canvas-text-196",
+          "canvas-text-196",
+          "canvas-attribute-033",
+          "canvas-text-197",
+          "canvas-text-197",
+          "canvas-attribute-034",
+          "canvas-text-198",
+          "canvas-text-198",
+          "canvas-text-220",
+          "canvas-text-221",
+          "canvas-text-222",
+          "canvas-text-223",
+          "canvas-text-224",
+          "canvas-text-225",
+          "canvas-text-226",
+          "canvas-text-227",
+          "canvas-text-228",
+          "canvas-text-229",
+          "canvas-text-230",
+          "canvas-text-231",
+          "canvas-text-232",
+          "canvas-text-233",
+          "canvas-text-234",
+          "canvas-text-235",
+          "canvas-text-236",
+          "canvas-text-237",
+          "canvas-text-238",
+          "canvas-text-239",
+          "canvas-text-240",
+          "canvas-text-241",
+          "canvas-text-242",
+          "canvas-text-243",
+          "canvas-text-244",
+          "canvas-text-245",
+          "canvas-text-246",
+          "canvas-text-247",
+          "canvas-text-248"
         ],
         "slot_macro_pairs": [
           {
@@ -40584,131 +40888,23 @@
             "slot": "evidence-and-notes"
           },
           {
+            "macro": "canvas-text-001",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-002",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-003",
+            "slot": ""
+          },
+          {
             "macro": "canvas-attribute-001",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-019",
-            "slot": "layout-slot-001"
-          },
-          {
-            "macro": "canvas-text-001",
-            "slot": "layout-slot-001"
-          },
-          {
-            "macro": "canvas-text-002",
-            "slot": "layout-slot-001"
-          },
-          {
-            "macro": "canvas-attribute-020",
-            "slot": "layout-slot-002"
-          },
-          {
-            "macro": "canvas-text-003",
-            "slot": "layout-slot-002"
-          },
-          {
-            "macro": "canvas-text-004",
-            "slot": "layout-slot-002"
-          },
-          {
-            "macro": "canvas-attribute-021",
-            "slot": "layout-slot-003"
-          },
-          {
-            "macro": "canvas-text-005",
-            "slot": "layout-slot-003"
-          },
-          {
-            "macro": "canvas-text-006",
-            "slot": "layout-slot-003"
-          },
-          {
-            "macro": "canvas-attribute-022",
-            "slot": "layout-slot-004"
-          },
-          {
-            "macro": "canvas-text-007",
-            "slot": "layout-slot-004"
-          },
-          {
-            "macro": "canvas-text-008",
-            "slot": "layout-slot-004"
-          },
-          {
-            "macro": "canvas-attribute-023",
-            "slot": "layout-slot-005"
-          },
-          {
-            "macro": "canvas-text-009",
-            "slot": "layout-slot-005"
-          },
-          {
-            "macro": "canvas-text-010",
-            "slot": "layout-slot-005"
-          },
-          {
-            "macro": "canvas-attribute-024",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-attribute-025",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-attribute-026",
-            "slot": "layout-slot-006"
-          },
-          {
-            "macro": "canvas-text-011",
-            "slot": "layout-slot-006"
-          },
-          {
-            "macro": "canvas-text-012",
-            "slot": "layout-slot-006"
-          },
-          {
-            "macro": "canvas-attribute-027",
-            "slot": "layout-slot-007"
-          },
-          {
-            "macro": "canvas-text-013",
-            "slot": "layout-slot-007"
-          },
-          {
-            "macro": "canvas-text-014",
-            "slot": "layout-slot-007"
-          },
-          {
-            "macro": "canvas-attribute-002",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-015",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-attribute-011",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-016",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-017",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-018",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-attribute-012",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-019",
+            "macro": "canvas-attribute-120",
             "slot": ""
           },
           {
@@ -40716,11 +40912,15 @@
             "slot": ""
           },
           {
+            "macro": "canvas-attribute-121",
+            "slot": ""
+          },
+          {
             "macro": "canvas-text-021",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-013",
+            "macro": "canvas-attribute-122",
             "slot": ""
           },
           {
@@ -40728,55 +40928,71 @@
             "slot": ""
           },
           {
-            "macro": "canvas-text-023",
+            "macro": "canvas-attribute-101",
             "slot": ""
           },
           {
-            "macro": "canvas-text-024",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-attribute-014",
+            "macro": "canvas-attribute-201",
             "slot": ""
           },
           {
             "macro": "canvas-text-025",
-            "slot": ""
+            "slot": "layout-slot-001"
           },
           {
             "macro": "canvas-text-026",
             "slot": ""
           },
           {
-            "macro": "canvas-text-027",
+            "macro": "canvas-attribute-102",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-015",
+            "macro": "canvas-attribute-202",
             "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": "layout-slot-002"
           },
           {
             "macro": "canvas-text-028",
             "slot": ""
           },
           {
-            "macro": "canvas-text-029",
+            "macro": "canvas-attribute-103",
             "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-203",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": "layout-slot-003"
           },
           {
             "macro": "canvas-text-030",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-016",
+            "macro": "canvas-attribute-104",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-204",
             "slot": ""
           },
           {
             "macro": "canvas-text-031",
-            "slot": ""
+            "slot": "layout-slot-004"
           },
           {
             "macro": "canvas-text-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-021",
             "slot": ""
           },
           {
@@ -40784,7 +41000,7 @@
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-017",
+            "macro": "canvas-attribute-022",
             "slot": ""
           },
           {
@@ -40792,7 +41008,51 @@
             "slot": ""
           },
           {
+            "macro": "canvas-attribute-023",
+            "slot": ""
+          },
+          {
             "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-051",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-022",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-052",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-023",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-053",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-310",
             "slot": ""
           },
           {
@@ -40800,23 +41060,99 @@
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-018",
-            "slot": ""
-          },
-          {
             "macro": "canvas-text-037",
             "slot": ""
           },
           {
+            "macro": "canvas-text-025",
+            "slot": ""
+          },
+          {
             "macro": "canvas-text-038",
+            "slot": "layout-slot-301"
+          },
+          {
+            "macro": "canvas-text-027",
             "slot": ""
           },
           {
             "macro": "canvas-text-039",
+            "slot": "layout-slot-302"
+          },
+          {
+            "macro": "canvas-text-029",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-011",
+            "macro": "canvas-text-040",
+            "slot": "layout-slot-303"
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-041",
+            "slot": "layout-slot-304"
+          },
+          {
+            "macro": "canvas-text-042",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-320",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-022",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-023",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-002",
             "slot": ""
           },
           {
@@ -40824,11 +41160,371 @@
             "slot": ""
           },
           {
-            "macro": "canvas-text-040",
+            "macro": "canvas-text-070",
+            "slot": "layout-slot-041"
+          },
+          {
+            "macro": "canvas-text-071",
+            "slot": "layout-slot-041"
+          },
+          {
+            "macro": "canvas-text-072",
+            "slot": "layout-slot-042"
+          },
+          {
+            "macro": "canvas-text-073",
+            "slot": "layout-slot-042"
+          },
+          {
+            "macro": "canvas-text-074",
+            "slot": "layout-slot-043"
+          },
+          {
+            "macro": "canvas-text-075",
+            "slot": "layout-slot-043"
+          },
+          {
+            "macro": "canvas-text-076",
+            "slot": "layout-slot-044"
+          },
+          {
+            "macro": "canvas-text-077",
+            "slot": "layout-slot-044"
+          },
+          {
+            "macro": "canvas-text-078",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-012",
+            "macro": "canvas-text-079",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-141",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-099",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-080",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-081",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-082",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-142",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-100",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-083",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-084",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-085",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-086",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-087",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-143",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-101",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-088",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-089",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-090",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-144",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-102",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-091",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-092",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-093",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-094",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-095",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-145",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-103",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-096",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-097",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-098",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-310",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-108",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-109",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-070",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-110",
+            "slot": "layout-slot-315"
+          },
+          {
+            "macro": "canvas-text-072",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-111",
+            "slot": "layout-slot-316"
+          },
+          {
+            "macro": "canvas-text-074",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-112",
+            "slot": "layout-slot-317"
+          },
+          {
+            "macro": "canvas-text-076",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-113",
+            "slot": "layout-slot-318"
+          },
+          {
+            "macro": "canvas-text-081",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-114",
+            "slot": "layout-slot-319"
+          },
+          {
+            "macro": "canvas-text-084",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-115",
+            "slot": "layout-slot-320"
+          },
+          {
+            "macro": "canvas-text-089",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-116",
+            "slot": "layout-slot-321"
+          },
+          {
+            "macro": "canvas-text-092",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-117",
+            "slot": "layout-slot-322"
+          },
+          {
+            "macro": "canvas-text-097",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-118",
+            "slot": "layout-slot-323"
+          },
+          {
+            "macro": "canvas-text-120",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-121",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-122",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-123",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-124",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-125",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-126",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-127",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-128",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-129",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-130",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-131",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-132",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-133",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-134",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-135",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-136",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-137",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-138",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-139",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-140",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-141",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-142",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-143",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-144",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-145",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-146",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-147",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-148",
+            "slot": "layout-slot-120"
+          },
+          {
+            "macro": "canvas-text-150",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-151",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-152",
             "slot": ""
           },
           {
@@ -40836,11 +41532,267 @@
             "slot": ""
           },
           {
-            "macro": "canvas-text-041",
+            "macro": "canvas-attribute-123",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-013",
+            "macro": "canvas-text-153",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-105",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-205",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-154",
+            "slot": "layout-slot-005"
+          },
+          {
+            "macro": "canvas-text-155",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-106",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-206",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-156",
+            "slot": "layout-slot-006"
+          },
+          {
+            "macro": "canvas-text-157",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-107",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-207",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-162",
+            "slot": "layout-slot-007"
+          },
+          {
+            "macro": "canvas-text-163",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-108",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-208",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-164",
+            "slot": "layout-slot-008"
+          },
+          {
+            "macro": "canvas-text-165",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-024",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-158",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-025",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-159",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-026",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-160",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-027",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-161",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-024",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-054",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-158",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-025",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-055",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-159",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-026",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-056",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-160",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-027",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-057",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-161",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-310",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-166",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-167",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-154",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-168",
+            "slot": "layout-slot-305"
+          },
+          {
+            "macro": "canvas-text-156",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-169",
+            "slot": "layout-slot-306"
+          },
+          {
+            "macro": "canvas-text-162",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-170",
+            "slot": "layout-slot-307"
+          },
+          {
+            "macro": "canvas-text-164",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-171",
+            "slot": "layout-slot-308"
+          },
+          {
+            "macro": "canvas-text-172",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-320",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-024",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-158",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-158",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-025",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-159",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-159",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-026",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-160",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-160",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-027",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-161",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-161",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-180",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-181",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-182",
             "slot": ""
           },
           {
@@ -40848,181 +41800,531 @@
             "slot": ""
           },
           {
-            "macro": "canvas-text-042",
+            "macro": "canvas-attribute-124",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-014",
+            "macro": "canvas-text-183",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-006",
+            "macro": "canvas-attribute-125",
             "slot": ""
           },
           {
-            "macro": "canvas-text-043",
+            "macro": "canvas-text-184",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-015",
+            "macro": "canvas-attribute-109",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-007",
+            "macro": "canvas-attribute-209",
             "slot": ""
           },
           {
-            "macro": "canvas-text-044",
+            "macro": "canvas-text-185",
+            "slot": "layout-slot-009"
+          },
+          {
+            "macro": "canvas-text-186",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-016",
+            "macro": "canvas-attribute-110",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-008",
+            "macro": "canvas-attribute-210",
             "slot": ""
           },
           {
-            "macro": "canvas-text-045",
+            "macro": "canvas-text-187",
+            "slot": "layout-slot-010"
+          },
+          {
+            "macro": "canvas-text-188",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-017",
+            "macro": "canvas-attribute-111",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-009",
+            "macro": "canvas-attribute-211",
             "slot": ""
           },
           {
-            "macro": "canvas-text-046",
+            "macro": "canvas-text-189",
+            "slot": "layout-slot-011"
+          },
+          {
+            "macro": "canvas-text-190",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-018",
+            "macro": "canvas-attribute-112",
             "slot": ""
           },
           {
-            "macro": "canvas-attribute-010",
+            "macro": "canvas-attribute-212",
             "slot": ""
           },
           {
-            "macro": "canvas-text-047",
+            "macro": "canvas-text-191",
+            "slot": "layout-slot-012"
+          },
+          {
+            "macro": "canvas-text-199",
             "slot": ""
           },
           {
-            "macro": "canvas-text-048",
+            "macro": "canvas-attribute-113",
             "slot": ""
           },
           {
-            "macro": "canvas-text-049",
+            "macro": "canvas-attribute-213",
             "slot": ""
           },
           {
-            "macro": "canvas-text-050",
+            "macro": "canvas-text-200",
+            "slot": "layout-slot-013"
+          },
+          {
+            "macro": "canvas-text-201",
             "slot": ""
           },
           {
-            "macro": "canvas-text-051",
+            "macro": "canvas-attribute-114",
             "slot": ""
           },
           {
-            "macro": "canvas-text-052",
+            "macro": "canvas-attribute-214",
             "slot": ""
           },
           {
-            "macro": "canvas-text-053",
+            "macro": "canvas-text-202",
+            "slot": "layout-slot-014"
+          },
+          {
+            "macro": "canvas-text-203",
             "slot": ""
           },
           {
-            "macro": "canvas-text-054",
+            "macro": "canvas-attribute-028",
             "slot": ""
           },
           {
-            "macro": "canvas-text-055",
+            "macro": "canvas-text-192",
             "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-029",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-193",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-030",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-194",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-195",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-196",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-197",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-198",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-028",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-058",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-192",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-029",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-193",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-030",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-194",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-195",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-196",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-197",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-198",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-310",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-204",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-211",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-185",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-205",
+            "slot": "layout-slot-309"
+          },
+          {
+            "macro": "canvas-text-187",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-206",
+            "slot": "layout-slot-310"
+          },
+          {
+            "macro": "canvas-text-189",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-207",
+            "slot": "layout-slot-311"
+          },
+          {
+            "macro": "canvas-text-191",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-208",
+            "slot": "layout-slot-312"
+          },
+          {
+            "macro": "canvas-text-200",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-209",
+            "slot": "layout-slot-313"
+          },
+          {
+            "macro": "canvas-text-202",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-210",
+            "slot": "layout-slot-314"
+          },
+          {
+            "macro": "canvas-text-212",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-320",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-028",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-192",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-192",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-029",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-193",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-193",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-030",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-194",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-194",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-195",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-195",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-196",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-196",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-197",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-197",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-198",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-198",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-220",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-221",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-222",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-223",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-224",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-225",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-226",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-227",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-228",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-229",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-230",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-231",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-232",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-233",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-234",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-235",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-236",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-237",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-238",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-239",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-240",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-241",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-242",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-243",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-244",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-245",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-246",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-247",
+            "slot": "layout-slot-220"
+          },
+          {
+            "macro": "canvas-text-248",
+            "slot": "layout-slot-220"
           }
         ],
-        "structure_sha256": "bb4bc498f805045163074df012aaef1a8f4d09e86039060b287e47dac0763a4e"
+        "structure_sha256": "450321f89700e95b7d340ab45577d45d34daa7e8de22ab4491939c2de0211572"
       },
-      "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
-      "source": {
-        "data_slots": [
-          "title",
-          "summary",
-          "prepare",
-          "gray",
-          "switch",
-          "observe",
-          "finish",
-          "gate",
-          "rollback",
-          "evidence-and-notes"
-        ],
-        "file_sha256": "c7e9b6d29d0200119693b5f4cac477a3027608717fb0d681d91eb1eb7b1fb049",
-        "macros": [
-          "title",
-          "title",
-          "summary",
-          "prepare",
-          "gray",
-          "switch",
-          "observe",
-          "finish",
-          "gate",
-          "rollback",
-          "evidence_and_notes"
-        ],
-        "slot_macro_pairs": [
-          {
-            "macro": "title",
-            "slot": ""
-          },
-          {
-            "macro": "title",
-            "slot": "title"
-          },
-          {
-            "macro": "summary",
-            "slot": "summary"
-          },
-          {
-            "macro": "prepare",
-            "slot": "prepare"
-          },
-          {
-            "macro": "gray",
-            "slot": "gray"
-          },
-          {
-            "macro": "switch",
-            "slot": "switch"
-          },
-          {
-            "macro": "observe",
-            "slot": "observe"
-          },
-          {
-            "macro": "finish",
-            "slot": "finish"
-          },
-          {
-            "macro": "gate",
-            "slot": "gate"
-          },
-          {
-            "macro": "rollback",
-            "slot": "rollback"
-          },
-          {
-            "macro": "evidence_and_notes",
-            "slot": "evidence-and-notes"
-          }
-        ],
-        "structure_sha256": "9ba20c2065981193d971515672086c62b79de41aa361e34df9034f6d48513e39"
-      },
-      "status": "migrated"
+      "change_reason": "Added the complete six-view technical design package and deprecated the isolated release-switch template.",
+      "source": null,
+      "status": "added"
     }
   }
 }

@@ -34,6 +34,15 @@ DEPRECATED_TEMPLATES = {
         "deprecated as the business-architecture default: use capability-domain-map, "
         "or route trigger/order/decision/exception prompts to business-flow/logic-flowchart"
     ),
+    ("technical-design", "release-switch-track"): (
+        "deprecated for one release cycle: use technical-design/technical-design-package; "
+        "release and rollback remain one view inside the complete design package"
+    ),
+    ("technical-design", "data-consistency-boundary"): (
+        "deprecated as a standalone diagram type: use "
+        "technical-design/technical-design-package and place Outbox transaction, "
+        "delivery, consumption, recovery, and consistency concerns in its mapped views"
+    ),
 }
 
 
@@ -92,9 +101,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--output", required=True, type=Path, help="new HTML artifact path")
     args = parser.parse_args(argv)
     try:
-        source = _canonical_template(args.family, args.template_id)
         _require_supported_standard(args.standard)
         _require_ready_template(args.family, args.template_id)
+        source = _canonical_template(args.family, args.template_id)
         output = args.output.expanduser()
         if output.exists() or output.is_symlink():
             raise ValueError(f"refusing to overwrite existing output: {output}")

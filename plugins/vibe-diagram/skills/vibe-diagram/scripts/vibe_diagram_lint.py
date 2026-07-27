@@ -498,10 +498,16 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
                     f"family policy evidence_placement is invalid: {family}/{template_id}"
                 )
             for key in (
-                "requires_branch",
-                "requires_merge",
                 "requires_node_details",
                 "requires_localized_node_labels",
+            ):
+                if key in template and type(template[key]) is not bool:
+                    raise ValueError(
+                        f"family policy {key} is invalid: {family}/{template_id}"
+                    )
+            for key in (
+                "requires_branch",
+                "requires_merge",
                 "requires_geometric_direction",
             ):
                 if key in template and (direction is None or type(template[key]) is not bool):
@@ -2524,6 +2530,7 @@ def lint_artifact_shell_kernel(html: str) -> List[str]:
     required_runtime_tokens = (
         "VibeDiagramQuality",
         "data-computed-layout-audit",
+        "auditLifecycle",
         "route-crosses-node",
         "route-target-not-anchored",
         "ResizeObserver",
@@ -3782,6 +3789,8 @@ class _MarkupIntegrityParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.errors: List[str] = []
+        self._svg_depth = 0
+        self._foreign_object_depth = 0
 
     def _check_attrs(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
@@ -3796,11 +3805,36 @@ class _MarkupIntegrityParser(HTMLParser):
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
     ) -> None:
         self._check_attrs(tag, attrs)
+        normalized_tag = tag.lower()
+        values = {name.lower(): value or "" for name, value in attrs}
+        classes = set(values.get("class", "").split())
+        if normalized_tag == "svg":
+            self._svg_depth += 1
+        elif normalized_tag == "foreignobject" and self._svg_depth:
+            self._foreign_object_depth += 1
+        elif (
+            normalized_tag == "span"
+            and "semantic-relation" in classes
+            and self._svg_depth
+            and not self._foreign_object_depth
+        ):
+            self.errors.append(
+                "Semantic relation carriers must remain outside SVG so browsers "
+                "do not terminate the SVG namespace before visible routes."
+            )
 
     def handle_startendtag(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
     ) -> None:
-        self._check_attrs(tag, attrs)
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        normalized_tag = tag.lower()
+        if normalized_tag == "foreignobject" and self._foreign_object_depth:
+            self._foreign_object_depth -= 1
+        elif normalized_tag == "svg" and self._svg_depth:
+            self._svg_depth -= 1
 
 
 def lint_markup_integrity(html: str) -> List[str]:
@@ -3873,6 +3907,158 @@ def lint_route_contract(html: str) -> List[str]:
     return errors
 
 
+TECHNICAL_DESIGN_VIEW_CONTRACT = (
+    ("overview", "diagram", "system-architecture", "component-breakdown"),
+    ("runtime", "sequence", "code-sequence", "participant-timeline"),
+    ("contracts", "table", "", ""),
+    ("consistency", "diagram", "state-data-model", "state-machine"),
+    ("recovery", "diagram", "business-flow", "logic-flowchart"),
+    ("release", "table", "", ""),
+)
+
+
+class _TechnicalDesignPackageParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.package_count = 0
+        self.views: List[Dict[str, Any]] = []
+        self.errors: List[str] = []
+        self._element_stack: List[Optional[Dict[str, Any]]] = []
+        self._current_view: Optional[Dict[str, Any]] = None
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        values = {name: value or "" for name, value in attrs}
+        self._element_stack.append(self._current_view)
+        if values.get("data-technical-design-package") == "1":
+            self.package_count += 1
+        view_id = values.get("data-technical-view-id", "").strip()
+        if view_id:
+            if self._current_view is not None:
+                self.errors.append("Technical design views must not be nested.")
+            self._current_view = {
+                "id": view_id,
+                "kind": values.get("data-view-kind", "").strip(),
+                "reuse_family": values.get("data-reuse-family", "").strip(),
+                "reuse_template": values.get("data-reuse-template", "").strip(),
+                "reuse_component": values.get("data-reuse-component", "").strip(),
+                "generic": 0,
+                "sequence": 0,
+                "tables": 0,
+            }
+            self.views.append(self._current_view)
+        if self._current_view is not None:
+            if "data-diagram-canvas" in values:
+                self._current_view["generic"] += 1
+            if "data-sequence-canvas" in values:
+                self._current_view["sequence"] += 1
+            if tag == "table" and values.get("data-technical-semantic-table") == "1":
+                self._current_view["tables"] += 1
+            if values.get("role") == "tablist" or "hidden" in values:
+                self.errors.append(
+                    "Technical design package views must remain continuously visible, not tab-hidden."
+                )
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self.handle_starttag(tag, attrs)
+        self.handle_endtag(tag)
+
+    def handle_endtag(self, _tag: str) -> None:
+        if self._element_stack:
+            self._current_view = self._element_stack.pop()
+
+
+def lint_technical_design_package(html: str) -> List[str]:
+    """Validate the six continuously visible views of the technical design package."""
+
+    parser = _TechnicalDesignPackageParser()
+    try:
+        parser.feed(html)
+        parser.close()
+    except Exception as exc:
+        return [f"Could not parse technical design package: {exc}."]
+    errors = list(parser.errors)
+    if parser.package_count != 1:
+        errors.append("Technical design package requires exactly one package root.")
+    composition_roots = len(
+        re.findall(
+            r'<[^>]+\bdata-diagram-composition-root="technical-design-package"',
+            html,
+        )
+    )
+    primary_control_scopes = len(
+        re.findall(
+            r'<[^>]+\bdata-diagram-control-scope="primary"',
+            html,
+        )
+    )
+    embedded_control_scopes = len(
+        re.findall(
+            r'<[^>]+\bdata-diagram-control-scope="embedded"',
+            html,
+        )
+    )
+    if composition_roots != 1:
+        errors.append(
+            "Technical design package requires one explicit composition root."
+        )
+    if primary_control_scopes != 1:
+        errors.append(
+            "Technical design package requires exactly one primary controlled canvas."
+        )
+    if embedded_control_scopes != 3:
+        errors.append(
+            "Technical design package requires three embedded visual subviews."
+        )
+    if re.search(r'role\s*=\s*["\']tablist["\']', html, re.IGNORECASE):
+        errors.append(
+            "Technical design package views must remain continuously visible, not tab-hidden."
+        )
+    actual_ids = [view["id"] for view in parser.views]
+    expected_ids = [entry[0] for entry in TECHNICAL_DESIGN_VIEW_CONTRACT]
+    if actual_ids != expected_ids:
+        errors.append(
+            "Technical design package views must appear continuously as "
+            + ", ".join(expected_ids)
+            + "."
+        )
+        return _deduplicate(errors)
+    for view, (_view_id, kind, family, template) in zip(
+        parser.views, TECHNICAL_DESIGN_VIEW_CONTRACT
+    ):
+        if view["kind"] != kind:
+            errors.append(
+                f'Technical design view "{view["id"]}" must use the {kind} carrier.'
+            )
+        expected_counts = {
+            "diagram": (1, 0, 0),
+            "sequence": (0, 1, 0),
+            "table": (0, 0, 1),
+        }[kind]
+        actual_counts = (view["generic"], view["sequence"], view["tables"])
+        if actual_counts != expected_counts:
+            errors.append(
+                f'Technical design view "{view["id"]}" has the wrong primary carrier.'
+            )
+        if kind == "table":
+            if view["reuse_component"] != "semantic-table":
+                errors.append(
+                    f'Technical design view "{view["id"]}" must reuse the semantic-table component.'
+                )
+        elif (
+            view["reuse_family"] != family
+            or view["reuse_template"] != template
+        ):
+            errors.append(
+                f'Technical design view "{view["id"]}" must reuse '
+                f"{family}/{template}."
+            )
+    return _deduplicate(errors)
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Validate a self-contained HTML diagram.")
     parser.add_argument("path", type=Path, help="HTML artifact to validate")
@@ -3897,6 +4083,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         errors.extend(lint_artifact_shell_kernel(html))
         errors.extend(lint_template_conformance(html, args.diagram_type))
         errors.extend(lint_primary_canvas_budget(html))
+        if (
+            args.diagram_type == "technical-design"
+            and 'data-template-id="technical-design-package"' in html
+        ):
+            errors.extend(lint_technical_design_package(html))
         if args.diagram_type == "system-architecture":
             errors.extend(lint_system_architecture(html, allow_candidates=args.allow_candidates))
         else:

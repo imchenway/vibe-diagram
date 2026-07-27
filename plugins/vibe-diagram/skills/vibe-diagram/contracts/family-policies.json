@@ -37,7 +37,7 @@
       "technical-design/api-contract-swimlane.html",
       "technical-design/data-consistency-boundary.html",
       "technical-design/module-contract-data-topology.html",
-      "technical-design/release-switch-track.html"
+      "technical-design/technical-design-package.html"
     ],
     "B06": [
       "fault-debugging/before-after-flow.html",
@@ -464,7 +464,22 @@
           }
         },
         "module-contract-data-topology": {"profile": "graph", "limits": {}},
-        "release-switch-track": {"profile": "timeline", "limits": {}}
+        "technical-design-package": {
+          "profile": "graph",
+          "limits": {"nodes": 6, "relations": 7, "groups": 3, "details": 6},
+          "controls_mode": "persistent",
+          "requires_node_details": true,
+          "requires_node_detail_hint_in_reading_guide": true,
+          "requires_localized_node_labels": true,
+          "quality": {
+            "requires_node_nonoverlap": true,
+            "requires_boundary_anchors": true,
+            "requires_routes_clear_nodes": true,
+            "min_relation_length": 18,
+            "min_arrowhead_size": 7,
+            "max_arrowhead_size": 14
+          }
+        }
       }
     }
   }

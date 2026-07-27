@@ -2,6 +2,7 @@
   "use strict";
   const allowed = new Set(["fit", "0.75", "0.9", "1"]);
   const managed = new Set();
+  const autoCentered = new WeakSet();
   const requestedByCanvas = new WeakMap();
   let resizeFrame = 0;
 
@@ -66,6 +67,13 @@
     if (applied) {
       canvas.style.setProperty("--diagram-scale", String(scale));
       canvas.setAttribute("data-diagram-scaled", "true");
+    } else if (
+      requested === "fit"
+      && canvas.dataset.primaryDirection === "north-to-south"
+      && !autoCentered.has(canvas)
+    ) {
+      canvas.scrollLeft = Math.max(0, (stage.scrollWidth - canvas.clientWidth) / 2);
+      autoCentered.add(canvas);
     }
     controls.forEach((item) => {
       const message = applied
@@ -85,6 +93,7 @@
   };
   const apply = (canvas, requested = "fit") => {
     if (!allowed.has(requested)) return false;
+    if (requested === "fit") autoCentered.delete(canvas);
     return retest(canvas, requested);
   };
   const scheduleRetest = () => {

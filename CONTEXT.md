@@ -63,3 +63,5 @@ The primary artifact produced by this project is a self-contained single-file HT
 | node detail disclosure | 一个外层语义节点拥有一个原生主详情入口；节点内部每个独立小节点拥有自己的原生辅助详情入口。所有入口与可打印 `<details>` 一一对应，既避免嵌套链接，也不以图标或弹窗替代节点的主标题和摘要。 |
 | node-detail interaction hint | One concise, language-matched instruction inside the shared reading guide that tells readers detailed nodes are interactive. It appears exactly once and never floats inside the primary SVG canvas. |
 | evidence boundary banner | A compact, visible evidence ledger inside the global reading guide. It always appears after the title and before the first primary canvas and distinguishes observed implementation, completed checks, and not-yet-verified claims. |
+| technical design package | 默认的完整技术设计交付物。它在同一单页中连续展开设计总览、运行时序、数据契约、状态一致性、失败恢复和发布验证六个视图；局部实现图不能冒充完整技术设计。 |
+| technical view kernel reuse | 技术设计组合层复用系统架构、代码时序、状态机、逻辑流程和语义表格的图族语法、布局、关系、交互与校验内核，但不嵌套或复制这些模板的完整 HTML 外壳。 |

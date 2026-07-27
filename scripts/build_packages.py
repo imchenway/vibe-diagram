@@ -48,7 +48,7 @@ VERSION_PLACEHOLDER = "${VERSION}"
 LICENSE_SIZE = 11357
 LICENSE_SHA256 = "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
 SOURCE_TEMPLATE_CONTRACT_SHA256 = "cab7874937427e6092defb67b2e28f280d9d31022788c9c6382bbfe334f93959"
-SOURCE_TEMPLATE_SNAPSHOTS_SHA256 = "0fce18ccbc91bb4724639eec267ddf779a1e5ab4537da0f4d4e63eca11bb8910"
+SOURCE_TEMPLATE_SNAPSHOTS_SHA256 = "9938ddafc5413225f9c96cc66a7ed26ff8a5030712807d06819e1a58d6c69501"
 SOURCE_SKILL_CONTENT_SHA256 = "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48"
 ADAPTER_KEYS = {
     "schema_version",
@@ -84,7 +84,10 @@ SEQUENCE_REDESIGN_PATHS = (
     "fault-debugging/debugging-sequence.html",
     "feature-iteration/current-target-sequence.html",
 )
-ADDED_TEMPLATE_PATHS = ("business-flow/logic-flowchart.html",)
+ADDED_TEMPLATE_PATHS = (
+    "business-flow/logic-flowchart.html",
+    "technical-design/technical-design-package.html",
+)
 TEMPLATE_PATHS: Tuple[str, ...] = (
     "business-architecture/capability-domain-map.html",
     "business-architecture/participant-boundary.html",
@@ -145,7 +148,7 @@ TEMPLATE_PATHS: Tuple[str, ...] = (
     "technical-design/api-contract-swimlane.html",
     "technical-design/data-consistency-boundary.html",
     "technical-design/module-contract-data-topology.html",
-    "technical-design/release-switch-track.html",
+    "technical-design/technical-design-package.html",
 )
 REFERENCE_PATHS: Tuple[str, ...] = (
     "business-architecture.md",
@@ -1273,11 +1276,15 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
                     f"family policy evidence_placement is invalid: {family}/{template_id}"
                 )
             for flag in (
+                "requires_node_details",
+                "requires_localized_node_labels",
+            ):
+                if flag in template and type(template[flag]) is not bool:
+                    raise _fail(f"family policy {flag} is invalid: {family}/{template_id}")
+            for flag in (
                 "requires_branch",
                 "requires_merge",
                 "requires_geometric_direction",
-                "requires_node_details",
-                "requires_localized_node_labels",
             ):
                 if flag in template and (direction is None or type(template[flag]) is not bool):
                     raise _fail(f"family policy {flag} is invalid: {family}/{template_id}")
@@ -3480,6 +3487,8 @@ class _CanonicalHtmlParser(HTMLParser):
         self.errors: List[str] = []
         self._style_depth = 0
         self._script_depth = 0
+        self._svg_depth = 0
+        self._foreign_object_depth = 0
 
     def handle_decl(self, decl: str) -> None:
         if decl.strip().lower() == "doctype html":
@@ -3502,6 +3511,19 @@ class _CanonicalHtmlParser(HTMLParser):
             self.main_attrs.append(attrs_map)
         if tag == "h1":
             self.has_h1 = True
+        if tag == "svg":
+            self._svg_depth += 1
+        elif tag == "foreignobject" and self._svg_depth:
+            self._foreign_object_depth += 1
+        elif (
+            tag == "span"
+            and "semantic-relation" in set(attrs_map.get("class", "").split())
+            and self._svg_depth
+            and not self._foreign_object_depth
+        ):
+            self.errors.append(
+                "semantic relation carriers must remain outside SVG"
+            )
         if tag in {"iframe", "object", "embed"}:
             self.errors.append(f"embedded container is forbidden: {tag}")
         for name, value in attrs_map.items():
@@ -3528,6 +3550,10 @@ class _CanonicalHtmlParser(HTMLParser):
             self._style_depth = max(0, self._style_depth - 1)
         if tag == "script":
             self._script_depth = max(0, self._script_depth - 1)
+        if tag == "foreignobject" and self._foreign_object_depth:
+            self._foreign_object_depth -= 1
+        if tag == "svg" and self._svg_depth:
+            self._svg_depth -= 1
 
     def handle_data(self, data: str) -> None:
         if self._style_depth:
@@ -4023,6 +4049,77 @@ def _sequence_kernel_digest(html: str) -> str:
     return hashlib.sha256(b"sequence-kernel-v1\0" + style + b"\0" + script).hexdigest()
 
 
+def _technical_design_package_errors(html: str) -> List[str]:
+    expected_views = (
+        "overview",
+        "runtime",
+        "contracts",
+        "consistency",
+        "recovery",
+        "release",
+    )
+    errors: List[str] = []
+    package_roots = len(
+        re.findall(
+            r"<[^>]+\bdata-technical-design-package\s*=\s*[\"']1[\"']",
+            html,
+            re.IGNORECASE,
+        )
+    )
+    if package_roots != 1:
+        errors.append("technical design package requires exactly one package root")
+    if len(
+        re.findall(
+            r'<[^>]+\bdata-diagram-composition-root="technical-design-package"',
+            html,
+        )
+    ) != 1:
+        errors.append("technical design package requires one explicit composition root")
+    if len(
+        re.findall(
+            r'<[^>]+\bdata-diagram-control-scope="primary"',
+            html,
+        )
+    ) != 1:
+        errors.append("technical design package requires one primary controlled canvas")
+    if len(
+        re.findall(
+            r'<[^>]+\bdata-diagram-control-scope="embedded"',
+            html,
+        )
+    ) != 3:
+        errors.append("technical design package requires three embedded visual subviews")
+    views = tuple(
+        re.findall(
+            r'<[^>]+\bdata-technical-view-id="([^"]+)"',
+            html,
+        )
+    )
+    if views != expected_views:
+        errors.append("technical design package view order is invalid")
+    required_reuse = (
+        'data-reuse-family="system-architecture" data-reuse-template="component-breakdown"',
+        'data-reuse-family="code-sequence" data-reuse-template="participant-timeline"',
+        'data-reuse-family="state-data-model" data-reuse-template="state-machine"',
+        'data-reuse-family="business-flow" data-reuse-template="logic-flowchart"',
+    )
+    if any(token not in html for token in required_reuse):
+        errors.append("technical design package kernel reuse declarations are incomplete")
+    if html.count('data-technical-semantic-table="1"') != 2:
+        errors.append("technical design package requires two semantic tables")
+    generic_canvases = len(
+        re.findall(r"<[^>]+\bdata-diagram-canvas(?:\s|=|>)", html, re.IGNORECASE)
+    )
+    sequence_canvases = len(
+        re.findall(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
+    )
+    if generic_canvases != 3 or sequence_canvases != 1:
+        errors.append("technical design package primary carrier inventory is invalid")
+    if re.search(r'role\s*=\s*["\']tablist["\']', html, re.IGNORECASE):
+        errors.append("technical design package must not hide views behind tabs")
+    return errors
+
+
 def _canonical_snapshot(path: Path, html: str) -> Dict[str, Any]:
     slots, macros, pairs = _slots_macros_pairs(html)
     return {
@@ -4182,7 +4279,11 @@ def validate_canonical(root: Path) -> None:
         "assets/contracts/adaptive-viewport/v1.css": ("data-diagram-canvas", "--diagram-scale"),
         "assets/contracts/adaptive-viewport/v1.js": ("VibeDiagramViewport", "0.75", "reset"),
         "assets/contracts/progressive-disclosure/v1.css": ("data-diagram-detail", "@media print"),
-        "assets/contracts/progressive-disclosure/v1.js": ("VibeDiagramDisclosure", "reset"),
+        "assets/contracts/progressive-disclosure/v1.js": (
+            "VibeDiagramDisclosure",
+            "auditLifecycle",
+            "reset",
+        ),
         "assets/contracts/semantic-relations/v1.css": (
             "data-diagram-visible-relation-id",
             "data-semantic-edge-route",
@@ -4264,6 +4365,19 @@ def validate_canonical(root: Path) -> None:
                 f"template structures are duplicated within {family}: {seen[signature]}, {relative}"
             )
         seen[signature] = relative
+        if relative == "technical-design/technical-design-package.html":
+            package_errors = _technical_design_package_errors(html)
+            package_errors.extend(_sequence_errors(html))
+            package_errors.extend(_sequence_visual_errors(html))
+            if sequence_digests and _sequence_kernel_digest(html) not in sequence_digests:
+                package_errors.append(
+                    "technical design package sequence kernel differs from the sequence family"
+                )
+            if package_errors:
+                raise _fail(
+                    f"invalid technical design package {relative}: "
+                    + "; ".join(package_errors)
+                )
         if relative in SEQUENCE_REDESIGN_PATHS:
             sequence_errors = _sequence_errors(html)
             template_id = Path(relative).stem
