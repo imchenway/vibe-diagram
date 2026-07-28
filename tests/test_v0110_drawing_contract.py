@@ -225,6 +225,13 @@ class V0110DrawingContractTest(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("border-top: 2px dashed", css)
         self.assertIn("content: none !important", css)
+        self.assertIn("--caption-fill:", css)
+        self.assertIn("background: var(--caption-fill)", css)
+        self.assertRegex(
+            css,
+            r"\[data-sequence-canvas\]\s+\[data-participant-id\][^{]*\{[^}]*"
+            r"background:\s*color-mix",
+        )
         self.assertNotRegex(css, r'content:\s*["\'][+-]["\']')
         self.assertIn('data-sequence-fragment-kind="alt"', html)
         self.assertEqual(
@@ -284,7 +291,7 @@ class V0110DrawingContractTest(unittest.TestCase):
             "artboard-wireframe", routing["page-mockup"]["default_template"]
         )
 
-    def test_technical_design_default_is_the_six_view_package(self) -> None:
+    def test_technical_design_default_is_the_four_view_package(self) -> None:
         routing = json.loads(
             (SKILL_ROOT / "contracts" / "template-routing.json").read_text(
                 encoding="utf-8"
@@ -304,10 +311,8 @@ class V0110DrawingContractTest(unittest.TestCase):
             [
                 "overview",
                 "runtime",
-                "contracts",
                 "consistency",
                 "recovery",
-                "release",
             ],
             re.findall(
                 r'<[^>]+\bdata-technical-view-id="([^"]+)"',
@@ -340,8 +345,43 @@ class V0110DrawingContractTest(unittest.TestCase):
                 )
             ),
         )
-        self.assertEqual(2, len(re.findall(r"<table\b", html)))
+        self.assertEqual(0, len(re.findall(r"<table\b", html)))
+        self.assertEqual(4, html.count('data-diagram-view-title="1"'))
+        self.assertEqual([], LINTER.lint_diagram_view_title_contract(html))
+        self.assertRegex(
+            html,
+            r'<[^>]+data-diagram-control-scope="primary"[^>]+'
+            r'data-diagram-controls-mode="persistent"',
+        )
         self.assertNotIn('role="tablist"', html)
+
+    def test_only_the_technical_design_package_keeps_persistent_controls(self) -> None:
+        persistent = []
+        for path in sorted(TEMPLATE_ROOT.rglob("*.html")):
+            if 'data-diagram-controls-mode="persistent"' in path.read_text(
+                encoding="utf-8"
+            ):
+                persistent.append(path.relative_to(TEMPLATE_ROOT).as_posix())
+        self.assertEqual(
+            ["technical-design/technical-design-package.html"],
+            persistent,
+        )
+
+    def test_graph_level_titles_require_type_separator_and_subject(self) -> None:
+        valid = (
+            '<h2 data-diagram-view-title="1">'
+            '<span data-diagram-view-type>时序图</span>'
+            '<span data-diagram-view-separator aria-hidden="true"></span>'
+            '<span data-diagram-view-subject>附件解析主链路</span>'
+            "</h2>"
+        )
+        self.assertEqual([], LINTER.lint_diagram_view_title_contract(valid))
+        for invalid in (
+            valid.replace(" data-diagram-view-separator", ""),
+            valid.replace(" data-diagram-view-type", ""),
+            valid.replace(" data-diagram-view-subject", ""),
+        ):
+            self.assertTrue(LINTER.lint_diagram_view_title_contract(invalid))
 
     def test_technical_design_package_rejects_hidden_or_reordered_views(self) -> None:
         html = (

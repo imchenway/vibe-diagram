@@ -242,6 +242,16 @@ class TrueDiagramDefaultsTest(unittest.TestCase):
                 '<a class="sequence-object-trigger" data-retired-detail-trigger',
                 1,
             ),
+            html.replace(
+                "[data-sequence-canvas] [data-participant-id] {",
+                "[data-sequence-canvas] [data-retired-participant-id] {",
+                1,
+            ),
+            html.replace(
+                "background: var(--caption-fill);",
+                "background: #fff;",
+                1,
+            ),
         )
         for index, mutated in enumerate(mutations, start=1):
             with self.subTest(mutation=index):

@@ -5,7 +5,7 @@ description: Use when an agent should create and deliver a self-contained HTML v
 
 # Vibe Diagram
 
-## 0.1.10 drawing principles
+## 0.1.12 drawing principles
 
 Vibe Diagram exists to explain subjects through real diagram geometry. Generation must first select the correct family, establish its primary visual grammar, size nodes for their actual copy, and then draw readable relationships. Scripts efficiently detect regressions; they do not replace drawing judgment, and reducing font size must never turn a failed composition into a pass.
 
@@ -13,6 +13,9 @@ Vibe Diagram exists to explain subjects through real diagram geometry. Generatio
 - When the user explicitly requests UML, BPMN, C4, ArchiMate, or another standard, follow that standard strictly. If strict support is unavailable, fail closed instead of silently degrading to a native template.
 - Delivery-acceptance diagrams and release-rollback diagrams are no longer public recommended families. Model ordered acceptance or release work as business flow, model itemized requirement-evidence-conclusion comparisons as matrices, and use a state machine only when the user explicitly requests state semantics.
 - Keep old explicit entry names for one release cycle as migration notices only; they must not become defaults again.
+- Write every graph-level title as `diagram type｜title`, localized to the artifact language. Do not apply this format to the page title, table captions, or detail headings.
+- Keep the percentage zoom component in the shared shell. Only the complete technical-design package keeps it persistently visible; every other template reveals it on overflow.
+- Sequence participants and message captions use semantic accent fills. Do not restore white participant or caption cards.
 
 ## Update gate
 

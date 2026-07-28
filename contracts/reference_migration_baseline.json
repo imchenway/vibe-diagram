@@ -2,7 +2,7 @@
   "references": {
     "business-architecture.md": "a58339e0c238b91f31affd713a48a264399792083dbe40b8e85f2b2239f3e5fd",
     "business-flow.md": "1409f68577a298b648132745513af151a3678f58f209f8c5ed7ed171af078ce7",
-    "code-sequence.md": "afc54fbb3c86c32c3678dd3ee8088c932fdaaf0445d475a2b364b6ce349ddeca",
+    "code-sequence.md": "92b4268fab87072448e7be338529d5410e4fc320f592457e340b6e285e03b21f",
     "decision-communication.md": "65e05bb5c72b779e7798e316b96702fdf92e92fb78adb836d0c736a0fe529c69",
     "delivery-acceptance.md": "c58d124e129a212b56718a2d9e91ea269cc6f19ec0367dcdcff17a65a6820365",
     "fault-debugging.md": "45b0acfb3d0778ea5e698916b1055d87ee0927ce0ec83e25e548828a4aac8ca2",
@@ -10,7 +10,7 @@
     "page-mockup.md": "66380feab8161b1dc28fee94db2106219e7c6b47372fce35bf6c4ca11c380047",
     "state-data-model.md": "682001bfdbbaa35805269a9bdee31449cf045df00ea92d370ee99fb5b60a08ee",
     "system-architecture.md": "6dd6dc99a079bfd1cee4e75a88c3b7a5e6438c1152b760c595987cd0753584e7",
-    "technical-design.md": "4704bd63521b9b19b025fb197c748ee55e9e5afa00ac26e9ea8f72803da2fb70"
+    "technical-design.md": "0c90995075c4d6a1e353561dfbdc5922736b09c55517c07c0c49d7a66957412c"
   },
   "schema_version": 1,
   "source_skill_content_sha256": "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48"

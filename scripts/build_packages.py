@@ -3963,6 +3963,20 @@ def _sequence_visual_errors(html: str) -> List[str]:
         re.IGNORECASE | re.DOTALL,
     ):
         errors.append("ready sequence lifelines must be at least 2px dashed")
+    if not re.search(
+        r"\[data-sequence-canvas\]\s+\[data-participant-id\]\s*\{[^}]*"
+        r"background\s*:\s*color-mix\(",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        errors.append("ready sequence participants require semantic accent backgrounds")
+    if not re.search(
+        r"\[data-sequence-canvas\]\s+\.seq-caption\s*\{[^}]*"
+        r"background\s*:\s*var\(--caption-fill\)",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        errors.append("ready sequence captions require semantic message-kind backgrounds")
 
     message_fragments = tuple(
         re.finditer(
@@ -4049,16 +4063,73 @@ def _sequence_kernel_digest(html: str) -> str:
     return hashlib.sha256(b"sequence-kernel-v1\0" + style + b"\0" + script).hexdigest()
 
 
+DIAGRAM_VIEW_TITLE_RE = re.compile(
+    r"<h(?P<level>[1-6])\b(?P<attrs>[^>]*)"
+    r"\bdata-diagram-view-title\s*=\s*([\"'])1\3[^>]*>"
+    r"(?P<body>.*?)</h(?P=level)>",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _diagram_view_title_errors(html: str) -> List[str]:
+    declared = len(
+        re.findall(
+            r"\bdata-diagram-view-title\s*=\s*([\"'])1\1",
+            html,
+            re.IGNORECASE,
+        )
+    )
+    blocks = tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))
+    errors: List[str] = []
+    if declared != len(blocks):
+        errors.append("diagram view title declarations must be complete headings")
+        return errors
+    type_pattern = re.compile(
+        r"<span\b(?=[^>]*\bdata-diagram-view-type(?:\s|=|>))[^>]*>.*?</span>",
+        re.IGNORECASE | re.DOTALL,
+    )
+    separator_pattern = re.compile(
+        r"<span\b(?=[^>]*\bdata-diagram-view-separator(?:\s|=|>))"
+        r"(?=[^>]*\baria-hidden\s*=\s*([\"'])true\1)[^>]*>.*?</span>",
+        re.IGNORECASE | re.DOTALL,
+    )
+    subject_pattern = re.compile(
+        r"<span\b(?=[^>]*\bdata-diagram-view-subject(?:\s|=|>))[^>]*>.*?</span>",
+        re.IGNORECASE | re.DOTALL,
+    )
+    for index, block in enumerate(blocks, start=1):
+        body = block.group("body")
+        type_parts = tuple(type_pattern.finditer(body))
+        separators = tuple(separator_pattern.finditer(body))
+        subject_parts = tuple(subject_pattern.finditer(body))
+        if (
+            len(type_parts) != 1
+            or len(separators) != 1
+            or len(subject_parts) != 1
+        ):
+            errors.append(
+                f"diagram view title {index} requires one type, separator, and subject"
+            )
+            continue
+        if not (
+            type_parts[0].start()
+            < separators[0].start()
+            < subject_parts[0].start()
+        ):
+            errors.append(
+                f"diagram view title {index} must use the diagram type｜title order"
+            )
+    return errors
+
+
 def _technical_design_package_errors(html: str) -> List[str]:
     expected_views = (
         "overview",
         "runtime",
-        "contracts",
         "consistency",
         "recovery",
-        "release",
     )
-    errors: List[str] = []
+    errors = _diagram_view_title_errors(html)
     package_roots = len(
         re.findall(
             r"<[^>]+\bdata-technical-design-package\s*=\s*[\"']1[\"']",
@@ -4089,6 +4160,17 @@ def _technical_design_package_errors(html: str) -> List[str]:
         )
     ) != 3:
         errors.append("technical design package requires three embedded visual subviews")
+    if len(
+        re.findall(
+            r"<[^>]+(?=[^>]*\bdata-diagram-control-scope=[\"']primary[\"'])"
+            r"(?=[^>]*\bdata-diagram-controls-mode=[\"']persistent[\"'])[^>]*>",
+            html,
+            re.IGNORECASE,
+        )
+    ) != 1:
+        errors.append(
+            "technical design package primary canvas requires persistent controls"
+        )
     views = tuple(
         re.findall(
             r'<[^>]+\bdata-technical-view-id="([^"]+)"',
@@ -4105,8 +4187,10 @@ def _technical_design_package_errors(html: str) -> List[str]:
     )
     if any(token not in html for token in required_reuse):
         errors.append("technical design package kernel reuse declarations are incomplete")
-    if html.count('data-technical-semantic-table="1"') != 2:
-        errors.append("technical design package requires two semantic tables")
+    if html.count('data-diagram-view-title="1"') != 4:
+        errors.append("technical design package requires four graph-level titles")
+    if 'data-technical-semantic-table="1"' in html:
+        errors.append("technical design package no longer includes semantic-table views")
     generic_canvases = len(
         re.findall(r"<[^>]+\bdata-diagram-canvas(?:\s|=|>)", html, re.IGNORECASE)
     )
@@ -4334,11 +4418,15 @@ def validate_canonical(root: Path) -> None:
     template_contract = load_template_contract(root)
     family_signatures: Dict[str, Dict[str, str]] = {}
     sequence_digests = set()
+    persistent_control_templates: List[str] = []
     for relative in TEMPLATE_PATHS:
         path = files[PurePosixPath("assets/templates") / relative]
         html = path.read_text(encoding="utf-8")
+        if 'data-diagram-controls-mode="persistent"' in html:
+            persistent_control_templates.append(relative)
         _validate_template_html(relative, html)
         shell_errors = artifact_shell_errors(html, require_content_neutral=True)
+        shell_errors.extend(_diagram_view_title_errors(html))
         shell_errors.extend(
             artifact_shell_kernel_errors(
                 html,
@@ -4446,6 +4534,12 @@ def validate_canonical(root: Path) -> None:
                 )
     if len(sequence_digests) != 1:
         raise _fail("the six sequence templates must embed one identical interaction kernel")
+    if persistent_control_templates != [
+        "technical-design/technical-design-package.html"
+    ]:
+        raise _fail(
+            "persistent percentage controls are reserved for the technical design package"
+        )
 
 
 def validate_manifest(client: str, manifest: Mapping[str, Any], version: str) -> None:

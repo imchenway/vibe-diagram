@@ -3651,6 +3651,24 @@ def lint_sequence_visual_contract(html: str) -> List[str]:
         errors.append(
             "Ready sequence lifelines must be at least 2px dashed visual carriers."
         )
+    if not re.search(
+        r"\[data-sequence-canvas\]\s+\[data-participant-id\]\s*\{[^}]*"
+        r"background\s*:\s*color-mix\(",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        errors.append(
+            "Ready sequence participants require non-white semantic accent backgrounds."
+        )
+    if not re.search(
+        r"\[data-sequence-canvas\]\s+\.seq-caption\s*\{[^}]*"
+        r"background\s*:\s*var\(--caption-fill\)",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        errors.append(
+            "Ready sequence message captions require semantic message-kind backgrounds."
+        )
 
     message_fragments = tuple(SEQUENCE_MESSAGE_FRAGMENT_RE.finditer(html))
     if len(message_fragments) != len(message_ids):
@@ -3907,13 +3925,74 @@ def lint_route_contract(html: str) -> List[str]:
     return errors
 
 
+DIAGRAM_VIEW_TITLE_RE = re.compile(
+    r"<h(?P<level>[1-6])\b(?P<attrs>[^>]*)"
+    r"\bdata-diagram-view-title\s*=\s*([\"'])1\3[^>]*>"
+    r"(?P<body>.*?)</h(?P=level)>",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def lint_diagram_view_title_contract(html: str) -> List[str]:
+    """Validate graph-level titles as “diagram type｜title” composites."""
+
+    declared = len(
+        re.findall(
+            r"\bdata-diagram-view-title\s*=\s*([\"'])1\1",
+            html,
+            re.IGNORECASE,
+        )
+    )
+    blocks = tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))
+    errors: List[str] = []
+    if declared != len(blocks):
+        errors.append("Diagram view title declarations must be on complete heading elements.")
+        return errors
+    part_patterns = {
+        "type": re.compile(
+            r"<span\b(?=[^>]*\bdata-diagram-view-type(?:\s|=|>))[^>]*>.*?</span>",
+            re.IGNORECASE | re.DOTALL,
+        ),
+        "separator": re.compile(
+            r"<span\b(?=[^>]*\bdata-diagram-view-separator(?:\s|=|>))"
+            r"(?=[^>]*\baria-hidden\s*=\s*([\"'])true\1)[^>]*>.*?</span>",
+            re.IGNORECASE | re.DOTALL,
+        ),
+        "subject": re.compile(
+            r"<span\b(?=[^>]*\bdata-diagram-view-subject(?:\s|=|>))[^>]*>.*?</span>",
+            re.IGNORECASE | re.DOTALL,
+        ),
+    }
+    for index, block in enumerate(blocks, start=1):
+        body = block.group("body")
+        type_parts = tuple(part_patterns["type"].finditer(body))
+        separators = tuple(part_patterns["separator"].finditer(body))
+        subject_parts = tuple(part_patterns["subject"].finditer(body))
+        if (
+            len(type_parts) != 1
+            or len(separators) != 1
+            or len(subject_parts) != 1
+        ):
+            errors.append(
+                f"Diagram view title {index} requires one type, separator, and subject."
+            )
+            continue
+        if not (
+            type_parts[0].start()
+            < separators[0].start()
+            < subject_parts[0].start()
+        ):
+            errors.append(
+                f'Diagram view title {index} must use the “diagram type｜title” order.'
+            )
+    return errors
+
+
 TECHNICAL_DESIGN_VIEW_CONTRACT = (
     ("overview", "diagram", "system-architecture", "component-breakdown"),
     ("runtime", "sequence", "code-sequence", "participant-timeline"),
-    ("contracts", "table", "", ""),
     ("consistency", "diagram", "state-data-model", "state-machine"),
     ("recovery", "diagram", "business-flow", "logic-flowchart"),
-    ("release", "table", "", ""),
 )
 
 
@@ -3946,9 +4025,12 @@ class _TechnicalDesignPackageParser(HTMLParser):
                 "generic": 0,
                 "sequence": 0,
                 "tables": 0,
+                "titles": 0,
             }
             self.views.append(self._current_view)
         if self._current_view is not None:
+            if values.get("data-diagram-view-title") == "1":
+                self._current_view["titles"] += 1
             if "data-diagram-canvas" in values:
                 self._current_view["generic"] += 1
             if "data-sequence-canvas" in values:
@@ -3972,7 +4054,7 @@ class _TechnicalDesignPackageParser(HTMLParser):
 
 
 def lint_technical_design_package(html: str) -> List[str]:
-    """Validate the six continuously visible views of the technical design package."""
+    """Validate the four continuously visible views of the technical design package."""
 
     parser = _TechnicalDesignPackageParser()
     try:
@@ -3981,6 +4063,7 @@ def lint_technical_design_package(html: str) -> List[str]:
     except Exception as exc:
         return [f"Could not parse technical design package: {exc}."]
     errors = list(parser.errors)
+    errors.extend(lint_diagram_view_title_contract(html))
     if parser.package_count != 1:
         errors.append("Technical design package requires exactly one package root.")
     composition_roots = len(
@@ -4013,6 +4096,18 @@ def lint_technical_design_package(html: str) -> List[str]:
         errors.append(
             "Technical design package requires three embedded visual subviews."
         )
+    persistent_primary_scopes = len(
+        re.findall(
+            r"<[^>]+(?=[^>]*\bdata-diagram-control-scope=[\"']primary[\"'])"
+            r"(?=[^>]*\bdata-diagram-controls-mode=[\"']persistent[\"'])[^>]*>",
+            html,
+            re.IGNORECASE,
+        )
+    )
+    if persistent_primary_scopes != 1:
+        errors.append(
+            "Technical design package requires persistent percentage controls on its primary canvas."
+        )
     if re.search(r'role\s*=\s*["\']tablist["\']', html, re.IGNORECASE):
         errors.append(
             "Technical design package views must remain continuously visible, not tab-hidden."
@@ -4042,6 +4137,10 @@ def lint_technical_design_package(html: str) -> List[str]:
         if actual_counts != expected_counts:
             errors.append(
                 f'Technical design view "{view["id"]}" has the wrong primary carrier.'
+            )
+        if view["titles"] != 1:
+            errors.append(
+                f'Technical design view "{view["id"]}" requires one graph-level title.'
             )
         if kind == "table":
             if view["reuse_component"] != "semantic-table":
@@ -4073,6 +4172,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         html = args.path.read_text(encoding="utf-8")
         errors = lint_markup_integrity(html)
         errors.extend(lint_route_contract(html))
+        errors.extend(lint_diagram_view_title_contract(html))
         errors.extend(lint_self_contained_resources(html))
         errors.extend(_validate_visible_language(html, ""))
         errors.extend(lint_template_identity(html, args.diagram_type))

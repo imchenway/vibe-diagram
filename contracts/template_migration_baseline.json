@@ -128,7 +128,7 @@
           "layout-slot-025",
           "layout-slot-026"
         ],
-        "file_sha256": "68f19a08c894f4bd9dcd369c7ea453b983beb510e7d531db78197e0f418cc751",
+        "file_sha256": "da17730efb34997c59f90690e90172eb83c27599673d699635f45b03be9f101d",
         "macros": [
           "routing_confidence",
           "title",
@@ -3289,7 +3289,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "7365135f8fb72c35ee2d21d763efdd96d7b8b9f01c552e1c8ba9c7d949c547ba",
+        "file_sha256": "e70381d5809a8374c749884eafb119a51dfff95db619eb05738a977be8154087",
         "macros": [
           "title",
           "title",
@@ -5262,7 +5262,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "738c782bf1b6fa86a4fda5af4f800e61f40752327e68cbcff9118d4cd8f30383",
+        "file_sha256": "aca36854da29c4c4099a96a1aeb573ce1ec5c1a521b5fec5702419e487aef2e2",
         "macros": [
           "title",
           "summary",
@@ -6041,7 +6041,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "59bd10ffed4927bda02898efde53c7a76528b1e30545c399201c50f574255a81",
+        "file_sha256": "c4d1da172fa7800197700c101fab1037cc2c189cfb3db092406dc83c26fd16d6",
         "macros": [
           "title",
           "summary",
@@ -8187,7 +8187,7 @@
           "layout-slot-017",
           "layout-slot-007"
         ],
-        "file_sha256": "7df7cf2de3e20142d49605012100f257036152ab0584f76ec63829b94f780f41",
+        "file_sha256": "e2881c776b14a9580bae845a3aeaffbfe56ad813b93535425e9ce20c18183353",
         "macros": [
           "title",
           "title",
@@ -8681,7 +8681,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "43908fb9a72b8d911bfb423d09fb8e4091a309bc403d9feea07f3ee6c3ef3fd1",
+        "file_sha256": "364cb902a45a62a3a48e01070e8241b0fd204fc77c4ecb7857e0bf7af88c80e2",
         "macros": [
           "title",
           "title",
@@ -9141,7 +9141,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "4e57b4a487bdb2e40a0f00e7a6c4a59a8ccf7260b1de772ee26ed2fab5c92997",
+        "file_sha256": "5cc31714a4efb217627d1079a167b4c410311de645cd8593107578089c4b71ba",
         "macros": [
           "title",
           "title",
@@ -9595,7 +9595,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "58d60495149fc609c7d0cfa79c7ad65d2a307a7428274f82b321b623fab93fa4",
+        "file_sha256": "ac6d42628ff37dcd1f0dd674c3195982fe7a339b6e53eafd77e7af8e6b495a3e",
         "macros": [
           "title",
           "title",
@@ -10618,7 +10618,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "ab65697dbf54a34527bbabcbc1a159be92ede0cdd666eabb18f61e0ffed57783",
+        "file_sha256": "dca5c0260ef87f2e71d0ba906956abf54f4339ff4b997522bbcae44d0e39f7ba",
         "macros": [
           "title",
           "title",
@@ -12126,7 +12126,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "6396d4e3b0a3f38324eec0b930c7886853f4ec25765ba121596fbbc2269af31a",
+        "file_sha256": "58510c5d62be957d11b4c936e6f3361ea1942cec5dcf04c41ba66886b4c5bbb1",
         "macros": [
           "title",
           "title",
@@ -15954,7 +15954,7 @@
           "layout-slot-018",
           "layout-slot-019"
         ],
-        "file_sha256": "fd113eedc07bc9c13c5ab7c3118ba9f601cece8866f79a3685b7bb71f28e26e3",
+        "file_sha256": "728282b9cbd9b25df9edaff857223e866ac8773ec158a258f2446107f179cd32",
         "macros": [
           "title",
           "title",
@@ -16919,7 +16919,7 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "3c17d3be98f4a62e2b9b50e6f06d6983c534200a78644848d444d786a16d71a5",
+        "file_sha256": "937cce0758be1f6307748743cd4348c14662edcea78bdfaa702e30170e6bb28e",
         "macros": [
           "title",
           "title",
@@ -17925,7 +17925,7 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "61ba65c37220be78359772c026e79b5d8e424028d6f1c41a41b678979c1a440f",
+        "file_sha256": "d2cb265d651a7a91986501592e97f8aeeda4417538ba760c3e49cc1482330aa3",
         "macros": [
           "title",
           "title",
@@ -18615,7 +18615,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "e26e06c99fb67938d3130f1f91dfd0ef38ac63dec5021e1325c183055d81ccf4",
+        "file_sha256": "e51918cb4a3719205e2e2508209d3a912b9e95a1351a4b2edc7b5b7760c81182",
         "macros": [
           "title",
           "title",
@@ -19701,7 +19701,7 @@
           "layout-slot-016",
           "layout-slot-017"
         ],
-        "file_sha256": "aba2772036da4fd40b44d3a689d995296dba45375c31c2575111fed0b941a4c6",
+        "file_sha256": "cc9723f7742dfdac61f41b54e435c553e61ac2edde4108a10e5d71f6aa49952e",
         "macros": [
           "title",
           "title",
@@ -21413,7 +21413,7 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "ee1ebb5b42a7918348130bfb19af5ff93c8da1059dbe3167ec12f2b8da6271f8",
+        "file_sha256": "2af4d23c354600dfab44404e1690682770a1264286c1f675d3918f57bfbfca25",
         "macros": [
           "title",
           "title",
@@ -22291,7 +22291,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "42da37e9511d071562d9c9d323e672edaedaf64927a86a2e07947e5d2c7f9796",
+        "file_sha256": "de758c0af01dd7d429bd57ce2600d911a7265d422340c7003a5e4937a86db619",
         "macros": [
           "title",
           "title",
@@ -26091,7 +26091,7 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "dbf431cf71356549aa52c16f29b1c229b0f91ef6611f517f3259f50e0253223a",
+        "file_sha256": "c325c903a1d308aee57f8a1f52d43ae0c9105c33c1491ede0440325ced639406",
         "macros": [
           "title",
           "title",
@@ -31007,7 +31007,7 @@
           "layout-slot-028",
           "layout-slot-029"
         ],
-        "file_sha256": "e5f707822dba2ddaf3941f3f7fddf24ef6b6865291d819abe1bfc95a85262f9a",
+        "file_sha256": "fa622f1a58558e02e57b60a18092951bf927513e9c1f494e61a142e62f1cf002",
         "macros": [
           "routing_confidence",
           "title",
@@ -36024,7 +36024,7 @@
           "layout-slot-025",
           "layout-slot-026"
         ],
-        "file_sha256": "a5afb9b06445183c104140c4e42c5a678f85f26a5e7282887d87539359f61cc6",
+        "file_sha256": "87196e40167c55b07227931ec751152693a8196fe08b101ebf7ae94d0512f667",
         "macros": [
           "routing_confidence",
           "title",
@@ -38945,7 +38945,7 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "c4009bae507b7404e76c5f98255c6c9b834b72063fe27a71e018803e9b7d23f6",
+        "file_sha256": "7d4e7c7aa10051cb13fba4207052d5f3b0b4765dfeed9ac0d1a5f0a781ecdf35",
         "macros": [
           "title",
           "title",
@@ -40432,7 +40432,6 @@
           "layout-slot-321",
           "layout-slot-322",
           "layout-slot-323",
-          "layout-slot-120",
           "layout-slot-005",
           "layout-slot-006",
           "layout-slot-007",
@@ -40452,10 +40451,9 @@
           "layout-slot-311",
           "layout-slot-312",
           "layout-slot-313",
-          "layout-slot-314",
-          "layout-slot-220"
+          "layout-slot-314"
         ],
-        "file_sha256": "a7c17c0958c261911e2ba67526bc740700f0a4db7705b6bbc457ebc29b23594a",
+        "file_sha256": "5aa3ed6ce901fcfa748801168a8c8a9c035a9b62db81b0d4681e726e803364cb",
         "macros": [
           "title",
           "title",
@@ -40599,35 +40597,6 @@
           "canvas-text-117",
           "canvas-text-097",
           "canvas-text-118",
-          "canvas-text-120",
-          "canvas-text-121",
-          "canvas-text-122",
-          "canvas-text-123",
-          "canvas-text-124",
-          "canvas-text-125",
-          "canvas-text-126",
-          "canvas-text-127",
-          "canvas-text-128",
-          "canvas-text-129",
-          "canvas-text-130",
-          "canvas-text-131",
-          "canvas-text-132",
-          "canvas-text-133",
-          "canvas-text-134",
-          "canvas-text-135",
-          "canvas-text-136",
-          "canvas-text-137",
-          "canvas-text-138",
-          "canvas-text-139",
-          "canvas-text-140",
-          "canvas-text-141",
-          "canvas-text-142",
-          "canvas-text-143",
-          "canvas-text-144",
-          "canvas-text-145",
-          "canvas-text-146",
-          "canvas-text-147",
-          "canvas-text-148",
           "canvas-text-150",
           "canvas-text-151",
           "canvas-text-152",
@@ -40799,36 +40768,7 @@
           "canvas-text-197",
           "canvas-attribute-034",
           "canvas-text-198",
-          "canvas-text-198",
-          "canvas-text-220",
-          "canvas-text-221",
-          "canvas-text-222",
-          "canvas-text-223",
-          "canvas-text-224",
-          "canvas-text-225",
-          "canvas-text-226",
-          "canvas-text-227",
-          "canvas-text-228",
-          "canvas-text-229",
-          "canvas-text-230",
-          "canvas-text-231",
-          "canvas-text-232",
-          "canvas-text-233",
-          "canvas-text-234",
-          "canvas-text-235",
-          "canvas-text-236",
-          "canvas-text-237",
-          "canvas-text-238",
-          "canvas-text-239",
-          "canvas-text-240",
-          "canvas-text-241",
-          "canvas-text-242",
-          "canvas-text-243",
-          "canvas-text-244",
-          "canvas-text-245",
-          "canvas-text-246",
-          "canvas-text-247",
-          "canvas-text-248"
+          "canvas-text-198"
         ],
         "slot_macro_pairs": [
           {
@@ -41398,122 +41338,6 @@
           {
             "macro": "canvas-text-118",
             "slot": "layout-slot-323"
-          },
-          {
-            "macro": "canvas-text-120",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-121",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-122",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-123",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-124",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-125",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-126",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-127",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-128",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-129",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-130",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-131",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-132",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-133",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-134",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-135",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-136",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-137",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-138",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-139",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-140",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-141",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-142",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-143",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-144",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-145",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-146",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-147",
-            "slot": "layout-slot-120"
-          },
-          {
-            "macro": "canvas-text-148",
-            "slot": "layout-slot-120"
           },
           {
             "macro": "canvas-text-150",
@@ -42202,127 +42026,11 @@
           {
             "macro": "canvas-text-198",
             "slot": ""
-          },
-          {
-            "macro": "canvas-text-220",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-221",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-222",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-223",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-224",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-225",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-226",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-227",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-228",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-229",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-230",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-231",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-232",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-233",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-234",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-235",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-236",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-237",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-238",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-239",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-240",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-241",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-242",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-243",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-244",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-245",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-246",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-247",
-            "slot": "layout-slot-220"
-          },
-          {
-            "macro": "canvas-text-248",
-            "slot": "layout-slot-220"
           }
         ],
-        "structure_sha256": "450321f89700e95b7d340ab45577d45d34daa7e8de22ab4491939c2de0211572"
+        "structure_sha256": "13a8128abda155e11607d315e2ad6945314aff090b5fd20d949e6b547fa2bab4"
       },
-      "change_reason": "Added the complete six-view technical design package and deprecated the isolated release-switch template.",
+      "change_reason": "Added the complete technical design package, then refined it to four core diagrams while keeping isolated contract and release views out of the public graph-type set.",
       "source": null,
       "status": "added"
     }

@@ -927,6 +927,7 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   <style data-sequence-visual="1">
 [data-sequence-canvas] .seq-step {
   --line-color: var(--blue);
+  --caption-fill: color-mix(in srgb, var(--blue) 12%, #f3f8fd);
   counter-increment: sequence-step;
   position: relative;
   display: block;
@@ -944,10 +945,30 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   text-decoration: underline;
   text-underline-offset: .18rem;
 }
-[data-sequence-canvas] .seq-step[data-message-kind="return"] { --line-color: var(--green); }
-[data-sequence-canvas] .seq-step[data-message-kind="error"] { --line-color: var(--red); }
-[data-sequence-canvas] .seq-step[data-message-kind="async"] { --line-color: var(--violet); }
-[data-sequence-canvas] .seq-step[data-message-kind="self"] { --line-color: var(--amber); padding-bottom: 50px; }
+[data-sequence-canvas] .seq-step[data-message-kind="return"] {
+  --line-color: var(--green);
+  --caption-fill: color-mix(in srgb, var(--green) 13%, #f2faf6);
+}
+[data-sequence-canvas] .seq-step[data-message-kind="error"] {
+  --line-color: var(--red);
+  --caption-fill: color-mix(in srgb, var(--red) 13%, #fff3f3);
+}
+[data-sequence-canvas] .seq-step[data-message-kind="async"] {
+  --line-color: var(--violet);
+  --caption-fill: color-mix(in srgb, var(--violet) 12%, #f6f3ff);
+}
+[data-sequence-canvas] .seq-step[data-message-kind="self"] {
+  --line-color: var(--amber);
+  --caption-fill: color-mix(in srgb, var(--amber) 14%, #fff8e8);
+  padding-bottom: 50px;
+}
+[data-sequence-canvas] [data-participant-id] {
+  background: color-mix(
+    in srgb,
+    var(--participant-accent, var(--blue)) 11%,
+    #f4f8fc
+  );
+}
 [data-sequence-canvas] .seq-number {
   position: absolute;
   left: 7px;
@@ -998,20 +1019,20 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   inline-size: min(20rem, 42vw);
   min-block-size: 0;
   transform: translateX(-50%);
-  padding: .1rem .35rem;
-  border: 0;
-  border-radius: .25rem;
-  background: #fbfdff;
+  padding: .22rem .5rem;
+  border: 1px solid color-mix(in srgb, var(--line-color) 26%, transparent);
+  border-radius: .4rem;
+  background: var(--caption-fill);
+  box-shadow: 0 .18rem .5rem rgba(20,57,92,.08);
   text-align: left;
   text-decoration: none;
   overflow-wrap: anywhere;
 }
 [data-sequence-canvas] .seq-step[data-message-kind="return"] .seq-caption {
-  border: 0;
+  border-style: dashed;
 }
 [data-sequence-canvas] .seq-step[data-message-kind="error"] .seq-caption {
-  border: 0;
-  background: #fff7f7;
+  border-color: color-mix(in srgb, var(--red) 34%, transparent);
 }
 [data-sequence-canvas] .seq-route {
   display: block;
@@ -1072,7 +1093,11 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   inline-size: 6px;
   block-size: 22%;
   border: 1px solid color-mix(in srgb, var(--participant-accent, var(--line)) 78%, #17324d);
-  background: #fff;
+  background: color-mix(
+    in srgb,
+    var(--participant-accent, var(--line)) 16%,
+    #f4f8fc
+  );
 }
 
 [data-sequence-canvas] [data-sequence-detail-trigger]::after {
@@ -1089,7 +1114,7 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
     padding: 10px;
     border: 1px solid rgba(141,179,216,.58);
     border-radius: .625rem;
-    background: rgba(255,255,255,.98);
+    background: var(--caption-fill);
     text-align: left;
   }
   [data-sequence-canvas] .seq-step[data-message-kind="return"] {
@@ -1098,7 +1123,7 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   }
   [data-sequence-canvas] .seq-step[data-message-kind="error"] {
     border-color: rgba(166,58,58,.44);
-    background: rgba(255,240,240,.98);
+    background: var(--caption-fill);
   }
   [data-sequence-canvas] .seq-step::after {
     content: "↓";
@@ -1133,23 +1158,25 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 .technical-view{min-inline-size:0;padding:1rem;border:1px solid #bfd2e4;border-radius:1rem;background:rgba(255,255,255,.96)}
 .technical-view[data-technical-view-id="overview"]{padding-inline:0}
 .technical-view[data-technical-view-id="overview"]>.view-heading{margin-inline:1rem}
-.view-heading{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.18rem .7rem;align-items:baseline;margin:0 0 .8rem;padding:0 .1rem .7rem;border-bottom:1px solid #d8e4ef}
-.view-heading span{grid-row:1 / span 2;align-self:start;min-inline-size:2.3rem;color:var(--blue);font-size:.72rem;font-weight:900;letter-spacing:.09em}
-.view-heading h2{margin:0;font-size:clamp(1.15rem,2vw,1.45rem);line-height:1.25}.view-heading p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.5}
+.view-heading{display:grid;gap:.18rem;align-items:baseline;margin:0 0 .8rem;padding:0 .1rem .7rem;border-bottom:1px solid #d8e4ef}
+.view-heading h2{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem;margin:0;font-size:clamp(1.15rem,2vw,1.45rem);line-height:1.25}
+.view-heading [data-diagram-view-type]{color:var(--blue);font-size:.78em;font-weight:900;letter-spacing:.04em}
+.view-heading .view-title-separator{color:#7b93aa;font-weight:700}.view-heading .view-title-separator::before{content:"｜"}
+.view-heading [data-diagram-view-subject]{color:var(--ink)}
+.view-heading p{margin:0;color:var(--muted);font-size:.82rem;line-height:1.5}
 .technical-map{padding:.65rem}.technical-map svg{display:block;inline-size:100%;block-size:auto;border-radius:.7rem;background:linear-gradient(rgba(111,157,202,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(111,157,202,.08) 1px,transparent 1px),#fbfdff;background-size:24px 24px,24px 24px,auto}
 .map-boundary{fill:rgba(246,250,254,.76);stroke:#a9c3dc;stroke-width:1.5}.state-boundary{fill:rgba(244,248,255,.8)}.feedback-boundary{fill:rgba(242,239,255,.54);stroke:#8b75cf;stroke-dasharray:7 6}.boundary-label{fill:#38546f;font-size:13px;font-weight:850}.vertical-label{font-size:11px}
 .map-node{fill:#fff;stroke:#176fb3;stroke-width:2;filter:drop-shadow(0 4px 8px rgba(25,67,107,.08))}.map-node.green{stroke:#11815d;fill:#f7fffb}.map-node.violet{stroke:#6954be;fill:#faf9ff}.map-node.amber{stroke:#a66a00;fill:#fffcf3}
 .node-link{display:flex;inline-size:100%;block-size:100%;flex-direction:column;align-items:center;justify-content:center;gap:.28rem;padding:.55rem;color:#17324d;text-align:center;text-decoration:none;overflow-wrap:anywhere}.node-link b{font-size:.88rem;line-height:1.22}.node-link small{color:var(--muted);font-size:.69rem;line-height:1.35}
 .route{fill:none;stroke:#176fb3;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}.route.green{stroke:#11815d}.route.violet{stroke:#6954be;stroke-dasharray:9 7}.route.amber{stroke:#a66a00;stroke-dasharray:4 7}.route-label{display:block;fill:#38546f;font-size:11px;font-weight:800;paint-order:stroke;stroke:#fbfdff;stroke-width:5px;stroke-linejoin:round}
-.semantic-table-wrap{max-inline-size:100%;overflow-x:auto;border:1px solid #c4d6e7;border-radius:.8rem;background:#fff}
-[data-technical-semantic-table]{inline-size:100%;min-inline-size:52rem;border-collapse:collapse;font-size:.78rem;line-height:1.45}
-[data-technical-semantic-table] caption{padding:.75rem 1rem;color:#17324d;font-weight:850;text-align:left}
-[data-technical-semantic-table] th,[data-technical-semantic-table] td{padding:.72rem .8rem;border-top:1px solid #dce7f1;border-inline-end:1px solid #e3ebf3;text-align:left;vertical-align:top;overflow-wrap:anywhere}
-[data-technical-semantic-table] thead th{background:#eef6fd;color:#294762;font-weight:850}[data-technical-semantic-table] tbody th{background:#f8fbfe;color:#17324d;min-inline-size:8rem}[data-technical-semantic-table] mark{padding:.08rem .28rem;border-radius:.25rem;background:#fff0ba;color:#704800}
 .technical-sequence{--sequence-natural-width:54rem;--sequence-participant-count:4;box-shadow:none}
 .technical-sequence .sequence-stage{position:relative;min-inline-size:54rem;padding:.75rem}
-.technical-sequence .sequence-participants{position:sticky;inset-block-start:0;z-index:6;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;padding:.15rem 0 .8rem;background:#fff}
-.technical-sequence [data-participant-id]{min-inline-size:0;border:1px solid #abc5df;border-radius:.65rem;background:#fff}
+.technical-sequence .sequence-participants{position:sticky;inset-block-start:0;z-index:6;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.65rem;padding:.15rem 0 .8rem;background:#f7fbff}
+.technical-sequence [data-participant-id="layout-participant-001"]{--participant-accent:var(--violet)}
+.technical-sequence [data-participant-id="layout-participant-002"]{--participant-accent:var(--blue)}
+.technical-sequence [data-participant-id="layout-participant-003"]{--participant-accent:var(--green)}
+.technical-sequence [data-participant-id="layout-participant-004"]{--participant-accent:var(--amber)}
+.technical-sequence [data-participant-id]{min-inline-size:0;border:1px solid color-mix(in srgb,var(--participant-accent,var(--blue)) 42%,transparent);border-radius:.65rem;background:color-mix(in srgb,var(--participant-accent,var(--blue)) 11%,#f4f8fc)}
 .technical-sequence [data-participant-id] a{display:flex;min-block-size:4.25rem;flex-direction:column;justify-content:center;padding:.55rem .7rem;text-align:center;text-decoration:none;overflow-wrap:anywhere}
 .technical-sequence [data-participant-id] strong{font-size:.86rem}.technical-sequence [data-participant-id] span{margin-top:.2rem;color:var(--muted);font-size:.69rem}
 .technical-sequence .sequence-lifelines{position:absolute;inset:5.8rem .75rem 1rem;display:grid;grid-template-columns:repeat(4,1fr);pointer-events:none}
@@ -1157,14 +1184,11 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 .technical-sequence .sequence-messages{position:relative;z-index:2;display:grid;gap:.35rem;padding-top:.3rem}
 .technical-sequence [data-sequence-phase-id]{position:relative;display:grid;gap:.15rem;padding:.65rem 0 .3rem;border-top:1px dashed #c5d7e8}
 .technical-sequence [data-sequence-fragment-label],.technical-sequence [data-sequence-phase-label]{display:inline-block;margin-inline:.6rem;color:#38546f;font-size:.7rem;font-weight:850}
-.technical-sequence .seq-caption{background:#fff}
 @media(max-width:48rem){
   main{width:min(100vw - 1rem,72rem);padding-top:.75rem}
   .technical-view{padding:.65rem}
   .technical-view[data-technical-view-id="overview"]{padding-inline:0}
   .technical-view[data-technical-view-id="overview"]>.view-heading{margin-inline:.65rem}
-  .view-heading{grid-template-columns:1fr}
-  .view-heading span{grid-row:auto}
   .technical-map{overflow-x:auto}
   .technical-map svg{min-inline-size:58rem}
   .technical-sequence,
@@ -1177,9 +1201,8 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
   .technical-sequence [data-sequence-phase-id]{display:block}
   .technical-sequence .sequence-participants{position:static;grid-template-columns:1fr 1fr}
   .technical-sequence .sequence-lifelines{display:none}
-  [data-technical-semantic-table]{min-inline-size:46rem}
 }
-@media print{.technical-view{break-inside:avoid;border-color:#9cb5cc;box-shadow:none}.semantic-table-wrap{overflow:visible}[data-technical-semantic-table]{min-inline-size:0}}
+@media print{.technical-view{break-inside:avoid;border-color:#9cb5cc;box-shadow:none}}
 </style>
 </head>
 <body>
@@ -1195,8 +1218,8 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
   </section>
   <section class="template-layout" data-technical-design-package="1" data-diagram-composition-root="technical-design-package">
     <section class="technical-view" data-technical-view-id="overview" data-view-kind="diagram" data-reuse-family="system-architecture" data-reuse-template="component-breakdown">
-  <header class="view-heading"><span>{{canvas-text-001}}</span><h2>{{canvas-text-002}}</h2><p>{{canvas-text-003}}</p></header>
-  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-overview" data-diagram-control-scope="primary" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary">
+  <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-001}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-002}}</span></h2><p>{{canvas-text-003}}</p></header>
+  <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-overview" data-diagram-control-scope="primary" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent">
     <section data-diagram-stage class="technical-map" aria-label="{{canvas-attribute-001}}">
       <svg viewBox="0 0 1160 360" role="img" aria-labelledby="layout-node-001">
         <defs>
@@ -1257,7 +1280,7 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 </details>
 </section>
     <section class="technical-view" data-technical-view-id="runtime" data-view-kind="sequence" data-reuse-family="code-sequence" data-reuse-template="participant-timeline">
-  <header class="view-heading"><span>{{canvas-text-060}}</span><h2>{{canvas-text-061}}</h2><p>{{canvas-text-062}}</p></header>
+  <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-060}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-061}}</span></h2><p>{{canvas-text-062}}</p></header>
   <section class="technical-sequence" aria-label="{{canvas-attribute-002}}" data-sequence-canvas data-sequence-contract="1" data-sequence-id="layout-sequence-001" data-diagram-control-scope="embedded" data-sequence-role="standalone" data-sequence-width="contained" data-sequence-height="flow">
     <div class="sequence-viewport" data-sequence-viewport tabindex="0" aria-label="{{canvas-attribute-003}}">
       <div class="sequence-stage" data-sequence-stage>
@@ -1321,17 +1344,8 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
   </div>
 </section>
 </section>
-    <section class="technical-view" data-technical-view-id="contracts" data-view-kind="table" data-reuse-component="semantic-table">
-  <header class="view-heading"><span>{{canvas-text-120}}</span><h2>{{canvas-text-121}}</h2><p>{{canvas-text-122}}</p></header>
-  <div class="semantic-table-wrap"><table data-technical-semantic-table="1" data-slot="layout-slot-120"><caption>{{canvas-text-123}}</caption><thead><tr><th scope="col">{{canvas-text-124}}</th><th scope="col">{{canvas-text-125}}</th><th scope="col">{{canvas-text-126}}</th><th scope="col">{{canvas-text-127}}</th><th scope="col">{{canvas-text-128}}</th></tr></thead><tbody>
-    <tr><th scope="row">{{canvas-text-129}}</th><td>{{canvas-text-130}}</td><td>{{canvas-text-131}}</td><td>{{canvas-text-132}}</td><td><mark>{{canvas-text-133}}</mark></td></tr>
-    <tr><th scope="row">{{canvas-text-134}}</th><td>{{canvas-text-135}}</td><td>{{canvas-text-136}}</td><td>{{canvas-text-137}}</td><td>{{canvas-text-138}}</td></tr>
-    <tr><th scope="row">{{canvas-text-139}}</th><td>{{canvas-text-140}}</td><td>{{canvas-text-141}}</td><td><mark>{{canvas-text-142}}</mark></td><td>{{canvas-text-143}}</td></tr>
-    <tr><th scope="row">{{canvas-text-144}}</th><td>{{canvas-text-145}}</td><td>{{canvas-text-146}}</td><td>{{canvas-text-147}}</td><td>{{canvas-text-148}}</td></tr>
-  </tbody></table></div>
-</section>
     <section class="technical-view" data-technical-view-id="consistency" data-view-kind="diagram" data-reuse-family="state-data-model" data-reuse-template="state-machine">
-  <header class="view-heading"><span>{{canvas-text-150}}</span><h2>{{canvas-text-151}}</h2><p>{{canvas-text-152}}</p></header>
+  <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-150}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-151}}</span></h2><p>{{canvas-text-152}}</p></header>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-consistency" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary">
     <section data-diagram-stage class="technical-map" aria-label="{{canvas-attribute-004}}">
       <svg viewBox="0 0 1160 390" role="img" aria-labelledby="layout-node-005">
@@ -1395,7 +1409,7 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 </details>
 </section>
     <section class="technical-view" data-technical-view-id="recovery" data-view-kind="diagram" data-reuse-family="business-flow" data-reuse-template="logic-flowchart">
-  <header class="view-heading"><span>{{canvas-text-180}}</span><h2>{{canvas-text-181}}</h2><p>{{canvas-text-182}}</p></header>
+  <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-180}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-181}}</span></h2><p>{{canvas-text-182}}</p></header>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-recovery" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary">
     <section data-diagram-stage class="technical-map recovery-map" aria-label="{{canvas-attribute-005}}">
       <svg viewBox="0 0 1160 760" role="img" aria-labelledby="layout-node-009">
@@ -1480,15 +1494,6 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
     </div>
   </section>
 </details>
-</section>
-    <section class="technical-view" data-technical-view-id="release" data-view-kind="table" data-reuse-component="semantic-table">
-  <header class="view-heading"><span>{{canvas-text-220}}</span><h2>{{canvas-text-221}}</h2><p>{{canvas-text-222}}</p></header>
-  <div class="semantic-table-wrap"><table data-technical-semantic-table="1" data-slot="layout-slot-220"><caption>{{canvas-text-223}}</caption><thead><tr><th scope="col">{{canvas-text-224}}</th><th scope="col">{{canvas-text-225}}</th><th scope="col">{{canvas-text-226}}</th><th scope="col">{{canvas-text-227}}</th><th scope="col">{{canvas-text-228}}</th></tr></thead><tbody>
-    <tr><th scope="row">{{canvas-text-229}}</th><td>{{canvas-text-230}}</td><td>{{canvas-text-231}}</td><td>{{canvas-text-232}}</td><td>{{canvas-text-233}}</td></tr>
-    <tr><th scope="row">{{canvas-text-234}}</th><td>{{canvas-text-235}}</td><td><mark>{{canvas-text-236}}</mark></td><td>{{canvas-text-237}}</td><td>{{canvas-text-238}}</td></tr>
-    <tr><th scope="row">{{canvas-text-239}}</th><td>{{canvas-text-240}}</td><td>{{canvas-text-241}}</td><td><mark>{{canvas-text-242}}</mark></td><td>{{canvas-text-243}}</td></tr>
-    <tr><th scope="row">{{canvas-text-244}}</th><td>{{canvas-text-245}}</td><td>{{canvas-text-246}}</td><td>{{canvas-text-247}}</td><td>{{canvas-text-248}}</td></tr>
-  </tbody></table></div>
 </section>
   </section>
 </main>

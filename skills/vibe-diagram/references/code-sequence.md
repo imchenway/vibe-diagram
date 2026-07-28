@@ -35,7 +35,7 @@ Sequence contract version: `1`.
 
 ## 0.1.10 sequence visual grammar
 
-- Participant names and responsibilities sit at the top. Lifelines use visible `2px` dashed strokes, and activation bars mark only real execution intervals without obscuring participant headers or messages.
-- Place message labels above arrows instead of using cards that cover them. Calls, asynchronous messages, returns, and errors use consistent line grammars; return lines are dashed.
+- Participant names and responsibilities sit at the top on non-white semantic accent fills. Lifelines use visible `2px` dashed strokes, and activation bars mark only real execution intervals without obscuring participant headers or messages.
+- Place message labels above arrows on message-kind semantic fills instead of white cards that cover them. Calls, asynchronous messages, returns, and errors use consistent line grammars; return lines are dashed.
 - Branches and timeouts use `alt` and `timeout` fragment semantics. Remove every plus or minus expansion hint; participants and messages are the detail triggers.
 - Selecting a participant or message uses the global popover for details. Native disclosures expand fully for print and no-JavaScript use.

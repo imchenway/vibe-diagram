@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-07-28
+
+- 将默认技术设计包从六视图收敛为设计总览、运行时序、状态一致性和失败恢复四个核心图；数据契约、发布与验收信息按需进入相关节点或详情，不再独立作为图类型。
+- 将百分比缩放组件保留为全局能力，仅在技术设计包主画布常驻显示，其余模板恢复为溢出时显示。
+- 为代码时序图族及技术设计内嵌时序统一加入非白色语义底色，覆盖参与者、消息标题和移动端消息节点。
+- 新增全局图级标题契约，统一使用“图类型｜标题”，并明确页面主标题、表格标题和详情标题不受该格式约束。
+
 ## [0.1.8] - 2026-07-24
 
 - Changed direct updater activation to use an in-process transient previous tree, delete it before reporting success, and retain no updater backup.
