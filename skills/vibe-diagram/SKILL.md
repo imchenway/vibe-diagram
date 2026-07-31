@@ -14,7 +14,7 @@ Vibe Diagram exists to explain subjects through real diagram geometry. Generatio
 - Delivery-acceptance diagrams and release-rollback diagrams are no longer public recommended families. Model ordered acceptance or release work as business flow, model itemized requirement-evidence-conclusion comparisons as matrices, and use a state machine only when the user explicitly requests state semantics.
 - Keep old explicit entry names for one release cycle as migration notices only; they must not become defaults again.
 - Write every graph-level title as `diagram type｜title`, localized to the artifact language. Do not apply this format to the page title, table captions, or detail headings.
-- Keep the percentage zoom component in the shared shell. Only the complete technical-design package keeps it persistently visible; every other template reveals it on overflow.
+- Keep the percentage zoom component in the shared title shell, to the right of the title on wide screens and below the title copy on narrow screens. A canvas-local reading guide, when required by its family or template contract, stays at the owning canvas top-left and uses only that diagram's actual visual tokens. The shared shell validates ownership and structure without prescribing domain-specific guide groups. A code-review package specifically requires relation-type and evidence-state groups, and uses one shared persistent canonical control group for its current and repair diagrams; the factual scenario between them is never scaled.
 - Sequence participants and message captions use semantic accent fills. Do not restore white participant or caption cards.
 
 ## Update gate
@@ -36,6 +36,7 @@ After the update gate finishes, read [the runtime workflow](references/runtime-w
 - [Adaptive readability and semantic relations](references/adaptive-readability.md)
 - [Business architecture](references/business-architecture.md)
 - [Business flow](references/business-flow.md)
+- [Code review](references/code-review.md)
 - [Code sequence](references/code-sequence.md)
 - [Decision communication](references/decision-communication.md)
 - [Delivery acceptance compatibility migration](references/delivery-acceptance.md)

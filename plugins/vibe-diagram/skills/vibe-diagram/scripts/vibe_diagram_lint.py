@@ -20,7 +20,7 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = SKILL_ROOT / "assets" / "templates"
 FAMILY_POLICY_PATH = SKILL_ROOT / "contracts" / "family-policies.json"
 TEMPLATE_ROUTING_PATH = SKILL_ROOT / "contracts" / "template-routing.json"
-EXPECTED_TEMPLATE_COUNT = 60
+EXPECTED_TEMPLATE_COUNT = 61
 RESOURCE_ATTRIBUTES = {"src", "srcset", "poster", "action", "formaction"}
 LINK_ATTRIBUTES = {"href", "xlink:href"}
 VOID_ELEMENTS = {
@@ -118,9 +118,10 @@ GENERIC_PRIMARY_DIRECTIONS = frozenset(
 ROUTING_FAMILY_KEYS = frozenset(
     {"default_template", "ready_templates", "blocked_templates"}
 )
+CODE_REVIEW_ROUTE_KEYS = frozenset({"family", "template", "primary_relation"})
 EVIDENCE_STATUSES = frozenset({"observed", "inferred", "proposed", "unresolved"})
 EVIDENCE_PLACEMENTS = frozenset(
-    {"before-primary-canvas", "after-primary-canvas"}
+    {"before-primary-canvas", "after-primary-canvas", "inside-primary-canvas"}
 )
 EVIDENCE_SOURCE_KINDS = frozenset(
     {"file", "line", "log", "test", "command", "user", "runtime", "design", "external"}
@@ -186,7 +187,6 @@ FAMILY_POLICY_TEMPLATE_OPTIONAL_KEYS = frozenset(
         "requires_merge",
         "controls_mode",
         "requires_node_details",
-        "requires_node_detail_hint_in_reading_guide",
         "requires_localized_node_labels",
         "requires_geometric_direction",
         "evidence_placement",
@@ -385,7 +385,7 @@ def _validated_migration_batches(
     seen = set()
     result: Dict[str, List[str]] = {}
     for batch, paths in value.items():
-        if re.fullmatch(r"B(?:0[1-9]|1[0-4])", batch) is None:
+        if re.fullmatch(r"B(?:0[1-9]|1[0-5])", batch) is None:
             raise ValueError(f"family policy migration batch id is invalid: {batch}")
         if (
             not isinstance(paths, list)
@@ -412,8 +412,8 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
     if policy["sequence_exclusions"] != list(EXPECTED_SEQUENCE_EXCLUSIONS):
         raise ValueError("family policy sequence exclusions are invalid")
     families = policy["families"]
-    if not isinstance(families, dict) or len(families) != 10:
-        raise ValueError("family policy must define exactly ten generic families")
+    if not isinstance(families, dict) or len(families) != 11:
+        raise ValueError("family policy must define exactly eleven generic families")
     catalog = load_template_layouts()
     covered = set()
     for family, definition in families.items():
@@ -727,6 +727,7 @@ class _EvidenceSlotRecord:
     entries: List[_EvidenceEntryRecord]
     text_parts: List[str]
     before_canvas: bool
+    inside_canvas: bool
 
 
 class _GenericContractParser(HTMLParser):
@@ -791,7 +792,14 @@ class _GenericContractParser(HTMLParser):
             if self._evidence_slot is not None:
                 self.errors.append("Evidence-and-notes slots must not be nested.")
             else:
-                self._evidence_slot = _EvidenceSlotRecord(0, [], [], not self._saw_canvas)
+                self._evidence_slot = _EvidenceSlotRecord(
+                    0,
+                    [],
+                    [],
+                    not self._saw_canvas,
+                    self._canvas is not None
+                    or bool(values.get("data-reading-guide-for", "").strip()),
+                )
                 self.evidence_slots.append(self._evidence_slot)
         if starts_ledger:
             if self._evidence_slot is None:
@@ -1819,6 +1827,8 @@ def _validate_evidence_ledger(
             errors.append("The evidence boundary ledger must appear before the first diagram canvas.")
         if evidence_placement == "after-primary-canvas" and slot.before_canvas:
             errors.append("The evidence ledger must appear after the first diagram canvas.")
+        if evidence_placement == "inside-primary-canvas" and not slot.inside_canvas:
+            errors.append("The evidence boundary ledger must appear inside its diagram canvas.")
         if slot.ledger_count != 1:
             errors.append(
                 "Every generic evidence-and-notes slot requires exactly one data-evidence-ledger."
@@ -2019,19 +2029,6 @@ def generic_contract_errors(
         return [f"Could not parse generic diagram contract: {exc}."]
     errors = list(parser.errors)
     errors.extend(_validate_visible_language(html, parser.document_lang))
-    if definition.get("requires_node_detail_hint_in_reading_guide"):
-        if parser.node_detail_hint_count != 1:
-            errors.append(
-                "Detailed architecture templates require exactly one node-detail interaction hint."
-            )
-        if parser.node_detail_hint_reading_guide_count != 1:
-            errors.append(
-                "The node-detail interaction hint must be inside the interaction group of the evidence reading guide."
-            )
-        if parser.node_detail_hint_canvas_count:
-            errors.append(
-                "The node-detail interaction hint must not float inside the primary SVG canvas."
-            )
     if not parser.canvases:
         errors.append("Generic diagram contract requires at least one canvas.")
         return errors
@@ -2177,7 +2174,7 @@ def generic_contract_errors(
         _validate_evidence_ledger(
             parser,
             semantic_targets,
-            definition.get("evidence_placement", "before-primary-canvas"),
+            definition.get("evidence_placement", "inside-primary-canvas"),
         )
     )
     return list(dict.fromkeys(errors))
@@ -2201,26 +2198,45 @@ class _ArtifactShellParser(HTMLParser):
         self.title_copy_count = 0
         self.controls_container_count = 0
         self.title_order = -1
-        self.guide_order = -1
         self.canvas_orders: List[int] = []
-        self.guide_groups: List[str] = []
-        self.interaction_groups_in_controls = 0
-        self.evidence_entries: List[Tuple[str, str, str]] = []
+        self.canvas_ids: List[str] = []
+        self.guide_records: List[Dict[str, Any]] = []
         self.control_sets: List[Tuple[str, List[str]]] = []
-        self.controls_outside_guide: List[str] = []
-        self.controls_inside_title = 0
+        self.controls_outside_title: List[str] = []
+        self.controls_inside_guide = 0
         self.content_text: List[str] = []
         self.content_attributes: List[Tuple[str, str]] = []
         self.content_identifiers: List[Tuple[str, str]] = []
         self.content_slots: List[str] = []
         self._order = 0
-        self._stack: List[Tuple[str, bool, bool, bool, bool, bool, int]] = []
+        self._stack: List[
+            Tuple[str, bool, bool, bool, bool, bool, int, str, int]
+        ] = []
 
-    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, int]:
+    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, int, str, int]:
         if not self._stack:
-            return False, False, False, False, False, -1
-        _, title, guide, controls, main, content, control_set = self._stack[-1]
-        return title, guide, controls, main, content, control_set
+            return False, False, False, False, False, -1, "", -1
+        (
+            _,
+            title,
+            guide,
+            controls,
+            main,
+            content,
+            control_set,
+            canvas_id,
+            guide_index,
+        ) = self._stack[-1]
+        return (
+            title,
+            guide,
+            controls,
+            main,
+            content,
+            control_set,
+            canvas_id,
+            guide_index,
+        )
 
     def handle_starttag(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
@@ -2234,16 +2250,33 @@ class _ArtifactShellParser(HTMLParser):
             parent_main,
             parent_content,
             parent_control_set,
+            parent_canvas_id,
+            parent_guide_index,
         ) = self._flags()
         starts_title = values.get("data-artifact-shell-title", "").strip() == "1"
         starts_guide = values.get("data-diagram-reading-guide", "").strip() == "1"
-        starts_controls_container = "data-reading-guide-controls" in values
+        starts_controls_container = "data-artifact-shell-controls" in values
+        starts_canvas = (
+            "data-diagram-canvas" in values or "data-sequence-canvas" in values
+        )
         in_title = parent_title or starts_title
         in_guide = parent_guide or starts_guide
         in_controls = parent_controls or starts_controls_container
         in_main = parent_main or tag.lower() == "main"
-        in_content = parent_content or (parent_main and not (in_title or in_guide))
+        in_content = (parent_content and not starts_guide) or (
+            parent_main and not (in_title or in_guide)
+        )
         control_set = parent_control_set
+        canvas_id = parent_canvas_id
+        guide_index = parent_guide_index
+
+        if starts_canvas:
+            canvas_id = (
+                values.get("data-diagram-id", "").strip()
+                or values.get("data-sequence-id", "").strip()
+            )
+            self.canvas_orders.append(self._order)
+            self.canvas_ids.append(canvas_id)
 
         if starts_title:
             self.title_count += 1
@@ -2252,7 +2285,16 @@ class _ArtifactShellParser(HTMLParser):
                 self.content_attributes.append(("artifact-shell-title-tag", tag.lower()))
         if starts_guide:
             self.guide_count += 1
-            self.guide_order = self._order
+            self.guide_records.append(
+                {
+                    "for": values.get("data-reading-guide-for", "").strip(),
+                    "canvas": canvas_id,
+                    "order": self._order,
+                    "groups": [],
+                    "evidence": [],
+                }
+            )
+            guide_index = len(self.guide_records) - 1
             if (
                 tag.lower() != "section"
                 or values.get("data-slot", "").strip() != "evidence-and-notes"
@@ -2263,21 +2305,21 @@ class _ArtifactShellParser(HTMLParser):
             self.title_copy_count += 1
         if starts_controls_container:
             self.controls_container_count += 1
-        if "data-reading-guide-group" in values and in_guide:
+        if (
+            "data-reading-guide-group" in values
+            and in_guide
+            and guide_index >= 0
+        ):
             guide_group = values["data-reading-guide-group"].strip()
-            self.guide_groups.append(guide_group)
-            if guide_group == "interaction" and in_controls:
-                self.interaction_groups_in_controls += 1
-        if "data-evidence-id" in values and in_guide:
-            self.evidence_entries.append(
+            self.guide_records[guide_index]["groups"].append(guide_group)
+        if "data-evidence-id" in values and in_guide and guide_index >= 0:
+            self.guide_records[guide_index]["evidence"].append(
                 (
                     values["data-evidence-id"].strip(),
                     values.get("data-evidence-status", "").strip(),
                     values.get("data-evidence-source-kind", "").strip(),
                 )
             )
-        if "data-diagram-canvas" in values or "data-sequence-canvas" in values:
-            self.canvas_orders.append(self._order)
 
         control_kind = ""
         if "data-diagram-controls" in values:
@@ -2287,10 +2329,10 @@ class _ArtifactShellParser(HTMLParser):
         if control_kind:
             self.control_sets.append((control_kind, []))
             control_set = len(self.control_sets) - 1
-            if not (in_guide and in_controls):
-                self.controls_outside_guide.append(control_kind)
-            if in_title:
-                self.controls_inside_title += 1
+            if not (in_title and in_controls):
+                self.controls_outside_title.append(control_kind)
+            if in_guide:
+                self.controls_inside_guide += 1
         if "data-diagram-zoom-control" in values and control_set >= 0:
             self.control_sets[control_set][1].append(
                 values["data-diagram-zoom-control"].strip()
@@ -2382,6 +2424,8 @@ class _ArtifactShellParser(HTMLParser):
                     in_main,
                     in_content,
                     control_set,
+                    canvas_id,
+                    guide_index,
                 )
             )
 
@@ -2408,46 +2452,59 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
     errors: List[str] = []
     if parser.title_count != 1 or parser.title_copy_count != 1:
         errors.append("Artifact shell requires exactly one title and summary region.")
-    if parser.guide_count != 1:
-        errors.append("Artifact shell requires exactly one reading guide.")
     if parser.controls_container_count != 1:
-        errors.append("Artifact shell requires exactly one right-side guide control region.")
+        errors.append("Artifact shell requires exactly one title-side control region.")
     if (
         parser.title_order < 0
-        or parser.guide_order < 0
         or not parser.canvas_orders
-        or not parser.title_order < parser.guide_order < min(parser.canvas_orders)
+        or not parser.title_order < min(parser.canvas_orders)
     ):
-        errors.append("Artifact shell order must be title, reading guide, then primary canvas.")
-    if Counter(parser.guide_groups) != Counter(
-        {"relations": 1, "evidence": 1, "interaction": 1}
-    ):
-        errors.append(
-            "Reading guide requires exactly the relations, evidence, and interaction groups."
-        )
-    if parser.interaction_groups_in_controls != 1:
-        errors.append(
-            "Reading guide interaction hint must sit above zoom controls in the right-side control region."
-        )
-    expected_evidence = {
-        ("evidence-observed", "observed", "file"),
-        ("evidence-check", "observed", "test"),
-        ("evidence-unresolved", "unresolved", "runtime"),
-    }
-    if set(parser.evidence_entries) != expected_evidence or len(parser.evidence_entries) != 3:
-        errors.append(
-            "Reading guide requires the fixed observed, checked, and unresolved evidence states."
-        )
+        errors.append("Artifact shell order must place the title before every canvas.")
+    if any(not canvas_id for canvas_id in parser.canvas_ids):
+        errors.append("Artifact shell canvases must expose stable identifiers.")
+    evidence_ids: List[str] = []
+    guide_targets: List[str] = []
+    for record in parser.guide_records:
+        if not record["for"] or record["for"] != record["canvas"]:
+            errors.append(
+                "Every local reading guide must directly identify its containing canvas."
+            )
+        guide_targets.append(record["for"])
+        groups = record["groups"]
+        if (
+            not groups
+            or len(groups) != len(set(groups))
+            or any(SEMANTIC_SLUG_RE.fullmatch(group) is None for group in groups)
+        ):
+            errors.append(
+                "Every local reading guide must declare unique semantic groups."
+            )
+        evidence = record["evidence"]
+        evidence_ids.extend(entry[0] for entry in evidence)
+        if any(
+            not evidence_id
+            or SEMANTIC_SLUG_RE.fullmatch(evidence_id) is None
+            or status not in EVIDENCE_STATUSES
+            or source_kind not in EVIDENCE_SOURCE_KINDS
+            for evidence_id, status, source_kind in evidence
+        ):
+            errors.append(
+                "Local reading-guide evidence entries must use valid semantic ids, statuses, and source kinds."
+            )
+    if len(guide_targets) != len(set(guide_targets)):
+        errors.append("A canvas may own at most one local reading guide.")
+    if len(evidence_ids) != len(set(evidence_ids)):
+        errors.append("Local reading-guide evidence identifiers must be unique.")
     if not parser.control_sets:
-        errors.append("Reading guide requires at least one zoom control set.")
+        errors.append("Artifact title requires at least one zoom control set.")
     expected_modes = ["0.75", "0.9", "1", "fit"]
     for kind, modes in parser.control_sets:
         if modes != expected_modes:
             errors.append(
                 f"Every {kind} zoom control set must expose 75%, 90%, 100%, and Auto in that order."
             )
-    if parser.controls_outside_guide or parser.controls_inside_title:
-        errors.append("All zoom controls must live at the right side of the reading guide.")
+    if parser.controls_outside_title or parser.controls_inside_guide:
+        errors.append("All zoom controls must live in the title-side control region.")
     if any(
         name == "artifact-shell-title-tag" for name, _value in parser.content_attributes
     ):
@@ -2917,10 +2974,10 @@ def load_template_routing(
     """Load the fail-closed routing allowlist used by scaffold and delivery lint."""
 
     routing = _read_json_unique(path)
-    if set(routing) != {"schema_version", "families"}:
+    if set(routing) != {"schema_version", "code_review_routes", "families"}:
         raise ValueError("template routing contract has an invalid root schema")
-    if type(routing["schema_version"]) is not int or routing["schema_version"] != 1:
-        raise ValueError("template routing schema_version must be integer 1")
+    if type(routing["schema_version"]) is not int or routing["schema_version"] != 2:
+        raise ValueError("template routing schema_version must be integer 2")
     catalog = load_template_layouts()
     families = routing["families"]
     if not isinstance(families, dict) or set(families) != set(catalog):
@@ -2944,6 +3001,33 @@ def load_template_routing(
             or default_template not in set(ready)
         ):
             raise ValueError(f"template routing inventory is invalid: {family}")
+    routes = routing["code_review_routes"]
+    expected_routes = {
+        "architecture-boundary",
+        "cause-evidence",
+        "control-branch",
+        "exception-compensation",
+        "path-contract-drift",
+        "state-lifecycle",
+        "time-concurrency",
+    }
+    if not isinstance(routes, dict) or set(routes) != expected_routes:
+        raise ValueError("code-review routes must cover the exact supported relation kinds")
+    for kind, route in routes.items():
+        if not isinstance(route, dict) or set(route) != CODE_REVIEW_ROUTE_KEYS:
+            raise ValueError(f"code-review route definition is invalid: {kind}")
+        family = route["family"]
+        template = route["template"]
+        if (
+            not isinstance(family, str)
+            or not isinstance(template, str)
+            or not isinstance(route["primary_relation"], str)
+            or not route["primary_relation"].strip()
+            or family == "code-review"
+            or family not in families
+            or template not in families[family]["ready_templates"]
+        ):
+            raise ValueError(f"code-review route target is not ready: {kind}")
     return routing
 
 
@@ -3206,11 +3290,21 @@ def lint_template_conformance(html: str, diagram_type: str) -> List[str]:
     template_path = TEMPLATE_ROOT / diagram_type / f"{template_id}.html"
     canonical = template_path.read_text(encoding="utf-8")
     errors: List[str] = []
-    errors.extend(artifact_shell_errors(canonical, require_content_neutral=True))
+    is_code_review = (
+        diagram_type == "code-review" and template_id == "code-review-package"
+    )
+    errors.extend(
+        artifact_shell_errors(
+            canonical,
+            require_content_neutral=not is_code_review,
+        )
+    )
     if _block_inventory(STYLE_BLOCK_RE, html) != _block_inventory(STYLE_BLOCK_RE, canonical):
         errors.append("Style blocks must match the declared canonical template exactly.")
     if _block_inventory(SCRIPT_BLOCK_RE, html) != _block_inventory(SCRIPT_BLOCK_RE, canonical):
         errors.append("Script blocks must match the declared canonical template exactly.")
+    if is_code_review:
+        return errors
     artifact_slots = Counter(parsed.attr_values("data-slot"))
     canonical_slots = Counter(_parse(canonical).attr_values("data-slot"))
     if artifact_slots != canonical_slots:
@@ -3988,6 +4082,656 @@ def lint_diagram_view_title_contract(html: str) -> List[str]:
     return errors
 
 
+class _CodeReviewPackageParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.package_count = 0
+        self.finding_tabs: List[str] = []
+        self.view_tabs: List[str] = []
+        self.definitions: List[Dict[str, Any]] = []
+        self.fallbacks: List[Dict[str, Any]] = []
+        self.active_canvases: List[Dict[str, Any]] = []
+        self.iframes = 0
+        self.errors: List[str] = []
+        self._definition: Optional[Dict[str, Any]] = None
+        self._view: Optional[Dict[str, Any]] = None
+        self._fallback: Optional[Dict[str, Any]] = None
+        self._fallback_view: Optional[Dict[str, Any]] = None
+        self._active_canvas: Optional[Dict[str, Any]] = None
+        self._stack: List[
+            Tuple[
+                Optional[Dict[str, Any]],
+                Optional[Dict[str, Any]],
+                Optional[Dict[str, Any]],
+                Optional[Dict[str, Any]],
+                Optional[Dict[str, Any]],
+            ]
+        ] = []
+
+    @staticmethod
+    def _view_record(values: Mapping[str, str], view_id: str) -> Dict[str, Any]:
+        return {
+            "id": view_id,
+            "reuse_family": values.get("data-reuse-family", "").strip(),
+            "reuse_template": values.get("data-reuse-template", "").strip(),
+            "topologies": set(),
+            "nodes": [],
+            "relations": [],
+            "participants": [],
+            "view_boxes": [],
+        }
+
+    def handle_starttag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        values = {name.lower(): value or "" for name, value in attrs}
+        previous = (
+            self._definition,
+            self._view,
+            self._fallback,
+            self._fallback_view,
+            self._active_canvas,
+        )
+        if tag.lower() not in VOID_ELEMENTS:
+            self._stack.append(previous)
+        if values.get("data-code-review-package") == "1":
+            self.package_count += 1
+        if tag.lower() == "iframe":
+            self.iframes += 1
+        finding_tab = values.get("data-review-finding-tab", "").strip()
+        if finding_tab:
+            self.finding_tabs.append(finding_tab)
+        if "data-review-view-tab" in values:
+            self.view_tabs.append(values.get("data-review-view", "").strip())
+        canvas_id = values.get("data-diagram-id", "").strip()
+        if canvas_id in {"code-review-current", "code-review-repair"}:
+            self._active_canvas = {
+                "id": canvas_id,
+                "controls_mode": values.get(
+                    "data-diagram-controls-mode", ""
+                ).strip(),
+                "topologies": [],
+                "nodes": [],
+                "relations": [],
+                "participants": [],
+                "view_boxes": [],
+            }
+            self.active_canvases.append(self._active_canvas)
+        definition_id = values.get("data-review-definition", "").strip()
+        if definition_id:
+            if self._definition is not None:
+                self.errors.append("Code-review definitions must not be nested.")
+            self._definition = {
+                "id": definition_id,
+                "kind": values.get("data-review-kind", "").strip(),
+                "route_family": values.get("data-review-route-family", "").strip(),
+                "route_template": values.get("data-review-route-template", "").strip(),
+                "views": [],
+                "scenario_count": 0,
+            }
+            self.definitions.append(self._definition)
+        if self._definition is not None:
+            if values.get("data-review-scenario-definition") == "1":
+                self._definition["scenario_count"] += 1
+            view_id = values.get("data-review-view", "").strip()
+            if view_id:
+                if self._view is not None:
+                    self.errors.append("Code-review views must not be nested.")
+                self._view = self._view_record(values, view_id)
+                self._definition["views"].append(self._view)
+            if self._view is not None:
+                topology = values.get("data-review-topology", "").strip()
+                if topology:
+                    self._view["topologies"].add(topology)
+                if "data-diagram-node-id" in values:
+                    self._view["nodes"].append(
+                        (
+                            values["data-diagram-node-id"].strip(),
+                            values.get("data-node-theme", "").strip(),
+                        )
+                    )
+                participant_id = values.get("data-participant-id", "").strip()
+                if participant_id:
+                    self._view["participants"].append(
+                        (
+                            participant_id,
+                            values.get("data-participant-role", "").strip(),
+                            values.get("data-participant-x", "").strip(),
+                            values.get("data-participant-y", "").strip(),
+                            values.get("data-participant-width", "").strip(),
+                            values.get("data-participant-height", "").strip(),
+                        )
+                    )
+                relation_id = values.get(
+                    "data-diagram-visible-relation-id", ""
+                ).strip()
+                if relation_id:
+                    self._view["relations"].append(
+                        (
+                            relation_id,
+                            values.get("data-from", "").strip(),
+                            values.get("data-to", "").strip(),
+                            values.get("data-relation-kind", "").strip(),
+                            values.get("d", "").strip(),
+                        )
+                    )
+                if tag.lower() == "svg":
+                    self._view["view_boxes"].append(values.get("viewbox", "").strip())
+        fallback_id = values.get("data-review-fallback-finding", "").strip()
+        if fallback_id:
+            self._fallback = {"id": fallback_id, "views": [], "scenario_count": 0}
+            self.fallbacks.append(self._fallback)
+        if self._fallback is not None:
+            if values.get("data-review-fallback-scenario") == "1":
+                self._fallback["scenario_count"] += 1
+            fallback_view_id = values.get(
+                "data-review-fallback-view", ""
+            ).strip()
+            if fallback_view_id:
+                self._fallback_view = self._view_record(values, fallback_view_id)
+                self._fallback["views"].append(self._fallback_view)
+            if self._fallback_view is not None:
+                topology = values.get("data-review-topology", "").strip()
+                if topology:
+                    self._fallback_view["topologies"].add(topology)
+                if "data-diagram-node-id" in values:
+                    self._fallback_view["nodes"].append(
+                        values["data-diagram-node-id"].strip()
+                    )
+                participant_id = values.get("data-participant-id", "").strip()
+                if participant_id:
+                    self._fallback_view["participants"].append(participant_id)
+                if "data-diagram-visible-relation-id" in values:
+                    self._fallback_view["relations"].append(
+                        values["data-diagram-visible-relation-id"].strip()
+                    )
+        if self._active_canvas is not None:
+            topology = values.get("data-review-topology", "").strip()
+            if topology:
+                self._active_canvas["topologies"].append(topology)
+            if "data-diagram-node-id" in values:
+                self._active_canvas["nodes"].append(
+                    (
+                        values["data-diagram-node-id"].strip(),
+                        values.get("data-node-theme", "").strip(),
+                    )
+                )
+            if "data-diagram-visible-relation-id" in values:
+                self._active_canvas["relations"].append(
+                    (
+                        values.get("data-relation-kind", "").strip(),
+                        values.get("d", "").strip(),
+                    )
+                )
+            participant_id = values.get("data-participant-id", "").strip()
+            if participant_id:
+                self._active_canvas["participants"].append(
+                    (
+                        values.get("data-participant-role", "").strip(),
+                        values.get("data-participant-x", "").strip(),
+                        values.get("data-participant-y", "").strip(),
+                        values.get("data-participant-width", "").strip(),
+                        values.get("data-participant-height", "").strip(),
+                    )
+                )
+            if tag.lower() == "svg":
+                self._active_canvas["view_boxes"].append(
+                    values.get("viewbox", "").strip()
+                )
+
+    def handle_startendtag(
+        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
+    ) -> None:
+        self.handle_starttag(tag, attrs)
+        if tag.lower() not in VOID_ELEMENTS:
+            self.handle_endtag(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() in VOID_ELEMENTS or not self._stack:
+            return
+        (
+            self._definition,
+            self._view,
+            self._fallback,
+            self._fallback_view,
+            self._active_canvas,
+        ) = self._stack.pop()
+
+
+def _review_route_points(path_data: str) -> List[Tuple[float, float]]:
+    tokens = re.findall(r"[MHV]|-?\d+(?:\.\d+)?", path_data)
+    points: List[Tuple[float, float]] = []
+    cursor_x = 0.0
+    cursor_y = 0.0
+    index = 0
+    while index < len(tokens):
+        command = tokens[index]
+        index += 1
+        if command == "M" and index + 1 < len(tokens):
+            cursor_x = float(tokens[index])
+            cursor_y = float(tokens[index + 1])
+            index += 2
+        elif command == "H" and index < len(tokens):
+            cursor_x = float(tokens[index])
+            index += 1
+        elif command == "V" and index < len(tokens):
+            cursor_y = float(tokens[index])
+            index += 1
+        else:
+            return []
+        points.append((cursor_x, cursor_y))
+    return points
+
+
+def lint_code_review_package(
+    html: str,
+    routing: Optional[Mapping[str, Any]] = None,
+) -> List[str]:
+    trusted = load_template_routing() if routing is None else routing
+    parser = _CodeReviewPackageParser()
+    try:
+        parser.feed(html)
+        parser.close()
+    except Exception as exc:
+        return [f"Could not parse code-review package: {exc}."]
+    errors = list(parser.errors)
+    if parser.package_count != 1:
+        errors.append("Code-review package requires exactly one package root.")
+    if parser.iframes:
+        errors.append("Code-review package must remain a single file without iframes.")
+    if not 1 <= len(parser.definitions) <= 12:
+        errors.append("Code-review package requires 1 to 12 finding definitions.")
+    definition_ids = [definition["id"] for definition in parser.definitions]
+    if len(definition_ids) != len(set(definition_ids)):
+        errors.append("Code-review finding identifiers must be unique.")
+    if parser.finding_tabs != definition_ids:
+        errors.append(
+            "Code-review finding navigation must match definition order exactly."
+        )
+    if parser.view_tabs:
+        errors.append(
+            "Code-review current and repair views must remain visible instead of using view tabs."
+        )
+    if (
+        [canvas["id"] for canvas in parser.active_canvases]
+        != ["code-review-current", "code-review-repair"]
+        or [canvas["controls_mode"] for canvas in parser.active_canvases]
+        != ["persistent", "persistent"]
+    ):
+        errors.append(
+            "Code-review package requires persistent current and repair canvases in order."
+        )
+    routes = trusted["code_review_routes"]
+    for definition in parser.definitions:
+        kind = definition["kind"]
+        route = routes.get(kind)
+        if route is None:
+            errors.append(
+                f'Code-review finding "{definition["id"]}" has an unresolved relation kind.'
+            )
+            continue
+        expected_route = (route["family"], route["template"])
+        declared_route = (
+            definition["route_family"],
+            definition["route_template"],
+        )
+        if declared_route != expected_route:
+            errors.append(
+                f'Code-review finding "{definition["id"]}" does not match its routed template.'
+            )
+        views = definition["views"]
+        if [view["id"] for view in views] != ["current", "repair"]:
+            errors.append(
+                f'Code-review finding "{definition["id"]}" requires current and repair views.'
+            )
+            continue
+        if definition["scenario_count"] != 1:
+            errors.append(
+                f'Code-review finding "{definition["id"]}" requires one factual scenario.'
+            )
+        signatures = []
+        for view in views:
+            if (view["reuse_family"], view["reuse_template"]) != expected_route:
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "does not reuse the routed family and template."
+                )
+            if view["topologies"] != {kind}:
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "does not declare exactly one routed topology."
+                )
+            node_ids = [node_id for node_id, _theme in view["nodes"]]
+            if not node_ids or len(node_ids) != len(set(node_ids)):
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "requires unique visual nodes."
+                )
+            if not view["relations"]:
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "requires visible directed relations."
+                )
+            node_set = set(node_ids)
+            if any(
+                not relation_id
+                or source not in node_set
+                or target not in node_set
+                or not relation_kind
+                or not path_data
+                for relation_id, source, target, relation_kind, path_data in view["relations"]
+            ):
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "contains an invalid relation endpoint or path."
+                )
+            if any(
+                not points
+                or any(
+                    abs(target_x - source_x) + abs(target_y - source_y) < 35
+                    for (source_x, source_y), (target_x, target_y)
+                    in zip(points, points[1:])
+                )
+                for _relation_id, _source, _target, _relation_kind, path_data
+                in view["relations"]
+                for points in [_review_route_points(path_data)]
+            ):
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "contains an elbow route without visible turn clearance."
+                )
+            participant_ids = [
+                participant_id
+                for participant_id, _role, _x, _y, _width, _height
+                in view["participants"]
+            ]
+            expected_participants = 4 if kind == "time-concurrency" else 0
+            if (
+                len(participant_ids) != expected_participants
+                or len(participant_ids) != len(set(participant_ids))
+                or any(
+                    not role or not x or not y or not width or not height
+                    for _participant_id, role, x, y, width, height
+                    in view["participants"]
+                )
+            ):
+                errors.append(
+                    f'Code-review finding "{definition["id"]}" view "{view["id"]}" '
+                    "has an invalid semantic participant inventory."
+                )
+            signatures.append(
+                (
+                    tuple(view["view_boxes"]),
+                    tuple(theme for _node_id, theme in view["nodes"]),
+                    tuple(
+                        (role, x, y, width, height)
+                        for _participant_id, role, x, y, width, height
+                        in view["participants"]
+                    ),
+                    tuple(
+                        (relation_kind, path_data)
+                        for _relation_id, _source, _target, relation_kind, path_data
+                        in view["relations"]
+                    ),
+                )
+            )
+        if len(signatures) == 2 and signatures[0] != signatures[1]:
+            errors.append(
+                f'Code-review finding "{definition["id"]}" current and repair views '
+                "must use the same topology geometry."
+            )
+    fallback_by_id = {fallback["id"]: fallback for fallback in parser.fallbacks}
+    if list(fallback_by_id) != definition_ids:
+        errors.append(
+            "Code-review no-script and print fallbacks must match finding order exactly."
+        )
+    for definition in parser.definitions:
+        fallback = fallback_by_id.get(definition["id"])
+        if fallback is None:
+            continue
+        route = routes.get(definition["kind"])
+        if route is None:
+            continue
+        expected_route = (route["family"], route["template"])
+        views = fallback["views"]
+        if [view["id"] for view in views] != ["current", "repair"]:
+            errors.append(
+                f'Code-review fallback "{definition["id"]}" requires both views.'
+            )
+            continue
+        if fallback["scenario_count"] != 1:
+            errors.append(
+                f'Code-review fallback "{definition["id"]}" requires one factual scenario.'
+            )
+        for view in views:
+            if (
+                (view["reuse_family"], view["reuse_template"]) != expected_route
+                or view["topologies"] != {definition["kind"]}
+                or not view["nodes"]
+                or not view["relations"]
+                or len(view["participants"])
+                != (4 if definition["kind"] == "time-concurrency" else 0)
+            ):
+                errors.append(
+                    f'Code-review fallback "{definition["id"]}" is incomplete or misrouted.'
+                )
+    if parser.definitions:
+        first = parser.definitions[0]
+        first_views = first["views"]
+        mirrors = len(first_views) == 2 and len(parser.active_canvases) == 2
+        if mirrors:
+            for active, view in zip(parser.active_canvases, first_views):
+                expected_signature = (
+                    tuple(view["view_boxes"]),
+                    tuple(theme for _node_id, theme in view["nodes"]),
+                    tuple(
+                        (role, x, y, width, height)
+                        for _participant_id, role, x, y, width, height
+                        in view["participants"]
+                    ),
+                    tuple(
+                        (relation_kind, path_data)
+                        for _relation_id, _source, _target, relation_kind, path_data
+                        in view["relations"]
+                    ),
+                )
+                active_signature = (
+                    tuple(active["view_boxes"]),
+                    tuple(theme for _node_id, theme in active["nodes"]),
+                    tuple(active["participants"]),
+                    tuple(active["relations"]),
+                )
+                if active["topologies"] != [first["kind"]] or active_signature != expected_signature:
+                    mirrors = False
+                    break
+        if not mirrors:
+            errors.append(
+                "Code-review paired canvases must initially mirror the first current and repair views."
+            )
+    title_controls = re.search(
+        r"<div\b[^>]*\bdata-artifact-shell-controls(?:\s|=|>)",
+        html,
+        re.IGNORECASE,
+    )
+    finding_nav = re.search(
+        r"<nav\b[^>]*\bclass\s*=\s*([\"'])[^\"']*\breview-finding-nav\b[^\"']*\1",
+        html,
+        re.IGNORECASE,
+    )
+    comparison = re.search(
+        r"<section\b[^>]*\bclass\s*=\s*([\"'])[^\"']*\breview-comparison\b[^\"']*\1",
+        html,
+        re.IGNORECASE,
+    )
+    current_canvas = re.search(
+        r"<[^>]+\bdata-diagram-id\s*=\s*([\"'])code-review-current\1",
+        html,
+        re.IGNORECASE,
+    )
+    repair_canvas = re.search(
+        r"<[^>]+\bdata-diagram-id\s*=\s*([\"'])code-review-repair\1",
+        html,
+        re.IGNORECASE,
+    )
+    active_scenario = re.search(
+        r"<section\b[^>]*\bdata-review-scenario(?:\s|=|>)",
+        html,
+        re.IGNORECASE,
+    )
+    current_guide = re.search(
+        r"<section\b[^>]*\bdata-diagram-reading-guide\s*=\s*([\"'])1\1"
+        r"[^>]*\bdata-reading-guide-for\s*=\s*([\"'])code-review-current\2",
+        html,
+        re.IGNORECASE,
+    )
+    repair_guide = re.search(
+        r"<section\b[^>]*\bdata-diagram-reading-guide\s*=\s*([\"'])1\1"
+        r"[^>]*\bdata-reading-guide-for\s*=\s*([\"'])code-review-repair\2",
+        html,
+        re.IGNORECASE,
+    )
+    if (
+        not title_controls
+        or not finding_nav
+        or not comparison
+        or not current_canvas
+        or not current_guide
+        or not active_scenario
+        or not repair_canvas
+        or not repair_guide
+        or not (
+            title_controls.start()
+            < finding_nav.start()
+            < comparison.start()
+            < current_canvas.start()
+            < current_guide.start()
+            < active_scenario.start()
+            < repair_canvas.start()
+            < repair_guide.start()
+        )
+    ):
+        errors.append(
+            "Code-review DOM order must be title-side controls, vertical finding rail, then current local guide and diagram, factual scenario, and repair local guide and diagram."
+        )
+    if len(
+        re.findall(
+            r"<[^>]+\bdata-diagram-controls\s*=\s*([\"'])code-review-pair\1",
+            html,
+            re.IGNORECASE,
+        )
+    ) != 1:
+        errors.append("Code-review paired canvases require one shared control group.")
+    if "data-artifact-shell-controls" not in html:
+        errors.append(
+            "Code-review shared controls must live in the artifact title region."
+        )
+    normalized_css = re.sub(r"\s+", "", html).lower()
+    review_canvas_rule = re.search(
+        r"\.review-canvas\[data-diagram-canvas\]\{(?P<body>[^}]*)\}",
+        normalized_css,
+    )
+    review_canvas_css = review_canvas_rule.group("body") if review_canvas_rule else ""
+    if (
+        review_canvas_rule is None
+        or "block-size:auto" not in review_canvas_css
+        or "max-block-size:none" not in review_canvas_css
+        or "overflow:visible" not in review_canvas_css
+        or "overscroll-behavior:auto" not in review_canvas_css
+        or re.search(r"overflow-[xy]:(?:auto|scroll)", review_canvas_css)
+    ):
+        errors.append(
+            "Code-review canvases must grow with the page without nested scrolling."
+        )
+    if (
+        re.search(
+            r"\.review-layout\{[^}]*display:grid;[^}]*grid-template-columns:"
+            r"minmax\(15rem,18rem\)minmax\(0,1fr\)",
+            normalized_css,
+        )
+        is None
+        or re.search(
+            r"\.review-finding-nav\{[^}]*display:grid;[^}]*grid-template-columns:1fr",
+            normalized_css,
+        )
+        is None
+    ):
+        errors.append(
+            "Code-review layout requires one vertical finding rail beside the three-part reader."
+        )
+    if re.search(
+        r"<div\b[^>]*\bdata-reading-guide-heading(?:\s|=|>)",
+        html,
+        re.IGNORECASE,
+    ):
+        errors.append("Code-review package must not render a reading-guide heading card.")
+    shell_parser = _ArtifactShellParser()
+    shell_parser.feed(html)
+    shell_parser.close()
+    review_guides = {
+        record["for"]: record
+        for record in shell_parser.guide_records
+        if record["for"] in {"code-review-current", "code-review-repair"}
+    }
+    expected_evidence_states = {
+        ("observed", "file"),
+        ("observed", "test"),
+        ("unresolved", "runtime"),
+    }
+    for canvas_id in ("code-review-current", "code-review-repair"):
+        record = review_guides.get(canvas_id)
+        if record is None:
+            errors.append(
+                f"Code-review canvas {canvas_id} requires one local relation-and-evidence guide."
+            )
+            continue
+        if Counter(record["groups"]) != Counter({"relations": 1, "evidence": 1}):
+            errors.append(
+                f"Code-review canvas {canvas_id} requires exactly the relations and evidence guide groups."
+            )
+        evidence = record["evidence"]
+        if (
+            len(evidence) != 3
+            or {(status, source_kind) for _id, status, source_kind in evidence}
+            != expected_evidence_states
+        ):
+            errors.append(
+                f"Code-review canvas {canvas_id} requires observed implementation, completed check, and unresolved runtime evidence states."
+            )
+    for attribute in ("data-review-current-title", "data-review-repair-title"):
+        visible_title = re.search(
+            rf"<h2\b[^>]*\b{attribute}(?:\s|=|>)[^>]*>(?P<body>.*?)</h2>",
+            html,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if visible_title and "｜" in re.sub(r"<[^>]+>", "", visible_title.group("body")):
+            errors.append(
+                "Code-review visible diagram headings must omit the topology type prefix."
+            )
+    title_match = re.search(
+        r"<h1\b[^>]*>(?P<body>.*?)</h1>",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if title_match:
+        title_text = re.sub(r"<[^>]+>", "", title_match.group("body")).strip()
+        if "{{" not in title_text:
+            title_parts = [part.strip() for part in title_text.split("｜")]
+            if len(title_parts) != 2 or not all(title_parts):
+                errors.append(
+                    "Code-review page title must use the code review｜title description form."
+                )
+    if len(re.findall(r"<script\b[^>]*\bdata-code-review-kernel", html)) != 1:
+        errors.append("Code-review package requires exactly one interaction kernel.")
+    required_fallback_tokens = (
+        "html:not(.review-enhanced)",
+        "@media print",
+        ".review-static-fallback",
+    )
+    if any(token not in html for token in required_fallback_tokens):
+        errors.append("Code-review package is missing no-script or print expansion.")
+    return _deduplicate(errors)
+
+
 TECHNICAL_DESIGN_VIEW_CONTRACT = (
     ("overview", "diagram", "system-architecture", "component-breakdown"),
     ("runtime", "sequence", "code-sequence", "participant-timeline"),
@@ -4182,7 +4926,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         errors.extend(artifact_shell_errors(html))
         errors.extend(lint_artifact_shell_kernel(html))
         errors.extend(lint_template_conformance(html, args.diagram_type))
-        errors.extend(lint_primary_canvas_budget(html))
+        is_code_review = (
+            args.diagram_type == "code-review"
+            and 'data-template-id="code-review-package"' in html
+        )
+        if not is_code_review:
+            errors.extend(lint_primary_canvas_budget(html))
+        if is_code_review:
+            errors.extend(lint_code_review_package(html, routing))
         if (
             args.diagram_type == "technical-design"
             and 'data-template-id="technical-design-package"' in html
@@ -4190,7 +4941,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             errors.extend(lint_technical_design_package(html))
         if args.diagram_type == "system-architecture":
             errors.extend(lint_system_architecture(html, allow_candidates=args.allow_candidates))
-        else:
+        elif not is_code_review:
             errors.extend(lint_title_description_stacking(html))
         identity = _parse(html)
         requires_sequence = args.diagram_type == "code-sequence" or any(
@@ -4215,14 +4966,15 @@ def main(argv: Optional[List[str]] = None) -> int:
             if ready_sequence:
                 errors.extend(lint_sequence_visual_contract(html))
         policy = load_family_policies()
-        errors.extend(
-            true_diagram_errors(
-                html,
-                args.diagram_type,
-                routing=routing,
-                policy=policy,
+        if not is_code_review:
+            errors.extend(
+                true_diagram_errors(
+                    html,
+                    args.diagram_type,
+                    routing=routing,
+                    policy=policy,
+                )
             )
-        )
         completed = {
             relative
             for paths in policy["migration_batches"].values()
@@ -4232,7 +4984,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             family = attrs.get("data-template-family", "").strip()
             template_id = attrs.get("data-template-id", "").strip()
             if f"{family}/{template_id}.html" in completed:
-                errors.extend(lint_generic_contract(html, family, template_id, policy))
+                if not is_code_review:
+                    errors.extend(lint_generic_contract(html, family, template_id, policy))
                 errors.extend(lint_adaptive_kernel(html))
                 errors.extend(lint_semantic_relations_kernel(html))
                 definition = policy["families"][family]["templates"][template_id]

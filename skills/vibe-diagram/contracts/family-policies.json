@@ -91,6 +91,9 @@
     ],
     "B14": [
       "business-flow/logic-flowchart.html"
+    ],
+    "B15": [
+      "code-review/code-review-package.html"
     ]
   },
   "families": {
@@ -108,7 +111,6 @@
           "requires_merge": true,
           "requires_geometric_direction": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "requires_localized_node_labels": true,
           "quality": {
             "requires_node_icons": true,
@@ -140,7 +142,6 @@
           "requires_branch": false,
           "requires_merge": false,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "quality": {
             "requires_node_nonoverlap": true,
             "requires_boundary_anchors": true,
@@ -162,7 +163,7 @@
           "topology": "dual-path-comparison",
           "direction": "west-to-east",
           "required_regions": ["west-shared", "upper-lane", "lower-lane", "east-shared"],
-          "evidence_placement": "before-primary-canvas",
+          "evidence_placement": "inside-primary-canvas",
           "requires_branch": true,
           "requires_merge": false
         },
@@ -176,7 +177,6 @@
           "requires_merge": true,
           "requires_geometric_direction": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "quality": {
             "requires_node_nonoverlap": true,
             "requires_boundary_anchors": true,
@@ -196,7 +196,6 @@
           "requires_merge": true,
           "requires_geometric_direction": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "quality": {
             "requires_node_nonoverlap": true,
             "requires_boundary_anchors": true,
@@ -208,6 +207,16 @@
         },
         "stage-track": {"profile": "timeline", "limits": {}},
         "swimlane-flow": {"profile": "graph", "limits": {"nodes": 24}}
+      }
+    },
+    "code-review": {
+      "limits": {"nodes": 168, "relations": 192, "groups": 48, "details": 12},
+      "templates": {
+        "code-review-package": {
+          "profile": "graph",
+          "limits": {"nodes": 168, "relations": 192, "groups": 48, "details": 12},
+          "controls_mode": "persistent"
+        }
       }
     },
     "decision-communication": {
@@ -248,7 +257,6 @@
           "requires_branch": true,
           "requires_merge": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "quality": {
             "requires_node_nonoverlap": true,
             "requires_boundary_anchors": true,
@@ -274,7 +282,6 @@
           "requires_branch": false,
           "requires_merge": false,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "requires_localized_node_labels": true,
           "quality": {
             "requires_node_nonoverlap": true,
@@ -298,7 +305,6 @@
           "requires_branch": true,
           "requires_merge": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "quality": {
             "requires_node_nonoverlap": true,
             "requires_boundary_anchors": true,
@@ -339,7 +345,6 @@
           "requires_branch": true,
         "requires_merge": false,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "quality": {
             "requires_node_nonoverlap": true,
             "requires_boundary_anchors": true,
@@ -376,7 +381,6 @@
           "requires_merge": true,
           "requires_geometric_direction": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "requires_localized_node_labels": true,
           "quality": {
             "requires_node_icons": true,
@@ -412,7 +416,6 @@
           "requires_merge": true,
           "requires_geometric_direction": true,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "requires_localized_node_labels": true,
           "quality": {
             "requires_node_icons": true,
@@ -449,7 +452,6 @@
           "requires_branch": false,
           "requires_merge": false,
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "requires_localized_node_labels": true,
           "quality": {
             "requires_node_nonoverlap": true,
@@ -469,7 +471,6 @@
           "limits": {"nodes": 6, "relations": 7, "groups": 3, "details": 6},
           "controls_mode": "persistent",
           "requires_node_details": true,
-          "requires_node_detail_hint_in_reading_guide": true,
           "requires_localized_node_labels": true,
           "quality": {
             "requires_node_nonoverlap": true,

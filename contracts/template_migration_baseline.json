@@ -81,6 +81,9 @@
     ],
     "B14": [
       "business-flow/logic-flowchart.html"
+    ],
+    "B15": [
+      "code-review/code-review-package.html"
     ]
   },
   "schema_version": 4,
@@ -97,6 +100,8 @@
   "templates": {
     "business-architecture/capability-domain-map.html": {
       "canonical": {
+        "file_sha256": "9775b9eafe6392294960db013261c3e9960f06fb4f26d5e2cdc3b13cb5c94393",
+        "structure_sha256": "58ac5af3b70654f6a6623ae48275da56837645df293cace63e8612461a2406c1",
         "data_slots": [
           "title",
           "summary",
@@ -128,7 +133,6 @@
           "layout-slot-025",
           "layout-slot-026"
         ],
-        "file_sha256": "da17730efb34997c59f90690e90172eb83c27599673d699635f45b03be9f101d",
         "macros": [
           "routing_confidence",
           "title",
@@ -143,7 +147,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-033",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -513,10 +516,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -1787,8 +1786,7 @@
             "macro": "canvas-text-251",
             "slot": ""
           }
-        ],
-        "structure_sha256": "58ac5af3b70654f6a6623ae48275da56837645df293cace63e8612461a2406c1"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -1894,6 +1892,8 @@
     },
     "business-architecture/participant-boundary.html": {
       "canonical": {
+        "file_sha256": "2fcc011b7f0bb8a3fa8cb3a066daf04eb1e409bf9a2dcb27195417f12357527a",
+        "structure_sha256": "db64352d95dc80b4544e9e903632aab76d7b6ab4aa708620f0f9aa31b90a1b80",
         "data_slots": [
           "title",
           "summary",
@@ -1906,7 +1906,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "e527f042dd473c1cc6a730c75ba0bbf3c1cf61d3b1edb64440d35337423a9fe1",
         "macros": [
           "title",
           "title",
@@ -1921,7 +1920,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-015",
           "canvas-attribute-016",
@@ -2050,10 +2048,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -2360,8 +2354,7 @@
             "macro": "canvas-text-043",
             "slot": ""
           }
-        ],
-        "structure_sha256": "db64352d95dc80b4544e9e903632aab76d7b6ab4aa708620f0f9aa31b90a1b80"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -2443,6 +2436,8 @@
     },
     "business-architecture/rule-constraint-heatmap.html": {
       "canonical": {
+        "file_sha256": "9dafbeb184dead0ebdf96c5bf94690b08e1247a6e4c16a12c9d1306cb366f565",
+        "structure_sha256": "8966191ac332e7752ed9beca43d9f76cc6b6da25ee4024bec1c79f86ec69983d",
         "data_slots": [
           "title",
           "summary",
@@ -2460,7 +2455,6 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "8b5dd0f5b6c0a4630f311bd8bc5a48f86f61d753976c86fc6d9772af10c6077d",
         "macros": [
           "title",
           "title",
@@ -2475,7 +2469,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-021",
           "canvas-text-001",
@@ -2652,10 +2645,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -3154,8 +3143,7 @@
             "macro": "canvas-text-082",
             "slot": ""
           }
-        ],
-        "structure_sha256": "8966191ac332e7752ed9beca43d9f76cc6b6da25ee4024bec1c79f86ec69983d"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -3267,6 +3255,8 @@
     },
     "business-architecture/value-chain-map.html": {
       "canonical": {
+        "file_sha256": "c345bab36034085c2de707490ca2b1bcd7ba648c2e94a7e50f2e117c49f90f8a",
+        "structure_sha256": "dc5368cd572910a854b9af8036636fa66dac6c2590f33d9a597140001f1b304e",
         "data_slots": [
           "title",
           "summary",
@@ -3289,7 +3279,6 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "e70381d5809a8374c749884eafb119a51dfff95db619eb05738a977be8154087",
         "macros": [
           "title",
           "title",
@@ -3304,7 +3293,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-038",
           "canvas-attribute-037",
           "canvas-text-001",
@@ -3487,10 +3475,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -4013,8 +3997,7 @@
             "macro": "canvas-text-006",
             "slot": ""
           }
-        ],
-        "structure_sha256": "dc5368cd572910a854b9af8036636fa66dac6c2590f33d9a597140001f1b304e"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -4102,6 +4085,8 @@
     },
     "business-flow/bpmn-light-flow.html": {
       "canonical": {
+        "file_sha256": "dbc2f47b37cd96cbadb80a60ec14fbdf20d2750b3e31834929fb7bfb01943299",
+        "structure_sha256": "ae40f23ed689c07e7ba94fb17bb479dad6ad13d0f846b005d489fccdf98a5a7a",
         "data_slots": [
           "title",
           "summary",
@@ -4112,7 +4097,6 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "145abab3057372edef93bb64754962e36b94632478e4dd729170c62fecfda650",
         "macros": [
           "title",
           "title",
@@ -4127,7 +4111,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-011",
           "canvas-attribute-012",
@@ -4233,10 +4216,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -4451,8 +4430,7 @@
             "macro": "canvas-text-033",
             "slot": ""
           }
-        ],
-        "structure_sha256": "ae40f23ed689c07e7ba94fb17bb479dad6ad13d0f846b005d489fccdf98a5a7a"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -4522,6 +4500,8 @@
     },
     "business-flow/dual-path-swimlane.html": {
       "canonical": {
+        "file_sha256": "6b3cc45b2492f17db7b3c328bb9a0ea9d2e2354da632bc84b7c31c0889d1ec89",
+        "structure_sha256": "24bb7e5622c7813ef7ce9ad520c2dc22a29f417702e1086fc26739c8f3443bf3",
         "data_slots": [
           "title",
           "summary",
@@ -4539,7 +4519,6 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "880d444d7355f744e0f5a883e48649665040341a00c0fa4eb1fba96cb6d3979e",
         "macros": [
           "title",
           "title",
@@ -4554,7 +4533,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-text-001",
           "canvas-text-002",
@@ -4702,10 +4680,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -5088,8 +5062,7 @@
             "macro": "canvas-text-045",
             "slot": ""
           }
-        ],
-        "structure_sha256": "24bb7e5622c7813ef7ce9ad520c2dc22a29f417702e1086fc26739c8f3443bf3"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -5241,6 +5214,8 @@
     },
     "business-flow/exception-branch-flow.html": {
       "canonical": {
+        "file_sha256": "4783fc2427a73d6c1e5fd778487d1f574a0b4700a96334d0ce478eb0f632caea",
+        "structure_sha256": "6c516180d9f8dc8178e435b0fe2b18df2c4d8ecc2cbee8edd93d9b0f6d0652ad",
         "data_slots": [
           "title",
           "summary",
@@ -5262,7 +5237,6 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "aca36854da29c4c4099a96a1aeb573ce1ec5c1a521b5fec5702419e487aef2e2",
         "macros": [
           "title",
           "summary",
@@ -5276,7 +5250,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-041",
           "canvas-attribute-037",
           "canvas-text-001",
@@ -5445,10 +5418,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -5931,8 +5900,7 @@
             "macro": "canvas-text-016",
             "slot": ""
           }
-        ],
-        "structure_sha256": "6c516180d9f8dc8178e435b0fe2b18df2c4d8ecc2cbee8edd93d9b0f6d0652ad"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -6020,6 +5988,8 @@
     },
     "business-flow/logic-flowchart.html": {
       "canonical": {
+        "file_sha256": "63ce18219a17e30af1d8b4a87bf4b79f46c62d828d7c637d32bc0cbb522e68bf",
+        "structure_sha256": "0294641e5e0a86e0322c6f5f5bfa686a34f3344a102db12eebf822bafc0305a0",
         "data_slots": [
           "title",
           "summary",
@@ -6041,7 +6011,6 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "c4d1da172fa7800197700c101fab1037cc2c189cfb3db092406dc83c26fd16d6",
         "macros": [
           "title",
           "summary",
@@ -6055,7 +6024,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-041",
           "canvas-attribute-037",
           "canvas-text-001",
@@ -6224,10 +6192,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -6710,8 +6674,7 @@
             "macro": "canvas-text-016",
             "slot": ""
           }
-        ],
-        "structure_sha256": "0294641e5e0a86e0322c6f5f5bfa686a34f3344a102db12eebf822bafc0305a0"
+        ]
       },
       "change_reason": "Added the native basic logic flowchart and true-diagram delivery contract.",
       "source": null,
@@ -6719,6 +6682,8 @@
     },
     "business-flow/stage-track.html": {
       "canonical": {
+        "file_sha256": "29f9bc9a08e5e00133e52604db31f658c6bb01c4e97a0dd09a047730e7cb988e",
+        "structure_sha256": "f22acd6837c3a7f5e1377c3acaee94f075f6943ead8b9ecdddb196b2c9e29301",
         "data_slots": [
           "title",
           "summary",
@@ -6733,7 +6698,6 @@
           "layout-slot-008",
           "layout-slot-009"
         ],
-        "file_sha256": "ad8f8a27ed63b66e02e6131bc73b7dccbac6cfd2bd2e53aeb0064c7c25dc14a9",
         "macros": [
           "title",
           "title",
@@ -6748,7 +6712,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-025",
           "canvas-attribute-026",
@@ -6921,10 +6884,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -7407,8 +7366,7 @@
             "macro": "canvas-text-066",
             "slot": ""
           }
-        ],
-        "structure_sha256": "f22acd6837c3a7f5e1377c3acaee94f075f6943ead8b9ecdddb196b2c9e29301"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -7502,6 +7460,8 @@
     },
     "business-flow/swimlane-flow.html": {
       "canonical": {
+        "file_sha256": "4e51b29b5e5bc436386c8da1ef2eb2fd8a97784e0bfc1b7e194aeeba9e142624",
+        "structure_sha256": "e6689133c2408ccfdd4566ba71c79e27a432c1b89df1e4f1a47d58bd1ec6cdfa",
         "data_slots": [
           "title",
           "summary",
@@ -7516,7 +7476,6 @@
           "layout-slot-008",
           "layout-slot-009"
         ],
-        "file_sha256": "cb4cdeaadfe4f14b82fe5cc8b93cfc57f88ec6a8969a5b5598b97556b1433819",
         "macros": [
           "title",
           "title",
@@ -7531,7 +7490,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-019",
           "canvas-text-001",
@@ -7680,10 +7638,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -8070,8 +8024,7 @@
             "macro": "canvas-text-058",
             "slot": ""
           }
-        ],
-        "structure_sha256": "e6689133c2408ccfdd4566ba71c79e27a432c1b89df1e4f1a47d58bd1ec6cdfa"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -8163,8 +8116,1595 @@
       },
       "status": "migrated"
     },
+    "code-review/code-review-package.html": {
+      "source": null,
+      "canonical": {
+        "file_sha256": "ccf82dc2b808e2ab4af4be057ce5f955673fa05aad146e16e2711171c78799ba",
+        "structure_sha256": "06eab99a848411a6c0ea09a9f81b720903c1859ca19c675529adb8c01214f394",
+        "data_slots": [
+          "title",
+          "summary",
+          "evidence-and-notes",
+          "layout-slot-001",
+          "layout-slot-002",
+          "layout-slot-003",
+          "layout-slot-004",
+          "layout-slot-005",
+          "layout-slot-006",
+          "evidence-and-notes",
+          "layout-slot-021",
+          "layout-slot-022",
+          "layout-slot-023",
+          "layout-slot-024",
+          "layout-slot-025",
+          "layout-slot-026",
+          "layout-slot-001",
+          "layout-slot-002",
+          "layout-slot-003",
+          "layout-slot-004",
+          "layout-slot-005",
+          "layout-slot-006",
+          "layout-slot-021",
+          "layout-slot-022",
+          "layout-slot-023",
+          "layout-slot-024",
+          "layout-slot-025",
+          "layout-slot-026",
+          "layout-slot-001",
+          "layout-slot-002",
+          "layout-slot-003",
+          "layout-slot-004",
+          "layout-slot-005",
+          "layout-slot-006",
+          "layout-slot-021",
+          "layout-slot-022",
+          "layout-slot-023",
+          "layout-slot-024",
+          "layout-slot-025",
+          "layout-slot-026"
+        ],
+        "macros": [
+          "title",
+          "title",
+          "summary",
+          "canvas-attribute-003",
+          "canvas-attribute-004",
+          "canvas-text-015",
+          "canvas-text-016",
+          "canvas-text-017",
+          "canvas-text-014",
+          "canvas-text-015",
+          "canvas-attribute-001",
+          "canvas-text-018",
+          "canvas-text-019",
+          "canvas-attribute-002",
+          "canvas-text-001",
+          "canvas-text-021",
+          "canvas-text-022",
+          "canvas-text-007",
+          "canvas-text-008",
+          "reading-guide-line-01",
+          "reading-guide-line-02",
+          "reading-guide-line-03",
+          "reading-guide-line-04",
+          "canvas-text-009",
+          "evidence-observed-source",
+          "canvas-text-010",
+          "evidence-check-source",
+          "canvas-text-011",
+          "evidence-unresolved-source",
+          "canvas-text-012",
+          "canvas-text-021",
+          "canvas-text-021",
+          "canvas-text-035",
+          "canvas-text-036",
+          "canvas-text-037",
+          "canvas-text-038",
+          "canvas-text-039",
+          "canvas-text-040",
+          "canvas-text-023",
+          "canvas-text-023",
+          "canvas-text-024",
+          "canvas-text-025",
+          "canvas-text-025",
+          "canvas-text-026",
+          "canvas-text-027",
+          "canvas-text-027",
+          "canvas-text-028",
+          "canvas-text-029",
+          "canvas-text-029",
+          "canvas-text-030",
+          "canvas-text-031",
+          "canvas-text-031",
+          "canvas-text-032",
+          "canvas-text-033",
+          "canvas-text-033",
+          "canvas-text-034",
+          "canvas-text-035",
+          "canvas-text-035",
+          "canvas-text-036",
+          "canvas-text-036",
+          "canvas-text-037",
+          "canvas-text-037",
+          "canvas-text-038",
+          "canvas-text-038",
+          "canvas-text-039",
+          "canvas-text-039",
+          "canvas-text-040",
+          "canvas-text-040",
+          "canvas-text-003",
+          "canvas-text-041",
+          "canvas-text-004",
+          "canvas-text-042",
+          "canvas-text-005",
+          "canvas-text-043",
+          "canvas-text-006",
+          "canvas-text-044",
+          "canvas-text-002",
+          "canvas-text-045",
+          "canvas-text-046",
+          "canvas-text-007",
+          "canvas-text-008",
+          "reading-guide-line-01",
+          "reading-guide-line-02",
+          "reading-guide-line-03",
+          "reading-guide-line-04",
+          "canvas-text-009",
+          "evidence-observed-source",
+          "canvas-text-010",
+          "evidence-check-source",
+          "canvas-text-011",
+          "evidence-unresolved-source",
+          "canvas-text-012",
+          "canvas-text-045",
+          "canvas-text-045",
+          "canvas-text-059",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-text-063",
+          "canvas-text-064",
+          "canvas-text-047",
+          "canvas-text-047",
+          "canvas-text-048",
+          "canvas-text-049",
+          "canvas-text-049",
+          "canvas-text-050",
+          "canvas-text-051",
+          "canvas-text-051",
+          "canvas-text-052",
+          "canvas-text-053",
+          "canvas-text-053",
+          "canvas-text-054",
+          "canvas-text-055",
+          "canvas-text-055",
+          "canvas-text-056",
+          "canvas-text-057",
+          "canvas-text-057",
+          "canvas-text-058",
+          "canvas-text-059",
+          "canvas-text-059",
+          "canvas-text-060",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-text-062",
+          "canvas-text-063",
+          "canvas-text-063",
+          "canvas-text-064",
+          "canvas-text-064",
+          "canvas-text-021",
+          "canvas-text-021",
+          "canvas-text-022",
+          "canvas-text-021",
+          "canvas-text-021",
+          "canvas-text-035",
+          "canvas-text-036",
+          "canvas-text-037",
+          "canvas-text-038",
+          "canvas-text-039",
+          "canvas-text-040",
+          "canvas-text-023",
+          "canvas-text-023",
+          "canvas-text-024",
+          "canvas-text-025",
+          "canvas-text-025",
+          "canvas-text-026",
+          "canvas-text-027",
+          "canvas-text-027",
+          "canvas-text-028",
+          "canvas-text-029",
+          "canvas-text-029",
+          "canvas-text-030",
+          "canvas-text-031",
+          "canvas-text-031",
+          "canvas-text-032",
+          "canvas-text-033",
+          "canvas-text-033",
+          "canvas-text-034",
+          "canvas-text-035",
+          "canvas-text-035",
+          "canvas-text-036",
+          "canvas-text-036",
+          "canvas-text-037",
+          "canvas-text-037",
+          "canvas-text-038",
+          "canvas-text-038",
+          "canvas-text-039",
+          "canvas-text-039",
+          "canvas-text-040",
+          "canvas-text-040",
+          "canvas-text-041",
+          "canvas-text-042",
+          "canvas-text-043",
+          "canvas-text-044",
+          "canvas-text-045",
+          "canvas-text-045",
+          "canvas-text-046",
+          "canvas-text-045",
+          "canvas-text-045",
+          "canvas-text-059",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-text-063",
+          "canvas-text-064",
+          "canvas-text-047",
+          "canvas-text-047",
+          "canvas-text-048",
+          "canvas-text-049",
+          "canvas-text-049",
+          "canvas-text-050",
+          "canvas-text-051",
+          "canvas-text-051",
+          "canvas-text-052",
+          "canvas-text-053",
+          "canvas-text-053",
+          "canvas-text-054",
+          "canvas-text-055",
+          "canvas-text-055",
+          "canvas-text-056",
+          "canvas-text-057",
+          "canvas-text-057",
+          "canvas-text-058",
+          "canvas-text-059",
+          "canvas-text-059",
+          "canvas-text-060",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-text-062",
+          "canvas-text-063",
+          "canvas-text-063",
+          "canvas-text-064",
+          "canvas-text-064",
+          "canvas-attribute-005",
+          "canvas-text-019",
+          "canvas-text-020",
+          "canvas-text-021",
+          "canvas-text-022",
+          "canvas-text-021",
+          "canvas-text-021",
+          "canvas-text-035",
+          "canvas-text-036",
+          "canvas-text-037",
+          "canvas-text-038",
+          "canvas-text-039",
+          "canvas-text-040",
+          "canvas-text-023",
+          "canvas-text-023",
+          "canvas-text-024",
+          "canvas-text-025",
+          "canvas-text-025",
+          "canvas-text-026",
+          "canvas-text-027",
+          "canvas-text-027",
+          "canvas-text-028",
+          "canvas-text-029",
+          "canvas-text-029",
+          "canvas-text-030",
+          "canvas-text-031",
+          "canvas-text-031",
+          "canvas-text-032",
+          "canvas-text-033",
+          "canvas-text-033",
+          "canvas-text-034",
+          "canvas-text-035",
+          "canvas-text-035",
+          "canvas-text-036",
+          "canvas-text-036",
+          "canvas-text-037",
+          "canvas-text-037",
+          "canvas-text-038",
+          "canvas-text-038",
+          "canvas-text-039",
+          "canvas-text-039",
+          "canvas-text-040",
+          "canvas-text-040",
+          "canvas-text-041",
+          "canvas-text-004",
+          "canvas-text-042",
+          "canvas-text-005",
+          "canvas-text-043",
+          "canvas-text-006",
+          "canvas-text-044",
+          "canvas-text-045",
+          "canvas-text-046",
+          "canvas-text-045",
+          "canvas-text-045",
+          "canvas-text-059",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-text-063",
+          "canvas-text-064",
+          "canvas-text-047",
+          "canvas-text-047",
+          "canvas-text-048",
+          "canvas-text-049",
+          "canvas-text-049",
+          "canvas-text-050",
+          "canvas-text-051",
+          "canvas-text-051",
+          "canvas-text-052",
+          "canvas-text-053",
+          "canvas-text-053",
+          "canvas-text-054",
+          "canvas-text-055",
+          "canvas-text-055",
+          "canvas-text-056",
+          "canvas-text-057",
+          "canvas-text-057",
+          "canvas-text-058",
+          "canvas-text-059",
+          "canvas-text-059",
+          "canvas-text-060",
+          "canvas-text-060",
+          "canvas-text-061",
+          "canvas-text-061",
+          "canvas-text-062",
+          "canvas-text-062",
+          "canvas-text-063",
+          "canvas-text-063",
+          "canvas-text-064",
+          "canvas-text-064"
+        ],
+        "slot_macro_pairs": [
+          {
+            "macro": "title",
+            "slot": ""
+          },
+          {
+            "macro": "title",
+            "slot": "title"
+          },
+          {
+            "macro": "summary",
+            "slot": "summary"
+          },
+          {
+            "macro": "canvas-attribute-003",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-004",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-015",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-016",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-017",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-014",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-015",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-001",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-018",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-019",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-002",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-001",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-022",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-007",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-008",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-01",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-02",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-03",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-04",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-009",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-010",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-011",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-012",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-023",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-023",
+            "slot": "layout-slot-001"
+          },
+          {
+            "macro": "canvas-text-024",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-025",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-025",
+            "slot": "layout-slot-002"
+          },
+          {
+            "macro": "canvas-text-026",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": "layout-slot-003"
+          },
+          {
+            "macro": "canvas-text-028",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": "layout-slot-004"
+          },
+          {
+            "macro": "canvas-text-030",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": "layout-slot-005"
+          },
+          {
+            "macro": "canvas-text-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": "layout-slot-006"
+          },
+          {
+            "macro": "canvas-text-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-003",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-041",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-004",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-042",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-005",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-043",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-006",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-044",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-002",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-046",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-007",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-008",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-01",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-02",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-03",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-04",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-009",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-010",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-011",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-012",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-047",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-047",
+            "slot": "layout-slot-021"
+          },
+          {
+            "macro": "canvas-text-048",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-049",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-049",
+            "slot": "layout-slot-022"
+          },
+          {
+            "macro": "canvas-text-050",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-051",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-051",
+            "slot": "layout-slot-023"
+          },
+          {
+            "macro": "canvas-text-052",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-053",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-053",
+            "slot": "layout-slot-024"
+          },
+          {
+            "macro": "canvas-text-054",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-055",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-055",
+            "slot": "layout-slot-025"
+          },
+          {
+            "macro": "canvas-text-056",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-057",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-057",
+            "slot": "layout-slot-026"
+          },
+          {
+            "macro": "canvas-text-058",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-022",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-023",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-023",
+            "slot": "layout-slot-001"
+          },
+          {
+            "macro": "canvas-text-024",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-025",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-025",
+            "slot": "layout-slot-002"
+          },
+          {
+            "macro": "canvas-text-026",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": "layout-slot-003"
+          },
+          {
+            "macro": "canvas-text-028",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": "layout-slot-004"
+          },
+          {
+            "macro": "canvas-text-030",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": "layout-slot-005"
+          },
+          {
+            "macro": "canvas-text-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": "layout-slot-006"
+          },
+          {
+            "macro": "canvas-text-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-041",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-042",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-043",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-044",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-046",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-047",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-047",
+            "slot": "layout-slot-021"
+          },
+          {
+            "macro": "canvas-text-048",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-049",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-049",
+            "slot": "layout-slot-022"
+          },
+          {
+            "macro": "canvas-text-050",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-051",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-051",
+            "slot": "layout-slot-023"
+          },
+          {
+            "macro": "canvas-text-052",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-053",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-053",
+            "slot": "layout-slot-024"
+          },
+          {
+            "macro": "canvas-text-054",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-055",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-055",
+            "slot": "layout-slot-025"
+          },
+          {
+            "macro": "canvas-text-056",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-057",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-057",
+            "slot": "layout-slot-026"
+          },
+          {
+            "macro": "canvas-text-058",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-attribute-005",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-019",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-020",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-022",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-021",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-023",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-023",
+            "slot": "layout-slot-001"
+          },
+          {
+            "macro": "canvas-text-024",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-025",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-025",
+            "slot": "layout-slot-002"
+          },
+          {
+            "macro": "canvas-text-026",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-027",
+            "slot": "layout-slot-003"
+          },
+          {
+            "macro": "canvas-text-028",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-029",
+            "slot": "layout-slot-004"
+          },
+          {
+            "macro": "canvas-text-030",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-031",
+            "slot": "layout-slot-005"
+          },
+          {
+            "macro": "canvas-text-032",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-033",
+            "slot": "layout-slot-006"
+          },
+          {
+            "macro": "canvas-text-034",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-035",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-036",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-037",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-038",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-039",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-040",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-041",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-004",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-042",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-005",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-043",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-006",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-044",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-046",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-045",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-047",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-047",
+            "slot": "layout-slot-021"
+          },
+          {
+            "macro": "canvas-text-048",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-049",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-049",
+            "slot": "layout-slot-022"
+          },
+          {
+            "macro": "canvas-text-050",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-051",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-051",
+            "slot": "layout-slot-023"
+          },
+          {
+            "macro": "canvas-text-052",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-053",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-053",
+            "slot": "layout-slot-024"
+          },
+          {
+            "macro": "canvas-text-054",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-055",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-055",
+            "slot": "layout-slot-025"
+          },
+          {
+            "macro": "canvas-text-056",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-057",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-057",
+            "slot": "layout-slot-026"
+          },
+          {
+            "macro": "canvas-text-058",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-059",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-060",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-061",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-062",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-063",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-064",
+            "slot": ""
+          }
+        ]
+      },
+      "change_reason": "Add the routed single-file code-review package with paired topology enforcement.",
+      "status": "added"
+    },
     "code-sequence/async-callback-sequence.html": {
       "canonical": {
+        "file_sha256": "1406d361c80d56c7fc3ba3bda5bf1696e47ffcc2979e7c6e267e3d3683e70a66",
+        "structure_sha256": "dcd0b9145ef6b1f7ca83977b7a43b149b6d76299e51d18be2bf966f8324816c4",
         "data_slots": [
           "title",
           "summary",
@@ -8187,11 +9727,11 @@
           "layout-slot-017",
           "layout-slot-007"
         ],
-        "file_sha256": "e2881c776b14a9580bae845a3aeaffbfe56ad813b93535425e9ce20c18183353",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-attribute-001",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -8202,8 +9742,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-text-001",
           "canvas-text-002",
@@ -8284,6 +9822,10 @@
             "slot": "summary"
           },
           {
+            "macro": "canvas-attribute-001",
+            "slot": ""
+          },
+          {
             "macro": "reading-guide-line-01",
             "slot": "evidence-and-notes"
           },
@@ -8322,14 +9864,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-attribute-001",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-002",
@@ -8591,8 +10125,7 @@
             "macro": "canvas-text-036",
             "slot": "layout-slot-007"
           }
-        ],
-        "structure_sha256": "28db4d4ed5a18f079d877bc16e9569823f3c7db88a1a479dbbde1d988b0a7ce4"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -8668,6 +10201,8 @@
     },
     "code-sequence/participant-timeline.html": {
       "canonical": {
+        "file_sha256": "99e3bff1c89ac8ee7c26f4f80a2049ef31ce70f75909d8a9414663934d962632",
+        "structure_sha256": "bab41e835b0ac9e5b4d11a1597040aafefbb4031eb24250b4cd5ba3a3c361564",
         "data_slots": [
           "title",
           "summary",
@@ -8681,11 +10216,11 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "364cb902a45a62a3a48e01070e8241b0fd204fc77c4ecb7857e0bf7af88c80e2",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-attribute-001",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -8696,8 +10231,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-text-001",
           "canvas-text-002",
@@ -8770,6 +10303,10 @@
             "slot": "summary"
           },
           {
+            "macro": "canvas-attribute-001",
+            "slot": ""
+          },
+          {
             "macro": "reading-guide-line-01",
             "slot": "evidence-and-notes"
           },
@@ -8808,14 +10345,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-attribute-001",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-002",
@@ -9045,8 +10574,7 @@
             "macro": "canvas-text-049",
             "slot": "layout-slot-008"
           }
-        ],
-        "structure_sha256": "6b1d70054628b95fd35f34bd456d63ec21c8f54ef01170a5cfdf29bad38a92f2"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -9128,6 +10656,8 @@
     },
     "code-sequence/retry-exception-sequence.html": {
       "canonical": {
+        "file_sha256": "f55f62e6a16720ba64c4aa62355617f4e84e02571612bfdc57297935f888aeea",
+        "structure_sha256": "77e83897b8eed138a306deaae730c709287e76f4a0052dc708d296f524c8216a",
         "data_slots": [
           "title",
           "summary",
@@ -9141,11 +10671,11 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "5cc31714a4efb217627d1079a167b4c410311de645cd8593107578089c4b71ba",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-attribute-001",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -9156,8 +10686,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-text-001",
           "canvas-text-002",
@@ -9229,6 +10757,10 @@
             "slot": "summary"
           },
           {
+            "macro": "canvas-attribute-001",
+            "slot": ""
+          },
+          {
             "macro": "reading-guide-line-01",
             "slot": "evidence-and-notes"
           },
@@ -9267,14 +10799,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-attribute-001",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-002",
@@ -9500,8 +11024,7 @@
             "macro": "canvas-text-046",
             "slot": "layout-slot-008"
           }
-        ],
-        "structure_sha256": "b5923415b82325313dc5d2c84740b8cdc709ecd0044a5b02f17d13fd595cc5be"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -9583,6 +11106,8 @@
     },
     "code-sequence/transaction-boundary-sequence.html": {
       "canonical": {
+        "file_sha256": "babcdaa9f429b1c209a8de4021045ca809db3d963ea375565c3a4518914667b1",
+        "structure_sha256": "2e4d78cfa1ff36da3f5b113ef340047b1d073dcbdc22c85047aeaeefede94b11",
         "data_slots": [
           "title",
           "summary",
@@ -9595,11 +11120,11 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "ac6d42628ff37dcd1f0dd674c3195982fe7a339b6e53eafd77e7af8e6b495a3e",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-attribute-001",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -9610,8 +11135,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-text-001",
           "canvas-text-002",
@@ -9676,6 +11199,10 @@
             "slot": "summary"
           },
           {
+            "macro": "canvas-attribute-001",
+            "slot": ""
+          },
+          {
             "macro": "reading-guide-line-01",
             "slot": "evidence-and-notes"
           },
@@ -9714,14 +11241,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-attribute-001",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-002",
@@ -9919,8 +11438,7 @@
             "macro": "canvas-text-041",
             "slot": "layout-slot-007"
           }
-        ],
-        "structure_sha256": "4675fafece9ebc66ea47c4ef3ae101a593e55dc08b37b7bd0a3182ade4355a89"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -9996,6 +11514,8 @@
     },
     "decision-communication/decision-tree.html": {
       "canonical": {
+        "file_sha256": "fb56957ff30b6ef3d0b06dcc44906ecaf57ac76effe47db36f4c8e6953b8c437",
+        "structure_sha256": "7628ac3a2e297c6a7bd2d5de5ee341806a15ebbe1d909546ba5edae72047510e",
         "data_slots": [
           "title",
           "summary",
@@ -10009,7 +11529,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "6da702d872b495a6679560871b23db874deb69a87f54bf28e03d7afd80a1a3ba",
         "macros": [
           "title",
           "title",
@@ -10024,7 +11543,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-attribute-018",
@@ -10163,10 +11681,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -10513,8 +12027,7 @@
             "macro": "canvas-text-054",
             "slot": ""
           }
-        ],
-        "structure_sha256": "7628ac3a2e297c6a7bd2d5de5ee341806a15ebbe1d909546ba5edae72047510e"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -10602,6 +12115,8 @@
     },
     "decision-communication/option-matrix-path.html": {
       "canonical": {
+        "file_sha256": "378e4c2fb24d09e2acf9fcc776d6538270c6196481b2acfcc24d81802c899db9",
+        "structure_sha256": "a1d76fdbb39b7d9a314a13dc468473126241c92cc705155943c42a02e8e526ac",
         "data_slots": [
           "title",
           "summary",
@@ -10618,7 +12133,6 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "dca5c0260ef87f2e71d0ba906956abf54f4339ff4b997522bbcae44d0e39f7ba",
         "macros": [
           "title",
           "title",
@@ -10633,7 +12147,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-028",
           "canvas-attribute-027",
           "canvas-text-001",
@@ -10765,10 +12278,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -11087,8 +12596,7 @@
             "macro": "canvas-text-014",
             "slot": ""
           }
-        ],
-        "structure_sha256": "a1d76fdbb39b7d9a314a13dc468473126241c92cc705155943c42a02e8e526ac"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -11188,6 +12696,8 @@
     },
     "decision-communication/recommended-path.html": {
       "canonical": {
+        "file_sha256": "16d4970635102e6f369bd78ec6ef4741546c0cd24ec16c4ec01ee79028703f26",
+        "structure_sha256": "dc4c658b15c87c6a750aec78f836abf37b89b5e3ff98671a94211128ad7b1fe0",
         "data_slots": [
           "title",
           "summary",
@@ -11200,7 +12710,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "e3f806ec8d927c7ba31eed06d06b66330c38e364bd75ba1a7dda708ddac61b99",
         "macros": [
           "title",
           "title",
@@ -11215,7 +12724,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-015",
           "canvas-attribute-001",
           "canvas-attribute-016",
@@ -11343,10 +12851,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -11649,8 +13153,7 @@
             "macro": "canvas-text-047",
             "slot": ""
           }
-        ],
-        "structure_sha256": "dc4c658b15c87c6a750aec78f836abf37b89b5e3ff98671a94211128ad7b1fe0"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -11732,6 +13235,8 @@
     },
     "decision-communication/tradeoff-quadrant.html": {
       "canonical": {
+        "file_sha256": "fb4f18e34d8bdaf1c03122ee0fa8cb9b558eaa82bec049e5d7e5aa2db7035ff7",
+        "structure_sha256": "8a504a5d3c2a73ffea1b9327c33551f5b4df1dd74a5b525201d70c584c4bf73f",
         "data_slots": [
           "title",
           "summary",
@@ -11741,7 +13246,6 @@
           "layout-slot-003",
           "layout-slot-004"
         ],
-        "file_sha256": "fea5629fb638962acec9932deb1793eddcb28a6b06154811e6bc8a0d42df87c0",
         "macros": [
           "title",
           "title",
@@ -11756,7 +13260,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-009",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -11855,10 +13358,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -12045,8 +13544,7 @@
             "macro": "canvas-text-030",
             "slot": ""
           }
-        ],
-        "structure_sha256": "8a504a5d3c2a73ffea1b9327c33551f5b4df1dd74a5b525201d70c584c4bf73f"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -12110,6 +13608,8 @@
     },
     "delivery-acceptance/acceptance-ledger.html": {
       "canonical": {
+        "file_sha256": "5894ac0da5f23dfdb6799cb807110767740bbc9a7ba27454c4c7c3674ed2074d",
+        "structure_sha256": "9656b4444a50e788e2ef54bda65527a9a57575b52cda96ee7d1dbbe0ce345401",
         "data_slots": [
           "title",
           "summary",
@@ -12126,7 +13626,6 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "58510c5d62be957d11b4c936e6f3361ea1942cec5dcf04c41ba66886b4c5bbb1",
         "macros": [
           "title",
           "title",
@@ -12141,7 +13640,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-028",
           "canvas-attribute-027",
           "canvas-text-001",
@@ -12273,10 +13771,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -12595,8 +14089,7 @@
             "macro": "canvas-text-014",
             "slot": ""
           }
-        ],
-        "structure_sha256": "9656b4444a50e788e2ef54bda65527a9a57575b52cda96ee7d1dbbe0ce345401"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -12756,6 +14249,8 @@
     },
     "delivery-acceptance/delivery-timeline.html": {
       "canonical": {
+        "file_sha256": "29426a2a3f34658a54b0d4c7c9dc5fe0440d0bf576c0d93f92b0f45070521225",
+        "structure_sha256": "82207b41602949a30569f0be804e2654420ef0dc2c2ca5c2a738bc9d05f8f975",
         "data_slots": [
           "title",
           "summary",
@@ -12766,7 +14261,6 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "98394f6a8d5bd97e2ebc508ec6ef807a36265f20f032009fe0c3190772fc70c5",
         "macros": [
           "title",
           "title",
@@ -12781,7 +14275,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-011",
           "canvas-attribute-001",
           "canvas-attribute-012",
@@ -12887,10 +14380,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -13105,8 +14594,7 @@
             "macro": "canvas-text-033",
             "slot": ""
           }
-        ],
-        "structure_sha256": "82207b41602949a30569f0be804e2654420ef0dc2c2ca5c2a738bc9d05f8f975"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -13176,6 +14664,8 @@
     },
     "delivery-acceptance/evidence-swimlane.html": {
       "canonical": {
+        "file_sha256": "c1ec5b74b643c9a8754dfa28fa389cc7e73550bd15b808042c0193776b8fd049",
+        "structure_sha256": "3a12af6d87c16f1f591965bf6325306dbe732ef8a300f4c6f63f2ffca45ea28a",
         "data_slots": [
           "title",
           "summary",
@@ -13193,7 +14683,6 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "9e760442c8fd20438ed077cfebb0897f7ef2867d4f61291d7e9998125c5fbdcf",
         "macros": [
           "title",
           "title",
@@ -13208,7 +14697,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-025",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -13394,10 +14882,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -13932,8 +15416,7 @@
             "macro": "canvas-text-085",
             "slot": ""
           }
-        ],
-        "structure_sha256": "3a12af6d87c16f1f591965bf6325306dbe732ef8a300f4c6f63f2ffca45ea28a"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -14045,6 +15528,8 @@
     },
     "delivery-acceptance/risk-action-board.html": {
       "canonical": {
+        "file_sha256": "e791a39e05b8e82102156cb6b70dde599b5dfb31065dc793dc44e37c2f689157",
+        "structure_sha256": "eaf7024373a34b7ddcca4e7fb10ab7696b9aad8be0f0acb220d1301f5f78fad2",
         "data_slots": [
           "title",
           "summary",
@@ -14062,7 +15547,6 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "405f8eb46809f7bb4979b4eb0ae8c2349d686e5725c180375d032d9d8beccf79",
         "macros": [
           "title",
           "title",
@@ -14077,7 +15561,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-025",
           "canvas-attribute-001",
           "canvas-attribute-026",
@@ -14260,10 +15743,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -14786,8 +16265,7 @@
             "macro": "canvas-text-082",
             "slot": ""
           }
-        ],
-        "structure_sha256": "eaf7024373a34b7ddcca4e7fb10ab7696b9aad8be0f0acb220d1301f5f78fad2"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -14899,6 +16377,8 @@
     },
     "fault-debugging/before-after-flow.html": {
       "canonical": {
+        "file_sha256": "84dffe9d2264fdc984cb90fc5ce8ea41f31d8ff90bf2c3d859da92ea69dabbed",
+        "structure_sha256": "49b74c8f0f464c1aebd1365f17be1100181bb2e582ceba88e926767a8e347724",
         "data_slots": [
           "title",
           "summary",
@@ -14912,7 +16392,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "a1823c2d39bfa9013fee9334f1a7851901b6907b3b2c9961021d8318888e5cf7",
         "macros": [
           "title",
           "title",
@@ -14927,7 +16406,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-attribute-018",
@@ -15067,10 +16545,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -15421,8 +16895,7 @@
             "macro": "canvas-text-055",
             "slot": ""
           }
-        ],
-        "structure_sha256": "49b74c8f0f464c1aebd1365f17be1100181bb2e582ceba88e926767a8e347724"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -15510,6 +16983,8 @@
     },
     "fault-debugging/bpmn-debug-flow.html": {
       "canonical": {
+        "file_sha256": "d202daaf5bfdb76ac4eeace7e6de5b134f3349629b609f935109f06ea4436b62",
+        "structure_sha256": "55e368dd3889c46db8a4f343f98875589c7755f27f2c85a0f41c418c0679cf74",
         "data_slots": [
           "title",
           "summary",
@@ -15520,7 +16995,6 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "1aea03908624a1eab730d92eb4bcccd3e8259deba94717acc8d285848302dbfb",
         "macros": [
           "title",
           "title",
@@ -15535,7 +17009,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-011",
           "canvas-attribute-001",
           "canvas-attribute-012",
@@ -15641,10 +17114,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -15859,8 +17328,7 @@
             "macro": "canvas-text-033",
             "slot": ""
           }
-        ],
-        "structure_sha256": "55e368dd3889c46db8a4f343f98875589c7755f27f2c85a0f41c418c0679cf74"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -15930,6 +17398,8 @@
     },
     "fault-debugging/causal-chain.html": {
       "canonical": {
+        "file_sha256": "48f228909ef8e3902dcb2d07c9e8fda9d21fe3490517da6cb682453574448a80",
+        "structure_sha256": "2c87c1c1500973ae59a98423c275ee84e515164b5f42609f3f0bf26f81863ad9",
         "data_slots": [
           "title",
           "summary",
@@ -15954,7 +17424,6 @@
           "layout-slot-018",
           "layout-slot-019"
         ],
-        "file_sha256": "728282b9cbd9b25df9edaff857223e866ac8773ec158a258f2446107f179cd32",
         "macros": [
           "title",
           "title",
@@ -15969,7 +17438,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-046",
           "canvas-attribute-045",
           "canvas-text-001",
@@ -16183,10 +17651,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -16833,8 +18297,7 @@
             "macro": "canvas-text-021",
             "slot": ""
           }
-        ],
-        "structure_sha256": "2c87c1c1500973ae59a98423c275ee84e515164b5f42609f3f0bf26f81863ad9"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -16904,6 +18367,8 @@
     },
     "fault-debugging/debugging-sequence.html": {
       "canonical": {
+        "file_sha256": "192fa3981da36aec58740fd2580dfedf5bf273684d35c892c4f4d52acac773fe",
+        "structure_sha256": "3c3bb7c0fa6b5b420d791eafd69e9f83445d4e5cb94d0c4bef7318efd37732e7",
         "data_slots": [
           "title",
           "summary",
@@ -16919,11 +18384,11 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "937cce0758be1f6307748743cd4348c14662edcea78bdfaa702e30170e6bb28e",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-attribute-001",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -16934,8 +18399,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-text-001",
           "canvas-text-002",
@@ -17006,6 +18469,10 @@
             "slot": "summary"
           },
           {
+            "macro": "canvas-attribute-001",
+            "slot": ""
+          },
+          {
             "macro": "reading-guide-line-01",
             "slot": "evidence-and-notes"
           },
@@ -17044,14 +18511,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-attribute-001",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-002",
@@ -17273,8 +18732,7 @@
             "macro": "canvas-text-046",
             "slot": "layout-slot-010"
           }
-        ],
-        "structure_sha256": "7ef6169a20b1fec1f43f987ffe24e7a83cc757ad74ce2b22fd9076747d187ba9"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -17368,6 +18826,8 @@
     },
     "fault-debugging/state-data-breakpoint.html": {
       "canonical": {
+        "file_sha256": "64459142b5167ec205c8d52578e47f3359ae3f49d4c3c86041767c30cd20d77c",
+        "structure_sha256": "c0260397d3d78e4486d1e2f512a928c917f47e24a110d921a04b96ddcb6d8be4",
         "data_slots": [
           "title",
           "summary",
@@ -17380,7 +18840,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "ab39da9260f3f34bd6506ba06cbc3aebd1b8588638d66b78718285b1dd2ce84e",
         "macros": [
           "title",
           "title",
@@ -17395,7 +18854,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-015",
           "canvas-attribute-001",
           "canvas-attribute-016",
@@ -17523,10 +18981,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -17829,8 +19283,7 @@
             "macro": "canvas-text-047",
             "slot": ""
           }
-        ],
-        "structure_sha256": "c0260397d3d78e4486d1e2f512a928c917f47e24a110d921a04b96ddcb6d8be4"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -17912,6 +19365,8 @@
     },
     "feature-iteration/current-target-flow.html": {
       "canonical": {
+        "file_sha256": "5914b8beb1069458925a6496b5ba57109e7ff0be8f00bb69421316a604b01514",
+        "structure_sha256": "3aa04dc8ad63a14be155786ce0f7d53ae2a7f6b4ac5d7f3260a1decbf3d4b8cb",
         "data_slots": [
           "title",
           "summary",
@@ -17925,7 +19380,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "d2cb265d651a7a91986501592e97f8aeeda4417538ba760c3e49cc1482330aa3",
         "macros": [
           "title",
           "title",
@@ -17940,7 +19394,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-018",
@@ -18096,10 +19549,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -18514,8 +19963,7 @@
             "macro": "canvas-text-030",
             "slot": ""
           }
-        ],
-        "structure_sha256": "3aa04dc8ad63a14be155786ce0f7d53ae2a7f6b4ac5d7f3260a1decbf3d4b8cb"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -18603,6 +20051,8 @@
     },
     "feature-iteration/current-target-sequence.html": {
       "canonical": {
+        "file_sha256": "1b9dff860cb0844096e8ab445a1bda2fa0a6d444d3a82f65ffac57e12ebc0089",
+        "structure_sha256": "fe20e39798dbd25fdb35cebc8970c598b2a622c5cbf0fd248addd0886d62567b",
         "data_slots": [
           "title",
           "summary",
@@ -18612,14 +20062,15 @@
           "layout-slot-003",
           "layout-slot-004",
           "layout-slot-005",
+          "evidence-and-notes",
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "e51918cb4a3719205e2e2508209d3a912b9e95a1351a4b2edc7b5b7760c81182",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-attribute-001",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -18630,8 +20081,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-text-001",
           "canvas-text-002",
@@ -18656,6 +20105,16 @@
           "canvas-text-018",
           "canvas-text-019",
           "canvas-text-020",
+          "reading-guide-line-01",
+          "reading-guide-line-02",
+          "reading-guide-line-03",
+          "reading-guide-line-04",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
           "canvas-attribute-006",
           "canvas-text-021",
           "canvas-text-022",
@@ -18693,6 +20152,10 @@
           {
             "macro": "summary",
             "slot": "summary"
+          },
+          {
+            "macro": "canvas-attribute-001",
+            "slot": ""
           },
           {
             "macro": "reading-guide-line-01",
@@ -18733,14 +20196,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-attribute-001",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-002",
@@ -18839,6 +20294,46 @@
             "slot": ""
           },
           {
+            "macro": "reading-guide-line-01",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-02",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-03",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-04",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
             "macro": "canvas-attribute-006",
             "slot": ""
           },
@@ -18934,8 +20429,7 @@
             "macro": "canvas-text-040",
             "slot": "layout-slot-007"
           }
-        ],
-        "structure_sha256": "81b37f7f549583c046dfdd8f266acb71efbabd5eadef91d493694ea41c6a4028"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -19011,6 +20505,8 @@
     },
     "feature-iteration/diff-heatmap.html": {
       "canonical": {
+        "file_sha256": "f93258cf54de56cbd6b7adf7cc04826edb1dccdd34904c26638c70a101d28fac",
+        "structure_sha256": "958c1b8049b66fa356e645674cd3765f3c3c7e0e1b0be1cb0300d2f27e31620f",
         "data_slots": [
           "title",
           "summary",
@@ -19025,7 +20521,6 @@
           "layout-slot-008",
           "layout-slot-009"
         ],
-        "file_sha256": "22b158bdcb440007dd6f91529e1938153f3a818960c78f6142278923d4ca9418",
         "macros": [
           "title",
           "title",
@@ -19040,7 +20535,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-019",
           "canvas-attribute-001",
           "canvas-attribute-020",
@@ -19190,10 +20684,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -19584,8 +21074,7 @@
             "macro": "canvas-text-061",
             "slot": ""
           }
-        ],
-        "structure_sha256": "958c1b8049b66fa356e645674cd3765f3c3c7e0e1b0be1cb0300d2f27e31620f"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -19679,6 +21168,8 @@
     },
     "feature-iteration/release-rollback-track.html": {
       "canonical": {
+        "file_sha256": "3e51943a53bcfaeb98549fd27db14f06ce955ad1009cd2352b631dcbc772448b",
+        "structure_sha256": "e1026ab4ce2f009f94f40284a7437dcb06f313867e892c6b83bcbb5ff3c917c6",
         "data_slots": [
           "title",
           "summary",
@@ -19701,7 +21192,6 @@
           "layout-slot-016",
           "layout-slot-017"
         ],
-        "file_sha256": "cc9723f7742dfdac61f41b54e435c553e61ac2edde4108a10e5d71f6aa49952e",
         "macros": [
           "title",
           "title",
@@ -19716,7 +21206,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-042",
           "canvas-attribute-041",
           "canvas-text-001",
@@ -19918,10 +21407,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -20520,8 +22005,7 @@
             "macro": "canvas-text-019",
             "slot": ""
           }
-        ],
-        "structure_sha256": "e1026ab4ce2f009f94f40284a7437dcb06f313867e892c6b83bcbb5ff3c917c6"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -20609,6 +22093,8 @@
     },
     "page-mockup/artboard-filmstrip.html": {
       "canonical": {
+        "file_sha256": "7c922c1dd81817e42dbd027ca481882b3acd9bcee38c9fcc15c28666fee21455",
+        "structure_sha256": "cf3bfb0c4be0fd65d677acd92afb1ed6958621aafdd1ab64e4542fb82ab1f292",
         "data_slots": [
           "title",
           "summary",
@@ -20625,7 +22111,6 @@
           "layout-slot-010",
           "layout-slot-011"
         ],
-        "file_sha256": "8b2081a9acc93488c4931c9142cc79e9f882406a69a8563b9cd573bc140921bc",
         "macros": [
           "title",
           "title",
@@ -20640,7 +22125,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-023",
           "canvas-attribute-001",
           "canvas-attribute-024",
@@ -20812,10 +22296,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -21294,8 +22774,7 @@
             "macro": "canvas-text-075",
             "slot": ""
           }
-        ],
-        "structure_sha256": "cf3bfb0c4be0fd65d677acd92afb1ed6958621aafdd1ab64e4542fb82ab1f292"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -21401,6 +22880,8 @@
     },
     "page-mockup/artboard-wireframe.html": {
       "canonical": {
+        "file_sha256": "d12c04bcc0bba7b02b857a2d8a2e502bd8103f2e89d37c2099b3432de3fbf170",
+        "structure_sha256": "5ce42c658482a92029c3e7be48b7aa93a546871cf3a95c9776989d82bd83324f",
         "data_slots": [
           "title",
           "summary",
@@ -21413,7 +22894,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "2af4d23c354600dfab44404e1690682770a1264286c1f675d3918f57bfbfca25",
         "macros": [
           "title",
           "title",
@@ -21428,7 +22908,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-002",
           "canvas-attribute-003",
@@ -21537,10 +23016,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -21767,8 +23242,7 @@
             "macro": "canvas-text-042",
             "slot": ""
           }
-        ],
-        "structure_sha256": "5ce42c658482a92029c3e7be48b7aa93a546871cf3a95c9776989d82bd83324f"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -21850,6 +23324,8 @@
     },
     "page-mockup/primary-path-page-flow.html": {
       "canonical": {
+        "file_sha256": "cf1b1967f02887c24bc6a6abb9a0019f2d7006dc33dc2ab5d43247cbbe0c1385",
+        "structure_sha256": "8d8960404c20fb1661aca59a6cbeef1e79f374c513f4d5b981d632e9ed6a2986",
         "data_slots": [
           "title",
           "summary",
@@ -21860,7 +23336,6 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "3b7ac6ccda6212bed3a1f6dd895cdae091aefd8a6c6b7b0d6c55198ac8eb04a5",
         "macros": [
           "title",
           "title",
@@ -21875,7 +23350,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-011",
           "canvas-attribute-001",
           "canvas-attribute-012",
@@ -21981,10 +23455,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -22199,8 +23669,7 @@
             "macro": "canvas-text-033",
             "slot": ""
           }
-        ],
-        "structure_sha256": "8d8960404c20fb1661aca59a6cbeef1e79f374c513f4d5b981d632e9ed6a2986"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -22270,6 +23739,8 @@
     },
     "page-mockup/responsive-state-board.html": {
       "canonical": {
+        "file_sha256": "b5b9a2eeeeba12cb08519392d13fb93235c10b3214cdb78cd8534478f7a3a3c2",
+        "structure_sha256": "dba9fb38d87615b34c788b620ce3048ed2a25d649a9b327f5a7811dd53859a4a",
         "data_slots": [
           "title",
           "summary",
@@ -22291,7 +23762,6 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "de758c0af01dd7d429bd57ce2600d911a7265d422340c7003a5e4937a86db619",
         "macros": [
           "title",
           "title",
@@ -22306,7 +23776,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-017",
@@ -22475,10 +23944,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -22945,8 +24410,7 @@
             "macro": "canvas-text-055",
             "slot": ""
           }
-        ],
-        "structure_sha256": "dba9fb38d87615b34c788b620ce3048ed2a25d649a9b327f5a7811dd53859a4a"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -23034,6 +24498,8 @@
     },
     "state-data-model/data-flow-model.html": {
       "canonical": {
+        "file_sha256": "ddf4dd8e6d31cecae686fde39ce810ebd7c5da23908e8d23c09c5166dfb5e49b",
+        "structure_sha256": "9e188f3956a30eb2b7a38b2d555e41512edcb821aff3e139492cb93fbc710e19",
         "data_slots": [
           "title",
           "summary",
@@ -23047,7 +24513,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "380a905b7b9e12d9ec3533fe1662ff5552274c6352380ac1f920318084de11e7",
         "macros": [
           "title",
           "title",
@@ -23062,7 +24527,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-019",
           "canvas-attribute-020",
@@ -23208,10 +24672,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -23586,8 +25046,7 @@
             "macro": "canvas-text-053",
             "slot": ""
           }
-        ],
-        "structure_sha256": "9e188f3956a30eb2b7a38b2d555e41512edcb821aff3e139492cb93fbc710e19"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -23675,6 +25134,8 @@
     },
     "state-data-model/er-lite.html": {
       "canonical": {
+        "file_sha256": "e724f0e720ffb3799e77276ad0f6fd3bfdbed7da2142f320b5a416be49725336",
+        "structure_sha256": "b65e686639649529cf2d8346e5336ae1bbab993a8a46828896ba3764ba8b9750",
         "data_slots": [
           "title",
           "summary",
@@ -23692,7 +25153,6 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "8a64a8e66fec736a12f5d149da66cddd3727feb3be6f5291df7c4e1586d098cc",
         "macros": [
           "title",
           "title",
@@ -23707,7 +25167,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-021",
           "canvas-attribute-022",
@@ -23872,10 +25331,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -24326,8 +25781,7 @@
             "macro": "canvas-text-065",
             "slot": ""
           }
-        ],
-        "structure_sha256": "b65e686639649529cf2d8346e5336ae1bbab993a8a46828896ba3764ba8b9750"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -24439,6 +25893,8 @@
     },
     "state-data-model/lifecycle-track.html": {
       "canonical": {
+        "file_sha256": "b10edac1c4b2c2789b0c31145ec45ed0e16b8a53c9ba6faac05ca6a2405f7ba0",
+        "structure_sha256": "d32352d89d7175852994d66406f3768032fab251f72c338e24dc3d410f782e0b",
         "data_slots": [
           "title",
           "summary",
@@ -24454,7 +25910,6 @@
           "layout-slot-009",
           "layout-slot-010"
         ],
-        "file_sha256": "a58967e0651cf78047bc684c4511b81078a1f3d72620bb2f47fb1573a286cf4b",
         "macros": [
           "title",
           "title",
@@ -24469,7 +25924,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-021",
           "canvas-attribute-022",
@@ -24636,10 +26090,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -25098,8 +26548,7 @@
             "macro": "canvas-text-063",
             "slot": ""
           }
-        ],
-        "structure_sha256": "d32352d89d7175852994d66406f3768032fab251f72c338e24dc3d410f782e0b"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -25199,6 +26648,8 @@
     },
     "state-data-model/state-event-matrix.html": {
       "canonical": {
+        "file_sha256": "46462f23e76803839d9773d2b331aacf2447ef9abc5857d5bb0a29fd07721cac",
+        "structure_sha256": "a429fd0468e33c066e3e163e680fe05b8b79dc97372469b2238b3975dea855cf",
         "data_slots": [
           "title",
           "summary",
@@ -25219,7 +26670,6 @@
           "layout-slot-014",
           "layout-slot-015"
         ],
-        "file_sha256": "e8d3b2aad48f910809847c5395efbc2cca0cd7bcc93fb0f5a26bf8ba8c900d28",
         "macros": [
           "title",
           "title",
@@ -25234,7 +26684,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-021",
           "canvas-text-001",
@@ -25417,10 +26866,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -25943,8 +27388,7 @@
             "macro": "canvas-text-085",
             "slot": ""
           }
-        ],
-        "structure_sha256": "a429fd0468e33c066e3e163e680fe05b8b79dc97372469b2238b3975dea855cf"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -26074,6 +27518,8 @@
     },
     "state-data-model/state-machine.html": {
       "canonical": {
+        "file_sha256": "c3d4da39056e165314a91063bb9459f68d6904cb5836665be34c69cb3973ffd9",
+        "structure_sha256": "b6fee74c633e5b8a463fdb75d8a04a2ec8a08f6f6b5a8eb1934e51a02559f645",
         "data_slots": [
           "title",
           "summary",
@@ -26091,7 +27537,6 @@
           "layout-slot-011",
           "layout-slot-012"
         ],
-        "file_sha256": "c325c903a1d308aee57f8a1f52d43ae0c9105c33c1491ede0440325ced639406",
         "macros": [
           "title",
           "title",
@@ -26106,7 +27551,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-text-018",
           "canvas-text-019",
@@ -26261,10 +27705,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -26675,8 +28115,7 @@
             "macro": "canvas-text-051",
             "slot": ""
           }
-        ],
-        "structure_sha256": "b6fee74c633e5b8a463fdb75d8a04a2ec8a08f6f6b5a8eb1934e51a02559f645"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -26746,6 +28185,8 @@
     },
     "system-architecture/api-integration.html": {
       "canonical": {
+        "file_sha256": "a289e4c58e82743af6355cb057d22a26466f0e85ab11cf61b291b6ac140957bb",
+        "structure_sha256": "c0fe6c9b11dfc79da9cedf6908ba86decf072bca712faeb502976bbfcc3aabd1",
         "data_slots": [
           "title",
           "summary",
@@ -26758,7 +28199,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "521aa397be756293ab71b6a776a224c28fed536e2fea40d8ef6334345e1c8504",
         "macros": [
           "routing_confidence",
           "title",
@@ -26773,7 +28213,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-015",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -26897,10 +28336,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -27187,8 +28622,7 @@
             "macro": "canvas-text-043",
             "slot": ""
           }
-        ],
-        "structure_sha256": "c0fe6c9b11dfc79da9cedf6908ba86decf072bca712faeb502976bbfcc3aabd1"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -27270,6 +28704,8 @@
     },
     "system-architecture/component-breakdown.html": {
       "canonical": {
+        "file_sha256": "6d1fb542640c007593d36abb3c1d6425f83e5fa319194b223a01f4b51113e0f5",
+        "structure_sha256": "55675b240ced307c5c2938cc54ab5aad8fa8746512b479b1d62758f877d8cb44",
         "data_slots": [
           "title",
           "summary",
@@ -27283,7 +28719,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "a7cd06cddcfa3b0321cf45b199ca7326faa9dd06fc50e2c55bb8da227561af69",
         "macros": [
           "routing_confidence",
           "title",
@@ -27298,7 +28733,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -27434,10 +28868,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -27772,8 +29202,7 @@
             "macro": "canvas-text-051",
             "slot": ""
           }
-        ],
-        "structure_sha256": "55675b240ced307c5c2938cc54ab5aad8fa8746512b479b1d62758f877d8cb44"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -27861,6 +29290,8 @@
     },
     "system-architecture/data-architecture.html": {
       "canonical": {
+        "file_sha256": "3a2171610a8897682b9fb12d631b60351cd39b4d398a6a9d3a105d04174b8a1b",
+        "structure_sha256": "6ca271bce8e22fb28da5c35035e04c90b546bbb45c41e32903523476eb7f01aa",
         "data_slots": [
           "title",
           "summary",
@@ -27874,7 +29305,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "78358d1d4a05a73b2f3f05b60cbbac3370668ab814aac58e0ed4f82c52c59fb3",
         "macros": [
           "routing_confidence",
           "title",
@@ -27889,7 +29319,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -28026,10 +29455,6 @@
             "slot": "evidence-and-notes"
           },
           {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
             "macro": "canvas-attribute-017",
             "slot": ""
           },
@@ -28353,8 +29778,7 @@
             "macro": "canvas-text-049",
             "slot": ""
           }
-        ],
-        "structure_sha256": "6ca271bce8e22fb28da5c35035e04c90b546bbb45c41e32903523476eb7f01aa"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -28442,6 +29866,8 @@
     },
     "system-architecture/data-flow.html": {
       "canonical": {
+        "file_sha256": "31540f8c31b7a9fe2cd13df4ff143daa6f08774bfb69ce2c15a70e65bc36d2e0",
+        "structure_sha256": "64ec5175b5bebbe7c970c0c81d0203cd845d92d6efa35e6121ae9d06d530e7ea",
         "data_slots": [
           "title",
           "summary",
@@ -28455,7 +29881,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "9d3f08571884490e87c93af06b24fe405e1f6d5b5b2f0dca0a9eda3c6e969ec9",
         "macros": [
           "routing_confidence",
           "title",
@@ -28470,7 +29895,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -28606,10 +30030,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -28944,8 +30364,7 @@
             "macro": "canvas-text-051",
             "slot": ""
           }
-        ],
-        "structure_sha256": "64ec5175b5bebbe7c970c0c81d0203cd845d92d6efa35e6121ae9d06d530e7ea"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -29033,6 +30452,8 @@
     },
     "system-architecture/delivery-pipeline.html": {
       "canonical": {
+        "file_sha256": "5f4be7e51d62940f3ed380ddc0f182922549ec053ec88ffd3f7c0dcc6249d3f2",
+        "structure_sha256": "3577beddf0d476fcb449aff63fea29da9a13c211f48dac9273ebcd245f764d75",
         "data_slots": [
           "title",
           "summary",
@@ -29044,7 +30465,6 @@
           "layout-slot-005",
           "layout-slot-006"
         ],
-        "file_sha256": "f4a372b93dca0c6abefef5d196f758988c7379471d29f51a966b9fc68f18cb8c",
         "macros": [
           "routing_confidence",
           "title",
@@ -29059,7 +30479,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-013",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -29175,10 +30594,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -29433,8 +30848,7 @@
             "macro": "canvas-text-039",
             "slot": ""
           }
-        ],
-        "structure_sha256": "3577beddf0d476fcb449aff63fea29da9a13c211f48dac9273ebcd245f764d75"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -29510,6 +30924,8 @@
     },
     "system-architecture/deployment-topology.html": {
       "canonical": {
+        "file_sha256": "d9710e3d13719d8c7f22c1e49916dd04323f8ccbab2bd7d8d0c6d3334d530e06",
+        "structure_sha256": "ac145b15cfe17f29594497819df083a5864343ec4f8b9f29dcfb8bc6dfdc0469",
         "data_slots": [
           "title",
           "summary",
@@ -29522,7 +30938,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "ed24bce492fb16cdea3bc4ec1c8538c865d5e50b40f99e5d988cc1a446ea13b4",
         "macros": [
           "routing_confidence",
           "title",
@@ -29537,7 +30952,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-015",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -29663,10 +31077,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -29961,8 +31371,7 @@
             "macro": "canvas-text-045",
             "slot": ""
           }
-        ],
-        "structure_sha256": "ac145b15cfe17f29594497819df083a5864343ec4f8b9f29dcfb8bc6dfdc0469"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -30044,6 +31453,8 @@
     },
     "system-architecture/event-driven.html": {
       "canonical": {
+        "file_sha256": "a33031e6f3ca9c4638bd461e3c79cb762ee5b82815c06b1f2b13b67d0cb87614",
+        "structure_sha256": "402fe3b65b12ceafca324610c961cacaa4d41b56c2be073affbf3704b8126eee",
         "data_slots": [
           "title",
           "summary",
@@ -30056,7 +31467,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "9b3eaf19aae09d9f5edac8c77684ef380691882294aa5aede49871e1c1fd2f8a",
         "macros": [
           "routing_confidence",
           "title",
@@ -30071,7 +31481,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -30197,10 +31606,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -30495,8 +31900,7 @@
             "macro": "canvas-text-042",
             "slot": ""
           }
-        ],
-        "structure_sha256": "402fe3b65b12ceafca324610c961cacaa4d41b56c2be073affbf3704b8126eee"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -30573,6 +31977,8 @@
     },
     "system-architecture/identity-access.html": {
       "canonical": {
+        "file_sha256": "6e00b9f3b902f12acfcd01aa2a392e7c91304f83104fd0c1942c832898611520",
+        "structure_sha256": "02203f730b92ea8016cfe540f3b490dce8a6ecae02ea232ae45e5d745d86be41",
         "data_slots": [
           "title",
           "summary",
@@ -30583,7 +31989,6 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "ad546304730499048341580a3d105b72f1657122cbe7c68c65344c6344c38a78",
         "macros": [
           "routing_confidence",
           "title",
@@ -30598,7 +32003,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-011",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -30700,10 +32104,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -30902,8 +32302,7 @@
             "macro": "canvas-text-029",
             "slot": ""
           }
-        ],
-        "structure_sha256": "02203f730b92ea8016cfe540f3b490dce8a6ecae02ea232ae45e5d745d86be41"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -30973,6 +32372,8 @@
     },
     "system-architecture/logical-layering.html": {
       "canonical": {
+        "file_sha256": "0c19c57cb5e785e0846f887f5b64940ea8a4a4ad6ceddab926b5a60ade159c52",
+        "structure_sha256": "2b150b4dc18de24620665a36183163f54b5a784c3bc3fd9a737ac154da28c4ec",
         "data_slots": [
           "title",
           "summary",
@@ -31007,7 +32408,6 @@
           "layout-slot-028",
           "layout-slot-029"
         ],
-        "file_sha256": "fa622f1a58558e02e57b60a18092951bf927513e9c1f494e61a142e62f1cf002",
         "macros": [
           "routing_confidence",
           "title",
@@ -31022,7 +32422,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-035",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -31418,10 +32817,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -32796,8 +34191,7 @@
             "macro": "canvas-text-165",
             "slot": ""
           }
-        ],
-        "structure_sha256": "2b150b4dc18de24620665a36183163f54b5a784c3bc3fd9a737ac154da28c4ec"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit; added independent primary and auxiliary details plus executable geometry quality",
       "source": {
@@ -32891,6 +34285,8 @@
     },
     "system-architecture/network-topology.html": {
       "canonical": {
+        "file_sha256": "a466e0ceed6427e724bf23ad502287c344c9479da75d3ba88a14fe6e96e31e8f",
+        "structure_sha256": "12d7517c2abac86f51021897d2f8b227aa18c32a71d9bab7334c39a65e36dc54",
         "data_slots": [
           "title",
           "summary",
@@ -32904,7 +34300,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "150a1c7d1bfaac8f10b1a48e1808afd5f58c7d6664469b9cfc950904ceb74715",
         "macros": [
           "routing_confidence",
           "title",
@@ -32919,7 +34314,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -33055,10 +34449,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -33393,8 +34783,7 @@
             "macro": "canvas-text-051",
             "slot": ""
           }
-        ],
-        "structure_sha256": "12d7517c2abac86f51021897d2f8b227aa18c32a71d9bab7334c39a65e36dc54"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -33482,6 +34871,8 @@
     },
     "system-architecture/observability-view.html": {
       "canonical": {
+        "file_sha256": "8b0e8863b133c11cd676767bf92e3af052d1236cc02570fad0a4f154b30fa93c",
+        "structure_sha256": "a55d8e6851452d4b1b04c4096bfed30e9e2b521542dd942b07dac87631d4fecc",
         "data_slots": [
           "title",
           "summary",
@@ -33492,7 +34883,6 @@
           "layout-slot-004",
           "layout-slot-005"
         ],
-        "file_sha256": "a88c98d6392389422eb7d869a2b4fb592ca10b846c49444dcc2ca7f22bdbb0fb",
         "macros": [
           "routing_confidence",
           "title",
@@ -33507,7 +34897,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-011",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -33611,10 +35000,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -33821,8 +35206,7 @@
             "macro": "canvas-text-031",
             "slot": ""
           }
-        ],
-        "structure_sha256": "a55d8e6851452d4b1b04c4096bfed30e9e2b521542dd942b07dac87631d4fecc"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -33892,6 +35276,8 @@
     },
     "system-architecture/resilience-view.html": {
       "canonical": {
+        "file_sha256": "f75d4f819c228055e8accf8fd44998e8213b8af2ba9ea60eff888b66248c8997",
+        "structure_sha256": "93d010fc0bd2c53d07d8fe55460d7b511b0f02103a7cdc3643a20e2658a93f5c",
         "data_slots": [
           "title",
           "summary",
@@ -33903,7 +35289,6 @@
           "layout-slot-005",
           "layout-slot-006"
         ],
-        "file_sha256": "4dbaae26a95908f944da17f145005b9bcb63a00886af707d7ce84b7b2ae4b09f",
         "macros": [
           "routing_confidence",
           "title",
@@ -33918,7 +35303,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-013",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -34034,10 +35418,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -34292,8 +35672,7 @@
             "macro": "canvas-text-039",
             "slot": ""
           }
-        ],
-        "structure_sha256": "93d010fc0bd2c53d07d8fe55460d7b511b0f02103a7cdc3643a20e2658a93f5c"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -34369,6 +35748,8 @@
     },
     "system-architecture/router-v6.html": {
       "canonical": {
+        "file_sha256": "baecda54c54846d22dfe9e500db99205c9a0e80107b1d706bc061513cf0d738c",
+        "structure_sha256": "aca3d8a7b2ce677cf36cc829d2aea1e5f5c4bffdbb529690a5d4bc4820a524a7",
         "data_slots": [
           "title",
           "summary",
@@ -34382,7 +35763,6 @@
           "layout-slot-007",
           "layout-slot-008"
         ],
-        "file_sha256": "d1296c09da64a7460a5a45a8293081823b753a3708731647b1f89ab417936fec",
         "macros": [
           "routing_confidence",
           "title",
@@ -34397,7 +35777,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-017",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -34530,10 +35909,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -34856,8 +36231,7 @@
             "macro": "canvas-text-048",
             "slot": ""
           }
-        ],
-        "structure_sha256": "aca3d8a7b2ce677cf36cc829d2aea1e5f5c4bffdbb529690a5d4bc4820a524a7"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -34945,6 +36319,8 @@
     },
     "system-architecture/security-view.html": {
       "canonical": {
+        "file_sha256": "c94e959dcb7519e5f8031876fb2225aa0569889e6b1b51b6c284fc5f2dca0c72",
+        "structure_sha256": "829f7fcdd2bdf5133ef35113904efa8906c3e2f32521b2890da1459afd4efd1a",
         "data_slots": [
           "title",
           "summary",
@@ -34957,7 +36333,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "87768d00073f1474cb3324f3b118d68c2b0c2f699c734d1e56f82b3812419e92",
         "macros": [
           "routing_confidence",
           "title",
@@ -34972,7 +36347,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-015",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -35096,10 +36470,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -35386,8 +36756,7 @@
             "macro": "canvas-text-043",
             "slot": ""
           }
-        ],
-        "structure_sha256": "829f7fcdd2bdf5133ef35113904efa8906c3e2f32521b2890da1459afd4efd1a"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -35469,6 +36838,8 @@
     },
     "system-architecture/system-context.html": {
       "canonical": {
+        "file_sha256": "2f0dfc66133e297c8a9e1ab4f7c0b13fb9ec6e255d2c3a5e53db54a697d7414d",
+        "structure_sha256": "a9100cbc042982954d887202801f0c2d4be867a341e97a653d2813d419c3321b",
         "data_slots": [
           "title",
           "summary",
@@ -35481,7 +36852,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "2bea15fee8548e637ae73655f2f424bb13862b838c650b5ca49b1c2397b93d67",
         "macros": [
           "routing_confidence",
           "title",
@@ -35496,7 +36866,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-015",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -35620,10 +36989,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -35910,8 +37275,7 @@
             "macro": "canvas-text-043",
             "slot": ""
           }
-        ],
-        "structure_sha256": "a9100cbc042982954d887202801f0c2d4be867a341e97a653d2813d419c3321b"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -35993,6 +37357,8 @@
     },
     "system-architecture/workload-overview.html": {
       "canonical": {
+        "file_sha256": "f0cc8cef89cf9f7f17798452d02a0a6571fe70d20701bb6edb30e8b943a93047",
+        "structure_sha256": "5243b0521611935ed11f1d9d5def07048a6ff5dc9272de746a98b6bd55392abf",
         "data_slots": [
           "title",
           "summary",
@@ -36024,7 +37390,6 @@
           "layout-slot-025",
           "layout-slot-026"
         ],
-        "file_sha256": "87196e40167c55b07227931ec751152693a8196fe08b101ebf7ae94d0512f667",
         "macros": [
           "routing_confidence",
           "title",
@@ -36039,7 +37404,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-033",
           "canvas-attribute-001",
           "canvas-text-001",
@@ -36409,10 +37773,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -37683,8 +39043,7 @@
             "macro": "canvas-text-251",
             "slot": ""
           }
-        ],
-        "structure_sha256": "5243b0521611935ed11f1d9d5def07048a6ff5dc9272de746a98b6bd55392abf"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit; added independent primary and auxiliary details plus executable geometry quality",
       "source": {
@@ -37767,6 +39126,8 @@
     },
     "technical-design/api-contract-swimlane.html": {
       "canonical": {
+        "file_sha256": "df382b70a2ccce4ccd5c7676a05507fba29cfcd94e5dcaefa9a6a5d9e65e7f69",
+        "structure_sha256": "1c641968d7ea6279e004164751c2360a0cf3b9a70d56e8a0379b115182f99c01",
         "data_slots": [
           "title",
           "summary",
@@ -37788,7 +39149,6 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "744a9945b137628127fb846c1892353b864f6cd72c3f60bebdb80e580289632d",
         "macros": [
           "title",
           "title",
@@ -37803,7 +39163,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-033",
           "canvas-attribute-034",
@@ -38041,10 +39400,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -38787,8 +40142,7 @@
             "macro": "canvas-text-114",
             "slot": ""
           }
-        ],
-        "structure_sha256": "1c641968d7ea6279e004164751c2360a0cf3b9a70d56e8a0379b115182f99c01"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -38924,6 +40278,8 @@
     },
     "technical-design/data-consistency-boundary.html": {
       "canonical": {
+        "file_sha256": "872ba432b75acae581e0625ac201ecf8b688c4477aec9d781cf44ef64ef4d5fb",
+        "structure_sha256": "f24720836cf0466981bd8ac8b577c92a242e8d73925708966d3123212bd08b28",
         "data_slots": [
           "title",
           "summary",
@@ -38945,7 +40301,6 @@
           "layout-slot-015",
           "layout-slot-016"
         ],
-        "file_sha256": "7d4e7c7aa10051cb13fba4207052d5f3b0b4765dfeed9ac0d1a5f0a781ecdf35",
         "macros": [
           "title",
           "title",
@@ -38960,7 +40315,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-031",
           "canvas-attribute-001",
           "canvas-text-017",
@@ -39156,10 +40510,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -39734,8 +41084,7 @@
             "macro": "canvas-text-064",
             "slot": ""
           }
-        ],
-        "structure_sha256": "f24720836cf0466981bd8ac8b577c92a242e8d73925708966d3123212bd08b28"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -39823,6 +41172,8 @@
     },
     "technical-design/module-contract-data-topology.html": {
       "canonical": {
+        "file_sha256": "c11a360e67f2a07365466bd68497cd563afa01c3ce7903951984b720d6819633",
+        "structure_sha256": "f6cab93bdf71752edbd4504d1a615aa41b62ef0e05e6af73a42e2f563c8146c9",
         "data_slots": [
           "title",
           "summary",
@@ -39835,7 +41186,6 @@
           "layout-slot-006",
           "layout-slot-007"
         ],
-        "file_sha256": "57c4ae06c2e5b53423068afb1f99b93160678938a9ed0118ad83da3b2151d935",
         "macros": [
           "title",
           "title",
@@ -39850,7 +41200,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
           "canvas-attribute-001",
           "canvas-attribute-017",
           "canvas-text-001",
@@ -39986,10 +41335,6 @@
           },
           {
             "macro": "evidence-unresolved-source",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
             "slot": "evidence-and-notes"
           },
           {
@@ -40324,8 +41669,7 @@
             "macro": "canvas-text-051",
             "slot": ""
           }
-        ],
-        "structure_sha256": "f6cab93bdf71752edbd4504d1a615aa41b62ef0e05e6af73a42e2f563c8146c9"
+        ]
       },
       "change_reason": "added collision-free unfilled previews and stacked interaction-over-zoom controls; embedded screenshot-free computed layout audit",
       "source": {
@@ -40407,6 +41751,8 @@
     },
     "technical-design/technical-design-package.html": {
       "canonical": {
+        "file_sha256": "96c79d16b35f11872db7a7a2732db47e9fa356765a17d402b68e6df58e24a663",
+        "structure_sha256": "4d288903e65a3eefec9f969f8c706d86e7f992336ac2fdfe1b67eaf924c1e3d9",
         "data_slots": [
           "title",
           "summary",
@@ -40419,6 +41765,7 @@
           "layout-slot-302",
           "layout-slot-303",
           "layout-slot-304",
+          "evidence-and-notes",
           "layout-slot-041",
           "layout-slot-042",
           "layout-slot-043",
@@ -40432,6 +41779,7 @@
           "layout-slot-321",
           "layout-slot-322",
           "layout-slot-323",
+          "evidence-and-notes",
           "layout-slot-005",
           "layout-slot-006",
           "layout-slot-007",
@@ -40440,6 +41788,7 @@
           "layout-slot-306",
           "layout-slot-307",
           "layout-slot-308",
+          "evidence-and-notes",
           "layout-slot-009",
           "layout-slot-010",
           "layout-slot-011",
@@ -40453,11 +41802,13 @@
           "layout-slot-313",
           "layout-slot-314"
         ],
-        "file_sha256": "5aa3ed6ce901fcfa748801168a8c8a9c035a9b62db81b0d4681e726e803364cb",
         "macros": [
           "title",
           "title",
           "summary",
+          "canvas-text-001",
+          "canvas-text-002",
+          "canvas-text-003",
           "reading-guide-line-01",
           "reading-guide-line-02",
           "reading-guide-line-03",
@@ -40468,10 +41819,6 @@
           "evidence-check-source",
           "evidence-unresolved-for",
           "evidence-unresolved-source",
-          "interaction-hint",
-          "canvas-text-001",
-          "canvas-text-002",
-          "canvas-text-003",
           "canvas-attribute-001",
           "canvas-attribute-120",
           "canvas-text-020",
@@ -40536,6 +41883,16 @@
           "canvas-text-061",
           "canvas-text-062",
           "canvas-attribute-002",
+          "reading-guide-line-01",
+          "reading-guide-line-02",
+          "reading-guide-line-03",
+          "reading-guide-line-04",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
           "canvas-attribute-003",
           "canvas-text-070",
           "canvas-text-071",
@@ -40600,6 +41957,16 @@
           "canvas-text-150",
           "canvas-text-151",
           "canvas-text-152",
+          "reading-guide-line-01",
+          "reading-guide-line-02",
+          "reading-guide-line-03",
+          "reading-guide-line-04",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
           "canvas-attribute-004",
           "canvas-attribute-123",
           "canvas-text-153",
@@ -40667,6 +42034,16 @@
           "canvas-text-180",
           "canvas-text-181",
           "canvas-text-182",
+          "reading-guide-line-01",
+          "reading-guide-line-02",
+          "reading-guide-line-03",
+          "reading-guide-line-04",
+          "evidence-observed-for",
+          "evidence-observed-source",
+          "evidence-check-for",
+          "evidence-check-source",
+          "evidence-unresolved-for",
+          "evidence-unresolved-source",
           "canvas-attribute-005",
           "canvas-attribute-124",
           "canvas-text-183",
@@ -40784,6 +42161,18 @@
             "slot": "summary"
           },
           {
+            "macro": "canvas-text-001",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-002",
+            "slot": ""
+          },
+          {
+            "macro": "canvas-text-003",
+            "slot": ""
+          },
+          {
             "macro": "reading-guide-line-01",
             "slot": "evidence-and-notes"
           },
@@ -40822,22 +42211,6 @@
           {
             "macro": "evidence-unresolved-source",
             "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "interaction-hint",
-            "slot": "evidence-and-notes"
-          },
-          {
-            "macro": "canvas-text-001",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-002",
-            "slot": ""
-          },
-          {
-            "macro": "canvas-text-003",
-            "slot": ""
           },
           {
             "macro": "canvas-attribute-001",
@@ -41096,6 +42469,46 @@
             "slot": ""
           },
           {
+            "macro": "reading-guide-line-01",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-02",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-03",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-04",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
+          },
+          {
             "macro": "canvas-attribute-003",
             "slot": ""
           },
@@ -41350,6 +42763,46 @@
           {
             "macro": "canvas-text-152",
             "slot": ""
+          },
+          {
+            "macro": "reading-guide-line-01",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-02",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-03",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-04",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "canvas-attribute-004",
@@ -41618,6 +43071,46 @@
           {
             "macro": "canvas-text-182",
             "slot": ""
+          },
+          {
+            "macro": "reading-guide-line-01",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-02",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-03",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "reading-guide-line-04",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-observed-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-check-source",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-for",
+            "slot": "evidence-and-notes"
+          },
+          {
+            "macro": "evidence-unresolved-source",
+            "slot": "evidence-and-notes"
           },
           {
             "macro": "canvas-attribute-005",
@@ -42027,8 +43520,7 @@
             "macro": "canvas-text-198",
             "slot": ""
           }
-        ],
-        "structure_sha256": "13a8128abda155e11607d315e2ad6945314aff090b5fd20d949e6b547fa2bab4"
+        ]
       },
       "change_reason": "Added the complete technical design package, then refined it to four core diagrams while keeping isolated contract and release views out of the public graph-type set.",
       "source": null,

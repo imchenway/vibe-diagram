@@ -10,6 +10,7 @@ import shutil
 import stat
 import sys
 import tempfile
+from collections import Counter
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
@@ -86,6 +87,7 @@ SEQUENCE_REDESIGN_PATHS = (
 )
 ADDED_TEMPLATE_PATHS = (
     "business-flow/logic-flowchart.html",
+    "code-review/code-review-package.html",
     "technical-design/technical-design-package.html",
 )
 TEMPLATE_PATHS: Tuple[str, ...] = (
@@ -99,6 +101,7 @@ TEMPLATE_PATHS: Tuple[str, ...] = (
     "business-flow/logic-flowchart.html",
     "business-flow/stage-track.html",
     "business-flow/swimlane-flow.html",
+    "code-review/code-review-package.html",
     "code-sequence/async-callback-sequence.html",
     "code-sequence/participant-timeline.html",
     "code-sequence/retry-exception-sequence.html",
@@ -153,6 +156,7 @@ TEMPLATE_PATHS: Tuple[str, ...] = (
 REFERENCE_PATHS: Tuple[str, ...] = (
     "business-architecture.md",
     "business-flow.md",
+    "code-review.md",
     "code-sequence.md",
     "decision-communication.md",
     "delivery-acceptance.md",
@@ -178,7 +182,7 @@ CONTRACT_ASSET_PATHS: Tuple[str, ...] = (
     "contracts/template-routing.json",
 )
 UPDATE_MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
-CANONICAL_FILE_COUNT = 89
+CANONICAL_FILE_COUNT = 91
 ADAPTER_IDENTITIES = {
     "codex": (
         "README.md",
@@ -288,6 +292,7 @@ GENERIC_LIMIT_KEYS = frozenset({"nodes", "relations", "groups", "details"})
 ROUTING_FAMILY_KEYS = frozenset(
     {"default_template", "ready_templates", "blocked_templates"}
 )
+CODE_REVIEW_ROUTE_KEYS = frozenset({"family", "template", "primary_relation"})
 FAMILY_POLICY_KEYS = frozenset(
     {
         "schema_version",
@@ -309,7 +314,6 @@ FAMILY_POLICY_TEMPLATE_OPTIONAL_KEYS = frozenset(
         "requires_geometric_direction",
         "controls_mode",
         "requires_node_details",
-        "requires_node_detail_hint_in_reading_guide",
         "requires_localized_node_labels",
         "evidence_placement",
         "quality",
@@ -343,7 +347,7 @@ PRIMARY_DIRECTIONS = frozenset(
 )
 EVIDENCE_STATUSES = frozenset({"observed", "inferred", "proposed", "unresolved"})
 EVIDENCE_PLACEMENTS = frozenset(
-    {"before-primary-canvas", "after-primary-canvas"}
+    {"before-primary-canvas", "after-primary-canvas", "inside-primary-canvas"}
 )
 EVIDENCE_SOURCE_KINDS = frozenset(
     {"file", "line", "log", "test", "command", "user", "runtime", "design", "external"}
@@ -867,7 +871,7 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
         and relative.as_posix().endswith(".html")
     }
     if set(templates) != set(TEMPLATE_PATHS) or canonical_templates != set(TEMPLATE_PATHS):
-        raise _fail("template contract must contain the exact 60 canonical template paths")
+        raise _fail("template contract must contain the exact 61 canonical template paths")
     migrated = set()
     added = set()
     for relative, entry in templates.items():
@@ -942,7 +946,7 @@ def load_reference_contract(root: Path) -> Dict[str, Any]:
         and relative.name not in {RUNTIME_WORKFLOW_PATH, ADAPTIVE_REFERENCE_PATH}
     }
     if set(references) != set(REFERENCE_PATHS) or expected != set(REFERENCE_PATHS):
-        raise _fail("reference contract must contain the exact 11 canonical references")
+        raise _fail("reference contract must contain the exact 12 canonical references")
     for relative, digest in references.items():
         safe_relative_path(relative)
         _validate_sha256(digest, f"references.{relative}")
@@ -963,7 +967,7 @@ def load_interaction_contract(root: Path) -> Dict[str, Any]:
         "adaptive_viewport": "1",
         "semantic_relations": "1",
         "progressive_disclosure": "1",
-        "template_routing": "1",
+        "template_routing": "2",
     }:
         raise _fail("interaction contract versions are invalid")
     scope = contract["scope"]
@@ -977,10 +981,10 @@ def load_interaction_contract(root: Path) -> Dict[str, Any]:
         raise _fail("interaction contract scope is invalid")
     if (
         type(scope["artifact_shell_template_count"]) is not int
-        or scope["artifact_shell_template_count"] != 60
+        or scope["artifact_shell_template_count"] != 61
     ):
         raise _fail("interaction contract artifact shell template count is invalid")
-    if type(scope["generic_template_count"]) is not int or scope["generic_template_count"] != 54:
+    if type(scope["generic_template_count"]) is not int or scope["generic_template_count"] != 55:
         raise _fail("interaction contract generic template count is invalid")
     if type(scope["sequence_template_count"]) is not int or scope["sequence_template_count"] != 6:
         raise _fail("interaction contract sequence template count is invalid")
@@ -1167,7 +1171,7 @@ def _validated_migration_batches(value: Any) -> Dict[str, List[str]]:
     seen = set()
     result: Dict[str, List[str]] = {}
     for batch, paths in value.items():
-        if re.fullmatch(r"B(?:0[1-9]|1[0-4])", batch) is None:
+        if re.fullmatch(r"B(?:0[1-9]|1[0-5])", batch) is None:
             raise _fail(f"family policy migration batch id is invalid: {batch}")
         if (
             not isinstance(paths, list)
@@ -1196,8 +1200,8 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
         raise _fail("family policy sequence exclusions are invalid")
     _validated_migration_batches(policy["migration_batches"])
     families = policy["families"]
-    if not isinstance(families, dict) or len(families) != 10:
-        raise _fail("family policy must define exactly ten generic families")
+    if not isinstance(families, dict) or len(families) != 11:
+        raise _fail("family policy must define exactly eleven generic families")
     covered = set()
     for family, definition in families.items():
         if not isinstance(definition, dict) or set(definition) != FAMILY_POLICY_FAMILY_KEYS:
@@ -1384,16 +1388,16 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
             covered.add(f"{family}/{template_id}.html")
     expected = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
     if covered != expected:
-        raise _fail("family policy must cover the exact 54 non-sequence templates")
+        raise _fail("family policy must cover the exact 55 non-sequence templates")
     return policy
 
 
 def load_template_routing(path: Path) -> Dict[str, Any]:
     routing = read_json_unique(path)
-    if set(routing) != {"schema_version", "families"}:
+    if set(routing) != {"schema_version", "code_review_routes", "families"}:
         raise _fail("template routing contract has an invalid root schema")
-    if type(routing["schema_version"]) is not int or routing["schema_version"] != 1:
-        raise _fail("template routing schema_version must be integer 1")
+    if type(routing["schema_version"]) is not int or routing["schema_version"] != 2:
+        raise _fail("template routing schema_version must be integer 2")
     catalog: Dict[str, set[str]] = {}
     for relative in TEMPLATE_PATHS:
         family, filename = relative.split("/", 1)
@@ -1420,6 +1424,33 @@ def load_template_routing(path: Path) -> Dict[str, Any]:
             or default_template not in set(ready)
         ):
             raise _fail(f"template routing inventory is invalid: {family}")
+    routes = routing["code_review_routes"]
+    expected_routes = {
+        "architecture-boundary",
+        "cause-evidence",
+        "control-branch",
+        "exception-compensation",
+        "path-contract-drift",
+        "state-lifecycle",
+        "time-concurrency",
+    }
+    if not isinstance(routes, dict) or set(routes) != expected_routes:
+        raise _fail("code-review routes must cover the exact supported relation kinds")
+    for kind, route in routes.items():
+        if not isinstance(route, dict) or set(route) != CODE_REVIEW_ROUTE_KEYS:
+            raise _fail(f"code-review route definition is invalid: {kind}")
+        family = route["family"]
+        template = route["template"]
+        if (
+            not isinstance(family, str)
+            or not isinstance(template, str)
+            or not isinstance(route["primary_relation"], str)
+            or not route["primary_relation"].strip()
+            or family == "code-review"
+            or family not in families
+            or template not in families[family]["ready_templates"]
+        ):
+            raise _fail(f"code-review route target is not ready: {kind}")
     return routing
 
 
@@ -1529,6 +1560,7 @@ class _EvidenceSlotRecord:
     ledger_count: int
     entries: List[_EvidenceEntryRecord]
     before_canvas: bool
+    inside_canvas: bool
 
 
 class _GenericContractParser(HTMLParser):
@@ -1593,7 +1625,13 @@ class _GenericContractParser(HTMLParser):
             if self._evidence_slot is not None:
                 self.errors.append("Evidence-and-notes slots must not be nested.")
             else:
-                self._evidence_slot = _EvidenceSlotRecord(0, [], not self._saw_canvas)
+                self._evidence_slot = _EvidenceSlotRecord(
+                    0,
+                    [],
+                    not self._saw_canvas,
+                    self._canvas is not None
+                    or bool(values.get("data-reading-guide-for", "").strip()),
+                )
                 self.evidence_slots.append(self._evidence_slot)
         if starts_ledger:
             if self._evidence_slot is None:
@@ -2155,6 +2193,8 @@ def _validate_evidence_ledger(
             errors.append("The evidence boundary ledger must appear before the first diagram canvas.")
         if evidence_placement == "after-primary-canvas" and slot.before_canvas:
             errors.append("The evidence ledger must appear after the first diagram canvas.")
+        if evidence_placement == "inside-primary-canvas" and not slot.inside_canvas:
+            errors.append("The evidence boundary ledger must appear inside its diagram canvas.")
         if slot.ledger_count != 1:
             errors.append(
                 "Every generic evidence-and-notes slot requires exactly one data-evidence-ledger."
@@ -2823,19 +2863,6 @@ def generic_contract_errors(
         return [f"Could not parse generic diagram contract: {exc}."]
     errors = list(parser.errors)
     errors.extend(_validate_visible_language(html, parser.document_lang))
-    if definition.get("requires_node_detail_hint_in_reading_guide"):
-        if parser.node_detail_hint_count != 1:
-            errors.append(
-                "Detailed architecture templates require exactly one node-detail interaction hint."
-            )
-        if parser.node_detail_hint_reading_guide_count != 1:
-            errors.append(
-                "The node-detail interaction hint must be inside the interaction group of the evidence reading guide."
-            )
-        if parser.node_detail_hint_canvas_count:
-            errors.append(
-                "The node-detail interaction hint must not float inside the primary SVG canvas."
-            )
     if not parser.canvases:
         errors.append("Generic diagram contract requires at least one canvas.")
         return errors
@@ -2983,7 +3010,7 @@ def generic_contract_errors(
         _validate_evidence_ledger(
             parser,
             semantic_targets,
-            definition.get("evidence_placement", "before-primary-canvas"),
+            definition.get("evidence_placement", "inside-primary-canvas"),
         )
     )
     return list(dict.fromkeys(errors))
@@ -3059,26 +3086,45 @@ class _ArtifactShellParser(HTMLParser):
         self.title_copy_count = 0
         self.controls_container_count = 0
         self.title_order = -1
-        self.guide_order = -1
         self.canvas_orders: List[int] = []
-        self.guide_groups: List[str] = []
-        self.interaction_groups_in_controls = 0
-        self.evidence_entries: List[Tuple[str, str, str]] = []
+        self.canvas_ids: List[str] = []
+        self.guide_records: List[Dict[str, Any]] = []
         self.control_sets: List[Tuple[str, List[str]]] = []
-        self.controls_outside_guide: List[str] = []
-        self.controls_inside_title = 0
+        self.controls_outside_title: List[str] = []
+        self.controls_inside_guide = 0
         self.content_text: List[str] = []
         self.content_attributes: List[Tuple[str, str]] = []
         self.content_identifiers: List[Tuple[str, str]] = []
         self.content_slots: List[str] = []
         self._order = 0
-        self._stack: List[Tuple[str, bool, bool, bool, bool, bool, int]] = []
+        self._stack: List[
+            Tuple[str, bool, bool, bool, bool, bool, int, str, int]
+        ] = []
 
-    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, int]:
+    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, int, str, int]:
         if not self._stack:
-            return False, False, False, False, False, -1
-        _, title, guide, controls, main, content, control_set = self._stack[-1]
-        return title, guide, controls, main, content, control_set
+            return False, False, False, False, False, -1, "", -1
+        (
+            _,
+            title,
+            guide,
+            controls,
+            main,
+            content,
+            control_set,
+            canvas_id,
+            guide_index,
+        ) = self._stack[-1]
+        return (
+            title,
+            guide,
+            controls,
+            main,
+            content,
+            control_set,
+            canvas_id,
+            guide_index,
+        )
 
     def handle_starttag(
         self, tag: str, attrs: List[Tuple[str, Optional[str]]]
@@ -3092,16 +3138,33 @@ class _ArtifactShellParser(HTMLParser):
             parent_main,
             parent_content,
             parent_control_set,
+            parent_canvas_id,
+            parent_guide_index,
         ) = self._flags()
         starts_title = values.get("data-artifact-shell-title", "").strip() == "1"
         starts_guide = values.get("data-diagram-reading-guide", "").strip() == "1"
-        starts_controls_container = "data-reading-guide-controls" in values
+        starts_controls_container = "data-artifact-shell-controls" in values
+        starts_canvas = (
+            "data-diagram-canvas" in values or "data-sequence-canvas" in values
+        )
         in_title = parent_title or starts_title
         in_guide = parent_guide or starts_guide
         in_controls = parent_controls or starts_controls_container
         in_main = parent_main or tag.lower() == "main"
-        in_content = parent_content or (parent_main and not (in_title or in_guide))
+        in_content = (parent_content and not starts_guide) or (
+            parent_main and not (in_title or in_guide)
+        )
         control_set = parent_control_set
+        canvas_id = parent_canvas_id
+        guide_index = parent_guide_index
+
+        if starts_canvas:
+            canvas_id = (
+                values.get("data-diagram-id", "").strip()
+                or values.get("data-sequence-id", "").strip()
+            )
+            self.canvas_orders.append(self._order)
+            self.canvas_ids.append(canvas_id)
 
         if starts_title:
             self.title_count += 1
@@ -3110,7 +3173,16 @@ class _ArtifactShellParser(HTMLParser):
                 self.content_attributes.append(("artifact-shell-title-tag", tag.lower()))
         if starts_guide:
             self.guide_count += 1
-            self.guide_order = self._order
+            self.guide_records.append(
+                {
+                    "for": values.get("data-reading-guide-for", "").strip(),
+                    "canvas": canvas_id,
+                    "order": self._order,
+                    "groups": [],
+                    "evidence": [],
+                }
+            )
+            guide_index = len(self.guide_records) - 1
             if (
                 tag.lower() != "section"
                 or values.get("data-slot", "").strip() != "evidence-and-notes"
@@ -3121,21 +3193,21 @@ class _ArtifactShellParser(HTMLParser):
             self.title_copy_count += 1
         if starts_controls_container:
             self.controls_container_count += 1
-        if "data-reading-guide-group" in values and in_guide:
+        if (
+            "data-reading-guide-group" in values
+            and in_guide
+            and guide_index >= 0
+        ):
             guide_group = values["data-reading-guide-group"].strip()
-            self.guide_groups.append(guide_group)
-            if guide_group == "interaction" and in_controls:
-                self.interaction_groups_in_controls += 1
-        if "data-evidence-id" in values and in_guide:
-            self.evidence_entries.append(
+            self.guide_records[guide_index]["groups"].append(guide_group)
+        if "data-evidence-id" in values and in_guide and guide_index >= 0:
+            self.guide_records[guide_index]["evidence"].append(
                 (
                     values["data-evidence-id"].strip(),
                     values.get("data-evidence-status", "").strip(),
                     values.get("data-evidence-source-kind", "").strip(),
                 )
             )
-        if "data-diagram-canvas" in values or "data-sequence-canvas" in values:
-            self.canvas_orders.append(self._order)
 
         control_kind = ""
         if "data-diagram-controls" in values:
@@ -3145,10 +3217,10 @@ class _ArtifactShellParser(HTMLParser):
         if control_kind:
             self.control_sets.append((control_kind, []))
             control_set = len(self.control_sets) - 1
-            if not (in_guide and in_controls):
-                self.controls_outside_guide.append(control_kind)
-            if in_title:
-                self.controls_inside_title += 1
+            if not (in_title and in_controls):
+                self.controls_outside_title.append(control_kind)
+            if in_guide:
+                self.controls_inside_guide += 1
         if "data-diagram-zoom-control" in values and control_set >= 0:
             self.control_sets[control_set][1].append(
                 values["data-diagram-zoom-control"].strip()
@@ -3240,6 +3312,8 @@ class _ArtifactShellParser(HTMLParser):
                     in_main,
                     in_content,
                     control_set,
+                    canvas_id,
+                    guide_index,
                 )
             )
 
@@ -3265,54 +3339,69 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
     parser.close()
     errors: List[str] = []
     if parser.title_count != 1 or parser.title_copy_count != 1:
-        errors.append("artifact shell requires exactly one title and summary region")
-    if parser.guide_count != 1:
-        errors.append("artifact shell requires exactly one reading guide")
+        errors.append("Artifact shell requires exactly one title and summary region.")
     if parser.controls_container_count != 1:
-        errors.append("artifact shell requires exactly one right-side guide control region")
+        errors.append("Artifact shell requires exactly one title-side control region.")
     if (
         parser.title_order < 0
-        or parser.guide_order < 0
         or not parser.canvas_orders
-        or not parser.title_order < parser.guide_order < min(parser.canvas_orders)
+        or not parser.title_order < min(parser.canvas_orders)
     ):
-        errors.append("artifact shell order must be title, reading guide, then primary canvas")
-    if sorted(parser.guide_groups) != ["evidence", "interaction", "relations"]:
-        errors.append(
-            "reading guide requires exactly the relations, evidence, and interaction groups"
-        )
-    if parser.interaction_groups_in_controls != 1:
-        errors.append(
-            "reading guide interaction hint must sit above zoom controls in the right-side control region"
-        )
-    expected_evidence = {
-        ("evidence-observed", "observed", "file"),
-        ("evidence-check", "observed", "test"),
-        ("evidence-unresolved", "unresolved", "runtime"),
-    }
-    if set(parser.evidence_entries) != expected_evidence or len(parser.evidence_entries) != 3:
-        errors.append(
-            "reading guide requires the fixed observed, checked, and unresolved evidence states"
-        )
+        errors.append("Artifact shell order must place the title before every canvas.")
+    if any(not canvas_id for canvas_id in parser.canvas_ids):
+        errors.append("Artifact shell canvases must expose stable identifiers.")
+    evidence_ids: List[str] = []
+    guide_targets: List[str] = []
+    for record in parser.guide_records:
+        if not record["for"] or record["for"] != record["canvas"]:
+            errors.append(
+                "Every local reading guide must directly identify its containing canvas."
+            )
+        guide_targets.append(record["for"])
+        groups = record["groups"]
+        if (
+            not groups
+            or len(groups) != len(set(groups))
+            or any(SEMANTIC_SLUG_RE.fullmatch(group) is None for group in groups)
+        ):
+            errors.append(
+                "Every local reading guide must declare unique semantic groups."
+            )
+        evidence = record["evidence"]
+        evidence_ids.extend(entry[0] for entry in evidence)
+        if any(
+            not evidence_id
+            or SEMANTIC_SLUG_RE.fullmatch(evidence_id) is None
+            or status not in EVIDENCE_STATUSES
+            or source_kind not in EVIDENCE_SOURCE_KINDS
+            for evidence_id, status, source_kind in evidence
+        ):
+            errors.append(
+                "Local reading-guide evidence entries must use valid semantic ids, statuses, and source kinds."
+            )
+    if len(guide_targets) != len(set(guide_targets)):
+        errors.append("A canvas may own at most one local reading guide.")
+    if len(evidence_ids) != len(set(evidence_ids)):
+        errors.append("Local reading-guide evidence identifiers must be unique.")
     if not parser.control_sets:
-        errors.append("reading guide requires at least one zoom control set")
+        errors.append("Artifact title requires at least one zoom control set.")
     expected_modes = ["0.75", "0.9", "1", "fit"]
     for kind, modes in parser.control_sets:
         if modes != expected_modes:
             errors.append(
-                f"every {kind} zoom control set must expose 75%, 90%, 100%, and Auto"
+                f"Every {kind} zoom control set must expose 75%, 90%, 100%, and Auto in that order."
             )
-    if parser.controls_outside_guide or parser.controls_inside_title:
-        errors.append("all zoom controls must live at the right side of the reading guide")
+    if parser.controls_outside_title or parser.controls_inside_guide:
+        errors.append("All zoom controls must live in the title-side control region.")
     if any(
         name == "artifact-shell-title-tag" for name, _value in parser.content_attributes
     ):
-        errors.append("artifact shell title marker must be on a header")
+        errors.append("Artifact shell title marker must be on a header.")
     if any(
         name == "artifact-shell-guide-tag" for name, _value in parser.content_attributes
     ):
         errors.append(
-            "artifact shell reading guide must be a version-1 evidence-and-notes section"
+            "Artifact shell reading guide must be a version-1 evidence-and-notes section."
         )
     if require_content_neutral:
         if any(
@@ -3320,7 +3409,7 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
             for text in parser.content_text
         ):
             errors.append(
-                "canonical template content surfaces may contain only neutral canvas-text placeholders"
+                "Canonical template content surfaces may contain only neutral canvas-text placeholders."
             )
         if any(
             re.fullmatch(r"\{\{canvas-attribute-\d{3}\}\}", value) is None
@@ -3328,11 +3417,11 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
             if not name.startswith("artifact-shell-")
         ):
             errors.append(
-                "canonical template content attributes may contain only neutral canvas-attribute placeholders"
+                "Canonical template content attributes may contain only neutral canvas-attribute placeholders."
             )
         if any(re.fullmatch(r"layout-slot-\d{3}", slot) is None for slot in parser.content_slots):
             errors.append(
-                "canonical template content slots must use neutral layout-slot identifiers"
+                "Canonical template content slots must use neutral layout-slot identifiers."
             )
         identifier_patterns = {
             "data-diagram-node-id": r"layout-node-\d{3}",
@@ -3374,7 +3463,7 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
             for name, value in parser.content_identifiers
         ):
             errors.append(
-                "canonical template identifiers and references must use neutral layout identifiers"
+                "Canonical template identifiers and references must use neutral layout identifiers."
             )
     return list(dict.fromkeys(errors))
 
@@ -4204,6 +4293,409 @@ def _technical_design_package_errors(html: str) -> List[str]:
     return errors
 
 
+def _tag_attribute_map(source: str) -> Dict[str, str]:
+    return {
+        name.lower(): value
+        for name, _quote, value in re.findall(
+            r"([A-Za-z0-9:-]+)\s*=\s*([\"'])(.*?)\2",
+            source,
+            re.DOTALL,
+        )
+    }
+
+
+def _code_review_route_points(path_data: str) -> List[Tuple[float, float]]:
+    tokens = re.findall(r"[MHV]|-?\d+(?:\.\d+)?", path_data)
+    points: List[Tuple[float, float]] = []
+    cursor_x = 0.0
+    cursor_y = 0.0
+    index = 0
+    while index < len(tokens):
+        command = tokens[index]
+        index += 1
+        if command == "M" and index + 1 < len(tokens):
+            cursor_x = float(tokens[index])
+            cursor_y = float(tokens[index + 1])
+            index += 2
+        elif command == "H" and index < len(tokens):
+            cursor_x = float(tokens[index])
+            index += 1
+        elif command == "V" and index < len(tokens):
+            cursor_y = float(tokens[index])
+            index += 1
+        else:
+            return []
+        points.append((cursor_x, cursor_y))
+    return points
+
+
+def _code_review_package_errors(
+    html: str,
+    routing: Mapping[str, Any],
+) -> List[str]:
+    errors: List[str] = []
+    if len(
+        re.findall(
+            r"<[^>]+\bdata-code-review-package\s*=\s*([\"'])1\1",
+            html,
+            re.IGNORECASE,
+        )
+    ) != 1:
+        errors.append("code-review package requires exactly one package root")
+    if re.search(r"<iframe\b", html, re.IGNORECASE):
+        errors.append("code-review package must remain a single file without iframes")
+    active_canvases = tuple(
+        re.finditer(
+            r"<[^>]+(?=[^>]*\bdata-diagram-id\s*=\s*([\"'])"
+            r"(code-review-current|code-review-repair)\1)"
+            r"(?=[^>]*\bdata-diagram-controls-mode\s*=\s*([\"'])persistent\3)[^>]*>",
+            html,
+            re.IGNORECASE,
+        )
+    )
+    if [match.group(2) for match in active_canvases] != [
+        "code-review-current",
+        "code-review-repair",
+    ]:
+        errors.append(
+            "code-review package requires persistent current and repair canvases"
+        )
+    title_controls = re.search(
+        r"<div\b[^>]*\bdata-artifact-shell-controls(?:\s|=|>)",
+        html,
+        re.IGNORECASE,
+    )
+    finding_nav = re.search(
+        r"<nav\b[^>]*\bclass\s*=\s*([\"'])[^\"']*\breview-finding-nav\b[^\"']*\1",
+        html,
+        re.IGNORECASE,
+    )
+    comparison = re.search(
+        r"<section\b[^>]*\bclass\s*=\s*([\"'])[^\"']*\breview-comparison\b[^\"']*\1",
+        html,
+        re.IGNORECASE,
+    )
+    active_scenario = re.search(
+        r"<section\b[^>]*\bdata-review-scenario(?:\s|=|>)",
+        html,
+        re.IGNORECASE,
+    )
+    current_guide = re.search(
+        r"<section\b[^>]*\bdata-diagram-reading-guide\s*=\s*([\"'])1\1"
+        r"[^>]*\bdata-reading-guide-for\s*=\s*([\"'])code-review-current\2",
+        html,
+        re.IGNORECASE,
+    )
+    repair_guide = re.search(
+        r"<section\b[^>]*\bdata-diagram-reading-guide\s*=\s*([\"'])1\1"
+        r"[^>]*\bdata-reading-guide-for\s*=\s*([\"'])code-review-repair\2",
+        html,
+        re.IGNORECASE,
+    )
+    if (
+        not title_controls
+        or not finding_nav
+        or not comparison
+        or not current_guide
+        or not active_scenario
+        or not repair_guide
+        or len(active_canvases) != 2
+        or not (
+            title_controls.start()
+            < finding_nav.start()
+            < comparison.start()
+            < active_canvases[0].start()
+            < current_guide.start()
+            < active_scenario.start()
+            < active_canvases[1].start()
+            < repair_guide.start()
+        )
+    ):
+        errors.append(
+            "code-review DOM order must be title controls, vertical finding rail, current local guide and diagram, factual scenario, then repair local guide and diagram"
+        )
+    if "data-review-view-tab" in html or "review-view-tabs" in html:
+        errors.append("code-review current and repair views must not use view tabs")
+    if len(
+        re.findall(
+            r"<[^>]+\bdata-diagram-controls\s*=\s*([\"'])code-review-pair\1",
+            html,
+            re.IGNORECASE,
+        )
+    ) != 1:
+        errors.append("code-review paired canvases require one shared control group")
+    if "data-artifact-shell-controls" not in html:
+        errors.append(
+            "code-review shared controls must live in the artifact title region"
+        )
+    normalized_css = re.sub(r"\s+", "", html).lower()
+    review_canvas_rule = re.search(
+        r"\.review-canvas\[data-diagram-canvas\]\{(?P<body>[^}]*)\}",
+        normalized_css,
+    )
+    review_canvas_css = review_canvas_rule.group("body") if review_canvas_rule else ""
+    if (
+        review_canvas_rule is None
+        or "block-size:auto" not in review_canvas_css
+        or "max-block-size:none" not in review_canvas_css
+        or "overflow:visible" not in review_canvas_css
+        or "overscroll-behavior:auto" not in review_canvas_css
+        or re.search(r"overflow-[xy]:(?:auto|scroll)", review_canvas_css)
+    ):
+        errors.append(
+            "code-review canvases must grow with the page without nested scrolling"
+        )
+    if (
+        re.search(
+            r"\.review-layout\{[^}]*display:grid;[^}]*grid-template-columns:"
+            r"minmax\(15rem,18rem\)minmax\(0,1fr\)",
+            normalized_css,
+        )
+        is None
+        or re.search(
+            r"\.review-finding-nav\{[^}]*display:grid;[^}]*grid-template-columns:1fr",
+            normalized_css,
+        )
+        is None
+    ):
+        errors.append(
+            "code-review layout requires one vertical finding rail beside the three-part reader"
+        )
+    if re.search(
+        r"<div\b[^>]*\bdata-reading-guide-heading(?:\s|=|>)",
+        html,
+        re.IGNORECASE,
+    ):
+        errors.append("code-review package must not render a reading-guide heading card")
+    shell_parser = _ArtifactShellParser()
+    shell_parser.feed(html)
+    shell_parser.close()
+    review_guides = {
+        record["for"]: record
+        for record in shell_parser.guide_records
+        if record["for"] in {"code-review-current", "code-review-repair"}
+    }
+    expected_evidence_states = {
+        ("observed", "file"),
+        ("observed", "test"),
+        ("unresolved", "runtime"),
+    }
+    for canvas_id in ("code-review-current", "code-review-repair"):
+        record = review_guides.get(canvas_id)
+        if record is None:
+            errors.append(
+                f"code-review canvas {canvas_id} requires one local relation-and-evidence guide"
+            )
+            continue
+        if Counter(record["groups"]) != Counter({"relations": 1, "evidence": 1}):
+            errors.append(
+                f"code-review canvas {canvas_id} requires exactly the relations and evidence guide groups"
+            )
+        evidence = record["evidence"]
+        if (
+            len(evidence) != 3
+            or {(status, source_kind) for _id, status, source_kind in evidence}
+            != expected_evidence_states
+        ):
+            errors.append(
+                f"code-review canvas {canvas_id} requires observed implementation, completed check, and unresolved runtime evidence states"
+            )
+    definition_pattern = re.compile(
+        r"<template\b(?P<attrs>[^>]*\bdata-review-definition\s*=\s*"
+        r"([\"']).*?\2[^>]*)>(?P<body>.*?)</template>",
+        re.IGNORECASE | re.DOTALL,
+    )
+    definitions = tuple(definition_pattern.finditer(html))
+    if not 1 <= len(definitions) <= 12:
+        errors.append("code-review package requires 1 to 12 finding definitions")
+    definition_ids: List[str] = []
+    for definition in definitions:
+        attrs = _tag_attribute_map(definition.group("attrs"))
+        finding_id = attrs.get("data-review-definition", "")
+        kind = attrs.get("data-review-kind", "")
+        definition_ids.append(finding_id)
+        route = routing["code_review_routes"].get(kind)
+        if route is None:
+            errors.append(f"code-review finding {finding_id} has an unresolved route")
+            continue
+        expected_route = (route["family"], route["template"])
+        if (
+            attrs.get("data-review-route-family", ""),
+            attrs.get("data-review-route-template", ""),
+        ) != expected_route:
+            errors.append(f"code-review finding {finding_id} route metadata is invalid")
+        body = definition.group("body")
+        if len(
+            re.findall(
+                r"\bdata-review-scenario-definition\s*=\s*([\"'])1\1",
+                body,
+                re.IGNORECASE,
+            )
+        ) != 1:
+            errors.append(f"code-review finding {finding_id} requires one factual scenario")
+        view_matches = tuple(
+            re.finditer(
+                r"<section\b(?=[^>]*\bdata-review-view\s*=\s*"
+                r"([\"'])(current|repair)\1)[^>]*>",
+                body,
+                re.IGNORECASE,
+            )
+        )
+        if [match.group(2) for match in view_matches] != ["current", "repair"]:
+            errors.append(f"code-review finding {finding_id} requires both views")
+            continue
+        signatures = []
+        for index, match in enumerate(view_matches):
+            view_attrs = _tag_attribute_map(match.group(0))
+            if (
+                view_attrs.get("data-reuse-family", ""),
+                view_attrs.get("data-reuse-template", ""),
+            ) != expected_route:
+                errors.append(
+                    f"code-review finding {finding_id} view reuse metadata is invalid"
+                )
+            if view_attrs.get("data-review-topology", "") != kind:
+                errors.append(
+                    f"code-review finding {finding_id} view topology is invalid"
+                )
+            end = view_matches[index + 1].start() if index + 1 < len(view_matches) else len(body)
+            view_body = body[match.start() : end]
+            themes = tuple(
+                re.findall(
+                    r"\bdata-node-theme\s*=\s*([\"'])(.*?)\1",
+                    view_body,
+                    re.IGNORECASE | re.DOTALL,
+                )
+            )
+            paths = tuple(
+                (
+                    relation_kind,
+                    path_data,
+                )
+                for _quote, relation_kind, _dquote, path_data in re.findall(
+                    r"<path\b(?=[^>]*\bdata-diagram-visible-relation-id)"
+                    r"(?=[^>]*\bdata-relation-kind\s*=\s*([\"'])(.*?)\1)"
+                    r"(?=[^>]*\bd\s*=\s*([\"'])(.*?)\3)[^>]*>",
+                    view_body,
+                    re.IGNORECASE | re.DOTALL,
+                )
+            )
+            if any(
+                not points
+                or any(
+                    abs(target_x - source_x) + abs(target_y - source_y) < 35
+                    for (source_x, source_y), (target_x, target_y)
+                    in zip(points, points[1:])
+                )
+                for _relation_kind, path_data in paths
+                for points in [_code_review_route_points(path_data)]
+            ):
+                errors.append(
+                    f"code-review finding {finding_id} contains an elbow route without visible turn clearance"
+                )
+            participant_tags = re.findall(
+                r"<[^>]+\bdata-participant-id\s*=\s*([\"']).*?\1[^>]*>",
+                view_body,
+                re.IGNORECASE | re.DOTALL,
+            )
+            participant_signatures = []
+            for participant_tag in re.finditer(
+                r"<[^>]+\bdata-participant-id\s*=\s*([\"']).*?\1[^>]*>",
+                view_body,
+                re.IGNORECASE | re.DOTALL,
+            ):
+                participant_attrs = _tag_attribute_map(participant_tag.group(0))
+                participant_signatures.append(
+                    (
+                        participant_attrs.get("data-participant-role", ""),
+                        participant_attrs.get("data-participant-x", ""),
+                        participant_attrs.get("data-participant-y", ""),
+                        participant_attrs.get("data-participant-width", ""),
+                        participant_attrs.get("data-participant-height", ""),
+                    )
+                )
+            expected_participants = 4 if kind == "time-concurrency" else 0
+            if (
+                not themes
+                or not paths
+                or len(participant_tags) != expected_participants
+                or any(not all(signature) for signature in participant_signatures)
+            ):
+                errors.append(
+                    f"code-review finding {finding_id} view lacks nodes, relations, or participants"
+                )
+            signatures.append(
+                (
+                    tuple(theme for _quote, theme in themes),
+                    tuple(participant_signatures),
+                    paths,
+                )
+            )
+        if len(signatures) == 2 and signatures[0] != signatures[1]:
+            errors.append(
+                f"code-review finding {finding_id} current and repair topology differs"
+            )
+    if len(definition_ids) != len(set(definition_ids)):
+        errors.append("code-review finding identifiers must be unique")
+    finding_tabs = re.findall(
+        r"\bdata-review-finding-tab\s*=\s*([\"'])(.*?)\1",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if [finding_id for _quote, finding_id in finding_tabs] != definition_ids:
+        errors.append("code-review finding navigation differs from definition order")
+    fallback_ids = re.findall(
+        r"\bdata-review-fallback-finding\s*=\s*([\"'])(.*?)\1",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if [finding_id for _quote, finding_id in fallback_ids] != definition_ids:
+        errors.append("code-review print fallback differs from definition order")
+    if len(
+        re.findall(
+            r"\bdata-review-fallback-scenario\s*=\s*([\"'])1\1",
+            html,
+            re.IGNORECASE,
+        )
+    ) != len(definition_ids):
+        errors.append("code-review print fallback requires one factual scenario per finding")
+    for attribute in ("data-review-current-title", "data-review-repair-title"):
+        visible_title = re.search(
+            rf"<h2\b[^>]*\b{attribute}(?:\s|=|>)[^>]*>(?P<body>.*?)</h2>",
+            html,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if visible_title and "｜" in re.sub(r"<[^>]+>", "", visible_title.group("body")):
+            errors.append(
+                "code-review visible diagram headings must omit the topology type prefix"
+            )
+    title_match = re.search(
+        r"<h1\b[^>]*>(?P<body>.*?)</h1>",
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if title_match:
+        title_text = re.sub(r"<[^>]+>", "", title_match.group("body")).strip()
+        if "{{" not in title_text:
+            title_parts = [part.strip() for part in title_text.split("｜")]
+            if len(title_parts) != 2 or not all(title_parts):
+                errors.append(
+                    "code-review page title must use the code review｜title description form"
+                )
+    if len(re.findall(r"<script\b[^>]*\bdata-code-review-kernel", html)) != 1:
+        errors.append("code-review package requires one interaction kernel")
+    if any(
+        token not in html
+        for token in (
+            "html:not(.review-enhanced)",
+            "@media print",
+            ".review-static-fallback",
+        )
+    ):
+        errors.append("code-review package lacks no-script or print expansion")
+    return errors
+
+
 def _canonical_snapshot(path: Path, html: str) -> Dict[str, Any]:
     slots, macros, pairs = _slots_macros_pairs(html)
     return {
@@ -4339,9 +4831,10 @@ def validate_canonical(root: Path) -> None:
 
     asset_requirements = {
         "assets/contracts/artifact-shell/v1.css": (
+            "data-diagram-title-region",
+            "data-artifact-shell-controls",
             "data-diagram-reading-guide",
-            "data-reading-guide-controls",
-            "data-reading-guide-controls-state",
+            "data-reading-guide-for",
             "data-sequence-toolbar",
         ),
         "assets/contracts/artifact-shell/v1.js": (
@@ -4357,7 +4850,8 @@ def validate_canonical(root: Path) -> None:
             "data-architecture-landmark-for",
             "node-content-overflow",
             "detail-trigger-empty",
-            "readingGuideControlsState",
+            "reflectTitleControlState",
+            "data-artifact-shell-controls",
             "ResizeObserver",
         ),
         "assets/contracts/adaptive-viewport/v1.css": ("data-diagram-canvas", "--diagram-scale"),
@@ -4425,7 +4919,11 @@ def validate_canonical(root: Path) -> None:
         if 'data-diagram-controls-mode="persistent"' in html:
             persistent_control_templates.append(relative)
         _validate_template_html(relative, html)
-        shell_errors = artifact_shell_errors(html, require_content_neutral=True)
+        is_code_review = relative == "code-review/code-review-package.html"
+        shell_errors = artifact_shell_errors(
+            html,
+            require_content_neutral=not is_code_review,
+        )
         shell_errors.extend(_diagram_view_title_errors(html))
         shell_errors.extend(
             artifact_shell_kernel_errors(
@@ -4466,7 +4964,33 @@ def validate_canonical(root: Path) -> None:
                     f"invalid technical design package {relative}: "
                     + "; ".join(package_errors)
                 )
-        if relative in SEQUENCE_REDESIGN_PATHS:
+        if is_code_review:
+            package_errors = _code_review_package_errors(html, routing)
+            package_errors.extend(
+                adaptive_kernel_errors(
+                    html,
+                    files[
+                        PurePosixPath("assets/contracts/adaptive-viewport/v1.css")
+                    ].read_text(encoding="utf-8"),
+                    files[
+                        PurePosixPath("assets/contracts/adaptive-viewport/v1.js")
+                    ].read_text(encoding="utf-8"),
+                )
+            )
+            package_errors.extend(
+                semantic_relations_kernel_errors(
+                    html,
+                    files[
+                        PurePosixPath("assets/contracts/semantic-relations/v1.css")
+                    ].read_text(encoding="utf-8"),
+                )
+            )
+            if package_errors:
+                raise _fail(
+                    f"invalid code-review package {relative}: "
+                    + "; ".join(package_errors)
+                )
+        elif relative in SEQUENCE_REDESIGN_PATHS:
             sequence_errors = _sequence_errors(html)
             template_id = Path(relative).stem
             if template_id in set(routing["families"][family]["ready_templates"]):
@@ -4535,10 +5059,11 @@ def validate_canonical(root: Path) -> None:
     if len(sequence_digests) != 1:
         raise _fail("the six sequence templates must embed one identical interaction kernel")
     if persistent_control_templates != [
-        "technical-design/technical-design-package.html"
+        "code-review/code-review-package.html",
+        "technical-design/technical-design-package.html",
     ]:
         raise _fail(
-            "persistent percentage controls are reserved for the technical design package"
+            "persistent percentage controls are reserved for code-review and technical-design packages"
         )
 
 

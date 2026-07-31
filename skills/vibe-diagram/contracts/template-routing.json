@@ -1,5 +1,42 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "code_review_routes": {
+    "architecture-boundary": {
+      "family": "system-architecture",
+      "template": "component-breakdown",
+      "primary_relation": "module dependency, ownership boundary, or responsibility placement"
+    },
+    "cause-evidence": {
+      "family": "fault-debugging",
+      "template": "causal-chain",
+      "primary_relation": "evidence, cause, impact, remediation, and verification"
+    },
+    "control-branch": {
+      "family": "business-flow",
+      "template": "logic-flowchart",
+      "primary_relation": "condition, branch, merge, or bounded decision loop"
+    },
+    "exception-compensation": {
+      "family": "business-flow",
+      "template": "exception-branch-flow",
+      "primary_relation": "failure origin, compensation, retry, fallback, or rejoin"
+    },
+    "path-contract-drift": {
+      "family": "business-flow",
+      "template": "dual-path-swimlane",
+      "primary_relation": "two implementation paths, contract drift, or a missing handoff"
+    },
+    "state-lifecycle": {
+      "family": "state-data-model",
+      "template": "state-machine",
+      "primary_relation": "durable state, lifecycle transition, retry limit, or terminal condition"
+    },
+    "time-concurrency": {
+      "family": "code-sequence",
+      "template": "async-callback-sequence",
+      "primary_relation": "time ordering, concurrency, lock ownership, lease, or transaction interleaving"
+    }
+  },
   "families": {
     "business-architecture": {
       "default_template": "capability-domain-map",
@@ -15,6 +52,11 @@
       "default_template": "async-callback-sequence",
       "ready_templates": ["async-callback-sequence"],
       "blocked_templates": ["participant-timeline", "retry-exception-sequence", "transaction-boundary-sequence"]
+    },
+    "code-review": {
+      "default_template": "code-review-package",
+      "ready_templates": ["code-review-package"],
+      "blocked_templates": []
     },
     "decision-communication": {
       "default_template": "option-matrix-path",

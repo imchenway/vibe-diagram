@@ -2,6 +2,7 @@
   "references": {
     "business-architecture.md": "a58339e0c238b91f31affd713a48a264399792083dbe40b8e85f2b2239f3e5fd",
     "business-flow.md": "1409f68577a298b648132745513af151a3678f58f209f8c5ed7ed171af078ce7",
+    "code-review.md": "d7fd1701794d5d023881d17551fbe963e1405f75eecbcf3ea3aad305d8c0e459",
     "code-sequence.md": "92b4268fab87072448e7be338529d5410e4fc320f592457e340b6e285e03b21f",
     "decision-communication.md": "65e05bb5c72b779e7798e316b96702fdf92e92fb78adb836d0c736a0fe529c69",
     "delivery-acceptance.md": "c58d124e129a212b56718a2d9e91ea269cc6f19ec0367dcdcff17a65a6820365",

@@ -26,13 +26,9 @@
   const localizeShell = () => {
     const language = (document.documentElement.lang || "").toLowerCase();
     const isChinese = language === "zh" || language.startsWith("zh-");
-    document.querySelectorAll("[data-reading-guide-heading]").forEach((heading) => {
-      heading.remove();
-    });
     const groupLabels = {
       relations: isChinese ? "\u5173\u7cfb\u7c7b\u578b" : "Line types",
-      evidence: isChinese ? "\u8bc1\u636e\u72b6\u6001" : "Evidence states",
-      interaction: isChinese ? "\u4ea4\u4e92\u65b9\u5f0f" : "Interaction"
+      evidence: isChinese ? "\u8bc1\u636e\u72b6\u6001" : "Evidence states"
     };
     document.querySelectorAll("[data-reading-guide-group]").forEach((group) => {
       const label = group.querySelector(":scope > [data-reading-guide-group-title]");
@@ -47,12 +43,6 @@
     document.querySelectorAll("[data-evidence-id] > b").forEach((label) => {
       const text = evidenceLabels[label.parentElement?.dataset.evidenceId];
       if (text) label.textContent = text;
-    });
-    document.querySelectorAll(
-      "[data-interaction-hint='node-detail'] [data-reading-guide-item] b"
-    ).forEach((label) => {
-      label.textContent =
-        "\u70b9\u51fb\u4efb\u4e00\u4e3b\u8282\u70b9\u67e5\u770b\u5bf9\u5e94\u8be6\u60c5";
     });
     document.querySelectorAll(
       "[data-diagram-zoom-control='fit'], [data-sequence-scale='fit']"
@@ -560,22 +550,13 @@
     return !controls.hidden;
   };
 
-  const reflectReadingGuideCapability = (canvas, controls) => {
-    const controlRegion = controls?.closest("[data-reading-guide-controls]");
-    const guide = controlRegion?.closest('[data-diagram-reading-guide="1"]');
-    if (!controlRegion || !guide) return;
-    const hasDetails = Array.from(canvas.querySelectorAll(detailTriggerSelector))
-      .some((trigger) => (trigger.dataset.detailFor || "").trim());
-    const hasZoom = controlsAreAvailable(controls);
-    const capability = hasDetails && hasZoom
-      ? "details-zoom"
-      : hasDetails
-        ? "details"
-        : hasZoom
-          ? "zoom"
-          : "none";
-    controlRegion.dataset.interactionCapability = capability;
-    guide.dataset.readingGuideControlsState = capability === "none" ? "empty" : "active";
+  const reflectTitleControlState = (controls) => {
+    const controlRegion = controls?.closest("[data-artifact-shell-controls]");
+    if (!controlRegion) return;
+    const hasVisibleControl = Array.from(
+      controlRegion.querySelectorAll("[data-diagram-controls], [data-sequence-toolbar]")
+    ).some(controlsAreAvailable);
+    controlRegion.dataset.controlsState = hasVisibleControl ? "active" : "empty";
   };
 
   const auditControls = (canvas, addIssue) => {
@@ -607,11 +588,11 @@
       addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
       return;
     }
-    reflectReadingGuideCapability(canvas, controls);
-    const controlRegion = controls.closest("[data-reading-guide-controls]");
-    const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
-    if (!controlRegion || !interaction) {
-      addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
+    reflectTitleControlState(controls);
+    const controlRegion = controls.closest("[data-artifact-shell-controls]");
+    const titleRegion = controlRegion?.closest("[data-artifact-shell-title='1']");
+    if (!controlRegion || !titleRegion) {
+      addIssue("title-control-region-missing", canvasId || "unnamed-canvas");
       return;
     }
     const scaleAttribute = controls.hasAttribute("data-sequence-toolbar")
@@ -625,28 +606,27 @@
     if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
       addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
     }
-    const guide = controlRegion.closest("[data-diagram-reading-guide='1']");
-    if (guide && isRendered(guide) && isRendered(canvas)) {
+    const guide = canvas.querySelector(
+      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    );
+    if (!guide) {
+      addIssue("local-reading-guide-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    if (isRendered(guide) && isRendered(canvas)) {
       const guideRect = guide.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();
       if (
-        Math.abs(guideRect.left - canvasRect.left) > epsilon ||
-        Math.abs(guideRect.right - canvasRect.right) > epsilon
+        guideRect.left < canvasRect.left - epsilon ||
+        guideRect.top < canvasRect.top - epsilon ||
+        guideRect.right > canvasRect.right + epsilon ||
+        guideRect.bottom > canvasRect.bottom + epsilon
       ) {
         addIssue(
-          "guide-canvas-horizontal-misalignment",
-          `${Math.round(guideRect.left - canvasRect.left)}:${Math.round(guideRect.right - canvasRect.right)}`
+          "local-guide-outside-canvas",
+          `${Math.round(guideRect.left - canvasRect.left)}:${Math.round(guideRect.top - canvasRect.top)}`
         );
       }
-    }
-    const interactionRect = interaction.getBoundingClientRect();
-    const controlsRect = controls.getBoundingClientRect();
-    if (
-      isVisible(interaction) &&
-      isVisible(controls) &&
-      interactionRect.bottom > controlsRect.top + epsilon
-    ) {
-      addIssue("interaction-not-above-controls", canvasId || "unnamed-canvas");
     }
   };
 
@@ -786,7 +766,9 @@
     document.fonts?.ready.then(scheduleAudit, scheduleAudit);
     if ("ResizeObserver" in globalThis) {
       const observer = new ResizeObserver(scheduleAudit);
-      document.querySelectorAll(`${auditRoots}, [data-diagram-reading-guide="1"]`).forEach(
+      document.querySelectorAll(
+        `${auditRoots}, [data-diagram-reading-guide="1"], [data-artifact-shell-controls]`
+      ).forEach(
         (element) => observer.observe(element)
       );
     } else {

@@ -78,44 +78,46 @@ h1{margin:0 0 10px;font-size:clamp(24px,2.8vw,34px);line-height:1.18;letter-spac
 </style>
 <style data-artifact-shell-kernel="1">
 [data-diagram-title-region] {
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "copy controls";
+  align-items: start;
+  gap: .75rem 1.5rem;
   max-inline-size: 100%;
 }
 
 [data-diagram-title-copy] {
+  grid-area: copy;
   min-inline-size: 0;
 }
 
-[data-diagram-reading-guide="1"] {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas: "groups controls";
-  align-items: center;
-  gap: .5rem 1rem;
-  inline-size: 100%;
-  margin-block: .5rem .75rem;
-  padding: .625rem .75rem;
-  border: 1px solid #b8cde1;
-  border-radius: .625rem;
-  background: #f8fbfe;
+[data-artifact-shell-controls] {
+  grid-area: controls;
+  display: flex;
+  min-inline-size: max-content;
+  max-inline-size: 100%;
+  align-items: flex-start;
+  justify-content: flex-end;
 }
 
-[data-diagram-reading-guide="1"][data-reading-guide-controls-state="empty"] {
+[data-artifact-shell-controls][data-controls-state="empty"] {
+  display: none;
+}
+
+[data-diagram-reading-guide="1"][data-reading-guide-for] {
+  display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "groups";
-}
-
-[data-reading-guide-heading] {
-  display: none;
-}
-
-[data-reading-guide-heading] strong {
-  color: #17324d;
-  font-size: .875rem;
-}
-
-[data-reading-guide-heading] span {
-  display: none;
+  align-items: start;
+  gap: 0;
+  inline-size: fit-content;
+  max-inline-size: calc(100% - 1.5rem);
+  margin: .75rem .75rem 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 [data-reading-guide-groups] {
@@ -126,7 +128,7 @@ h1{margin:0 0 10px;font-size:clamp(24px,2.8vw,34px);line-height:1.18;letter-spac
     "relations"
     "evidence";
   align-items: start;
-  gap: .45rem;
+  gap: .42rem;
   min-inline-size: 0;
 }
 
@@ -141,14 +143,9 @@ h1{margin:0 0 10px;font-size:clamp(24px,2.8vw,34px);line-height:1.18;letter-spac
 [data-reading-guide-group] {
   display: flex;
   align-items: center;
-  gap: .4rem .65rem;
+  gap: .35rem .6rem;
   min-inline-size: 0;
   flex-wrap: wrap;
-}
-
-[data-reading-guide-group] + [data-reading-guide-group] {
-  padding-inline-start: 0;
-  border-inline-start: 0;
 }
 
 [data-reading-guide-group-title] {
@@ -164,9 +161,6 @@ h1{margin:0 0 10px;font-size:clamp(24px,2.8vw,34px);line-height:1.18;letter-spac
   font-weight: 900;
   letter-spacing: .025em;
   white-space: nowrap;
-}
-
-[data-reading-guide-groups] [data-reading-guide-group-title] {
   box-shadow: 0 .08rem .2rem rgba(20, 57, 92, .08);
 }
 
@@ -271,36 +265,6 @@ h1{margin:0 0 10px;font-size:clamp(24px,2.8vw,34px);line-height:1.18;letter-spac
   background: #fff6de;
 }
 
-[data-reading-guide-controls] {
-  grid-area: controls;
-  display: flex;
-  min-inline-size: max-content;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-end;
-  gap: .45rem;
-}
-
-[data-reading-guide-controls][data-interaction-capability="none"] {
-  display: none;
-}
-
-[data-reading-guide-controls][data-interaction-capability="details"] {
-  min-inline-size: 0;
-  max-inline-size: min(100%, 24rem);
-  justify-self: end;
-}
-
-[data-reading-guide-controls][data-interaction-capability="details"] [data-reading-guide-group="interaction"] {
-  padding-block-end: .1rem;
-}
-
-[data-reading-guide-controls] [data-reading-guide-group="interaction"] {
-  justify-content: flex-start;
-  padding: .1rem .35rem 0;
-  border-inline-start: 0;
-}
-
 [data-diagram-controls],
 [data-sequence-toolbar] {
   position: relative;
@@ -379,53 +343,45 @@ h1{margin:0 0 10px;font-size:clamp(24px,2.8vw,34px);line-height:1.18;letter-spac
 }
 
 @media (max-width: 64rem) {
-  [data-diagram-reading-guide="1"] {
-    grid-template-columns: 1fr;
+  [data-diagram-title-region] {
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      "heading"
-      "groups"
+      "copy"
       "controls";
   }
 
-  [data-reading-guide-controls] {
+  [data-artifact-shell-controls] {
     min-inline-size: 0;
-    max-inline-size: 100%;
-    align-items: flex-start;
     justify-content: flex-start;
     justify-self: stretch;
-  }
-
-  [data-reading-guide-group] + [data-reading-guide-group] {
-    padding-inline-start: 0;
-    border-inline-start: 0;
   }
 }
 
 @media (max-width: 48rem) {
-  [data-reading-guide-heading],
-  [data-reading-guide-groups] {
-    align-items: flex-start;
-    flex-direction: column;
+  [data-diagram-reading-guide="1"] {
+    inline-size: calc(100% - 1rem);
+    max-inline-size: calc(100% - 1rem);
+    margin: .5rem .5rem 0;
   }
 
   [data-reading-guide-group] {
     align-items: flex-start;
   }
-
 }
 
 @media print {
-  [data-diagram-reading-guide="1"] {
-    break-inside: avoid;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "heading"
-      "groups";
-    background: #fff;
+  [data-diagram-title-region] {
+    display: block;
   }
 
-  [data-reading-guide-controls] {
+  [data-artifact-shell-controls] {
     display: none !important;
+  }
+
+  [data-diagram-reading-guide="1"] {
+    break-inside: avoid;
+    background: #fff;
+    box-shadow: none;
   }
 }
 </style>
@@ -818,19 +774,23 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
 </head>
 <body>
 <main data-diagram-type="feature-iteration" data-template-family="feature-iteration" data-template-id="release-rollback-track" data-template-layout="release-observe-rollback-recovery" data-template-contract-version="2">
-  <header data-diagram-title-region data-artifact-shell-title="1"><div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div></header>
-  <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide">
-    <div data-reading-guide-heading><strong>Reading guide</strong></div>
-    <div data-reading-guide-groups>
-      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
-      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b></article><article data-evidence-id="evidence-check" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b></article><article data-evidence-id="evidence-unresolved" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b></article></div>
-    </div>
-    <div data-reading-guide-controls aria-label="Diagram scale controls">
-      <div data-reading-guide-group="interaction" data-interaction-hint="node-detail" data-node-detail-interaction-hint="1"><span data-reading-guide-group-title>Interaction</span><span data-reading-guide-item>☝️ <b>{{interaction-hint}}</b></span></div>
+  <header data-diagram-title-region data-artifact-shell-title="1"><div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
+    <div data-artifact-shell-controls aria-label="Diagram scale controls">
+
       <div data-diagram-controls="release-rollback-track" aria-label="Diagram zoom controls"><button type="button" data-diagram-zoom-control="0.75" aria-pressed="false">75%</button><button type="button" data-diagram-zoom-control="0.9" aria-pressed="false">90%</button><button type="button" data-diagram-zoom-control="1" aria-pressed="false">100%</button><button type="button" data-diagram-zoom-control="fit" aria-pressed="true">Auto</button><output data-diagram-zoom-status aria-live="polite">Fit width</output></div>
     </div>
-  </section>
+  </header>
+
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="release-rollback-track" data-diagram-profile="graph" data-diagram-width="contained" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="overflow" data-diagram-topology="release-observe-threshold-rollback-recovery" data-primary-direction="west-to-east">
+    <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide" data-reading-guide-for="release-rollback-track">
+
+    <div data-reading-guide-groups>
+      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
+      <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed-release-rollback-track" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b></article><article data-evidence-id="evidence-check-release-rollback-track" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b></article><article data-evidence-id="evidence-unresolved-release-rollback-track" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b></article></div>
+    </div>
+
+  </section>
+
     <section data-diagram-stage data-reading-guide="{{canvas-attribute-042}}" class="template-layout release-rollback-track" aria-label="{{canvas-attribute-041}}"><svg class="flow-map" data-diagram-svg="1" data-architecture-canvas="1" viewBox="0 0 1200 600" role="img" aria-labelledby="release-svg-title release-svg-desc" preserveAspectRatio="xMidYMid meet">
     <title id="release-svg-title">{{canvas-text-001}}</title><desc id="release-svg-desc">{{canvas-text-002}}</desc>
     <defs>
@@ -1512,13 +1472,9 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
   const localizeShell = () => {
     const language = (document.documentElement.lang || "").toLowerCase();
     const isChinese = language === "zh" || language.startsWith("zh-");
-    document.querySelectorAll("[data-reading-guide-heading]").forEach((heading) => {
-      heading.remove();
-    });
     const groupLabels = {
       relations: isChinese ? "\u5173\u7cfb\u7c7b\u578b" : "Line types",
-      evidence: isChinese ? "\u8bc1\u636e\u72b6\u6001" : "Evidence states",
-      interaction: isChinese ? "\u4ea4\u4e92\u65b9\u5f0f" : "Interaction"
+      evidence: isChinese ? "\u8bc1\u636e\u72b6\u6001" : "Evidence states"
     };
     document.querySelectorAll("[data-reading-guide-group]").forEach((group) => {
       const label = group.querySelector(":scope > [data-reading-guide-group-title]");
@@ -1533,12 +1489,6 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
     document.querySelectorAll("[data-evidence-id] > b").forEach((label) => {
       const text = evidenceLabels[label.parentElement?.dataset.evidenceId];
       if (text) label.textContent = text;
-    });
-    document.querySelectorAll(
-      "[data-interaction-hint='node-detail'] [data-reading-guide-item] b"
-    ).forEach((label) => {
-      label.textContent =
-        "\u70b9\u51fb\u4efb\u4e00\u4e3b\u8282\u70b9\u67e5\u770b\u5bf9\u5e94\u8be6\u60c5";
     });
     document.querySelectorAll(
       "[data-diagram-zoom-control='fit'], [data-sequence-scale='fit']"
@@ -2046,22 +1996,13 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
     return !controls.hidden;
   };
 
-  const reflectReadingGuideCapability = (canvas, controls) => {
-    const controlRegion = controls?.closest("[data-reading-guide-controls]");
-    const guide = controlRegion?.closest('[data-diagram-reading-guide="1"]');
-    if (!controlRegion || !guide) return;
-    const hasDetails = Array.from(canvas.querySelectorAll(detailTriggerSelector))
-      .some((trigger) => (trigger.dataset.detailFor || "").trim());
-    const hasZoom = controlsAreAvailable(controls);
-    const capability = hasDetails && hasZoom
-      ? "details-zoom"
-      : hasDetails
-        ? "details"
-        : hasZoom
-          ? "zoom"
-          : "none";
-    controlRegion.dataset.interactionCapability = capability;
-    guide.dataset.readingGuideControlsState = capability === "none" ? "empty" : "active";
+  const reflectTitleControlState = (controls) => {
+    const controlRegion = controls?.closest("[data-artifact-shell-controls]");
+    if (!controlRegion) return;
+    const hasVisibleControl = Array.from(
+      controlRegion.querySelectorAll("[data-diagram-controls], [data-sequence-toolbar]")
+    ).some(controlsAreAvailable);
+    controlRegion.dataset.controlsState = hasVisibleControl ? "active" : "empty";
   };
 
   const auditControls = (canvas, addIssue) => {
@@ -2093,11 +2034,11 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
       addIssue("zoom-controls-missing", canvasId || "unnamed-canvas");
       return;
     }
-    reflectReadingGuideCapability(canvas, controls);
-    const controlRegion = controls.closest("[data-reading-guide-controls]");
-    const interaction = controlRegion?.querySelector("[data-reading-guide-group='interaction']");
-    if (!controlRegion || !interaction) {
-      addIssue("reading-guide-control-stack-missing", canvasId || "unnamed-canvas");
+    reflectTitleControlState(controls);
+    const controlRegion = controls.closest("[data-artifact-shell-controls]");
+    const titleRegion = controlRegion?.closest("[data-artifact-shell-title='1']");
+    if (!controlRegion || !titleRegion) {
+      addIssue("title-control-region-missing", canvasId || "unnamed-canvas");
       return;
     }
     const scaleAttribute = controls.hasAttribute("data-sequence-toolbar")
@@ -2111,28 +2052,27 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
     if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
       addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
     }
-    const guide = controlRegion.closest("[data-diagram-reading-guide='1']");
-    if (guide && isRendered(guide) && isRendered(canvas)) {
+    const guide = canvas.querySelector(
+      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    );
+    if (!guide) {
+      addIssue("local-reading-guide-missing", canvasId || "unnamed-canvas");
+      return;
+    }
+    if (isRendered(guide) && isRendered(canvas)) {
       const guideRect = guide.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();
       if (
-        Math.abs(guideRect.left - canvasRect.left) > epsilon ||
-        Math.abs(guideRect.right - canvasRect.right) > epsilon
+        guideRect.left < canvasRect.left - epsilon ||
+        guideRect.top < canvasRect.top - epsilon ||
+        guideRect.right > canvasRect.right + epsilon ||
+        guideRect.bottom > canvasRect.bottom + epsilon
       ) {
         addIssue(
-          "guide-canvas-horizontal-misalignment",
-          `${Math.round(guideRect.left - canvasRect.left)}:${Math.round(guideRect.right - canvasRect.right)}`
+          "local-guide-outside-canvas",
+          `${Math.round(guideRect.left - canvasRect.left)}:${Math.round(guideRect.top - canvasRect.top)}`
         );
       }
-    }
-    const interactionRect = interaction.getBoundingClientRect();
-    const controlsRect = controls.getBoundingClientRect();
-    if (
-      isVisible(interaction) &&
-      isVisible(controls) &&
-      interactionRect.bottom > controlsRect.top + epsilon
-    ) {
-      addIssue("interaction-not-above-controls", canvasId || "unnamed-canvas");
     }
   };
 
@@ -2272,7 +2212,9 @@ html[data-progressive-disclosure-enhanced="true"] [data-diagram-detail-close]:fo
     document.fonts?.ready.then(scheduleAudit, scheduleAudit);
     if ("ResizeObserver" in globalThis) {
       const observer = new ResizeObserver(scheduleAudit);
-      document.querySelectorAll(`${auditRoots}, [data-diagram-reading-guide="1"]`).forEach(
+      document.querySelectorAll(
+        `${auditRoots}, [data-diagram-reading-guide="1"], [data-artifact-shell-controls]`
+      ).forEach(
         (element) => observer.observe(element)
       );
     } else {
