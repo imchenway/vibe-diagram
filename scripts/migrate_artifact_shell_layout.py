@@ -120,7 +120,7 @@ def _sync_kernel(html: str, tag: str, marker: str, source: str) -> str:
 
 
 def _structure_standalone_title(html: str) -> str:
-    if 'data-code-review-package="1"' in html or 'data-technical-design-package="1"' in html:
+    if 'data-code-review-package="1"' in html:
         return html
     if re.search(
         r'<h1\b(?=[^>]*\bdata-slot\s*=\s*(["\'])title\1)'
@@ -159,7 +159,6 @@ def _structure_standalone_title(html: str) -> str:
 def _bind_standalone_guide_items(html: str) -> str:
     if (
         'data-code-review-package="1"' in html
-        or 'data-technical-design-package="1"' in html
         or re.search(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
     ):
         return html

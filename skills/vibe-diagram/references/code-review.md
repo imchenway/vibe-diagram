@@ -26,9 +26,8 @@ Select the kind from the primary relationship the reader must understand:
 | `state-lifecycle` | `state-data-model/state-machine` | durable state, lifecycle, retry limit, cutoff, or terminal state is primary |
 | `path-contract-drift` | `business-flow/dual-path-swimlane` | two implementation paths, contract drift, artifact drift, or a missing handoff is primary |
 | `cause-evidence` | `fault-debugging/causal-chain` | evidence, cause, impact, remediation, and verification are primary |
-| `architecture-boundary` | `system-architecture/component-breakdown` | module dependency, ownership boundary, or responsibility placement is primary |
 
-Do not route by severity, programming language, repository, filename, or reviewer identity. Split a finding when two independent primary relationships would require different topologies. Ask for confirmation when the primary relation remains ambiguous.
+Do not route by severity, programming language, repository, filename, or reviewer identity. Architecture-boundary findings have no supported code-review topology and fail closed. Split a finding when two independent primary relationships would require different topologies. Ask for confirmation when the primary relation remains ambiguous.
 
 ## Paired-view invariant
 

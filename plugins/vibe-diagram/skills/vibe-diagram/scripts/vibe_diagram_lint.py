@@ -20,7 +20,7 @@ SKILL_ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_ROOT = SKILL_ROOT / "assets" / "templates"
 FAMILY_POLICY_PATH = SKILL_ROOT / "contracts" / "family-policies.json"
 TEMPLATE_ROUTING_PATH = SKILL_ROOT / "contracts" / "template-routing.json"
-EXPECTED_TEMPLATE_COUNT = 61
+EXPECTED_TEMPLATE_COUNT = 31
 RESOURCE_ATTRIBUTES = {"src", "srcset", "poster", "action", "formaction"}
 LINK_ATTRIBUTES = {"href", "xlink:href"}
 VOID_ELEMENTS = {
@@ -103,7 +103,6 @@ SEQUENCE_HEIGHT_MODES = frozenset({"auto", "flow", "scroll"})
 SEQUENCE_OWNER_TEMPLATES = frozenset(
     {
         ("fault-debugging", "debugging-sequence"),
-        ("feature-iteration", "current-target-sequence"),
     }
 )
 GENERIC_CONTRACT_VERSION = "1"
@@ -219,7 +218,6 @@ EXPECTED_SEQUENCE_EXCLUSIONS = (
     "code-sequence/retry-exception-sequence.html",
     "code-sequence/transaction-boundary-sequence.html",
     "fault-debugging/debugging-sequence.html",
-    "feature-iteration/current-target-sequence.html",
 )
 TEMPLATE_CONTRACT_VERSION = "2"
 PRIMARY_SEQUENCE_MESSAGE_LIMIT = 12
@@ -413,8 +411,8 @@ def load_family_policies(path: Path = FAMILY_POLICY_PATH) -> Dict[str, Any]:
     if policy["sequence_exclusions"] != list(EXPECTED_SEQUENCE_EXCLUSIONS):
         raise ValueError("family policy sequence exclusions are invalid")
     families = policy["families"]
-    if not isinstance(families, dict) or len(families) != 11:
-        raise ValueError("family policy must define exactly eleven generic families")
+    if not isinstance(families, dict) or len(families) != 7:
+        raise ValueError("family policy must define exactly seven generic families")
     catalog = load_template_layouts()
     covered = set()
     for family, definition in families.items():
@@ -3004,7 +3002,6 @@ def load_template_routing(
             raise ValueError(f"template routing inventory is invalid: {family}")
     routes = routing["code_review_routes"]
     expected_routes = {
-        "architecture-boundary",
         "cause-evidence",
         "control-branch",
         "exception-compensation",
@@ -4042,10 +4039,7 @@ def lint_diagram_view_title_contract(html: str) -> List[str]:
     )
     blocks = tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))
     errors: List[str] = []
-    if 'data-technical-design-package="1"' in html:
-        expected = 4
-        expected_level = None
-    elif 'data-code-review-package="1"' in html:
+    if 'data-code-review-package="1"' in html:
         expected = 2
         expected_level = "2"
     else:
@@ -4108,7 +4102,6 @@ def lint_guide_relation_binding_contract(html: str) -> List[str]:
     if (
         re.search(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
         or 'data-code-review-package="1"' in html
-        or 'data-technical-design-package="1"' in html
     ):
         return []
     element_openings = re.findall(r"<[A-Za-z][A-Za-z0-9:-]*\b[^<>]*>", html)
@@ -4809,176 +4802,6 @@ def lint_code_review_package(
     return _deduplicate(errors)
 
 
-TECHNICAL_DESIGN_VIEW_CONTRACT = (
-    ("overview", "diagram", "system-architecture", "component-breakdown"),
-    ("runtime", "sequence", "code-sequence", "participant-timeline"),
-    ("consistency", "diagram", "state-data-model", "state-machine"),
-    ("recovery", "diagram", "business-flow", "logic-flowchart"),
-)
-
-
-class _TechnicalDesignPackageParser(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.package_count = 0
-        self.views: List[Dict[str, Any]] = []
-        self.errors: List[str] = []
-        self._element_stack: List[Optional[Dict[str, Any]]] = []
-        self._current_view: Optional[Dict[str, Any]] = None
-
-    def handle_starttag(
-        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
-    ) -> None:
-        values = {name: value or "" for name, value in attrs}
-        self._element_stack.append(self._current_view)
-        if values.get("data-technical-design-package") == "1":
-            self.package_count += 1
-        view_id = values.get("data-technical-view-id", "").strip()
-        if view_id:
-            if self._current_view is not None:
-                self.errors.append("Technical design views must not be nested.")
-            self._current_view = {
-                "id": view_id,
-                "kind": values.get("data-view-kind", "").strip(),
-                "reuse_family": values.get("data-reuse-family", "").strip(),
-                "reuse_template": values.get("data-reuse-template", "").strip(),
-                "reuse_component": values.get("data-reuse-component", "").strip(),
-                "generic": 0,
-                "sequence": 0,
-                "tables": 0,
-                "titles": 0,
-            }
-            self.views.append(self._current_view)
-        if self._current_view is not None:
-            if values.get("data-diagram-view-title") == "1":
-                self._current_view["titles"] += 1
-            if "data-diagram-canvas" in values:
-                self._current_view["generic"] += 1
-            if "data-sequence-canvas" in values:
-                self._current_view["sequence"] += 1
-            if tag == "table" and values.get("data-technical-semantic-table") == "1":
-                self._current_view["tables"] += 1
-            if values.get("role") == "tablist" or "hidden" in values:
-                self.errors.append(
-                    "Technical design package views must remain continuously visible, not tab-hidden."
-                )
-
-    def handle_startendtag(
-        self, tag: str, attrs: List[Tuple[str, Optional[str]]]
-    ) -> None:
-        self.handle_starttag(tag, attrs)
-        self.handle_endtag(tag)
-
-    def handle_endtag(self, _tag: str) -> None:
-        if self._element_stack:
-            self._current_view = self._element_stack.pop()
-
-
-def lint_technical_design_package(html: str) -> List[str]:
-    """Validate the four continuously visible views of the technical design package."""
-
-    parser = _TechnicalDesignPackageParser()
-    try:
-        parser.feed(html)
-        parser.close()
-    except Exception as exc:
-        return [f"Could not parse technical design package: {exc}."]
-    errors = list(parser.errors)
-    errors.extend(lint_diagram_view_title_contract(html))
-    if parser.package_count != 1:
-        errors.append("Technical design package requires exactly one package root.")
-    composition_roots = len(
-        re.findall(
-            r'<[^>]+\bdata-diagram-composition-root="technical-design-package"',
-            html,
-        )
-    )
-    primary_control_scopes = len(
-        re.findall(
-            r'<[^>]+\bdata-diagram-control-scope="primary"',
-            html,
-        )
-    )
-    embedded_control_scopes = len(
-        re.findall(
-            r'<[^>]+\bdata-diagram-control-scope="embedded"',
-            html,
-        )
-    )
-    if composition_roots != 1:
-        errors.append(
-            "Technical design package requires one explicit composition root."
-        )
-    if primary_control_scopes != 1:
-        errors.append(
-            "Technical design package requires exactly one primary controlled canvas."
-        )
-    if embedded_control_scopes != 3:
-        errors.append(
-            "Technical design package requires three embedded visual subviews."
-        )
-    persistent_primary_scopes = len(
-        re.findall(
-            r"<[^>]+(?=[^>]*\bdata-diagram-control-scope=[\"']primary[\"'])"
-            r"(?=[^>]*\bdata-diagram-controls-mode=[\"']persistent[\"'])[^>]*>",
-            html,
-            re.IGNORECASE,
-        )
-    )
-    if persistent_primary_scopes != 1:
-        errors.append(
-            "Technical design package requires persistent percentage controls on its primary canvas."
-        )
-    if re.search(r'role\s*=\s*["\']tablist["\']', html, re.IGNORECASE):
-        errors.append(
-            "Technical design package views must remain continuously visible, not tab-hidden."
-        )
-    actual_ids = [view["id"] for view in parser.views]
-    expected_ids = [entry[0] for entry in TECHNICAL_DESIGN_VIEW_CONTRACT]
-    if actual_ids != expected_ids:
-        errors.append(
-            "Technical design package views must appear continuously as "
-            + ", ".join(expected_ids)
-            + "."
-        )
-        return _deduplicate(errors)
-    for view, (_view_id, kind, family, template) in zip(
-        parser.views, TECHNICAL_DESIGN_VIEW_CONTRACT
-    ):
-        if view["kind"] != kind:
-            errors.append(
-                f'Technical design view "{view["id"]}" must use the {kind} carrier.'
-            )
-        expected_counts = {
-            "diagram": (1, 0, 0),
-            "sequence": (0, 1, 0),
-            "table": (0, 0, 1),
-        }[kind]
-        actual_counts = (view["generic"], view["sequence"], view["tables"])
-        if actual_counts != expected_counts:
-            errors.append(
-                f'Technical design view "{view["id"]}" has the wrong primary carrier.'
-            )
-        if view["titles"] != 1:
-            errors.append(
-                f'Technical design view "{view["id"]}" requires one graph-level title.'
-            )
-        if kind == "table":
-            if view["reuse_component"] != "semantic-table":
-                errors.append(
-                    f'Technical design view "{view["id"]}" must reuse the semantic-table component.'
-                )
-        elif (
-            view["reuse_family"] != family
-            or view["reuse_template"] != template
-        ):
-            errors.append(
-                f'Technical design view "{view["id"]}" must reuse '
-                f"{family}/{template}."
-            )
-    return _deduplicate(errors)
-
-
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description="Validate a self-contained HTML diagram.")
     parser.add_argument("path", type=Path, help="HTML artifact to validate")
@@ -5012,11 +4835,6 @@ def main(argv: Optional[List[str]] = None) -> int:
             errors.extend(lint_primary_canvas_budget(html))
         if is_code_review:
             errors.extend(lint_code_review_package(html, routing))
-        if (
-            args.diagram_type == "technical-design"
-            and 'data-template-id="technical-design-package"' in html
-        ):
-            errors.extend(lint_technical_design_package(html))
         if args.diagram_type == "system-architecture":
             errors.extend(lint_system_architecture(html, allow_candidates=args.allow_candidates))
         elif not is_code_review:

@@ -24,29 +24,15 @@ CODE_REVIEW_TEMPLATE = "code-review-package"
 CODE_REVIEW_FINDING_LIMIT = 12
 DEPRECATED_FAMILIES = {
     "delivery-acceptance": (
-        "deprecated for one release cycle: route acceptance steps to "
-        "business-flow/logic-flowchart and requirement-to-evidence traceability "
-        "to decision-communication/option-matrix-path"
+        "deprecated for one release cycle: route ordered acceptance steps to "
+        "business-flow/logic-flowchart; itemized requirement-to-evidence "
+        "comparison currently has no ready template"
     ),
 }
 DEPRECATED_TEMPLATES = {
-    ("feature-iteration", "release-rollback-track"): (
-        "deprecated for one release cycle: route release, observation, gate, and rollback "
-        "to business-flow/logic-flowchart; use state-data-model/state-machine only when "
-        "the user explicitly requests a state machine"
-    ),
     ("business-architecture", "value-chain-map"): (
         "deprecated as the business-architecture default: use capability-domain-map, "
         "or route trigger/order/decision/exception prompts to business-flow/logic-flowchart"
-    ),
-    ("technical-design", "release-switch-track"): (
-        "deprecated for one release cycle: use technical-design/technical-design-package; "
-        "release and rollback remain one view inside the complete design package"
-    ),
-    ("technical-design", "data-consistency-boundary"): (
-        "deprecated as a standalone diagram type: use "
-        "technical-design/technical-design-package and place Outbox transaction, "
-        "delivery, consumption, recovery, and consistency concerns in its mapped views"
     ),
 }
 
@@ -56,24 +42,6 @@ TopologyEdge = Tuple[int, int, str, int, int, str]
 
 
 CODE_REVIEW_TOPOLOGIES: Dict[str, Dict[str, Any]] = {
-    "architecture-boundary": {
-        "view_box": "0 0 960 650",
-        "nodes": (
-            (360, 245, 240, 100, "center"),
-            (30, 75, 210, 90, "boundary"),
-            (720, 75, 210, 90, "boundary"),
-            (30, 455, 210, 90, "boundary"),
-            (720, 455, 210, 90, "boundary"),
-            (360, 525, 240, 90, "outcome"),
-        ),
-        "edges": (
-            (1, 0, "M240 120H300V270H360", 300, 210, "dependency"),
-            (2, 0, "M720 120H660V270H600", 660, 210, "dependency"),
-            (3, 0, "M240 500H300V320H360", 300, 410, "ownership"),
-            (4, 0, "M720 500H660V320H600", 660, 410, "ownership"),
-            (0, 5, "M480 345V525", 515, 435, "outcome"),
-        ),
-    },
     "cause-evidence": {
         "view_box": "0 0 1040 520",
         "nodes": (
@@ -735,11 +703,6 @@ def _topology_decor(kind: str) -> str:
             '<g aria-hidden="true"><rect x="250" y="45" width="490" height="175" rx="18" '
             'fill="#eef6ff" stroke="#9fc1df"></rect><rect x="250" y="400" width="490" '
             'height="175" rx="18" fill="#fff4f4" stroke="#dfaaaa"></rect></g>'
-        )
-    if kind == "architecture-boundary":
-        return (
-            '<g aria-hidden="true"><rect x="15" y="30" width="930" height="580" rx="24" '
-            'fill="none" stroke="#9fc1df" stroke-width="2" stroke-dasharray="10 8"></rect></g>'
         )
     return ""
 

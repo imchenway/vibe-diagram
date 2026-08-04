@@ -49,7 +49,7 @@ VERSION_PLACEHOLDER = "${VERSION}"
 LICENSE_SIZE = 11357
 LICENSE_SHA256 = "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
 SOURCE_TEMPLATE_CONTRACT_SHA256 = "cab7874937427e6092defb67b2e28f280d9d31022788c9c6382bbfe334f93959"
-SOURCE_TEMPLATE_SNAPSHOTS_SHA256 = "9938ddafc5413225f9c96cc66a7ed26ff8a5030712807d06819e1a58d6c69501"
+SOURCE_TEMPLATE_SNAPSHOTS_SHA256 = "032743124b597b4a54181eee191487001330adb06c2577d1b958e94a4d518d3d"
 SOURCE_SKILL_CONTENT_SHA256 = "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48"
 ADAPTER_KEYS = {
     "schema_version",
@@ -83,12 +83,10 @@ SEQUENCE_REDESIGN_PATHS = (
     "code-sequence/retry-exception-sequence.html",
     "code-sequence/transaction-boundary-sequence.html",
     "fault-debugging/debugging-sequence.html",
-    "feature-iteration/current-target-sequence.html",
 )
 ADDED_TEMPLATE_PATHS = (
     "business-flow/logic-flowchart.html",
     "code-review/code-review-package.html",
-    "technical-design/technical-design-package.html",
 )
 TEMPLATE_PATHS: Tuple[str, ...] = (
     "business-architecture/capability-domain-map.html",
@@ -106,10 +104,6 @@ TEMPLATE_PATHS: Tuple[str, ...] = (
     "code-sequence/participant-timeline.html",
     "code-sequence/retry-exception-sequence.html",
     "code-sequence/transaction-boundary-sequence.html",
-    "decision-communication/decision-tree.html",
-    "decision-communication/option-matrix-path.html",
-    "decision-communication/recommended-path.html",
-    "decision-communication/tradeoff-quadrant.html",
     "delivery-acceptance/acceptance-ledger.html",
     "delivery-acceptance/delivery-timeline.html",
     "delivery-acceptance/evidence-swimlane.html",
@@ -119,53 +113,23 @@ TEMPLATE_PATHS: Tuple[str, ...] = (
     "fault-debugging/causal-chain.html",
     "fault-debugging/debugging-sequence.html",
     "fault-debugging/state-data-breakpoint.html",
-    "feature-iteration/current-target-flow.html",
-    "feature-iteration/current-target-sequence.html",
-    "feature-iteration/diff-heatmap.html",
-    "feature-iteration/release-rollback-track.html",
-    "page-mockup/artboard-filmstrip.html",
-    "page-mockup/artboard-wireframe.html",
-    "page-mockup/primary-path-page-flow.html",
-    "page-mockup/responsive-state-board.html",
     "state-data-model/data-flow-model.html",
     "state-data-model/er-lite.html",
     "state-data-model/lifecycle-track.html",
     "state-data-model/state-event-matrix.html",
     "state-data-model/state-machine.html",
-    "system-architecture/api-integration.html",
-    "system-architecture/component-breakdown.html",
-    "system-architecture/data-architecture.html",
-    "system-architecture/data-flow.html",
-    "system-architecture/delivery-pipeline.html",
-    "system-architecture/deployment-topology.html",
-    "system-architecture/event-driven.html",
-    "system-architecture/identity-access.html",
     "system-architecture/logical-layering.html",
-    "system-architecture/network-topology.html",
-    "system-architecture/observability-view.html",
-    "system-architecture/resilience-view.html",
-    "system-architecture/router-v6.html",
-    "system-architecture/security-view.html",
-    "system-architecture/system-context.html",
     "system-architecture/workload-overview.html",
-    "technical-design/api-contract-swimlane.html",
-    "technical-design/data-consistency-boundary.html",
-    "technical-design/module-contract-data-topology.html",
-    "technical-design/technical-design-package.html",
 )
 REFERENCE_PATHS: Tuple[str, ...] = (
     "business-architecture.md",
     "business-flow.md",
     "code-review.md",
     "code-sequence.md",
-    "decision-communication.md",
     "delivery-acceptance.md",
     "fault-debugging.md",
-    "feature-iteration.md",
-    "page-mockup.md",
     "state-data-model.md",
     "system-architecture.md",
-    "technical-design.md",
 )
 RUNTIME_WORKFLOW_PATH = "runtime-workflow.md"
 ADAPTIVE_REFERENCE_PATH = "adaptive-readability.md"
@@ -182,7 +146,7 @@ CONTRACT_ASSET_PATHS: Tuple[str, ...] = (
     "contracts/template-routing.json",
 )
 UPDATE_MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
-CANONICAL_FILE_COUNT = 91
+CANONICAL_FILE_COUNT = 57
 ADAPTER_IDENTITIES = {
     "codex": (
         "README.md",
@@ -871,7 +835,7 @@ def load_template_contract(root: Path) -> Dict[str, Any]:
         and relative.as_posix().endswith(".html")
     }
     if set(templates) != set(TEMPLATE_PATHS) or canonical_templates != set(TEMPLATE_PATHS):
-        raise _fail("template contract must contain the exact 61 canonical template paths")
+        raise _fail("template contract must contain the exact 31 canonical template paths")
     migrated = set()
     added = set()
     for relative, entry in templates.items():
@@ -946,7 +910,7 @@ def load_reference_contract(root: Path) -> Dict[str, Any]:
         and relative.name not in {RUNTIME_WORKFLOW_PATH, ADAPTIVE_REFERENCE_PATH}
     }
     if set(references) != set(REFERENCE_PATHS) or expected != set(REFERENCE_PATHS):
-        raise _fail("reference contract must contain the exact 12 canonical references")
+        raise _fail("reference contract must contain the exact 8 canonical references")
     for relative, digest in references.items():
         safe_relative_path(relative)
         _validate_sha256(digest, f"references.{relative}")
@@ -981,12 +945,12 @@ def load_interaction_contract(root: Path) -> Dict[str, Any]:
         raise _fail("interaction contract scope is invalid")
     if (
         type(scope["artifact_shell_template_count"]) is not int
-        or scope["artifact_shell_template_count"] != 61
+        or scope["artifact_shell_template_count"] != 31
     ):
         raise _fail("interaction contract artifact shell template count is invalid")
-    if type(scope["generic_template_count"]) is not int or scope["generic_template_count"] != 55:
+    if type(scope["generic_template_count"]) is not int or scope["generic_template_count"] != 26:
         raise _fail("interaction contract generic template count is invalid")
-    if type(scope["sequence_template_count"]) is not int or scope["sequence_template_count"] != 6:
+    if type(scope["sequence_template_count"]) is not int or scope["sequence_template_count"] != 5:
         raise _fail("interaction contract sequence template count is invalid")
     completed_batches = scope["completed_batches"]
     if (
@@ -1200,8 +1164,8 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
         raise _fail("family policy sequence exclusions are invalid")
     _validated_migration_batches(policy["migration_batches"])
     families = policy["families"]
-    if not isinstance(families, dict) or len(families) != 11:
-        raise _fail("family policy must define exactly eleven generic families")
+    if not isinstance(families, dict) or len(families) != 7:
+        raise _fail("family policy must define exactly seven generic families")
     covered = set()
     for family, definition in families.items():
         if not isinstance(definition, dict) or set(definition) != FAMILY_POLICY_FAMILY_KEYS:
@@ -1388,7 +1352,7 @@ def load_family_policies(path: Path) -> Dict[str, Any]:
             covered.add(f"{family}/{template_id}.html")
     expected = set(TEMPLATE_PATHS) - set(SEQUENCE_REDESIGN_PATHS)
     if covered != expected:
-        raise _fail("family policy must cover the exact 55 non-sequence templates")
+        raise _fail("family policy must cover the exact 26 non-sequence templates")
     return policy
 
 
@@ -1426,7 +1390,6 @@ def load_template_routing(path: Path) -> Dict[str, Any]:
             raise _fail(f"template routing inventory is invalid: {family}")
     routes = routing["code_review_routes"]
     expected_routes = {
-        "architecture-boundary",
         "cause-evidence",
         "control-branch",
         "exception-compensation",
@@ -4184,10 +4147,7 @@ def _diagram_view_title_errors(html: str) -> List[str]:
     )
     blocks = tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))
     errors: List[str] = []
-    if 'data-technical-design-package="1"' in html:
-        expected = 4
-        expected_level = None
-    elif 'data-code-review-package="1"' in html:
+    if 'data-code-review-package="1"' in html:
         expected = 2
         expected_level = "2"
     else:
@@ -4246,7 +4206,6 @@ def _guide_relation_binding_errors(html: str) -> List[str]:
     if (
         re.search(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
         or 'data-code-review-package="1"' in html
-        or 'data-technical-design-package="1"' in html
     ):
         return []
     element_openings = re.findall(r"<[A-Za-z][A-Za-z0-9:-]*\b[^<>]*>", html)
@@ -4294,88 +4253,6 @@ def _guide_relation_binding_errors(html: str) -> List[str]:
         errors.append("reading-guide bindings do not cover relations: " + ", ".join(missing))
     if duplicates:
         errors.append("reading-guide bindings repeat relations: " + ", ".join(duplicates))
-    return errors
-
-
-def _technical_design_package_errors(html: str) -> List[str]:
-    expected_views = (
-        "overview",
-        "runtime",
-        "consistency",
-        "recovery",
-    )
-    errors = _diagram_view_title_errors(html)
-    package_roots = len(
-        re.findall(
-            r"<[^>]+\bdata-technical-design-package\s*=\s*[\"']1[\"']",
-            html,
-            re.IGNORECASE,
-        )
-    )
-    if package_roots != 1:
-        errors.append("technical design package requires exactly one package root")
-    if len(
-        re.findall(
-            r'<[^>]+\bdata-diagram-composition-root="technical-design-package"',
-            html,
-        )
-    ) != 1:
-        errors.append("technical design package requires one explicit composition root")
-    if len(
-        re.findall(
-            r'<[^>]+\bdata-diagram-control-scope="primary"',
-            html,
-        )
-    ) != 1:
-        errors.append("technical design package requires one primary controlled canvas")
-    if len(
-        re.findall(
-            r'<[^>]+\bdata-diagram-control-scope="embedded"',
-            html,
-        )
-    ) != 3:
-        errors.append("technical design package requires three embedded visual subviews")
-    if len(
-        re.findall(
-            r"<[^>]+(?=[^>]*\bdata-diagram-control-scope=[\"']primary[\"'])"
-            r"(?=[^>]*\bdata-diagram-controls-mode=[\"']persistent[\"'])[^>]*>",
-            html,
-            re.IGNORECASE,
-        )
-    ) != 1:
-        errors.append(
-            "technical design package primary canvas requires persistent controls"
-        )
-    views = tuple(
-        re.findall(
-            r'<[^>]+\bdata-technical-view-id="([^"]+)"',
-            html,
-        )
-    )
-    if views != expected_views:
-        errors.append("technical design package view order is invalid")
-    required_reuse = (
-        'data-reuse-family="system-architecture" data-reuse-template="component-breakdown"',
-        'data-reuse-family="code-sequence" data-reuse-template="participant-timeline"',
-        'data-reuse-family="state-data-model" data-reuse-template="state-machine"',
-        'data-reuse-family="business-flow" data-reuse-template="logic-flowchart"',
-    )
-    if any(token not in html for token in required_reuse):
-        errors.append("technical design package kernel reuse declarations are incomplete")
-    if len(tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))) != 4:
-        errors.append("technical design package requires four graph-level titles")
-    if 'data-technical-semantic-table="1"' in html:
-        errors.append("technical design package no longer includes semantic-table views")
-    generic_canvases = len(
-        re.findall(r"<[^>]+\bdata-diagram-canvas(?:\s|=|>)", html, re.IGNORECASE)
-    )
-    sequence_canvases = len(
-        re.findall(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
-    )
-    if generic_canvases != 3 or sequence_canvases != 1:
-        errors.append("technical design package primary carrier inventory is invalid")
-    if re.search(r'role\s*=\s*["\']tablist["\']', html, re.IGNORECASE):
-        errors.append("technical design package must not hide views behind tabs")
     return errors
 
 
@@ -5040,19 +4917,6 @@ def validate_canonical(root: Path) -> None:
                 f"template structures are duplicated within {family}: {seen[signature]}, {relative}"
             )
         seen[signature] = relative
-        if relative == "technical-design/technical-design-package.html":
-            package_errors = _technical_design_package_errors(html)
-            package_errors.extend(_sequence_errors(html))
-            package_errors.extend(_sequence_visual_errors(html))
-            if sequence_digests and _sequence_kernel_digest(html) not in sequence_digests:
-                package_errors.append(
-                    "technical design package sequence kernel differs from the sequence family"
-                )
-            if package_errors:
-                raise _fail(
-                    f"invalid technical design package {relative}: "
-                    + "; ".join(package_errors)
-                )
         if is_code_review:
             package_errors = _code_review_package_errors(html, routing)
             package_errors.extend(

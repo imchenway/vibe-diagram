@@ -75,50 +75,6 @@ class TrueDiagramDefaultsTest(unittest.TestCase):
             self.assertEqual(1, result)
             self.assertFalse(output.exists())
 
-    def test_deprecated_technical_design_entry_reports_the_migration_target(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory) / "deprecated.html"
-            stdout = io.StringIO()
-            with contextlib.redirect_stdout(stdout):
-                result = SCAFFOLD.main(
-                    [
-                        "--type",
-                        "technical-design",
-                        "--template",
-                        "release-switch-track",
-                        "--output",
-                        str(output),
-                    ]
-                )
-            self.assertEqual(1, result)
-            self.assertFalse(output.exists())
-            self.assertIn(
-                "technical-design/technical-design-package",
-                stdout.getvalue(),
-            )
-
-    def test_standalone_outbox_diagram_reports_the_complete_design_target(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory) / "deprecated-outbox.html"
-            stdout = io.StringIO()
-            with contextlib.redirect_stdout(stdout):
-                result = SCAFFOLD.main(
-                    [
-                        "--type",
-                        "technical-design",
-                        "--template",
-                        "data-consistency-boundary",
-                        "--output",
-                        str(output),
-                    ]
-                )
-            self.assertEqual(1, result)
-            self.assertFalse(output.exists())
-            self.assertIn(
-                "technical-design/technical-design-package",
-                stdout.getvalue(),
-            )
-
     def test_named_external_standard_cannot_silently_use_native_template(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "strict-standard.html"

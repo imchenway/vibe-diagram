@@ -1,6 +1,6 @@
 ---
 name: vibe-diagram
-description: Use when an agent should create and deliver a self-contained HTML visual artifact for architecture, workflows, sequences, state and data models, debugging evidence, feature iteration, page mockups, technical design, decision communication, or acceptance matrices, including explicit or contextual requests such as “画图”, “画个图”, “画图给我看”, “架构图”, “UML”, “流程图”, and “时序图”; Mermaid alone never satisfies the request.
+description: Use when an agent should create and deliver a self-contained HTML visual artifact for architecture, workflows, sequences, state and data models, debugging evidence, or code review, including explicit or contextual requests such as “画图”, “画个图”, “画图给我看”, “架构图”, “UML”, “流程图”, and “时序图”; Mermaid alone never satisfies the request.
 ---
 
 # Vibe Diagram
@@ -11,7 +11,7 @@ Vibe Diagram exists to explain subjects through real diagram geometry. Generatio
 
 - When the user does not name an external standard, use the native Vibe Diagram family grammar.
 - When the user explicitly requests UML, BPMN, C4, ArchiMate, or another standard, follow that standard strictly. If strict support is unavailable, fail closed instead of silently degrading to a native template.
-- Delivery-acceptance diagrams and release-rollback diagrams are no longer public recommended families. Model ordered acceptance or release work as business flow, model itemized requirement-evidence-conclusion comparisons as matrices, and use a state machine only when the user explicitly requests state semantics.
+- Delivery-acceptance diagrams and release-rollback diagrams are no longer public recommended families. Model ordered acceptance or release work as business flow, fail closed for unsupported itemized requirement-evidence comparisons, and use a state machine only when the user explicitly requests state semantics.
 - Keep old explicit entry names for one release cycle as migration notices only; they must not become defaults again.
 - Write every graph-level title as `diagram type｜title`, localized to the artifact language. In a standalone artifact, the page `h1` is also its only graph-level title and must use this structure directly. In a multi-diagram package, the page title may remain independent while every subgraph title uses the structure. Do not apply it to table captions or detail headings.
 - Keep the percentage zoom component persistently visible in the shared title shell whenever its canvas is measurable, to the right of the title on wide screens and below the title copy on narrow screens. A canvas-local reading guide, when required by its family or template contract, stays visibly inside the owning diagram surface at its top-left on the same continuous 24-pixel grid as the diagram body, with no ungridded separator strip; its wording and swatches must be authored from that diagram's real relation categories and computed visual tokens. The shared shell validates ownership, grid-surface placement, relation binding, and structure without prescribing domain-specific guide groups. A code-review package specifically requires relation-type and evidence-state groups, and uses one shared persistent canonical control group for its current and repair diagrams; the factual scenario between them is never scaled.
@@ -38,11 +38,7 @@ After the update gate finishes, read [the runtime workflow](references/runtime-w
 - [Business flow](references/business-flow.md)
 - [Code review](references/code-review.md)
 - [Code sequence](references/code-sequence.md)
-- [Decision communication](references/decision-communication.md)
 - [Delivery acceptance compatibility migration](references/delivery-acceptance.md)
 - [Fault debugging](references/fault-debugging.md)
-- [Feature iteration](references/feature-iteration.md)
-- [Page mockup](references/page-mockup.md)
 - [State and data model](references/state-data-model.md)
 - [System architecture](references/system-architecture.md)
-- [Technical design](references/technical-design.md)

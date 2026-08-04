@@ -2,16 +2,12 @@
   "references": {
     "business-architecture.md": "a58339e0c238b91f31affd713a48a264399792083dbe40b8e85f2b2239f3e5fd",
     "business-flow.md": "1409f68577a298b648132745513af151a3678f58f209f8c5ed7ed171af078ce7",
-    "code-review.md": "d7fd1701794d5d023881d17551fbe963e1405f75eecbcf3ea3aad305d8c0e459",
+    "code-review.md": "910794828f403d40d647fceebf4a2b7d4d4e1db0ca62bf4c40a89c2f9ca53f4e",
     "code-sequence.md": "92b4268fab87072448e7be338529d5410e4fc320f592457e340b6e285e03b21f",
-    "decision-communication.md": "65e05bb5c72b779e7798e316b96702fdf92e92fb78adb836d0c736a0fe529c69",
-    "delivery-acceptance.md": "c58d124e129a212b56718a2d9e91ea269cc6f19ec0367dcdcff17a65a6820365",
+    "delivery-acceptance.md": "4e1de80ec25a4e5cf366f1d3e749bd10de05bf62cc9011f806478ca8f24bad20",
     "fault-debugging.md": "45b0acfb3d0778ea5e698916b1055d87ee0927ce0ec83e25e548828a4aac8ca2",
-    "feature-iteration.md": "8395b3e0ea61a57b058b08d0c9da2ac80a794d4559158b62f4cd1c174213b253",
-    "page-mockup.md": "66380feab8161b1dc28fee94db2106219e7c6b47372fce35bf6c4ca11c380047",
     "state-data-model.md": "682001bfdbbaa35805269a9bdee31449cf045df00ea92d370ee99fb5b60a08ee",
-    "system-architecture.md": "6dd6dc99a079bfd1cee4e75a88c3b7a5e6438c1152b760c595987cd0753584e7",
-    "technical-design.md": "0c90995075c4d6a1e353561dfbdc5922736b09c55517c07c0c49d7a66957412c"
+    "system-architecture.md": "791fa4e1a5f58eb229240b374269fba769a392ed8c3ee1bac6e328c16d686884"
   },
   "schema_version": 1,
   "source_skill_content_sha256": "6d123fce6a33df73e04f8f953d9429c24cc833897291ca30dad62ecf611dfb48"

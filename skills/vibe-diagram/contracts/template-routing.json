@@ -1,11 +1,6 @@
 {
   "schema_version": 2,
   "code_review_routes": {
-    "architecture-boundary": {
-      "family": "system-architecture",
-      "template": "component-breakdown",
-      "primary_relation": "module dependency, ownership boundary, or responsibility placement"
-    },
     "cause-evidence": {
       "family": "fault-debugging",
       "template": "causal-chain",
@@ -58,11 +53,6 @@
       "ready_templates": ["code-review-package"],
       "blocked_templates": []
     },
-    "decision-communication": {
-      "default_template": "option-matrix-path",
-      "ready_templates": ["option-matrix-path"],
-      "blocked_templates": ["decision-tree", "recommended-path", "tradeoff-quadrant"]
-    },
     "delivery-acceptance": {
       "default_template": "acceptance-ledger",
       "ready_templates": ["acceptance-ledger"],
@@ -73,16 +63,6 @@
       "ready_templates": ["causal-chain"],
       "blocked_templates": ["before-after-flow", "bpmn-debug-flow", "debugging-sequence", "state-data-breakpoint"]
     },
-    "feature-iteration": {
-      "default_template": "current-target-flow",
-      "ready_templates": ["current-target-flow"],
-      "blocked_templates": ["current-target-sequence", "diff-heatmap", "release-rollback-track"]
-    },
-    "page-mockup": {
-      "default_template": "artboard-wireframe",
-      "ready_templates": ["artboard-wireframe"],
-      "blocked_templates": ["artboard-filmstrip", "primary-path-page-flow", "responsive-state-board"]
-    },
     "state-data-model": {
       "default_template": "state-machine",
       "ready_templates": ["state-machine"],
@@ -91,29 +71,10 @@
     "system-architecture": {
       "default_template": "workload-overview",
       "ready_templates": [
-        "api-integration",
-        "component-breakdown",
-        "data-architecture",
-        "data-flow",
-        "delivery-pipeline",
-        "deployment-topology",
-        "event-driven",
-        "identity-access",
         "logical-layering",
-        "network-topology",
-        "observability-view",
-        "resilience-view",
-        "router-v6",
-        "security-view",
-        "system-context",
         "workload-overview"
       ],
       "blocked_templates": []
-    },
-    "technical-design": {
-      "default_template": "technical-design-package",
-      "ready_templates": ["technical-design-package"],
-      "blocked_templates": ["api-contract-swimlane", "data-consistency-boundary", "module-contract-data-topology"]
     }
   }
 }

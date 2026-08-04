@@ -56,23 +56,18 @@ When the user asks for alternatives, first produce a compact atlas of meaningful
 
 Route by the relationship the user must understand:
 
-- System boundary, component, deployment, security, or runtime topology: system architecture.
+- System structure that fits either a workload overview or a north-to-south logical layering: system architecture.
 - Roles, capabilities, domains, rules, or value creation: business architecture.
 - Ordered work across roles or exception branches: business flow.
 - Calls, returns, async callbacks, retries, and time: code sequence.
 - State transitions, entities, lifecycle, or data movement: state/data model.
 - Symptom-to-cause evidence and repair verification: fault debugging.
-- Current-to-target behavior: feature iteration.
 - Multiple code-review findings with current diagram, factual scenario, and paired-topology repair diagram: code review. Route each finding by its primary relationship, never by severity, language, repository, or filename.
-- Screen hierarchy, responsive states, or page journeys: page mockup.
-- Module contracts, consistency, release switching, or detailed engineering constraints: technical design.
-- Options, tradeoffs, recommendations, and decisions: decision communication.
-- Requirements, evidence, conclusions, and remaining actions: decision communication using an acceptance matrix view.
 - Release, observation, gates, compensation, or rollback: business flow; use a state machine only when the user explicitly asks for state semantics.
 
-`delivery-acceptance` and `feature-iteration/release-rollback-track` are one-cycle compatibility aliases only. New requests must use the destinations above.
+Treat the current routing catalog as exhaustive: any absent family or code-review relation kind must fail closed instead of being replaced with a visually similar template. `delivery-acceptance` is a one-cycle compatibility alias only; new ordered acceptance requests must use business flow, while itemized requirement-to-evidence comparisons remain unsupported.
 
-For any of the six sequence templates, read the `Sequence interaction contract` in its owning reference before editing the template.
+For any of the five sequence templates, read the `Sequence interaction contract` in its owning reference before editing the template.
 
 ## Shared diagram grammar
 

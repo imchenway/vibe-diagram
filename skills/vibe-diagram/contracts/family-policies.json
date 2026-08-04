@@ -6,14 +6,12 @@
     "code-sequence/participant-timeline.html",
     "code-sequence/retry-exception-sequence.html",
     "code-sequence/transaction-boundary-sequence.html",
-    "fault-debugging/debugging-sequence.html",
-    "feature-iteration/current-target-sequence.html"
+    "fault-debugging/debugging-sequence.html"
   ],
   "migration_batches": {
     "B01": [
       "business-flow/dual-path-swimlane.html",
-      "business-flow/swimlane-flow.html",
-      "decision-communication/option-matrix-path.html"
+      "business-flow/swimlane-flow.html"
     ],
     "B02": [
       "business-flow/bpmn-light-flow.html",
@@ -33,27 +31,11 @@
       "business-architecture/rule-constraint-heatmap.html",
       "business-architecture/value-chain-map.html"
     ],
-    "B05": [
-      "technical-design/api-contract-swimlane.html",
-      "technical-design/data-consistency-boundary.html",
-      "technical-design/module-contract-data-topology.html",
-      "technical-design/technical-design-package.html"
-    ],
     "B06": [
       "fault-debugging/before-after-flow.html",
       "fault-debugging/bpmn-debug-flow.html",
       "fault-debugging/causal-chain.html",
       "fault-debugging/state-data-breakpoint.html"
-    ],
-    "B07": [
-      "feature-iteration/current-target-flow.html",
-      "feature-iteration/diff-heatmap.html",
-      "feature-iteration/release-rollback-track.html"
-    ],
-    "B08": [
-      "decision-communication/decision-tree.html",
-      "decision-communication/recommended-path.html",
-      "decision-communication/tradeoff-quadrant.html"
     ],
     "B09": [
       "delivery-acceptance/acceptance-ledger.html",
@@ -61,33 +43,9 @@
       "delivery-acceptance/evidence-swimlane.html",
       "delivery-acceptance/risk-action-board.html"
     ],
-    "B10": [
-      "page-mockup/artboard-filmstrip.html",
-      "page-mockup/artboard-wireframe.html",
-      "page-mockup/primary-path-page-flow.html",
-      "page-mockup/responsive-state-board.html"
-    ],
     "B11": [
-      "system-architecture/component-breakdown.html",
-      "system-architecture/deployment-topology.html",
       "system-architecture/logical-layering.html",
-      "system-architecture/network-topology.html",
-      "system-architecture/system-context.html",
       "system-architecture/workload-overview.html"
-    ],
-    "B12": [
-      "system-architecture/api-integration.html",
-      "system-architecture/data-architecture.html",
-      "system-architecture/data-flow.html",
-      "system-architecture/event-driven.html",
-      "system-architecture/router-v6.html"
-    ],
-    "B13": [
-      "system-architecture/delivery-pipeline.html",
-      "system-architecture/identity-access.html",
-      "system-architecture/observability-view.html",
-      "system-architecture/resilience-view.html",
-      "system-architecture/security-view.html"
     ],
     "B14": [
       "business-flow/logic-flowchart.html"
@@ -219,18 +177,6 @@
         }
       }
     },
-    "decision-communication": {
-      "limits": {"nodes": 28, "relations": 32, "groups": 8, "details": 8},
-      "templates": {
-        "decision-tree": {"profile": "graph", "limits": {}},
-        "option-matrix-path": {
-          "profile": "matrix",
-          "limits": {"nodes": 5, "groups": 3, "details": 5}
-        },
-        "recommended-path": {"profile": "graph", "limits": {}},
-        "tradeoff-quadrant": {"profile": "matrix", "limits": {}}
-      }
-    },
     "delivery-acceptance": {
       "limits": {"nodes": 36, "relations": 42, "groups": 10, "details": 10},
       "templates": {
@@ -269,65 +215,6 @@
         "state-data-breakpoint": {"profile": "matrix", "limits": {}}
       }
     },
-    "feature-iteration": {
-      "limits": {"nodes": 30, "relations": 36, "groups": 10, "details": 8},
-      "templates": {
-        "current-target-flow": {
-          "profile": "graph",
-          "limits": {"nodes": 8, "relations": 4, "groups": 2, "details": 8},
-          "topology": "current-target-paired-evolution",
-          "direction": "west-to-east",
-          "controls_mode": "persistent",
-          "required_regions": ["current", "target"],
-          "requires_branch": false,
-          "requires_merge": false,
-          "requires_node_details": true,
-          "requires_localized_node_labels": true,
-          "quality": {
-            "requires_node_nonoverlap": true,
-            "requires_boundary_anchors": true,
-            "requires_routes_clear_nodes": true,
-            "max_top_whitespace_ratio": 0.08,
-            "max_bottom_whitespace_ratio": 0.08,
-            "min_horizontal_utilization_ratio": 0.9,
-            "min_relation_length": 120,
-            "min_arrowhead_size": 7,
-            "max_arrowhead_size": 14
-          }
-        },
-        "diff-heatmap": {"profile": "matrix", "limits": {}},
-        "release-rollback-track": {
-          "profile": "graph",
-          "limits": {"nodes": 8, "relations": 9, "groups": 6, "details": 8},
-          "topology": "release-observe-threshold-rollback-recovery",
-          "direction": "west-to-east",
-          "required_regions": ["release", "decision", "success", "rollback", "recovery", "outcome"],
-          "requires_branch": true,
-          "requires_merge": true,
-          "requires_node_details": true,
-          "quality": {
-            "requires_node_nonoverlap": true,
-            "requires_boundary_anchors": true,
-            "requires_routes_clear_nodes": true,
-            "min_relation_length": 30,
-            "min_arrowhead_size": 7,
-            "max_arrowhead_size": 14
-          }
-        }
-      }
-    },
-    "page-mockup": {
-      "limits": {"nodes": 32, "relations": 28, "groups": 12, "details": 8},
-      "templates": {
-        "artboard-filmstrip": {"profile": "artboard", "limits": {}},
-        "artboard-wireframe": {"profile": "artboard", "limits": {}},
-        "primary-path-page-flow": {"profile": "graph", "limits": {}},
-        "responsive-state-board": {
-          "profile": "artboard",
-          "limits": {"nodes": 8, "relations": 7, "groups": 4, "details": 8}
-        }
-      }
-    },
     "state-data-model": {
       "limits": {"nodes": 34, "relations": 44, "groups": 10, "details": 8},
       "templates": {
@@ -362,14 +249,6 @@
     "system-architecture": {
       "limits": {"nodes": 40, "relations": 52, "groups": 12, "details": 10},
       "templates": {
-        "api-integration": {"profile": "graph", "limits": {}},
-        "component-breakdown": {"profile": "graph", "limits": {}},
-        "data-architecture": {"profile": "graph", "limits": {}},
-        "data-flow": {"profile": "graph", "limits": {}},
-        "delivery-pipeline": {"profile": "timeline", "limits": {}},
-        "deployment-topology": {"profile": "graph", "limits": {}},
-        "event-driven": {"profile": "graph", "limits": {}},
-        "identity-access": {"profile": "graph", "limits": {}},
         "logical-layering": {
           "profile": "graph",
           "limits": {"details": 9},
@@ -399,12 +278,6 @@
             "max_arrowhead_size": 16
           }
         },
-        "network-topology": {"profile": "graph", "limits": {}},
-        "observability-view": {"profile": "graph", "limits": {}},
-        "resilience-view": {"profile": "graph", "limits": {}},
-        "router-v6": {"profile": "graph", "limits": {}},
-        "security-view": {"profile": "graph", "limits": {}},
-        "system-context": {"profile": "graph", "limits": {}},
         "workload-overview": {
           "profile": "graph",
           "limits": {"details": 8},
@@ -434,51 +307,6 @@
             "min_distinct_relation_colors": 4,
             "min_arrowhead_size": 6,
             "max_arrowhead_size": 16
-          }
-        }
-      }
-    },
-    "technical-design": {
-      "limits": {"nodes": 34, "relations": 44, "groups": 10, "details": 8},
-      "templates": {
-        "api-contract-swimlane": {"profile": "graph", "limits": {}},
-        "data-consistency-boundary": {
-          "profile": "graph",
-          "limits": {"nodes": 8, "relations": 8, "groups": 5, "details": 8},
-          "topology": "outbox-consistency-boundaries",
-          "direction": "west-to-east",
-          "controls_mode": "persistent",
-          "required_regions": ["transaction", "delivery", "consumption", "recovery", "constraints"],
-          "requires_branch": false,
-          "requires_merge": false,
-          "requires_node_details": true,
-          "requires_localized_node_labels": true,
-          "quality": {
-            "requires_node_nonoverlap": true,
-            "requires_boundary_anchors": true,
-            "requires_routes_clear_nodes": true,
-            "max_top_whitespace_ratio": 0.06,
-            "max_bottom_whitespace_ratio": 0.04,
-            "min_horizontal_utilization_ratio": 0.97,
-            "min_relation_length": 18,
-            "min_arrowhead_size": 7,
-            "max_arrowhead_size": 14
-          }
-        },
-        "module-contract-data-topology": {"profile": "graph", "limits": {}},
-        "technical-design-package": {
-          "profile": "graph",
-          "limits": {"nodes": 6, "relations": 7, "groups": 3, "details": 6},
-          "controls_mode": "persistent",
-          "requires_node_details": true,
-          "requires_localized_node_labels": true,
-          "quality": {
-            "requires_node_nonoverlap": true,
-            "requires_boundary_anchors": true,
-            "requires_routes_clear_nodes": true,
-            "min_relation_length": 18,
-            "min_arrowhead_size": 7,
-            "max_arrowhead_size": 14
           }
         }
       }

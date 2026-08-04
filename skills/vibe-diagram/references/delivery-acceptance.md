@@ -13,7 +13,7 @@ From 0.1.10, this family is a one-release compatibility entry. The invented deli
 - `../assets/templates/delivery-acceptance/evidence-swimlane.html`: evidence ownership and collection across sources.
 - `../assets/templates/delivery-acceptance/risk-action-board.html`: risk, impact, owner, action, and status.
 
-New requests must not select this family directly. Ordered acceptance work routes to business flow, while itemized requirements and evidence route to an acceptance matrix under decision communication. The old explicit name returns only migration guidance.
+New requests must not select this family directly. Ordered acceptance work routes to business flow. Itemized requirement-to-evidence comparison currently has no ready template and must fail closed instead of being forced into another family. The old explicit name returns only migration guidance.
 
 ## Modeling rules
 

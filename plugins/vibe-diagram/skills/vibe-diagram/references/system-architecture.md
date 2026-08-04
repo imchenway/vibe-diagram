@@ -8,21 +8,7 @@ Use this family for system boundaries, containers, components, deployment, data,
 
 ## Templates
 
-- `../assets/templates/system-architecture/api-integration.html`: contracts and integration edges.
-- `../assets/templates/system-architecture/component-breakdown.html`: internal component responsibilities.
-- `../assets/templates/system-architecture/data-architecture.html`: data domains, stores, governance, and consumers.
-- `../assets/templates/system-architecture/data-flow.html`: sources, transformations, trust boundaries, and sinks.
-- `../assets/templates/system-architecture/delivery-pipeline.html`: source-to-build-to-release delivery stages when staged delivery is the primary question.
-- `../assets/templates/system-architecture/deployment-topology.html`: environments, runtime units, and infrastructure.
-- `../assets/templates/system-architecture/event-driven.html`: producers, channels, consumers, and delivery semantics.
-- `../assets/templates/system-architecture/identity-access.html`: identity, authentication, authorization, and protected resources.
 - `../assets/templates/system-architecture/logical-layering.html`: a true north-to-south layered DAG with peers placed in parallel inside a rank and explicit branch or merge relations between ranks.
-- `../assets/templates/system-architecture/network-topology.html`: zones, boundaries, ingress, egress, and internal networks.
-- `../assets/templates/system-architecture/observability-view.html`: telemetry sources, pipelines, storage, rules, and response.
-- `../assets/templates/system-architecture/resilience-view.html`: failure domains, isolation, degradation, and recovery.
-- `../assets/templates/system-architecture/router-v6.html`: route the question to the most useful architectural view.
-- `../assets/templates/system-architecture/security-view.html`: assets, threats, trust boundaries, and controls.
-- `../assets/templates/system-architecture/system-context.html`: people and external systems around one system boundary; use it for context, not as a substitute for internal layering or workload topology.
 - `../assets/templates/system-architecture/workload-overview.html`: a narrow west rail, wide north-to-south center spine, narrow east rail, lower-center band, and full-width southern band; the positions carry no predefined domain roles.
 
 Copy one primary template and replace its slots. Do not combine all views into one canvas or reduce them to the same generic grid.
@@ -50,8 +36,7 @@ An unfilled canonical preview hides every unresolved canvas text token so long m
 
 ## Routing rules
 
-- Start from the question: context, runtime, data, integration, deployment, security, resilience, observability, or delivery.
-- Do not route to `delivery-pipeline` merely because source, build, release, publication, or deployment terms appear. Select it only when the staged source-to-build-to-release progression is the dominant relationship being explained.
+- Start from the required geometry. Requests that do not fit either remaining topology fail closed instead of being forced into a generic architecture view.
 - Use `workload-overview` when the evidence needs two side rails around a dense central north-to-south spine plus lower-center and southern bands. Use `logical-layering` for a predominantly top-to-bottom dependency stack with parallel responsibilities and branch or merge points. Choose by geometry; do not infer content roles from either layout.
 - Use one dominant view and add a second only when it resolves a distinct conflict.
 - Keep the primary request or information flow visually continuous.
