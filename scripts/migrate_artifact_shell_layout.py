@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL_ROOT = ROOT / "skills" / "vibe-diagram"
 TEMPLATE_ROOT = SKILL_ROOT / "assets" / "templates"
 SHELL_ROOT = SKILL_ROOT / "assets" / "contracts" / "artifact-shell"
+ADAPTIVE_ROOT = SKILL_ROOT / "assets" / "contracts" / "adaptive-viewport"
 
 
 def _matching_end(html: str, start: int, tag: str) -> int:
@@ -118,7 +119,186 @@ def _sync_kernel(html: str, tag: str, marker: str, source: str) -> str:
     return rendered
 
 
-def _migrate_template(path: Path, shell_css: str, shell_js: str) -> bool:
+def _structure_standalone_title(html: str) -> str:
+    if 'data-code-review-package="1"' in html or 'data-technical-design-package="1"' in html:
+        return html
+    if re.search(
+        r'<h1\b(?=[^>]*\bdata-slot\s*=\s*(["\'])title\1)'
+        r'(?=[^>]*\bdata-diagram-view-title\s*=\s*(["\'])1\2)[^>]*>',
+        html,
+        re.IGNORECASE,
+    ):
+        return html
+    source = '<h1 data-slot="title">{{title}}</h1>'
+    target = (
+        '<h1 data-slot="title" data-diagram-view-title="1">'
+        '<span data-diagram-view-type>{{diagram-type}}</span>'
+        '<span data-diagram-view-separator aria-hidden="true"></span>'
+        '<span data-diagram-view-subject>{{title}}</span></h1>'
+    )
+    if target in html:
+        return html
+    if source in html:
+        return html.replace(source, target, 1)
+    filled = re.search(
+        r'<h1\b(?=[^>]*\bdata-slot\s*=\s*(["\'])title\1)[^>]*>(.*?)</h1>',
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if not filled:
+        raise ValueError("standalone artifact is missing its page title")
+    rendered = (
+        '<h1 data-slot="title" data-diagram-view-title="1">'
+        '<span data-diagram-view-type>{{diagram-type}}</span>'
+        '<span data-diagram-view-separator aria-hidden="true"></span>'
+        f'<span data-diagram-view-subject>{filled.group(2)}</span></h1>'
+    )
+    return html[: filled.start()] + rendered + html[filled.end() :]
+
+
+def _bind_standalone_guide_items(html: str) -> str:
+    if (
+        'data-code-review-package="1"' in html
+        or 'data-technical-design-package="1"' in html
+        or re.search(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
+    ):
+        return html
+    counter = 0
+
+    def replace(match: re.Match[str]) -> str:
+        nonlocal counter
+        opening = match.group(0)
+        if "data-guide-relations" in opening:
+            return opening
+        counter += 1
+        return opening[:-1] + f' data-guide-relations="{{{{reading-guide-relation-{counter:02d}}}}}">'
+
+    return re.sub(
+        r'<span\b(?=[^>]*\bdata-reading-guide-item(?:\s|=|>))'
+        r'(?=[^>]*\bdata-line-kind\s*=)[^>]*>',
+        replace,
+        html,
+        flags=re.IGNORECASE,
+    )
+
+
+def _ensure_persistent_control_mode(html: str) -> str:
+    def replace(match: re.Match[str]) -> str:
+        opening = match.group(0)
+        if (
+            "data-diagram-controls-mode" in opening
+            or 'data-diagram-control-scope="embedded"' in opening
+        ):
+            return opening
+        return opening[:-1] + ' data-diagram-controls-mode="persistent">'
+
+    return re.sub(
+        r"<(?:div|section)\b(?=[^>]*\bdata-diagram-canvas(?:\s|=|>))[^>]*>",
+        replace,
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
+
+def _move_generic_guides_into_stages(html: str) -> str:
+    if 'data-code-review-package="1"' in html:
+        return html
+
+    def grid_surface_opening(opening: str) -> str:
+        if "data-diagram-grid-surface" in opening:
+            return opening
+        return opening[:-1] + ' data-diagram-grid-surface="1">'
+
+    canvas_pattern = re.compile(
+        r"<(?:div|section)\b(?=[^>]*\bdata-diagram-canvas(?:\s|=|>))[^>]*>",
+        re.IGNORECASE | re.DOTALL,
+    )
+    canvases = list(canvas_pattern.finditer(html))
+    for canvas_match in reversed(canvases):
+        canvas_end = _matching_end(html, canvas_match.start(), canvas_match.group(0)[1:].split(None, 1)[0])
+        canvas = html[canvas_match.start() : canvas_end]
+        guide_match = re.search(
+            r"<section\b[^>]*\bdata-diagram-reading-guide\s*=\s*([\"'])1\1[^>]*>",
+            canvas,
+            re.IGNORECASE,
+        )
+        stage_match = re.search(
+            r"<(?:div|section)\b[^>]*\bdata-diagram-stage(?:\s|=|>)[^>]*>",
+            canvas,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if not guide_match or not stage_match:
+            continue
+        if guide_match.start() > stage_match.start():
+            stage_tag = stage_match.group(0)[1:].split(None, 1)[0]
+            stage_end = _matching_end(canvas, stage_match.start(), stage_tag)
+            if guide_match.start() < stage_end:
+                opening = grid_surface_opening(stage_match.group(0))
+                canvas = (
+                    canvas[: stage_match.start()]
+                    + opening
+                    + canvas[stage_match.end() :]
+                )
+                html = html[: canvas_match.start()] + canvas + html[canvas_end:]
+            continue
+        guide_end = _matching_end(canvas, guide_match.start(), "section")
+        guide = canvas[guide_match.start() : guide_end]
+        canvas = canvas[: guide_match.start()] + canvas[guide_end:]
+        stage_match = re.search(
+            r"<(?:div|section)\b[^>]*\bdata-diagram-stage(?:\s|=|>)[^>]*>",
+            canvas,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if not stage_match:
+            raise ValueError("diagram canvas lost its stage during guide migration")
+        opening = grid_surface_opening(stage_match.group(0))
+        canvas = (
+            canvas[: stage_match.start()]
+            + opening
+            + canvas[stage_match.end() :]
+        )
+        insert_at = stage_match.start() + len(opening)
+        canvas = (
+            canvas[:insert_at]
+            + "\n    "
+            + guide.strip()
+            + "\n"
+            + canvas[insert_at:]
+        )
+        html = html[: canvas_match.start()] + canvas + html[canvas_end:]
+    return html
+
+
+def _mark_sequence_guide_surfaces(html: str) -> str:
+    canvas_pattern = re.compile(
+        r"<(?:div|section)\b(?=[^>]*\bdata-sequence-canvas(?:\s|=|>))[^>]*>",
+        re.IGNORECASE | re.DOTALL,
+    )
+    for canvas_match in reversed(list(canvas_pattern.finditer(html))):
+        canvas_tag = canvas_match.group(0)[1:].split(None, 1)[0]
+        canvas_end = _matching_end(html, canvas_match.start(), canvas_tag)
+        canvas = html[canvas_match.start() : canvas_end]
+        if not re.search(
+            r"<section\b[^>]*\bdata-diagram-reading-guide\s*=\s*([\"'])1\1[^>]*>",
+            canvas,
+            re.IGNORECASE,
+        ):
+            continue
+        opening = canvas_match.group(0)
+        if "data-diagram-grid-surface" in opening:
+            continue
+        opening = opening[:-1] + ' data-diagram-grid-surface="1">'
+        html = html[: canvas_match.start()] + opening + html[canvas_match.end() :]
+    return html
+
+
+def _migrate_template(
+    path: Path,
+    shell_css: str,
+    shell_js: str,
+    adaptive_css: str,
+    adaptive_js: str,
+) -> bool:
     original = path.read_text(encoding="utf-8")
     html = original
 
@@ -188,6 +368,19 @@ def _migrate_template(path: Path, shell_css: str, shell_js: str) -> bool:
             html = html[:offset] + content + html[offset:]
 
     html = _remove_reading_guide_headings(html)
+    html = _structure_standalone_title(html)
+    html = _bind_standalone_guide_items(html)
+    html = _move_generic_guides_into_stages(html)
+    html = _mark_sequence_guide_surfaces(html)
+    html = html.replace(
+        'data-diagram-controls-mode="overflow"',
+        'data-diagram-controls-mode="persistent"',
+    )
+    html = _ensure_persistent_control_mode(html)
+    html = html.replace(
+        "if (toolbar) toolbar.hidden = !overflowX || !supportsZoom;",
+        "if (toolbar) toolbar.hidden = !supportsZoom;",
+    )
     html = _sync_kernel(
         html,
         "style",
@@ -200,6 +393,22 @@ def _migrate_template(path: Path, shell_css: str, shell_js: str) -> bool:
         "data-artifact-shell-preview-kernel",
         shell_js,
     )
+    if 'data-adaptive-viewport-kernel="1"' in html:
+        html = _sync_kernel(
+            html,
+            "style",
+            "data-adaptive-viewport-kernel",
+            adaptive_css,
+        )
+        html = _sync_kernel(
+            html,
+            "script",
+            "data-adaptive-viewport-kernel",
+            adaptive_js,
+        )
+    html = "\n".join(line.rstrip() for line in html.splitlines())
+    if original.endswith("\n"):
+        html += "\n"
     if html == original:
         return False
     path.write_text(html, encoding="utf-8")
@@ -223,50 +432,7 @@ def _sync_code_review_package(path: Path) -> bool:
         sys.dont_write_bytecode = original_bytecode_setting
 
     original = path.read_text(encoding="utf-8")
-    html = original
-    html, css_count = re.subn(
-        r"<style>.*?</style>",
-        f"<style>{module.CODE_REVIEW_BASE_CSS.strip()}</style>",
-        html,
-        count=1,
-        flags=re.DOTALL,
-    )
-    html, runtime_count = re.subn(
-        r'(<script data-code-review-kernel="1">\n).*?(\n</script>)',
-        lambda match: (
-            match.group(1)
-            + module.CODE_REVIEW_RUNTIME.strip()
-            + match.group(2)
-        ),
-        html,
-        count=1,
-        flags=re.DOTALL,
-    )
-    if css_count != 1 or runtime_count != 1:
-        raise ValueError(f"{path} 缺少代码审查样式或运行内核")
-    review_script = re.search(
-        r'<script data-code-review-kernel="1">\n.*?\n</script>',
-        html,
-        flags=re.DOTALL,
-    )
-    adaptive_script = re.search(
-        r'<script data-adaptive-viewport-kernel="1">\n.*?\n</script>',
-        html,
-        flags=re.DOTALL,
-    )
-    if not review_script or not adaptive_script:
-        raise ValueError(f"{path} 缺少代码审查或自适应运行内核")
-    if review_script.start() < adaptive_script.start():
-        before = html[: review_script.start()]
-        between = html[review_script.end() : adaptive_script.start()]
-        after = html[adaptive_script.end() :]
-        html = (
-            before
-            + adaptive_script.group(0)
-            + between
-            + review_script.group(0)
-            + after
-        )
+    html = module._render_code_review_package(module._canonical_review_spec())
     if html == original:
         return False
     path.write_text(html, encoding="utf-8")
@@ -288,6 +454,8 @@ def main() -> int:
     args = _arguments()
     shell_css = (SHELL_ROOT / "v1.css").read_text(encoding="utf-8")
     shell_js = (SHELL_ROOT / "v1.js").read_text(encoding="utf-8")
+    adaptive_css = (ADAPTIVE_ROOT / "v1.css").read_text(encoding="utf-8")
+    adaptive_js = (ADAPTIVE_ROOT / "v1.js").read_text(encoding="utf-8")
     changed = 0
     targets = (
         [path.resolve() for path in args.artifact]
@@ -297,7 +465,15 @@ def main() -> int:
     for path in targets:
         if not path.exists():
             raise FileNotFoundError(path)
-        changed += int(_migrate_template(path, shell_css, shell_js))
+        changed += int(
+            _migrate_template(
+                path,
+                shell_css,
+                shell_js,
+                adaptive_css,
+                adaptive_js,
+            )
+        )
         if 'data-code-review-package="1"' in path.read_text(encoding="utf-8"):
             changed += int(_sync_code_review_package(path))
     print(f"已完成 {changed} 次外壳或代码审查内核更新")

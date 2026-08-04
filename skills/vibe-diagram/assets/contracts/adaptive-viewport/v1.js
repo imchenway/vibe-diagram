@@ -7,6 +7,16 @@
   let resizeFrame = 0;
 
   const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const alignGuide = (canvas) => {
+    const stage = stageFor(canvas);
+    const guide = stage?.querySelector(":scope > [data-diagram-reading-guide='1']");
+    if (!guide) return;
+    const rawScale = canvas.hasAttribute("data-diagram-scaled")
+      ? Number.parseFloat(getComputedStyle(canvas).getPropertyValue("--diagram-scale") || "1")
+      : 1;
+    const scale = Number.isFinite(rawScale) && rawScale > 0 ? rawScale : 1;
+    guide.style.setProperty("--guide-scroll-offset", `${canvas.scrollLeft / scale}px`);
+  };
   const controlsFor = (canvas, root = document) =>
     Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
       (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
@@ -45,21 +55,9 @@
       return false;
     }
     const overflow = stage.scrollWidth > canvas.clientWidth + 1;
-    const persistent = canvas.dataset.diagramControlsMode === "persistent";
-    const controlsVisible = persistent || overflow;
+    const controlsVisible = true;
     revealControls(canvas, controlsVisible, overflow);
     const controls = controlsFor(canvas);
-    if (!controlsVisible) {
-      controls.forEach((item) =>
-        reflect(
-          item,
-          "fit",
-          true,
-          item.dataset.diagramStatusFits || "Fits at 100%"
-        )
-      );
-      return true;
-    }
     const scale = requested === "fit"
       ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
       : Number(requested);
@@ -89,6 +87,7 @@
         : item.dataset.diagramStatusScroll || "Scroll";
       reflect(item, requested, applied, message);
     });
+    alignGuide(canvas);
     return applied;
   };
   const apply = (canvas, requested = "fit") => {
@@ -114,6 +113,7 @@
       if (!canvas || controls.dataset.diagramBound === "true") return;
       controls.dataset.diagramBound = "true";
       controls.hidden = true;
+      canvas.addEventListener("scroll", () => alignGuide(canvas), { passive: true });
       controls.addEventListener("click", (event) => {
         const button = event.target.closest("[data-diagram-zoom-control]");
         if (!button || !controls.contains(button)) return;

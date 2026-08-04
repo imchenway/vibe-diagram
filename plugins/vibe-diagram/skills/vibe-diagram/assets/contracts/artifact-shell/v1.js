@@ -559,6 +559,82 @@
     controlRegion.dataset.controlsState = hasVisibleControl ? "active" : "empty";
   };
 
+  const localGuideFor = (canvas, canvasId) => (
+    canvas.querySelector(
+      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    ) || canvas.querySelector(
+      `:scope > [data-diagram-stage] > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    )
+  );
+
+  const usableLineColor = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    return normalized && normalized !== "none" && normalized !== "transparent" &&
+      normalized !== "rgba(0, 0, 0, 0)";
+  };
+
+  const relationVisual = (relation) => {
+    const style = getComputedStyle(relation);
+    const color = [
+      style.stroke,
+      style.borderBlockStartColor,
+      style.borderTopColor,
+      style.color
+    ].find(usableLineColor) || "#0877ff";
+    const dash = String(style.strokeDasharray || "").trim().toLowerCase();
+    const borderStyle = [style.borderBlockStartStyle, style.borderTopStyle]
+      .find((value) => value && value !== "none") || "solid";
+    return {
+      color,
+      lineStyle: dash && dash !== "none" && dash !== "0px" ? "dashed" : borderStyle
+    };
+  };
+
+  const auditGuideRelations = (canvas, guide, addIssue) => {
+    const items = Array.from(
+      guide.querySelectorAll("[data-reading-guide-item]:has([data-line-swatch])")
+    );
+    if (!items.some((item) => item.hasAttribute("data-guide-relations"))) return;
+    const covered = new Set();
+    items.forEach((item, index) => {
+      const ids = (item.dataset.guideRelations || "").trim().split(/\s+/).filter(Boolean);
+      if (!ids.length) {
+        addIssue("guide-relation-binding-missing", String(index + 1));
+        return;
+      }
+      const visuals = [];
+      ids.forEach((relationId) => {
+        const relation = canvas.querySelector(
+          `[data-diagram-visible-relation-id="${CSS.escape(relationId)}"]`
+        );
+        if (!relation) {
+          addIssue("guide-relation-target-missing", relationId);
+          return;
+        }
+        covered.add(relationId);
+        visuals.push(relationVisual(relation));
+      });
+      const signatures = new Set(
+        visuals.map((visual) => `${visual.color}|${visual.lineStyle}`)
+      );
+      if (signatures.size > 1) {
+        addIssue("guide-relation-style-mismatch", String(index + 1));
+        return;
+      }
+      const visual = visuals[0];
+      if (visual) {
+        item.style.setProperty("--guide-line-color", visual.color);
+        item.style.setProperty("--guide-line-style", visual.lineStyle);
+      }
+    });
+    canvas.querySelectorAll("[data-diagram-visible-relation-id]").forEach((relation) => {
+      const relationId = relation.dataset.diagramVisibleRelationId || "";
+      if (relationId && !covered.has(relationId)) {
+        addIssue("guide-relation-uncovered", relationId);
+      }
+    });
+  };
+
   const auditControls = (canvas, addIssue) => {
     const controlScope = (canvas.dataset.diagramControlScope || "").trim();
     if (controlScope === "embedded") {
@@ -589,6 +665,9 @@
       return;
     }
     reflectTitleControlState(controls);
+    if (!controlsAreAvailable(controls)) {
+      addIssue("zoom-controls-not-visible", canvasId || "unnamed-canvas");
+    }
     const controlRegion = controls.closest("[data-artifact-shell-controls]");
     const titleRegion = controlRegion?.closest("[data-artifact-shell-title='1']");
     if (!controlRegion || !titleRegion) {
@@ -606,13 +685,27 @@
     if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
       addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
     }
-    const guide = canvas.querySelector(
-      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
-    );
+    const guide = localGuideFor(canvas, canvasId);
     if (!guide) {
       addIssue("local-reading-guide-missing", canvasId || "unnamed-canvas");
       return;
     }
+    const gridSurface = guide.closest('[data-diagram-grid-surface="1"]');
+    if (!gridSurface || !canvas.contains(gridSurface)) {
+      addIssue("local-guide-grid-surface-missing", canvasId || "unnamed-canvas");
+    } else {
+      const surfaceStyle = getComputedStyle(gridSurface);
+      const gridSizes = surfaceStyle.backgroundSize
+        .split(",")
+        .map((value) => value.trim());
+      if (
+        surfaceStyle.backgroundImage === "none" ||
+        !gridSizes.some((value) => value === "24px 24px")
+      ) {
+        addIssue("local-guide-grid-pattern-missing", canvasId || "unnamed-canvas");
+      }
+    }
+    auditGuideRelations(canvas, guide, addIssue);
     if (isRendered(guide) && isRendered(canvas)) {
       const guideRect = guide.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();

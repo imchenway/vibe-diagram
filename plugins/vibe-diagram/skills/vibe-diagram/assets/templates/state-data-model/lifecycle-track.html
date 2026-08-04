@@ -20,6 +20,19 @@
   min-inline-size: 0;
 }
 
+[data-diagram-view-title="1"] {
+  display: flex;
+  min-inline-size: 0;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+[data-diagram-view-separator]::before {
+  content: "｜";
+  color: #7b93aa;
+  font-weight: 700;
+}
+
 [data-artifact-shell-controls] {
   grid-area: controls;
   display: flex;
@@ -33,6 +46,14 @@
   display: none;
 }
 
+[data-diagram-grid-surface="1"] {
+  background-image:
+    linear-gradient(rgba(42, 105, 159, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 105, 159, .045) 1px, transparent 1px),
+    linear-gradient(180deg, #fff, #f9fcff);
+  background-size: 24px 24px, 24px 24px, auto;
+}
+
 [data-diagram-reading-guide="1"][data-reading-guide-for] {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -40,13 +61,19 @@
   align-items: start;
   gap: 0;
   inline-size: fit-content;
-  max-inline-size: calc(100% - 1.5rem);
+  max-inline-size: min(calc(100% - 1.5rem), calc(100vw - 2.75rem));
   margin: .75rem .75rem 0;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+[data-diagram-stage] > [data-diagram-reading-guide="1"][data-reading-guide-for] {
+  position: relative;
+  z-index: 4;
+  transform: translateX(var(--guide-scroll-offset, 0px));
 }
 
 [data-reading-guide-groups] {
@@ -130,7 +157,7 @@
   position: absolute;
   inset-inline: 0 .32rem;
   inset-block-start: .3rem;
-  border-block-start: 3px solid #0877ff;
+  border-block-start: 3px var(--guide-line-style, solid) var(--guide-line-color, #0877ff);
 }
 
 [data-line-swatch]::after {
@@ -138,34 +165,22 @@
   position: absolute;
   inset-inline-end: 0;
   inset-block-start: .06rem;
-  border-inline-start: .5rem solid #0877ff;
+  border-inline-start: .5rem solid var(--guide-line-color, #0877ff);
   border-block: .34rem solid transparent;
 }
 
-[data-line-kind="line-02"] [data-line-swatch]::before {
-  border-color: #00a56a;
+[data-line-kind="line-02"] {
+  --guide-line-color: #00a56a;
 }
 
-[data-line-kind="line-02"] [data-line-swatch]::after {
-  border-inline-start-color: #00a56a;
+[data-line-kind="line-03"] {
+  --guide-line-color: #7c3aed;
+  --guide-line-style: dashed;
 }
 
-[data-line-kind="line-03"] [data-line-swatch]::before {
-  border-color: #7c3aed;
-  border-block-start-style: dashed;
-}
-
-[data-line-kind="line-03"] [data-line-swatch]::after {
-  border-inline-start-color: #7c3aed;
-}
-
-[data-line-kind="line-04"] [data-line-swatch]::before {
-  border-color: #f59e0b;
-  border-block-start-style: dotted;
-}
-
-[data-line-kind="line-04"] [data-line-swatch]::after {
-  border-inline-start-color: #f59e0b;
+[data-line-kind="line-04"] {
+  --guide-line-color: #f59e0b;
+  --guide-line-style: dotted;
 }
 
 [data-diagram-reading-guide="1"] [data-evidence-id]::before {
@@ -461,7 +476,7 @@ html:not(.vibe-js) [data-fallback-for] {
       data-template-layout="lifecycle-track"
       data-template-contract-version="2">
     <header data-diagram-title-region data-artifact-shell-title="1">
-    <div data-diagram-title-copy><h1 data-slot="title">{{title}}</h1><p class="summary" data-slot="summary">{{summary}}</p></div>
+    <div data-diagram-title-copy><h1 data-slot="title" data-diagram-view-title="1"><span data-diagram-view-type>{{diagram-type}}</span><span data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{title}}</span></h1><p class="summary" data-slot="summary">{{summary}}</p></div>
 
     <div data-artifact-shell-controls aria-label="Diagram scale controls">
 
@@ -479,17 +494,19 @@ html:not(.vibe-js) [data-fallback-for] {
 
 <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="lifecycle-track"
       data-diagram-profile="timeline" data-diagram-width="wide" data-diagram-height="auto"
-      data-diagram-mobile="stack">
+      data-diagram-mobile="stack" data-diagram-controls-mode="persistent">
+
+
+    <section data-diagram-stage class="template-layout lifecycle-track" aria-label="{{canvas-attribute-001}}" data-diagram-grid-surface="1">
     <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide" data-reading-guide-for="lifecycle-track">
 
     <div data-reading-guide-groups>
-      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
+      <div data-reading-guide-group="relations"><span data-reading-guide-group-title>Line types</span><span data-reading-guide-item data-line-kind="line-01" data-guide-relations="{{reading-guide-relation-01}}"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-01}}</b></span><span data-reading-guide-item data-line-kind="line-02" data-guide-relations="{{reading-guide-relation-02}}"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-02}}</b></span><span data-reading-guide-item data-line-kind="line-03" data-guide-relations="{{reading-guide-relation-03}}"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-03}}</b></span><span data-reading-guide-item data-line-kind="line-04" data-guide-relations="{{reading-guide-relation-04}}"><i data-line-swatch aria-hidden="true"></i><b>{{reading-guide-line-04}}</b></span></div>
       <div data-reading-guide-group="evidence"><span data-reading-guide-group-title>Evidence states</span><article data-evidence-id="evidence-observed-lifecycle-track" data-evidence-status="observed" data-evidence-for="{{evidence-observed-for}}" data-evidence-source-kind="file" data-evidence-source="{{evidence-observed-source}}"><b>Observed implementation</b></article><article data-evidence-id="evidence-check-lifecycle-track" data-evidence-status="observed" data-evidence-for="{{evidence-check-for}}" data-evidence-source-kind="test" data-evidence-source="{{evidence-check-source}}"><b>Completed check</b></article><article data-evidence-id="evidence-unresolved-lifecycle-track" data-evidence-status="unresolved" data-evidence-for="{{evidence-unresolved-for}}" data-evidence-source-kind="runtime" data-evidence-source="{{evidence-unresolved-source}}"><b>Not yet verified</b></article></div>
     </div>
 
   </section>
 
-    <section data-diagram-stage class="template-layout lifecycle-track" aria-label="{{canvas-attribute-001}}">
       <div class="milestones boundary" data-diagram-group-id="layout-group-001" data-semantic-role="{{canvas-attribute-021}}" data-reading-guide="{{canvas-attribute-022}}"><div id="layout-node-001" class="slot core" data-diagram-node-id="layout-node-001" data-semantic-role="{{canvas-attribute-023}}" data-slot="layout-slot-001"><b>{{canvas-text-001}}</b><span>{{canvas-text-002}}</span></div><div id="layout-node-002" class="slot support" data-diagram-node-id="layout-node-002" data-semantic-role="{{canvas-attribute-024}}" data-slot="layout-slot-002"><b>{{canvas-text-003}}</b><span>{{canvas-text-004}}</span></div><div id="layout-node-003" class="slot data" data-diagram-node-id="layout-node-003" data-semantic-role="{{canvas-attribute-025}}" data-slot="layout-slot-003"><b>{{canvas-text-005}}</b><span>{{canvas-text-006}}</span></div><div id="layout-node-004" class="slot risk" data-diagram-node-id="layout-node-004" data-semantic-role="{{canvas-attribute-026}}" data-slot="layout-slot-004"><b>{{canvas-text-007}}</b><span>{{canvas-text-008}}</span></div><div id="layout-node-005" class="slot ops" data-diagram-node-id="layout-node-005" data-semantic-role="{{canvas-attribute-027}}" data-slot="layout-slot-005"><b>{{canvas-text-009}}</b><span>{{canvas-text-010}}</span></div></div>
       <div class="phase" data-diagram-group-id="layout-group-002" data-semantic-role="{{canvas-attribute-028}}" data-reading-guide="{{canvas-attribute-029}}"><div id="layout-node-006" class="slot support" data-diagram-node-id="layout-node-006" data-semantic-role="{{canvas-attribute-030}}" data-slot="layout-slot-006"><b>{{canvas-text-011}}</b><span>{{canvas-text-012}}</span></div></div><div class="phase" data-diagram-group-id="layout-group-003" data-semantic-role="{{canvas-attribute-031}}" data-reading-guide="{{canvas-attribute-032}}"><div id="layout-node-007" class="slot data" data-diagram-node-id="layout-node-007" data-semantic-role="{{canvas-attribute-033}}" data-slot="layout-slot-007"><b>{{canvas-text-013}}</b><span>{{canvas-text-014}}</span></div></div><div class="phase" data-diagram-group-id="layout-group-004" data-semantic-role="{{canvas-attribute-034}}" data-reading-guide="{{canvas-attribute-035}}"><div id="layout-node-008" class="slot risk" data-diagram-node-id="layout-node-008" data-semantic-role="{{canvas-attribute-036}}" data-slot="layout-slot-008"><b>{{canvas-text-015}}</b><span>{{canvas-text-016}}</span></div></div><div class="phase" data-diagram-group-id="layout-group-005" data-semantic-role="{{canvas-attribute-037}}" data-reading-guide="{{canvas-attribute-038}}"><div id="layout-node-009" class="slot ops" data-diagram-node-id="layout-node-009" data-semantic-role="{{canvas-attribute-039}}" data-slot="layout-slot-009"><b>{{canvas-text-017}}</b><span>{{canvas-text-018}}</span></div></div><div class="phase" data-diagram-group-id="layout-group-006" data-semantic-role="{{canvas-attribute-040}}" data-reading-guide="{{canvas-attribute-041}}"><div id="layout-node-010" class="slot " data-diagram-node-id="layout-node-010" data-semantic-role="{{canvas-attribute-042}}" data-slot="layout-slot-010"><b>{{canvas-text-019}}</b><span>{{canvas-text-020}}</span></div></div>
         <section data-semantic-edge-ledger aria-label="{{canvas-attribute-002}}">
@@ -521,6 +538,16 @@ html:not(.vibe-js) [data-fallback-for] {
   let resizeFrame = 0;
 
   const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const alignGuide = (canvas) => {
+    const stage = stageFor(canvas);
+    const guide = stage?.querySelector(":scope > [data-diagram-reading-guide='1']");
+    if (!guide) return;
+    const rawScale = canvas.hasAttribute("data-diagram-scaled")
+      ? Number.parseFloat(getComputedStyle(canvas).getPropertyValue("--diagram-scale") || "1")
+      : 1;
+    const scale = Number.isFinite(rawScale) && rawScale > 0 ? rawScale : 1;
+    guide.style.setProperty("--guide-scroll-offset", `${canvas.scrollLeft / scale}px`);
+  };
   const controlsFor = (canvas, root = document) =>
     Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
       (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
@@ -559,21 +586,9 @@ html:not(.vibe-js) [data-fallback-for] {
       return false;
     }
     const overflow = stage.scrollWidth > canvas.clientWidth + 1;
-    const persistent = canvas.dataset.diagramControlsMode === "persistent";
-    const controlsVisible = persistent || overflow;
+    const controlsVisible = true;
     revealControls(canvas, controlsVisible, overflow);
     const controls = controlsFor(canvas);
-    if (!controlsVisible) {
-      controls.forEach((item) =>
-        reflect(
-          item,
-          "fit",
-          true,
-          item.dataset.diagramStatusFits || "Fits at 100%"
-        )
-      );
-      return true;
-    }
     const scale = requested === "fit"
       ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
       : Number(requested);
@@ -603,6 +618,7 @@ html:not(.vibe-js) [data-fallback-for] {
         : item.dataset.diagramStatusScroll || "Scroll";
       reflect(item, requested, applied, message);
     });
+    alignGuide(canvas);
     return applied;
   };
   const apply = (canvas, requested = "fit") => {
@@ -628,6 +644,7 @@ html:not(.vibe-js) [data-fallback-for] {
       if (!canvas || controls.dataset.diagramBound === "true") return;
       controls.dataset.diagramBound = "true";
       controls.hidden = true;
+      canvas.addEventListener("scroll", () => alignGuide(canvas), { passive: true });
       controls.addEventListener("click", (event) => {
         const button = event.target.closest("[data-diagram-zoom-control]");
         if (!button || !controls.contains(button)) return;
@@ -1230,6 +1247,82 @@ html:not(.vibe-js) [data-fallback-for] {
     controlRegion.dataset.controlsState = hasVisibleControl ? "active" : "empty";
   };
 
+  const localGuideFor = (canvas, canvasId) => (
+    canvas.querySelector(
+      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    ) || canvas.querySelector(
+      `:scope > [data-diagram-stage] > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    )
+  );
+
+  const usableLineColor = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    return normalized && normalized !== "none" && normalized !== "transparent" &&
+      normalized !== "rgba(0, 0, 0, 0)";
+  };
+
+  const relationVisual = (relation) => {
+    const style = getComputedStyle(relation);
+    const color = [
+      style.stroke,
+      style.borderBlockStartColor,
+      style.borderTopColor,
+      style.color
+    ].find(usableLineColor) || "#0877ff";
+    const dash = String(style.strokeDasharray || "").trim().toLowerCase();
+    const borderStyle = [style.borderBlockStartStyle, style.borderTopStyle]
+      .find((value) => value && value !== "none") || "solid";
+    return {
+      color,
+      lineStyle: dash && dash !== "none" && dash !== "0px" ? "dashed" : borderStyle
+    };
+  };
+
+  const auditGuideRelations = (canvas, guide, addIssue) => {
+    const items = Array.from(
+      guide.querySelectorAll("[data-reading-guide-item]:has([data-line-swatch])")
+    );
+    if (!items.some((item) => item.hasAttribute("data-guide-relations"))) return;
+    const covered = new Set();
+    items.forEach((item, index) => {
+      const ids = (item.dataset.guideRelations || "").trim().split(/\s+/).filter(Boolean);
+      if (!ids.length) {
+        addIssue("guide-relation-binding-missing", String(index + 1));
+        return;
+      }
+      const visuals = [];
+      ids.forEach((relationId) => {
+        const relation = canvas.querySelector(
+          `[data-diagram-visible-relation-id="${CSS.escape(relationId)}"]`
+        );
+        if (!relation) {
+          addIssue("guide-relation-target-missing", relationId);
+          return;
+        }
+        covered.add(relationId);
+        visuals.push(relationVisual(relation));
+      });
+      const signatures = new Set(
+        visuals.map((visual) => `${visual.color}|${visual.lineStyle}`)
+      );
+      if (signatures.size > 1) {
+        addIssue("guide-relation-style-mismatch", String(index + 1));
+        return;
+      }
+      const visual = visuals[0];
+      if (visual) {
+        item.style.setProperty("--guide-line-color", visual.color);
+        item.style.setProperty("--guide-line-style", visual.lineStyle);
+      }
+    });
+    canvas.querySelectorAll("[data-diagram-visible-relation-id]").forEach((relation) => {
+      const relationId = relation.dataset.diagramVisibleRelationId || "";
+      if (relationId && !covered.has(relationId)) {
+        addIssue("guide-relation-uncovered", relationId);
+      }
+    });
+  };
+
   const auditControls = (canvas, addIssue) => {
     const controlScope = (canvas.dataset.diagramControlScope || "").trim();
     if (controlScope === "embedded") {
@@ -1260,6 +1353,9 @@ html:not(.vibe-js) [data-fallback-for] {
       return;
     }
     reflectTitleControlState(controls);
+    if (!controlsAreAvailable(controls)) {
+      addIssue("zoom-controls-not-visible", canvasId || "unnamed-canvas");
+    }
     const controlRegion = controls.closest("[data-artifact-shell-controls]");
     const titleRegion = controlRegion?.closest("[data-artifact-shell-title='1']");
     if (!controlRegion || !titleRegion) {
@@ -1277,13 +1373,27 @@ html:not(.vibe-js) [data-fallback-for] {
     if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
       addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
     }
-    const guide = canvas.querySelector(
-      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
-    );
+    const guide = localGuideFor(canvas, canvasId);
     if (!guide) {
       addIssue("local-reading-guide-missing", canvasId || "unnamed-canvas");
       return;
     }
+    const gridSurface = guide.closest('[data-diagram-grid-surface="1"]');
+    if (!gridSurface || !canvas.contains(gridSurface)) {
+      addIssue("local-guide-grid-surface-missing", canvasId || "unnamed-canvas");
+    } else {
+      const surfaceStyle = getComputedStyle(gridSurface);
+      const gridSizes = surfaceStyle.backgroundSize
+        .split(",")
+        .map((value) => value.trim());
+      if (
+        surfaceStyle.backgroundImage === "none" ||
+        !gridSizes.some((value) => value === "24px 24px")
+      ) {
+        addIssue("local-guide-grid-pattern-missing", canvasId || "unnamed-canvas");
+      }
+    }
+    auditGuideRelations(canvas, guide, addIssue);
     if (isRendered(guide) && isRendered(canvas)) {
       const guideRect = guide.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();

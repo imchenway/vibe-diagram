@@ -3098,12 +3098,12 @@ class _ArtifactShellParser(HTMLParser):
         self.content_slots: List[str] = []
         self._order = 0
         self._stack: List[
-            Tuple[str, bool, bool, bool, bool, bool, int, str, int]
+            Tuple[str, bool, bool, bool, bool, bool, bool, int, str, int]
         ] = []
 
-    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, int, str, int]:
+    def _flags(self) -> Tuple[bool, bool, bool, bool, bool, bool, int, str, int]:
         if not self._stack:
-            return False, False, False, False, False, -1, "", -1
+            return False, False, False, False, False, False, -1, "", -1
         (
             _,
             title,
@@ -3111,6 +3111,7 @@ class _ArtifactShellParser(HTMLParser):
             controls,
             main,
             content,
+            grid_surface,
             control_set,
             canvas_id,
             guide_index,
@@ -3121,6 +3122,7 @@ class _ArtifactShellParser(HTMLParser):
             controls,
             main,
             content,
+            grid_surface,
             control_set,
             canvas_id,
             guide_index,
@@ -3137,6 +3139,7 @@ class _ArtifactShellParser(HTMLParser):
             parent_controls,
             parent_main,
             parent_content,
+            parent_grid_surface,
             parent_control_set,
             parent_canvas_id,
             parent_guide_index,
@@ -3151,6 +3154,9 @@ class _ArtifactShellParser(HTMLParser):
         in_guide = parent_guide or starts_guide
         in_controls = parent_controls or starts_controls_container
         in_main = parent_main or tag.lower() == "main"
+        in_grid_surface = parent_grid_surface or (
+            values.get("data-diagram-grid-surface", "").strip() == "1"
+        )
         in_content = (parent_content and not starts_guide) or (
             parent_main and not (in_title or in_guide)
         )
@@ -3180,6 +3186,7 @@ class _ArtifactShellParser(HTMLParser):
                     "order": self._order,
                     "groups": [],
                     "evidence": [],
+                    "grid_surface": in_grid_surface,
                 }
             )
             guide_index = len(self.guide_records) - 1
@@ -3311,6 +3318,7 @@ class _ArtifactShellParser(HTMLParser):
                     in_controls,
                     in_main,
                     in_content,
+                    in_grid_surface,
                     control_set,
                     canvas_id,
                     guide_index,
@@ -3356,6 +3364,10 @@ def artifact_shell_errors(html: str, *, require_content_neutral: bool = False) -
         if not record["for"] or record["for"] != record["canvas"]:
             errors.append(
                 "Every local reading guide must directly identify its containing canvas."
+            )
+        if not record["grid_surface"]:
+            errors.append(
+                "Every local reading guide must be rendered on its containing canvas grid surface."
             )
         guide_targets.append(record["for"])
         groups = record["groups"]
@@ -4161,15 +4173,30 @@ DIAGRAM_VIEW_TITLE_RE = re.compile(
 
 
 def _diagram_view_title_errors(html: str) -> List[str]:
-    declared = len(
-        re.findall(
-            r"\bdata-diagram-view-title\s*=\s*([\"'])1\1",
-            html,
-            re.IGNORECASE,
-        )
+    heading_openings = re.findall(
+        r"<h[1-6]\b[^<>]*>",
+        html,
+        re.IGNORECASE,
+    )
+    declared = sum(
+        bool(re.search(r"\bdata-diagram-view-title\s*=\s*([\"'])1\1", opening, re.IGNORECASE))
+        for opening in heading_openings
     )
     blocks = tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))
     errors: List[str] = []
+    if 'data-technical-design-package="1"' in html:
+        expected = 4
+        expected_level = None
+    elif 'data-code-review-package="1"' in html:
+        expected = 2
+        expected_level = "2"
+    else:
+        expected = 1
+        expected_level = "1"
+    if declared != expected:
+        errors.append(
+            f"diagram title contract requires exactly {expected} structured graph-level title(s)"
+        )
     if declared != len(blocks):
         errors.append("diagram view title declarations must be complete headings")
         return errors
@@ -4187,6 +4214,10 @@ def _diagram_view_title_errors(html: str) -> List[str]:
         re.IGNORECASE | re.DOTALL,
     )
     for index, block in enumerate(blocks, start=1):
+        if expected_level is not None and block.group("level") != expected_level:
+            errors.append(
+                f"diagram view title {index} must use an h{expected_level} heading"
+            )
         body = block.group("body")
         type_parts = tuple(type_pattern.finditer(body))
         separators = tuple(separator_pattern.finditer(body))
@@ -4208,6 +4239,61 @@ def _diagram_view_title_errors(html: str) -> List[str]:
             errors.append(
                 f"diagram view title {index} must use the diagram type｜title order"
             )
+    return errors
+
+
+def _guide_relation_binding_errors(html: str) -> List[str]:
+    if (
+        re.search(r"<[^>]+\bdata-sequence-canvas(?:\s|=|>)", html, re.IGNORECASE)
+        or 'data-code-review-package="1"' in html
+        or 'data-technical-design-package="1"' in html
+    ):
+        return []
+    element_openings = re.findall(r"<[A-Za-z][A-Za-z0-9:-]*\b[^<>]*>", html)
+    visible = [
+        match.groups()
+        for opening in element_openings
+        if (match := re.search(
+            r'\bdata-diagram-visible-relation-id\s*=\s*(["\'])([^"\']+)\1',
+            opening,
+            re.IGNORECASE,
+        ))
+    ]
+    visible_ids = [value for _quote, value in visible]
+    if not visible_ids:
+        return []
+    openings = re.findall(
+        r'<span\b(?=[^>]*\bdata-reading-guide-item(?:\s|=|>))'
+        r'(?=[^>]*\bdata-line-kind\s*=)[^>]*>',
+        html,
+        re.IGNORECASE,
+    )
+    errors: List[str] = []
+    mappings: List[str] = []
+    for index, opening in enumerate(openings, start=1):
+        match = re.search(
+            r'\bdata-guide-relations\s*=\s*(["\'])(.*?)\1',
+            opening,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if not match or not match.group(2).strip():
+            errors.append(f"reading-guide relation item {index} requires an explicit binding")
+            continue
+        mappings.append(match.group(2).strip())
+    if errors or any("{{" in mapping for mapping in mappings):
+        return errors
+    bound = [relation_id for mapping in mappings for relation_id in mapping.split()]
+    unknown = sorted(set(bound) - set(visible_ids))
+    missing = sorted(set(visible_ids) - set(bound))
+    duplicates = sorted(
+        relation_id for relation_id in set(bound) if bound.count(relation_id) > 1
+    )
+    if unknown:
+        errors.append("reading-guide bindings reference unknown relations: " + ", ".join(unknown))
+    if missing:
+        errors.append("reading-guide bindings do not cover relations: " + ", ".join(missing))
+    if duplicates:
+        errors.append("reading-guide bindings repeat relations: " + ", ".join(duplicates))
     return errors
 
 
@@ -4276,7 +4362,7 @@ def _technical_design_package_errors(html: str) -> List[str]:
     )
     if any(token not in html for token in required_reuse):
         errors.append("technical design package kernel reuse declarations are incomplete")
-    if html.count('data-diagram-view-title="1"') != 4:
+    if len(tuple(DIAGRAM_VIEW_TITLE_RE.finditer(html))) != 4:
         errors.append("technical design package requires four graph-level titles")
     if 'data-technical-semantic-table="1"' in html:
         errors.append("technical design package no longer includes semantic-table views")
@@ -4835,6 +4921,7 @@ def validate_canonical(root: Path) -> None:
             "data-artifact-shell-controls",
             "data-diagram-reading-guide",
             "data-reading-guide-for",
+            "data-diagram-grid-surface",
             "data-sequence-toolbar",
         ),
         "assets/contracts/artifact-shell/v1.js": (
@@ -4851,6 +4938,7 @@ def validate_canonical(root: Path) -> None:
             "node-content-overflow",
             "detail-trigger-empty",
             "reflectTitleControlState",
+            "local-guide-grid-surface-missing",
             "data-artifact-shell-controls",
             "ResizeObserver",
         ),
@@ -4925,6 +5013,7 @@ def validate_canonical(root: Path) -> None:
             require_content_neutral=not is_code_review,
         )
         shell_errors.extend(_diagram_view_title_errors(html))
+        shell_errors.extend(_guide_relation_binding_errors(html))
         shell_errors.extend(
             artifact_shell_kernel_errors(
                 html,
@@ -5058,12 +5147,12 @@ def validate_canonical(root: Path) -> None:
                 )
     if len(sequence_digests) != 1:
         raise _fail("the six sequence templates must embed one identical interaction kernel")
-    if persistent_control_templates != [
-        "code-review/code-review-package.html",
-        "technical-design/technical-design-package.html",
-    ]:
+    expected_persistent_templates = [
+        relative for relative in TEMPLATE_PATHS if relative not in SEQUENCE_REDESIGN_PATHS
+    ]
+    if persistent_control_templates != expected_persistent_templates:
         raise _fail(
-            "persistent percentage controls are reserved for code-review and technical-design packages"
+            "every adaptive template must declare persistent percentage controls"
         )
 
 

@@ -12,6 +12,19 @@
   min-inline-size: 0;
 }
 
+[data-diagram-view-title="1"] {
+  display: flex;
+  min-inline-size: 0;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+[data-diagram-view-separator]::before {
+  content: "｜";
+  color: #7b93aa;
+  font-weight: 700;
+}
+
 [data-artifact-shell-controls] {
   grid-area: controls;
   display: flex;
@@ -25,6 +38,14 @@
   display: none;
 }
 
+[data-diagram-grid-surface="1"] {
+  background-image:
+    linear-gradient(rgba(42, 105, 159, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 105, 159, .045) 1px, transparent 1px),
+    linear-gradient(180deg, #fff, #f9fcff);
+  background-size: 24px 24px, 24px 24px, auto;
+}
+
 [data-diagram-reading-guide="1"][data-reading-guide-for] {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -32,13 +53,19 @@
   align-items: start;
   gap: 0;
   inline-size: fit-content;
-  max-inline-size: calc(100% - 1.5rem);
+  max-inline-size: min(calc(100% - 1.5rem), calc(100vw - 2.75rem));
   margin: .75rem .75rem 0;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+[data-diagram-stage] > [data-diagram-reading-guide="1"][data-reading-guide-for] {
+  position: relative;
+  z-index: 4;
+  transform: translateX(var(--guide-scroll-offset, 0px));
 }
 
 [data-reading-guide-groups] {
@@ -122,7 +149,7 @@
   position: absolute;
   inset-inline: 0 .32rem;
   inset-block-start: .3rem;
-  border-block-start: 3px solid #0877ff;
+  border-block-start: 3px var(--guide-line-style, solid) var(--guide-line-color, #0877ff);
 }
 
 [data-line-swatch]::after {
@@ -130,34 +157,22 @@
   position: absolute;
   inset-inline-end: 0;
   inset-block-start: .06rem;
-  border-inline-start: .5rem solid #0877ff;
+  border-inline-start: .5rem solid var(--guide-line-color, #0877ff);
   border-block: .34rem solid transparent;
 }
 
-[data-line-kind="line-02"] [data-line-swatch]::before {
-  border-color: #00a56a;
+[data-line-kind="line-02"] {
+  --guide-line-color: #00a56a;
 }
 
-[data-line-kind="line-02"] [data-line-swatch]::after {
-  border-inline-start-color: #00a56a;
+[data-line-kind="line-03"] {
+  --guide-line-color: #7c3aed;
+  --guide-line-style: dashed;
 }
 
-[data-line-kind="line-03"] [data-line-swatch]::before {
-  border-color: #7c3aed;
-  border-block-start-style: dashed;
-}
-
-[data-line-kind="line-03"] [data-line-swatch]::after {
-  border-inline-start-color: #7c3aed;
-}
-
-[data-line-kind="line-04"] [data-line-swatch]::before {
-  border-color: #f59e0b;
-  border-block-start-style: dotted;
-}
-
-[data-line-kind="line-04"] [data-line-swatch]::after {
-  border-inline-start-color: #f59e0b;
+[data-line-kind="line-04"] {
+  --guide-line-color: #f59e0b;
+  --guide-line-style: dotted;
 }
 
 [data-diagram-reading-guide="1"] [data-evidence-id]::before {

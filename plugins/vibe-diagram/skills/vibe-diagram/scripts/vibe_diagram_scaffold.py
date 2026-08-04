@@ -229,11 +229,13 @@ CODE_REVIEW_RUNTIME = r"""
   };
   const headings = {
     current: {
-      title: root.querySelector("[data-review-current-title]"),
+      type: root.querySelector("[data-review-current-title] [data-diagram-view-type]"),
+      subject: root.querySelector("[data-review-current-title] [data-diagram-view-subject]"),
       summary: root.querySelector("[data-review-current-summary]")
     },
     repair: {
-      title: root.querySelector("[data-review-repair-title]"),
+      type: root.querySelector("[data-review-repair-title] [data-diagram-view-type]"),
+      subject: root.querySelector("[data-review-repair-title] [data-diagram-view-subject]"),
       summary: root.querySelector("[data-review-repair-summary]")
     }
   };
@@ -329,9 +331,8 @@ CODE_REVIEW_RUNTIME = r"""
       const currentStage = canvases[viewId]?.querySelector("[data-diagram-stage]");
       if (!view || !source || !currentStage) return;
       currentStage.replaceWith(source.cloneNode(true));
-      if (headings[viewId].title) {
-        headings[viewId].title.textContent = view.dataset.reviewTitle || "";
-      }
+      if (headings[viewId].type) headings[viewId].type.textContent = view.dataset.reviewType || "";
+      if (headings[viewId].subject) headings[viewId].subject.textContent = view.dataset.reviewTitle || "";
       if (headings[viewId].summary) {
         headings[viewId].summary.textContent = view.dataset.reviewSummary || "";
       }
@@ -534,8 +535,10 @@ def _validate_review_view(
                 ),
             }
         )
+    normalized_title = _text(value["title"], f"{label}.title")
+    _review_title_parts(normalized_title)
     return {
-        "title": _text(value["title"], f"{label}.title"),
+        "title": normalized_title,
         "summary": _text(value["summary"], f"{label}.summary"),
         "participants": normalized_participants,
         "nodes": normalized_nodes,
@@ -741,9 +744,11 @@ def _topology_decor(kind: str) -> str:
     return ""
 
 
-def _visible_review_title(value: str) -> str:
+def _review_title_parts(value: str) -> Tuple[str, str]:
     parts = [part.strip() for part in value.split("｜", 1)]
-    return parts[1] if len(parts) == 2 and parts[1] else parts[0]
+    if len(parts) != 2 or not all(parts):
+        raise ValueError("review diagram titles must use the diagram type｜title format")
+    return parts[0], parts[1]
 
 
 def _render_review_graph(
@@ -840,7 +845,7 @@ def _render_review_definition(finding: Mapping[str, Any], index: int) -> str:
     views = []
     for view_index, view_id in enumerate(("current", "repair")):
         view = finding[view_id]
-        visible_title = _visible_review_title(view["title"])
+        title_type, visible_title = _review_title_parts(view["title"])
         graph = _render_review_graph(
             finding_index=index,
             view_index=view_index,
@@ -851,6 +856,7 @@ def _render_review_definition(finding: Mapping[str, Any], index: int) -> str:
         )
         views.append(
             f'<section data-review-view="{view_id}" '
+            f'data-review-type="{_escape(title_type)}" '
             f'data-review-title="{_escape(visible_title)}" '
             f'data-review-diagram-title="{_escape(view["title"])}" '
             f'data-review-summary="{_escape(view["summary"])}" '
@@ -886,7 +892,7 @@ def _render_review_fallback(
     views = []
     for view_index, view_id in enumerate(("current", "repair")):
         view = finding[view_id]
-        visible_title = _visible_review_title(view["title"])
+        title_type, visible_title = _review_title_parts(view["title"])
         graph = _render_review_graph(
             finding_index=index,
             view_index=view_index,
@@ -900,7 +906,7 @@ def _render_review_fallback(
             f'data-reuse-family="{_escape(route["family"])}" '
             f'data-reuse-template="{_escape(route["template"])}" '
             f'data-review-topology="{_escape(finding["kind"])}">'
-            f'<h3>{_escape(visible_title)}</h3><p>{_escape(view["summary"])}</p>'
+            f'<h3>{_escape(title_type)}｜{_escape(visible_title)}</h3><p>{_escape(view["summary"])}</p>'
             f'<div class="review-fallback-graph">{graph}</div></section>'
         )
         if view_id == "current":
@@ -1022,8 +1028,8 @@ __SEMANTIC_CSS__
       <nav class="review-finding-nav" role="tablist" aria-label="__FINDING_NAV_LABEL__">__FINDING_NAV__</nav>
       <section id="code-review-comparison" class="review-comparison" data-review-comparison role="tabpanel" tabindex="0" aria-label="__VIEW_NAV_LABEL__" aria-labelledby="review-__FIRST_FINDING_ID__-tab" data-diagram-control-scope="primary" data-sequence-id="code-review-pair">
         <article class="review-active" data-review-active-view="current">
-          <header class="review-active-heading"><span class="review-view-label">__CURRENT_TAB__</span><h2 data-review-current-title>__CURRENT_TITLE__</h2><p data-review-current-summary>__CURRENT_SUMMARY__</p></header>
-          <div class="review-canvas" data-diagram-canvas data-diagram-contract="1" data-diagram-id="code-review-current" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent">__CURRENT_GUIDE____CURRENT_GRAPH__</div>
+          <header class="review-active-heading"><span class="review-view-label">__CURRENT_TAB__</span><h2 data-review-current-title data-diagram-view-title="1"><span data-diagram-view-type>__CURRENT_TYPE__</span><span data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>__CURRENT_TITLE__</span></h2><p data-review-current-summary>__CURRENT_SUMMARY__</p></header>
+          <div class="review-canvas" data-diagram-canvas data-diagram-grid-surface="1" data-diagram-contract="1" data-diagram-id="code-review-current" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent">__CURRENT_GUIDE____CURRENT_GRAPH__</div>
         </article>
         <section class="review-scenario" data-review-scenario aria-labelledby="code-review-scenario-title">
           <header class="review-scenario-heading"><span class="review-scenario-label">__SCENARIO_LABEL__</span><h2 id="code-review-scenario-title" data-review-scenario-title>__SCENARIO_TITLE__</h2></header>
@@ -1034,8 +1040,8 @@ __SEMANTIC_CSS__
           </div>
         </section>
         <article class="review-active" data-review-active-view="repair">
-          <header class="review-active-heading"><span class="review-view-label">__REPAIR_TAB__</span><h2 data-review-repair-title>__REPAIR_TITLE__</h2><p data-review-repair-summary>__REPAIR_SUMMARY__</p></header>
-          <div class="review-canvas" data-diagram-canvas data-diagram-contract="1" data-diagram-id="code-review-repair" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent">__REPAIR_GUIDE____REPAIR_GRAPH__</div>
+          <header class="review-active-heading"><span class="review-view-label">__REPAIR_TAB__</span><h2 data-review-repair-title data-diagram-view-title="1"><span data-diagram-view-type>__REPAIR_TYPE__</span><span data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>__REPAIR_TITLE__</span></h2><p data-review-repair-summary>__REPAIR_SUMMARY__</p></header>
+          <div class="review-canvas" data-diagram-canvas data-diagram-grid-surface="1" data-diagram-contract="1" data-diagram-id="code-review-repair" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent">__REPAIR_GUIDE____REPAIR_GRAPH__</div>
         </article>
       </section>
     </div>
@@ -1098,14 +1104,16 @@ __SHELL_JS__
         "__SCENARIO_TRIGGER_LABEL__": _escape(guide["scenario_trigger_label"]),
         "__SCENARIO_PROCESS_LABEL__": _escape(guide["scenario_process_label"]),
         "__SCENARIO_IMPACT_LABEL__": _escape(guide["scenario_impact_label"]),
-        "__CURRENT_TITLE__": _escape(_visible_review_title(first_current["title"])),
+        "__CURRENT_TYPE__": _escape(_review_title_parts(first_current["title"])[0]),
+        "__CURRENT_TITLE__": _escape(_review_title_parts(first_current["title"])[1]),
         "__CURRENT_SUMMARY__": _escape(first_current["summary"]),
         "__CURRENT_GRAPH__": current_graph,
         "__SCENARIO_TITLE__": _escape(first_scenario["title"]),
         "__SCENARIO_TRIGGER__": _escape(first_scenario["trigger"]),
         "__SCENARIO_PROCESS__": _escape(first_scenario["process"]),
         "__SCENARIO_IMPACT__": _escape(first_scenario["impact"]),
-        "__REPAIR_TITLE__": _escape(_visible_review_title(first_repair["title"])),
+        "__REPAIR_TYPE__": _escape(_review_title_parts(first_repair["title"])[0]),
+        "__REPAIR_TITLE__": _escape(_review_title_parts(first_repair["title"])[1]),
         "__REPAIR_SUMMARY__": _escape(first_repair["summary"]),
         "__REPAIR_GRAPH__": repair_graph,
         "__DEFINITIONS__": definitions,
@@ -1136,9 +1144,9 @@ def _draft_review_spec(kinds: Sequence[str]) -> Dict[str, Any]:
         relation_count = len(topology["edges"])
         participant_count = len(topology.get("participants", ()))
 
-        def view(label: str) -> Dict[str, Any]:
+        def view(diagram_type: str) -> Dict[str, Any]:
             result: Dict[str, Any] = {
-                "title": f"{label} view {index:02d}",
+                "title": f"{diagram_type}｜View {index:02d}",
                 "summary": routing["code_review_routes"][kind]["primary_relation"],
                 "nodes": [
                     {"title": f"Node {node_index}", "detail": "Replace with reviewed evidence"}
@@ -1166,14 +1174,14 @@ def _draft_review_spec(kinds: Sequence[str]) -> Dict[str, Any]:
                 "title": f"Review finding {index:02d}",
                 "summary": routing["code_review_routes"][kind]["primary_relation"],
                 "kind": kind,
-                "current": view("Current and risk"),
+                "current": view("Current-state diagram"),
                 "scenario": {
                     "title": f"Real failure scenario {index:02d}",
                     "trigger": "Replace with the evidence-backed trigger condition.",
                     "process": "Replace with the real execution or state sequence.",
                     "impact": "Replace with the concrete user, data, or operational impact.",
                 },
-                "repair": view("Proposed repair"),
+                "repair": view("Repair diagram"),
             }
         )
     return {
@@ -1234,7 +1242,7 @@ def _canonical_review_spec() -> Dict[str, Any]:
 
     def view() -> Dict[str, Any]:
         return {
-            "title": text(),
+            "title": f"{text()}｜{text()}",
             "summary": text(),
             "nodes": [
                 {"title": text(), "detail": text()} for _node in topology["nodes"]

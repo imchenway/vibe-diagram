@@ -24,6 +24,19 @@ a{color:inherit}.template-layout{border:1px solid rgba(141,179,216,.62);border-r
   min-inline-size: 0;
 }
 
+[data-diagram-view-title="1"] {
+  display: flex;
+  min-inline-size: 0;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+[data-diagram-view-separator]::before {
+  content: "｜";
+  color: #7b93aa;
+  font-weight: 700;
+}
+
 [data-artifact-shell-controls] {
   grid-area: controls;
   display: flex;
@@ -37,6 +50,14 @@ a{color:inherit}.template-layout{border:1px solid rgba(141,179,216,.62);border-r
   display: none;
 }
 
+[data-diagram-grid-surface="1"] {
+  background-image:
+    linear-gradient(rgba(42, 105, 159, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 105, 159, .045) 1px, transparent 1px),
+    linear-gradient(180deg, #fff, #f9fcff);
+  background-size: 24px 24px, 24px 24px, auto;
+}
+
 [data-diagram-reading-guide="1"][data-reading-guide-for] {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -44,13 +65,19 @@ a{color:inherit}.template-layout{border:1px solid rgba(141,179,216,.62);border-r
   align-items: start;
   gap: 0;
   inline-size: fit-content;
-  max-inline-size: calc(100% - 1.5rem);
+  max-inline-size: min(calc(100% - 1.5rem), calc(100vw - 2.75rem));
   margin: .75rem .75rem 0;
   padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+[data-diagram-stage] > [data-diagram-reading-guide="1"][data-reading-guide-for] {
+  position: relative;
+  z-index: 4;
+  transform: translateX(var(--guide-scroll-offset, 0px));
 }
 
 [data-reading-guide-groups] {
@@ -134,7 +161,7 @@ a{color:inherit}.template-layout{border:1px solid rgba(141,179,216,.62);border-r
   position: absolute;
   inset-inline: 0 .32rem;
   inset-block-start: .3rem;
-  border-block-start: 3px solid #0877ff;
+  border-block-start: 3px var(--guide-line-style, solid) var(--guide-line-color, #0877ff);
 }
 
 [data-line-swatch]::after {
@@ -142,34 +169,22 @@ a{color:inherit}.template-layout{border:1px solid rgba(141,179,216,.62);border-r
   position: absolute;
   inset-inline-end: 0;
   inset-block-start: .06rem;
-  border-inline-start: .5rem solid #0877ff;
+  border-inline-start: .5rem solid var(--guide-line-color, #0877ff);
   border-block: .34rem solid transparent;
 }
 
-[data-line-kind="line-02"] [data-line-swatch]::before {
-  border-color: #00a56a;
+[data-line-kind="line-02"] {
+  --guide-line-color: #00a56a;
 }
 
-[data-line-kind="line-02"] [data-line-swatch]::after {
-  border-inline-start-color: #00a56a;
+[data-line-kind="line-03"] {
+  --guide-line-color: #7c3aed;
+  --guide-line-style: dashed;
 }
 
-[data-line-kind="line-03"] [data-line-swatch]::before {
-  border-color: #7c3aed;
-  border-block-start-style: dashed;
-}
-
-[data-line-kind="line-03"] [data-line-swatch]::after {
-  border-inline-start-color: #7c3aed;
-}
-
-[data-line-kind="line-04"] [data-line-swatch]::before {
-  border-color: #f59e0b;
-  border-block-start-style: dotted;
-}
-
-[data-line-kind="line-04"] [data-line-swatch]::after {
-  border-inline-start-color: #f59e0b;
+[data-line-kind="line-04"] {
+  --guide-line-color: #f59e0b;
+  --guide-line-style: dotted;
 }
 
 [data-diagram-reading-guide="1"] [data-evidence-id]::before {
@@ -1171,6 +1186,9 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
     <section class="technical-view" data-technical-view-id="overview" data-view-kind="diagram" data-reuse-family="system-architecture" data-reuse-template="component-breakdown">
   <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-001}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-002}}</span></h2><p>{{canvas-text-003}}</p></header>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-overview" data-diagram-control-scope="primary" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary" data-diagram-controls-mode="persistent">
+
+
+    <section data-diagram-stage class="technical-map" aria-label="{{canvas-attribute-001}}" data-diagram-grid-surface="1">
     <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide" data-reading-guide-for="technical-design-overview">
 
     <div data-reading-guide-groups>
@@ -1180,7 +1198,6 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 
   </section>
 
-    <section data-diagram-stage class="technical-map" aria-label="{{canvas-attribute-001}}">
       <svg viewBox="0 0 1160 360" role="img" aria-labelledby="layout-node-001">
         <defs>
   <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#176fb3"></path></marker>
@@ -1241,7 +1258,7 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 </section>
     <section class="technical-view" data-technical-view-id="runtime" data-view-kind="sequence" data-reuse-family="code-sequence" data-reuse-template="participant-timeline">
   <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-060}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-061}}</span></h2><p>{{canvas-text-062}}</p></header>
-  <section class="technical-sequence" aria-label="{{canvas-attribute-002}}" data-sequence-canvas data-sequence-contract="1" data-sequence-id="layout-sequence-001" data-diagram-control-scope="embedded" data-sequence-role="standalone" data-sequence-width="contained" data-sequence-height="flow">
+  <section class="technical-sequence" aria-label="{{canvas-attribute-002}}" data-sequence-canvas data-sequence-contract="1" data-sequence-id="layout-sequence-001" data-diagram-control-scope="embedded" data-sequence-role="standalone" data-sequence-width="contained" data-sequence-height="flow" data-diagram-grid-surface="1">
     <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide" data-reading-guide-for="layout-sequence-001">
 
     <div data-reading-guide-groups>
@@ -1316,6 +1333,9 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
     <section class="technical-view" data-technical-view-id="consistency" data-view-kind="diagram" data-reuse-family="state-data-model" data-reuse-template="state-machine">
   <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-150}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-151}}</span></h2><p>{{canvas-text-152}}</p></header>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-consistency" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary">
+
+
+    <section data-diagram-stage class="technical-map" aria-label="{{canvas-attribute-004}}" data-diagram-grid-surface="1">
     <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide" data-reading-guide-for="technical-design-consistency">
 
     <div data-reading-guide-groups>
@@ -1325,7 +1345,6 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 
   </section>
 
-    <section data-diagram-stage class="technical-map" aria-label="{{canvas-attribute-004}}">
       <svg viewBox="0 0 1160 390" role="img" aria-labelledby="layout-node-005">
         <defs>
   <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#176fb3"></path></marker>
@@ -1389,6 +1408,9 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
     <section class="technical-view" data-technical-view-id="recovery" data-view-kind="diagram" data-reuse-family="business-flow" data-reuse-template="logic-flowchart">
   <header class="view-heading"><h2 data-diagram-view-title="1"><span data-diagram-view-type>{{canvas-text-180}}</span><span class="view-title-separator" data-diagram-view-separator aria-hidden="true"></span><span data-diagram-view-subject>{{canvas-text-181}}</span></h2><p>{{canvas-text-182}}</p></header>
   <div data-diagram-canvas data-diagram-contract="1" data-diagram-id="technical-design-recovery" data-diagram-control-scope="embedded" data-diagram-profile="graph" data-diagram-width="auto" data-diagram-height="flow" data-diagram-mobile="summary">
+
+
+    <section data-diagram-stage class="technical-map recovery-map" aria-label="{{canvas-attribute-005}}" data-diagram-grid-surface="1">
     <section data-slot="evidence-and-notes" data-evidence-ledger="1" data-diagram-reading-guide="1" aria-label="Diagram reading guide" data-reading-guide-for="technical-design-recovery">
 
     <div data-reading-guide-groups>
@@ -1398,7 +1420,6 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
 
   </section>
 
-    <section data-diagram-stage class="technical-map recovery-map" aria-label="{{canvas-attribute-005}}">
       <svg viewBox="0 0 1160 760" role="img" aria-labelledby="layout-node-009">
         <defs>
   <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M1 1L9 5L1 9Z" fill="#176fb3"></path></marker>
@@ -1574,7 +1595,7 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
         var supportsZoom = CSS.supports("zoom", "1");
         var overflowX = stage.scrollWidth > viewport.clientWidth + 1;
         canvas.dataset.sequenceOverflowX = String(overflowX);
-        if (toolbar) toolbar.hidden = !overflowX || !supportsZoom;
+        if (toolbar) toolbar.hidden = !supportsZoom;
         if (!supportsZoom) {
           stage.style.zoom = "1";
           canvas.dataset.sequenceScale = "1";
@@ -1685,6 +1706,16 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
   let resizeFrame = 0;
 
   const stageFor = (canvas) => canvas.querySelector(":scope > [data-diagram-stage]");
+  const alignGuide = (canvas) => {
+    const stage = stageFor(canvas);
+    const guide = stage?.querySelector(":scope > [data-diagram-reading-guide='1']");
+    if (!guide) return;
+    const rawScale = canvas.hasAttribute("data-diagram-scaled")
+      ? Number.parseFloat(getComputedStyle(canvas).getPropertyValue("--diagram-scale") || "1")
+      : 1;
+    const scale = Number.isFinite(rawScale) && rawScale > 0 ? rawScale : 1;
+    guide.style.setProperty("--guide-scroll-offset", `${canvas.scrollLeft / scale}px`);
+  };
   const controlsFor = (canvas, root = document) =>
     Array.from(root.querySelectorAll("[data-diagram-controls]")).filter(
       (controls) => controls.dataset.diagramControls === canvas.dataset.diagramId
@@ -1723,21 +1754,9 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
       return false;
     }
     const overflow = stage.scrollWidth > canvas.clientWidth + 1;
-    const persistent = canvas.dataset.diagramControlsMode === "persistent";
-    const controlsVisible = persistent || overflow;
+    const controlsVisible = true;
     revealControls(canvas, controlsVisible, overflow);
     const controls = controlsFor(canvas);
-    if (!controlsVisible) {
-      controls.forEach((item) =>
-        reflect(
-          item,
-          "fit",
-          true,
-          item.dataset.diagramStatusFits || "Fits at 100%"
-        )
-      );
-      return true;
-    }
     const scale = requested === "fit"
       ? Math.min(1, canvas.clientWidth / stage.scrollWidth)
       : Number(requested);
@@ -1767,6 +1786,7 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
         : item.dataset.diagramStatusScroll || "Scroll";
       reflect(item, requested, applied, message);
     });
+    alignGuide(canvas);
     return applied;
   };
   const apply = (canvas, requested = "fit") => {
@@ -1792,6 +1812,7 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
       if (!canvas || controls.dataset.diagramBound === "true") return;
       controls.dataset.diagramBound = "true";
       controls.hidden = true;
+      canvas.addEventListener("scroll", () => alignGuide(canvas), { passive: true });
       controls.addEventListener("click", (event) => {
         const button = event.target.closest("[data-diagram-zoom-control]");
         if (!button || !controls.contains(button)) return;
@@ -2816,6 +2837,82 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
     controlRegion.dataset.controlsState = hasVisibleControl ? "active" : "empty";
   };
 
+  const localGuideFor = (canvas, canvasId) => (
+    canvas.querySelector(
+      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    ) || canvas.querySelector(
+      `:scope > [data-diagram-stage] > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
+    )
+  );
+
+  const usableLineColor = (value) => {
+    const normalized = String(value || "").trim().toLowerCase();
+    return normalized && normalized !== "none" && normalized !== "transparent" &&
+      normalized !== "rgba(0, 0, 0, 0)";
+  };
+
+  const relationVisual = (relation) => {
+    const style = getComputedStyle(relation);
+    const color = [
+      style.stroke,
+      style.borderBlockStartColor,
+      style.borderTopColor,
+      style.color
+    ].find(usableLineColor) || "#0877ff";
+    const dash = String(style.strokeDasharray || "").trim().toLowerCase();
+    const borderStyle = [style.borderBlockStartStyle, style.borderTopStyle]
+      .find((value) => value && value !== "none") || "solid";
+    return {
+      color,
+      lineStyle: dash && dash !== "none" && dash !== "0px" ? "dashed" : borderStyle
+    };
+  };
+
+  const auditGuideRelations = (canvas, guide, addIssue) => {
+    const items = Array.from(
+      guide.querySelectorAll("[data-reading-guide-item]:has([data-line-swatch])")
+    );
+    if (!items.some((item) => item.hasAttribute("data-guide-relations"))) return;
+    const covered = new Set();
+    items.forEach((item, index) => {
+      const ids = (item.dataset.guideRelations || "").trim().split(/\s+/).filter(Boolean);
+      if (!ids.length) {
+        addIssue("guide-relation-binding-missing", String(index + 1));
+        return;
+      }
+      const visuals = [];
+      ids.forEach((relationId) => {
+        const relation = canvas.querySelector(
+          `[data-diagram-visible-relation-id="${CSS.escape(relationId)}"]`
+        );
+        if (!relation) {
+          addIssue("guide-relation-target-missing", relationId);
+          return;
+        }
+        covered.add(relationId);
+        visuals.push(relationVisual(relation));
+      });
+      const signatures = new Set(
+        visuals.map((visual) => `${visual.color}|${visual.lineStyle}`)
+      );
+      if (signatures.size > 1) {
+        addIssue("guide-relation-style-mismatch", String(index + 1));
+        return;
+      }
+      const visual = visuals[0];
+      if (visual) {
+        item.style.setProperty("--guide-line-color", visual.color);
+        item.style.setProperty("--guide-line-style", visual.lineStyle);
+      }
+    });
+    canvas.querySelectorAll("[data-diagram-visible-relation-id]").forEach((relation) => {
+      const relationId = relation.dataset.diagramVisibleRelationId || "";
+      if (relationId && !covered.has(relationId)) {
+        addIssue("guide-relation-uncovered", relationId);
+      }
+    });
+  };
+
   const auditControls = (canvas, addIssue) => {
     const controlScope = (canvas.dataset.diagramControlScope || "").trim();
     if (controlScope === "embedded") {
@@ -2846,6 +2943,9 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
       return;
     }
     reflectTitleControlState(controls);
+    if (!controlsAreAvailable(controls)) {
+      addIssue("zoom-controls-not-visible", canvasId || "unnamed-canvas");
+    }
     const controlRegion = controls.closest("[data-artifact-shell-controls]");
     const titleRegion = controlRegion?.closest("[data-artifact-shell-title='1']");
     if (!controlRegion || !titleRegion) {
@@ -2863,13 +2963,27 @@ body{background:radial-gradient(circle at 18% 3%,rgba(214,233,255,.78),transpare
     if (scaleOrder.join("|") !== "0.75|0.9|1|fit") {
       addIssue("zoom-control-order", scaleOrder.join("|") || "empty");
     }
-    const guide = canvas.querySelector(
-      `:scope > [data-diagram-reading-guide='1'][data-reading-guide-for="${CSS.escape(canvasId)}"]`
-    );
+    const guide = localGuideFor(canvas, canvasId);
     if (!guide) {
       addIssue("local-reading-guide-missing", canvasId || "unnamed-canvas");
       return;
     }
+    const gridSurface = guide.closest('[data-diagram-grid-surface="1"]');
+    if (!gridSurface || !canvas.contains(gridSurface)) {
+      addIssue("local-guide-grid-surface-missing", canvasId || "unnamed-canvas");
+    } else {
+      const surfaceStyle = getComputedStyle(gridSurface);
+      const gridSizes = surfaceStyle.backgroundSize
+        .split(",")
+        .map((value) => value.trim());
+      if (
+        surfaceStyle.backgroundImage === "none" ||
+        !gridSizes.some((value) => value === "24px 24px")
+      ) {
+        addIssue("local-guide-grid-pattern-missing", canvasId || "unnamed-canvas");
+      }
+    }
+    auditGuideRelations(canvas, guide, addIssue);
     if (isRendered(guide) && isRendered(canvas)) {
       const guideRect = guide.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();
