@@ -1,7 +1,7 @@
 {
   "name": "vibe-diagram",
   "version": "${VERSION}",
-  "description": "Create polished, self-contained HTML diagrams.",
+  "description": "Create product-manager-first, self-contained HTML diagrams.",
   "author": {
     "name": "imchenway"
   },
@@ -9,8 +9,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Vibe Diagram",
-    "shortDescription": "Self-contained HTML diagrams for complex ideas",
-    "longDescription": "Turn architecture, workflows, sequences, state, debugging, design, decisions, and delivery acceptance into self-contained HTML diagrams.",
+    "shortDescription": "Product-readable HTML diagrams with technical evidence",
+    "longDescription": "Create product-manager-first, model-authored architecture, workflow, sequence, state, data, debugging, comparison, technical-design, code-review, and page-prototype visuals as self-contained HTML with mapped technical evidence.",
     "developerName": "imchenway",
     "category": "Developer Tools",
     "capabilities": [
@@ -18,7 +18,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use Vibe Diagram to create a self-contained HTML diagram for this request."
+      "Use Vibe Diagram to create a product-manager-first, self-contained HTML diagram for this request."
     ],
     "brandColor": "#1F6FB2"
   }

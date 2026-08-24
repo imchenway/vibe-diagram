@@ -1,6 +1,6 @@
 # Vibe Diagram
 
-`vibe-diagram` is a portable Agent Skill that turns code, documentation, and requirements into self-contained, single-file HTML visuals for architecture, workflows, sequences, state models, and technical designs.
+`vibe-diagram` is a portable Agent Skill that turns code, documentation, and requirements into product-manager-first, self-contained, single-file HTML visuals. Every artifact explains the business meaning first while preserving exact technical evidence in mapped supporting views and details.
 
 ## Install
 
@@ -30,4 +30,4 @@ TRAE China:
 npx --yes skills@latest add https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram --skill vibe-diagram --agent trae-cn --global --copy --yes
 ```
 
-The command copies the complete Skill, including its scripts, references, contracts, and templates. After installation, start a new TRAE conversation and ask it to use `vibe-diagram`.
+The command copies the complete Skill, including its scripts, references, contracts, shared shell, and visual archetypes. After installation, start a new TRAE conversation and ask it to use `vibe-diagram`.

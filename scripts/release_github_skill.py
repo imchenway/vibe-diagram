@@ -579,6 +579,7 @@ def prepare_release(
     target: str,
     runner: Any,
     *,
+    previous_version: Optional[str] = None,
     dry_run: bool = False,
 ) -> Dict[str, object]:
     parse_stable_version(target)
@@ -596,11 +597,26 @@ def prepare_release(
     ):
         raise ReleaseError("current release metadata is not internally consistent")
     if target != current:
-        require_newer_version(current, target)
+        if previous_version is not None and previous_version != current:
+            raise ReleaseError(
+                "--previous-version must match the current repository version "
+                "when prepare still needs to stage the target"
+            )
+        release_previous_version = current
+        require_newer_version(release_previous_version, target)
+    else:
+        if previous_version is None:
+            raise ReleaseError(
+                "--previous-version is required when the target version is "
+                "already staged in the repository"
+            )
+        parse_stable_version(previous_version)
+        require_newer_version(previous_version, target)
+        release_previous_version = previous_version
     digest = _candidate_digest(skill_root, target)
     result: Dict[str, object] = {
         "status": "planned" if dry_run else "prepared",
-        "previous_version": current,
+        "previous_version": release_previous_version,
         "version": target,
         "tree_sha256": digest,
         "local_validation": "unverified",
@@ -2137,8 +2153,6 @@ def verify_runtime_installed(
                 sys.executable,
                 str(installed / "scripts" / "vibe_diagram_lint.py"),
                 str(artifact),
-                "--type",
-                "system-architecture",
             ),
             cwd=artifact.parent,
             check=False,
@@ -2296,6 +2310,7 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
 
     prepare = common("prepare")
     prepare.add_argument("--dry-run", action="store_true")
+    prepare.add_argument("--previous-version")
     verify = common("verify")
     status = common("status")
     status.add_argument("--refresh", action="store_true")
@@ -2380,14 +2395,29 @@ def execute(
     store = ReleaseStateStore(state_dir)
     state = store.ensure_compatible(args.version, config.repository)
     if args.command == "prepare":
-        previous = _read_version(root / config.version_file)
-        result = prepare_release(root, config, args.version, runner, dry_run=args.dry_run)
+        previous_version = args.previous_version
+        if state is not None:
+            if previous_version is not None and previous_version != state.previous_version:
+                raise ReleaseError(
+                    "--previous-version differs from the existing release state"
+                )
+            previous_version = state.previous_version
+        result = prepare_release(
+            root,
+            config,
+            args.version,
+            runner,
+            previous_version=previous_version,
+            dry_run=args.dry_run,
+        )
         if args.dry_run:
             return _command_result(args.command, config.repository, result)
         if state is None:
             state = ReleaseState.new(
                 target_version=args.version,
-                previous_version=previous,
+                previous_version=_require_string(
+                    result.get("previous_version"), "previous_version"
+                ),
                 repository=config.repository,
                 baseline_head=_baseline_head(root, runner),
             )

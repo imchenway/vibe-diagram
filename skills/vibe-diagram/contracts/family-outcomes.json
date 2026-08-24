@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "families": {
+    "business-architecture": {
+      "mode": "graph",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": ["capability", "domain", "participant", "object", "rule"]
+    },
+    "business-flow": {
+      "mode": "flow",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": ["start", "end"],
+      "required_any_node_roles": ["activity", "decision", "event", "merge"]
+    },
+    "code-sequence": {
+      "mode": "sequence",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": ["participant"],
+      "required_any_node_roles": []
+    },
+    "system-architecture": {
+      "mode": "graph",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": ["system", "service", "component", "interface", "store", "external"]
+    },
+    "fault-debugging": {
+      "mode": "graph",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": ["symptom", "repair", "verification"],
+      "required_any_node_roles": ["cause", "hypothesis"]
+    },
+    "state-machine": {
+      "mode": "state",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": ["initial", "state"],
+      "required_any_node_roles": ["terminal", "cyclic"]
+    },
+    "data-model": {
+      "mode": "data",
+      "requires_edges": true,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": ["entity", "store", "source", "process", "sink"]
+    },
+    "comparison-matrix": {
+      "mode": "matrix",
+      "requires_edges": false,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": []
+    },
+    "code-review": {
+      "mode": "review",
+      "requires_edges": false,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": []
+    },
+    "technical-design": {
+      "mode": "design",
+      "requires_edges": false,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": []
+    },
+    "page-prototype": {
+      "mode": "prototype",
+      "requires_edges": false,
+      "requires_groups": false,
+      "required_node_roles": [],
+      "required_any_node_roles": []
+    }
+  }
+}

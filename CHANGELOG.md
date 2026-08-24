@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-24
+
+- Made product managers the mandatory primary audience for every diagram family: business meaning, impact, rules, decisions, outcomes, and acceptance now lead while exact implementation identifiers remain mapped evidence.
+- Added business-first labeling, a global product summary contract, product-aware shell tokens, `product-reading-reviewed`, and fail-closed Manifest audience validation without adding a product template or node protocol.
+- Replaced the combined real-scenario Atlas as acceptance evidence with twelve independently generated product-manager artifacts, each reviewed without opening technical details.
+- Replaced fixed templates and the rejected Contract v3 generic renderer with model-authored final HTML/SVG from current evidence.
+- Added a content-neutral blank shell, twelve on-demand visual archetypes, ArtifactManifest v1 coverage, and minimal semantic markers that do not prescribe nodes, DOM, topology, or coordinates.
+- Rebuilt static and browser checks around observable outcomes: family grammar, critical visibility, endpoint integrity, overflow, collision, anchoring, and self-containment.
+- Physically removed the production template catalog, template routing, `DiagramDocumentSpec`, dynamic renderer, and obsolete fixed-contract test assets.
+- Migrated deterministic multi-client packaging, updater integrity, documentation, and the local Codex projection to the model-owned authoring boundary.
+- Updated the guarded publisher to preserve the true prior stable version for pre-staged candidates and aligned installed-client runtime verification with the outcome-based linter CLI.
+- Verified the replacement against a CRM release blocker, eleven additional source-backed scenarios, 5/17/52-fact scale probes, three distinct grammars for the same facts, and three real-browser viewports without claiming client runtime verification.
+
 ## [0.1.14] - 2026-07-31
 
 - 新增代码审查图族：在一个自包含 HTML 中按意见展示现状图、真实问题场景和同构修复图，并依据条件分支、异常补偿、并发时序、状态生命周期、双路径漂移、因果证据或架构边界自动路由。

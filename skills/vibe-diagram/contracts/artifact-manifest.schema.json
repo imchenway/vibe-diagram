@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "vibe-diagram/artifact-manifest@1",
+  "title": "Vibe Diagram ArtifactManifest v1",
+  "type": "object",
+  "required": [
+    "$schema",
+    "artifactId",
+    "language",
+    "title",
+    "audience",
+    "questions",
+    "criticalFacts",
+    "views",
+    "evidence",
+    "extensions"
+  ],
+  "properties": {
+    "$schema": {"const": "vibe-diagram/artifact-manifest@1"},
+    "artifactId": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"},
+    "language": {"type": "string", "minLength": 2},
+    "title": {"type": "string", "minLength": 1},
+    "audience": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "contains": {"const": "product-manager"}
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/question"}
+    },
+    "criticalFacts": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/criticalFact"}
+    },
+    "views": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/view"}
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidence"}
+    },
+    "extensions": {"type": "object", "additionalProperties": true}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "identifier": {"type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"},
+    "targetIds": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "question": {
+      "type": "object",
+      "required": ["id", "text", "priority", "answeredBy"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "text": {"type": "string", "minLength": 1},
+        "priority": {"enum": ["critical", "important", "supporting"]},
+        "answeredBy": {"$ref": "#/$defs/targetIds"}
+      },
+      "additionalProperties": false
+    },
+    "criticalFact": {
+      "type": "object",
+      "required": ["id", "statement", "status", "visibleIn", "evidenceIds"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "statement": {"type": "string", "minLength": 1},
+        "status": {"enum": ["observed", "inferred", "proposed", "unresolved", "verified"]},
+        "visibleIn": {"$ref": "#/$defs/targetIds"},
+        "evidenceIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "view": {
+      "type": "object",
+      "required": ["id", "family", "role", "elementId"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "family": {"$ref": "#/$defs/identifier"},
+        "role": {"enum": ["primary", "supporting", "appendix"]},
+        "elementId": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["id", "status", "sourceKind", "source", "supports"],
+      "properties": {
+        "id": {"$ref": "#/$defs/identifier"},
+        "status": {"enum": ["observed", "inferred", "proposed", "unresolved", "verified"]},
+        "sourceKind": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "supports": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/identifier"}
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

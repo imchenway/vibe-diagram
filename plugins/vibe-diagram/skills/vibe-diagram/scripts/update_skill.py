@@ -40,8 +40,21 @@ REQUIRED_FILES = {
     "VERSION",
     "update.json",
     "references/runtime-workflow.md",
+    "references/artifact-authoring.md",
+    "references/archetypes/basic-flow.md",
+    "assets/shell/v1.css",
+    "assets/shell/v1.js",
+    "contracts/artifact-manifest.schema.json",
+    "contracts/family-outcomes.json",
     "scripts/update_skill.py",
     "scripts/vibe_diagram_lint.py",
+    "scripts/vibe_diagram_scaffold.py",
+}
+FORBIDDEN_FILES = {
+    "contracts/diagram-document.schema.json",
+    "contracts/template-routing.json",
+    "scripts/vibe_diagram_render.py",
+    "scripts/vibe_diagram_spec.py",
 }
 
 
@@ -81,6 +94,8 @@ def _safe_files(skill_root: Path) -> Iterator[Tuple[str, Path]]:
     if skill_root.is_symlink() or not skill_root.is_dir():
         raise UpdateError(f"skill root must be a real directory: {skill_root}")
     for path in sorted(skill_root.rglob("*")):
+        if "__pycache__" in path.parts or path.name == ".DS_Store" or path.suffix == ".pyc":
+            continue
         if path.is_symlink():
             raise UpdateError(f"symlink is forbidden in the skill tree: {path}")
         if path.is_dir():
@@ -347,6 +362,10 @@ def _verify_candidate(candidate: Path, manifest: Dict[str, object]) -> None:
     missing = sorted(REQUIRED_FILES - actual_files)
     if missing:
         raise UpdateError(f"release is missing required files: {', '.join(missing)}")
+    forbidden = sorted(FORBIDDEN_FILES.intersection(actual_files))
+    if forbidden or any(path.startswith("assets/templates/") for path in actual_files):
+        names = forbidden or ["assets/templates/"]
+        raise UpdateError(f"release contains retired production files: {', '.join(names)}")
     version = read_version(candidate)
     if version != manifest["version"]:
         raise UpdateError("release VERSION does not match the stable manifest")

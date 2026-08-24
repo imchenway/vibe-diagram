@@ -1,7 +1,7 @@
 interface:
   display_name: "vibe-diagram"
-  short_description: "Create and deliver canonical self-contained HTML diagrams."
-  default_prompt: "Use $vibe-diagram to create, validate, and deliver a canonical self-contained HTML diagram for this request."
+  short_description: "Create product-manager-first self-contained HTML diagrams."
+  default_prompt: "Use $vibe-diagram to explain the current evidence for a product manager, directly author, validate, and deliver a self-contained HTML diagram with mapped technical evidence."
 
 policy:
   allow_implicit_invocation: true
