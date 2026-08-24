@@ -40,6 +40,12 @@ CONFIG_KEYS = {
     "check_command",
 }
 MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
+LEGACY_RUNTIME_ARCHIVE_FILES = {
+    "SKILL.md",
+    "VERSION",
+    "update.json",
+    "scripts/update_skill.py",
+}
 STABLE_VERSION_RE = re.compile(
     r"(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
 )
@@ -660,11 +666,54 @@ def _write_canonical_archive(skill_root: Path, version: str, target: Path) -> No
         raise ReleaseError(f"could not create canonical archive: {exc}", exit_code=4) from exc
 
 
+def _verify_archive_candidate(
+    updater: Any,
+    candidate: Path,
+    manifest: Dict[str, object],
+    *,
+    enforce_current_contract: bool,
+) -> str:
+    if enforce_current_contract:
+        updater._verify_candidate(candidate, manifest)
+    else:
+        missing = sorted(
+            relative
+            for relative in LEGACY_RUNTIME_ARCHIVE_FILES
+            if (candidate / relative).is_symlink()
+            or not (candidate / relative).is_file()
+        )
+        if missing:
+            raise ReleaseError(
+                "previous release archive is missing runtime files: "
+                + ", ".join(missing),
+                exit_code=5,
+            )
+        local_manifest = updater.validate_manifest(
+            _json_loads(
+                (candidate / "update.json").read_bytes(),
+                "archive update manifest",
+            )
+        )
+        if local_manifest != manifest:
+            raise ReleaseError(
+                "previous release archive manifest is inconsistent",
+                exit_code=5,
+            )
+        if updater.tree_sha256(candidate) != manifest["tree_sha256"]:
+            raise ReleaseError(
+                "previous release archive tree integrity check failed",
+                exit_code=5,
+            )
+    return updater.read_version(candidate)
+
+
 def _validate_archive_path(
     root: Path,
     config: ReleaseConfig,
     version: str,
     archive_path: Path,
+    *,
+    enforce_current_contract: bool = True,
 ) -> Dict[str, object]:
     updater = load_updater(root / config.skill_root)
     with tempfile.TemporaryDirectory() as temporary:
@@ -675,8 +724,12 @@ def _validate_archive_path(
                 (candidate / "update.json").read_bytes(), "archive update manifest"
             )
             manifest = updater.validate_manifest(manifest_value)
-            updater._verify_candidate(candidate, manifest)
-            candidate_version = updater.read_version(candidate)
+            candidate_version = _verify_archive_candidate(
+                updater,
+                candidate,
+                manifest,
+                enforce_current_contract=enforce_current_contract,
+            )
         except Exception as exc:
             if isinstance(exc, ReleaseError):
                 raise
@@ -696,13 +749,21 @@ def _validate_archive_bytes(
     config: ReleaseConfig,
     version: str,
     payload: bytes,
+    *,
+    enforce_current_contract: bool = True,
 ) -> Dict[str, object]:
     if len(payload) > MAX_REMOTE_BYTES:
         raise ReleaseError("release archive exceeds the size limit", exit_code=5)
     with tempfile.TemporaryDirectory() as temporary:
         path = Path(temporary) / "release.zip"
         path.write_bytes(payload)
-        return _validate_archive_path(root, config, version, path)
+        return _validate_archive_path(
+            root,
+            config,
+            version,
+            path,
+            enforce_current_contract=enforce_current_contract,
+        )
 
 
 def _verification_commands(config: ReleaseConfig) -> List[Tuple[str, ...]]:
@@ -1603,7 +1664,13 @@ def _runtime_release_payloads(
         previous_archive = fetch_bytes(
             _runtime_tag_archive_url(config, previous_version)
         )
-        _validate_archive_bytes(root, config, previous_version, previous_archive)
+        _validate_archive_bytes(
+            root,
+            config,
+            previous_version,
+            previous_archive,
+            enforce_current_contract=False,
+        )
     return stable_manifest, target_archive, previous_archive
 
 
@@ -1613,6 +1680,8 @@ def _stage_runtime_archive(
     expected_manifest: Mapping[str, object],
     expected_version: str,
     staging_root: Path,
+    *,
+    enforce_current_contract: bool = True,
 ) -> Path:
     archive = staging_root / "release.zip"
     try:
@@ -1625,8 +1694,12 @@ def _stage_runtime_archive(
         if not isinstance(value, dict):
             raise ReleaseError("runtime archive manifest must be an object", exit_code=7)
         manifest = updater.validate_manifest(value)
-        updater._verify_candidate(candidate, manifest)
-        candidate_version = updater.read_version(candidate)
+        candidate_version = _verify_archive_candidate(
+            updater,
+            candidate,
+            manifest,
+            enforce_current_contract=enforce_current_contract,
+        )
     except ReleaseError:
         raise
     except Exception as exc:
@@ -1725,7 +1798,11 @@ def verify_runtime_isolated(
     if previous_archive is None:
         raise ReleaseError("previous immutable archive is unavailable", exit_code=5)
     previous_manifest = _validate_archive_bytes(
-        root, config, state.previous_version, previous_archive
+        root,
+        config,
+        state.previous_version,
+        previous_archive,
+        enforce_current_contract=False,
     )
     phase = "install-previous"
     try:
@@ -1738,6 +1815,7 @@ def verify_runtime_isolated(
                 previous_manifest,
                 state.previous_version,
                 runtime_root / "previous-stage",
+                enforce_current_contract=False,
             )
             installed = runtime_root / "skills" / "vibe-diagram"
             installed.parent.mkdir(parents=True)
@@ -2078,7 +2156,11 @@ def verify_runtime_installed(
     if previous_archive is None:
         raise ReleaseError("previous immutable archive is unavailable", exit_code=5)
     previous_manifest = _validate_archive_bytes(
-        root, config, state.previous_version, previous_archive
+        root,
+        config,
+        state.previous_version,
+        previous_archive,
+        enforce_current_contract=False,
     )
 
     recovery_root = Path(
@@ -2092,6 +2174,7 @@ def verify_runtime_installed(
             previous_manifest,
             state.previous_version,
             recovery_root / "previous-stage",
+            enforce_current_contract=False,
         )
     except BaseException:
         shutil.rmtree(recovery_root, ignore_errors=True)

@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Fixed cross-version runtime verification so a previous immutable release is checked against its own manifest and tree digest instead of the current release's file inventory; this preserves strict target validation while allowing real upgrades across contract migrations.
+
 ## [0.2.0] - 2026-08-24
 
 - Made product managers the mandatory primary audience for every diagram family: business meaning, impact, rules, decisions, outcomes, and acceptance now lead while exact implementation identifiers remain mapped evidence.
