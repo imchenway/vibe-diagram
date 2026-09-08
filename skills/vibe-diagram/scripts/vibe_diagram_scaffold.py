@@ -14,6 +14,8 @@ from pathlib import Path
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 SHELL_CSS = SKILL_ROOT / "assets" / "shell" / "v1.css"
 SHELL_JS = SKILL_ROOT / "assets" / "shell" / "v1.js"
+# 先载入排版能力，外壳在字体就绪后统一调用。
+LAYOUT_JS = SKILL_ROOT / "assets" / "shell" / "layout.js"
 LANG_RE = re.compile(r"[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*")
 RETIRED_FLAGS = {"--spec", "--template", "--review-kind", "--review-spec", "--standard"}
 
@@ -60,6 +62,7 @@ def _shell_copy(language: str) -> dict[str, str]:
 
 
 def render(title: str, language: str, css: str, script: str) -> str:
+    """组合单文件外壳；输入仍是作者最终 HTML，而非第二套图描述。"""
     safe_title = html.escape(title, quote=True)
     safe_language = html.escape(language, quote=True)
     copy = _shell_copy(language)
@@ -99,6 +102,7 @@ def render(title: str, language: str, css: str, script: str) -> str:
 {_manifest(title, language)}
   </script>
   <script data-vd-shell="1">
+{_read_asset(LAYOUT_JS).rstrip()}
 {script.rstrip()}
   </script>
 </body>

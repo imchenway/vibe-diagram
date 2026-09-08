@@ -30,4 +30,4 @@ TRAE 中国版：
 npx --yes skills@latest add https://github.com/imchenway/vibe-diagram/tree/stable/skills/vibe-diagram --skill vibe-diagram --agent trae-cn --global --copy --yes
 ```
 
-命令会复制完整 Skill，包括脚本、参考资料、校验规则和模板。安装完成后，新建 TRAE 对话并明确要求使用 `vibe-diagram` 即可。
+命令会复制完整 Skill，包括脚本、校验规则、五种基础图法和共享外壳。安装完成后，新建 TRAE 对话并明确要求使用 `vibe-diagram` 即可。

@@ -1,24 +1,11 @@
-# Archetype: Code Sequence
+# 时序图
 
-Use for ordered calls, returns, synchronous work, transactions, and participant interaction.
+适用于同步调用、返回、自调用、异步发送、并发、回调、重试和超时。
 
-## Recognizable shape
+- 每个真实参与者有独立标题和生命线，时间从上向下。
+- 消息端点绑定真实发送者与接收者；调用、返回、异步、错误和超时有不同线型或文字，不能只是隐藏属性不同。
+- 消息顺序沿 DOM 顺序。重试和循环显示条件或次数上限；并发、迟到、重复投递在真实分歧处说明。
+- 队列、持久存储、工作者、回调和观察者在证据有区分时不能合并成一个服务。
+- 片段只覆盖真实参与者；不得编造时长、投递保证或成功结果。
 
-- Distinct participants have visible headers and independent lifelines.
-- Time progresses from top to bottom.
-- Messages connect the actual sender and receiver lifelines.
-- Calls, returns, self-calls, activation, and exceptions use distinguishable visual forms.
-- Phase or alternative fragments span only the participants they concern.
-
-## Avoid
-
-- floating message cards without lifelines;
-- merging semantically different participants to reduce width;
-- an ordinary flowchart relabeled as a sequence;
-- message captions covering their arrows.
-
-Wide sequences may use local horizontal scrolling at the 75% readability floor.
-
-## Product-manager reading
-
-Start from the user or business action and end at the visible result. Participant headers use business responsibility first and exact service names second; calls and errors explain their business meaning without losing the real sender, receiver, order, or exception.
+图类标记：`code-sequence`。普通和异步共用时序画法；自动排版安排参与者、生命线和消息，带嵌套片段时直接编排。收益是修改消息时顺序稳定；取舍是宽图需要视图内横滚。

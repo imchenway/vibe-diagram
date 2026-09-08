@@ -195,6 +195,32 @@ dialog[data-vd-detail-for]::backdrop { background: rgba(14, 31, 48, 0.28); backd
 
 [data-vd-static-fallback] { margin-top: 16px; }
 
+/* 五种图法共用可读的基础笔触；作者仍决定形状与业务含义。 */
+svg text { font-family: inherit; font-size: 16px; fill: var(--vd-ink); }
+[data-vd-shape] { fill: #fff; stroke: var(--vd-line); stroke-width: 2; }
+[data-vd-node="decision"] [data-vd-shape] { fill: var(--vd-amber-soft); stroke: var(--vd-amber); }
+[data-vd-edge], [data-vd-lifeline-for] { fill: none; stroke: var(--vd-blue); stroke-width: 2; }
+[data-vd-lifeline-for] { stroke: var(--vd-line); stroke-dasharray: 5 5; }
+[data-vd-message-kind="return"], [data-vd-message-kind="async"] { stroke-dasharray: 7 4; }
+[data-vd-message-kind="error"], [data-vd-message-kind="timeout"] { stroke: var(--vd-red); }
+/* 高亮只降低无关关系的对比，不隐藏关键事实；键盘焦点另有轮廓。 */
+[data-vd-emphasis="quiet"] { opacity: 0.38; }
+[data-vd-emphasis="related"] [data-vd-shape] { stroke: var(--vd-blue); stroke-width: 3; }
+[data-vd-node][role="button"] { cursor: pointer; }
+[data-vd-node]:focus-visible { outline: 3px solid var(--vd-blue); outline-offset: 5px; }
+/* 按视图显示操作，窄屏自然换行；反馈使用文本而非只有颜色。 */
+[data-vd-view-tools] { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+[data-vd-view-tools] button, [data-vd-comparison] button, [data-vd-diagnostics] button {
+  min-height: 44px; padding: 8px 12px; border: 1px solid var(--vd-line); border-radius: 8px;
+  background: #fff; color: var(--vd-ink); font: inherit; cursor: pointer;
+}
+[data-vd-view-tools] button:focus-visible, [data-vd-comparison] button:focus-visible, [data-vd-diagnostics] button:focus-visible { outline: 3px solid var(--vd-blue); outline-offset: 2px; }
+[data-vd-view-status] { flex-basis: 100%; margin: 0; overflow-wrap: anywhere; }
+[data-vd-comparison], [data-vd-diagnostics] { padding: 12px 0; overflow-wrap: anywhere; }
+[data-vd-comparison] summary, [data-vd-diagnostics] summary { cursor: pointer; font-weight: 700; }
+[data-vd-comparison] li, [data-vd-diagnostics] li { margin: 8px 0; line-height: 1.6; }
+[data-vd-comparison] pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; }
+
 @media (max-width: 48rem) {
   [data-vd-artifact="1"] { width: min(100vw - 20px, 48rem); padding-top: 14px; }
   [data-vd-title-region] { grid-template-columns: 1fr; gap: 12px; }
@@ -209,6 +235,8 @@ dialog[data-vd-detail-for]::backdrop { background: rgba(14, 31, 48, 0.28); backd
   body { background: #fff; }
   [data-vd-artifact="1"] { width: 100%; padding: 0; }
   [data-vd-controls], [data-vd-audit-output] { display: none !important; }
+  [data-vd-view-tools], [data-vd-diagnostics] { display: none !important; }
+  [data-vd-emphasis] { opacity: 1 !important; }
   [data-vd-viewport] { overflow: visible !important; }
   [data-vd-zoom-target] { zoom: 1 !important; transform: none !important; }
   dialog[data-vd-detail-for] { display: block; position: static; width: auto; max-height: none; margin: 1rem 0; box-shadow: none; }

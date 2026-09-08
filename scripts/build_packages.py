@@ -32,12 +32,14 @@ ADAPTER_KEYS = {
 EXTRA_KEYS = {"source", "output"}
 UPDATE_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
 CLIENTS = ("claude", "codex", "copilot", "gemini")
+# 公共排版和安全交付必须随每个客户端完整打包。
 REQUIRED_CANONICAL = {
     "SKILL.md",
     "VERSION",
     "update.json",
     "assets/shell/v1.css",
     "assets/shell/v1.js",
+    "assets/shell/layout.js",
     "contracts/artifact-manifest.schema.json",
     "contracts/family-outcomes.json",
     "references/runtime-workflow.md",
@@ -45,6 +47,7 @@ REQUIRED_CANONICAL = {
     "scripts/update_skill.py",
     "scripts/vibe_diagram_lint.py",
     "scripts/vibe_diagram_scaffold.py",
+    "scripts/vibe_diagram_artifact.py",
 }
 FORBIDDEN_CANONICAL = {
     "contracts/diagram-document.schema.json",
@@ -52,25 +55,10 @@ FORBIDDEN_CANONICAL = {
     "scripts/vibe_diagram_render.py",
     "scripts/vibe_diagram_spec.py",
 }
-ARCHETYPE_NAMES = {
-    "async-retry-sequence.md",
-    "basic-flow.md",
-    "business-architecture.md",
-    "code-review.md",
-    "code-sequence.md",
-    "comparison-matrix.md",
-    "er-data-flow.md",
-    "fault-causal-chain.md",
-    "state-machine.md",
-    "swimlane-exception-flow.md",
-    "system-architecture.md",
-    "technical-design-page-prototype.md",
-}
-FAMILY_NAMES = {
-    "business-architecture", "business-flow", "code-sequence", "system-architecture",
-    "fault-debugging", "state-machine", "data-model", "comparison-matrix", "code-review",
-    "technical-design", "page-prototype",
-}
+# 五种基础图法是唯一的图形指导，不按业务场景复制。
+ARCHETYPE_NAMES = {'state-machine.md', 'architecture.md', 'basic-flow.md', 'code-sequence.md', 'er-data-flow.md'}
+# 比较表和页面原型仍按原生 HTML 能力校验。
+FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'page-prototype', 'state-machine', 'comparison-matrix'}
 
 
 class BuildError(RuntimeError):
@@ -319,6 +307,7 @@ def canonical_file_map(root: Path) -> Dict[PurePosixPath, Path]:
 
 
 def validate_canonical(root: Path) -> TreeRecord:
+    """验证五种基础图法及完整的共享能力，保留原有生产门禁。"""
     files = canonical_file_map(root)
     skill_root = root / "skills" / "vibe-diagram"
     skill_text = files[PurePosixPath("SKILL.md")].read_text(encoding="utf-8")
@@ -333,7 +322,7 @@ def validate_canonical(root: Path) -> TreeRecord:
         if path.parent == PurePosixPath("references/archetypes") and path.suffix == ".md"
     }
     if archetypes != ARCHETYPE_NAMES:
-        raise _fail("canonical archetype inventory must match the approved twelve references")
+        raise _fail("canonical archetype inventory must match the approved five references")
     for match in re.findall(r"\]\((references/[^)]+)\)", skill_text):
         if PurePosixPath(match) not in files:
             raise _fail(f"SKILL.md references a missing resource: {match}")

@@ -1,22 +1,10 @@
-# Archetype: State Machine
+# 状态图
 
-Use for durable lifecycle, retries, leases, approvals, terminal conditions, and guarded transitions.
+适用于持久状态、审批、租约、取消、恢复和生命周期。
 
-## Recognizable shape
+- 显示初始状态、真实状态及终态；没有终态的生命周期明确标为循环。
+- 每条转换显示触发事件和适用条件，拒绝、过期、取消、重试及恢复路径保持完整。
+- 状态名表示已经处于什么条件，不能把临时操作当成持久状态。
+- 回路必须有含义，不能凭视觉完整性补造最终成功。
 
-- Show an initial state and named states as distinct semantic objects.
-- Directed transitions carry event and guard meaning where applicable.
-- Terminal states are explicit, or the diagram clearly declares a cyclic lifecycle.
-- Retry, timeout, cancellation, and recovery paths retain their real conditions.
-- Persisted state and transient activity are not conflated.
-
-## Avoid
-
-- a horizontal milestone timeline without transitions;
-- states named after operations instead of durable conditions;
-- unlabeled loops;
-- inventing terminal success when the lifecycle has none.
-
-## Product-manager reading
-
-Use product-recognizable state names and state which event or rule permits, blocks, retries, expires, or finishes the transition. Persistence and lease mechanics remain supporting detail unless they change the visible lifecycle.
+图类标记：`state-machine`。节点角色为 initial、state、terminal 或 cyclic，连线使用 transition。收益是状态与活动不会混淆；取舍是自动排列不能代替生命周期事实核实。

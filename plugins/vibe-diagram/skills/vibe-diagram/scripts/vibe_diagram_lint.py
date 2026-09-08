@@ -52,6 +52,12 @@ class Element:
     hidden: bool
     view_id: str = ""
     text_parts: List[str] = field(default_factory=list)
+    # 记录任务归属与作者几何，供跨视图审核和修改对比复用。
+    task_id: str = ""
+    # 自动布局不将节点位置计作业务变化。
+    automatic: bool = False
+    # 只记录作者写入的坐标，不混入运行时的缩放或高亮。
+    geometry: List[Dict[str, str]] = field(default_factory=list)
 
     @property
     def identifier(self) -> str:
@@ -83,6 +89,8 @@ class ArtifactParser(HTMLParser):
         self.manifest_depth = 0
         self.style_depth = 0
         self.script_depth = 0
+        # 非执行 JSON 数据不应被当成联网脚本检查。
+        self.json_depth = 0
 
     def handle_decl(self, decl: str) -> None:
         if decl.strip().lower() == "doctype html":
@@ -91,6 +99,7 @@ class ArtifactParser(HTMLParser):
             self.doctype = True
 
     def _start(self, tag: str, attrs: Sequence[Tuple[str, Optional[str]]], closed: bool) -> None:
+        """读取原始 HTML 标记，并保留所属视图、任务和几何信息。"""
         tag = tag.lower()
         names = [name.lower() for name, _ in attrs]
         duplicates = sorted({name for name in names if names.count(name) > 1})
@@ -111,6 +120,14 @@ class ArtifactParser(HTMLParser):
                     view_id = entry.element.view_id
                     break
         element = Element(tag, values, self.getpos()[0], inherited_hidden or own_hidden, view_id)
+        element.task_id = values.get("id", "") if "data-vd-task" in values else next((entry.element.task_id for entry in reversed(self.stack) if entry.element.task_id), "")
+        element.automatic = values.get("data-vd-layout") == "auto" or any(entry.element.automatic for entry in self.stack)
+        geometry = {key: value for key, value in values.items() if key in {"x", "y", "x1", "x2", "y1", "y2", "width", "height", "cx", "cy", "rx", "ry", "r", "d", "points", "transform", "viewbox"}}
+        if geometry:
+            element.geometry.append(geometry)
+            for entry in self.stack:
+                if any(key in entry.element.attrs for key in ("data-vd-node", "data-vd-group")):
+                    entry.element.geometry.append(geometry)
         self.elements.append(element)
         identifier = values.get("id", "")
         if identifier:
@@ -130,7 +147,10 @@ class ArtifactParser(HTMLParser):
         elif tag == "script":
             if values.get("src"):
                 self.errors.append("external script src is forbidden")
-            self.script_depth += 1
+            if values.get("type", "").strip().lower() == "application/json":
+                self.json_depth += 1
+            else:
+                self.script_depth += 1
 
         if not closed and tag not in VOID_ELEMENTS:
             hides_children = element.hidden or (tag == "details" and "open" not in values) or (tag == "dialog" and "open" not in values)
@@ -147,6 +167,8 @@ class ArtifactParser(HTMLParser):
         if tag == "script":
             if self.manifest_depth:
                 self.manifest_depth -= 1
+            elif self.json_depth:
+                self.json_depth -= 1
             elif self.script_depth:
                 self.script_depth -= 1
         elif tag == "style" and self.style_depth:
@@ -365,6 +387,7 @@ def _roles(elements: Iterable[Element]) -> List[str]:
 
 
 def _validate_family(view: Element, elements: List[Element], policy: Mapping[str, Any], parser: ArtifactParser) -> List[str]:
+    """按基础图法检查可见含义，业务场景另外审核。"""
     errors: List[str] = []
     view_id = view.attrs.get("data-vd-view", "")
     family = view.attrs.get("data-vd-family", "")
@@ -373,7 +396,7 @@ def _validate_family(view: Element, elements: List[Element], policy: Mapping[str
     groups = [element for element in elements if element.attrs.get("data-vd-group")]
     edges = [element for element in elements if element.attrs.get("data-vd-edge")]
     labels = {element.attrs.get("data-vd-edge-label") for element in elements if element.attrs.get("data-vd-edge-label")}
-    ids = {element.identifier for element in elements if element.identifier}
+    ids = {element.identifier for element in nodes if element.identifier}
 
     for node in nodes:
         if not node.identifier:
@@ -391,6 +414,9 @@ def _validate_family(view: Element, elements: List[Element], policy: Mapping[str
             errors.append(f"edge {edge.identifier} endpoints must exist inside view {view_id}")
         if edge.tag not in GEOMETRY_TAGS:
             errors.append(f"edge {edge.identifier} must mark a visible SVG path, line, or polyline")
+    for label in [element for element in elements if "data-vd-edge-label" in element.attrs]:
+        if not label.identifier or not label.text or label.hidden or label.attrs["data-vd-edge-label"] not in {edge.identifier for edge in edges}:
+            errors.append(f"关系标签 {label.identifier or '(无编号)'} 必须有可见文字并引用当前视图的真实连线")
 
     if policy.get("requires_edges") and len(nodes) > 1 and not edges:
         errors.append(f"view {view_id} family {family} requires visible directed edges")
@@ -430,11 +456,12 @@ def _validate_family(view: Element, elements: List[Element], policy: Mapping[str
         for edge in edges:
             if edge.attrs.get("data-vd-edge") != "transition":
                 errors.append(f"state view edge {edge.identifier} must declare transition semantics")
+            if edge.identifier not in labels:
+                errors.append(f"状态转换 {edge.identifier} 必须显示触发事件或条件")
     elif mode == "data":
-        movement = {"reads", "writes", "emits", "consumes", "transforms", "flows"}
         for edge in edges:
-            if not edge.attrs.get("data-vd-cardinality") and edge.attrs.get("data-vd-edge") not in movement:
-                errors.append(f"data edge {edge.identifier} requires cardinality or data-movement meaning")
+            if not edge.attrs.get("data-vd-cardinality") or edge.identifier not in labels:
+                errors.append(f"数据关系 {edge.identifier} 必须标明并显示数量关系；数据流转使用 architecture 图法")
     elif mode == "matrix":
         matrices = [element for element in elements if "data-vd-matrix" in element.attrs]
         differences = [element for element in elements if "data-vd-difference" in element.attrs]
@@ -445,12 +472,6 @@ def _validate_family(view: Element, elements: List[Element], policy: Mapping[str
             errors.append(f"comparison view {view_id} must visibly mark important differences")
         if not conclusions:
             errors.append(f"comparison view {view_id} requires a visible conclusion")
-    elif mode == "review":
-        sections = [element.attrs.get("data-vd-review-section") for element in elements if element.attrs.get("data-vd-review-section")]
-        required = ["current", "scenario", "repair"]
-        positions = [sections.index(value) if value in sections else -1 for value in required]
-        if any(position < 0 for position in positions) or positions != sorted(positions):
-            errors.append(f"code-review view {view_id} requires visible current → scenario → repair order")
     elif mode == "prototype":
         if not any("data-vd-prototype" in element.attrs for element in elements):
             errors.append(f"page-prototype view {view_id} requires data-vd-prototype")
@@ -492,11 +513,8 @@ def _resource_errors(parser: ArtifactParser, html_text: str) -> List[str]:
     return errors
 
 
-def lint(path: Path, expected_family: str = "", allow_candidates: bool = False) -> List[str]:
-    try:
-        html_text = path.read_text(encoding="utf-8")
-    except (OSError, UnicodeError) as exc:
-        return [f"could not read artifact: {exc}"]
+def lint_text(html_text: str, expected_family: str = "", allow_candidates: bool = False) -> List[str]:
+    """校验已冻结的同一份文字，避免检查后再次读到另一份文件。"""
     parser = ArtifactParser()
     try:
         parser.feed(html_text)
@@ -534,6 +552,12 @@ def lint(path: Path, expected_family: str = "", allow_candidates: bool = False) 
     for marker in ("VibeDiagramQuality", "auditAll", "data-vd-audit-status", "edge-through-node", "critical-target-not-primary-visible", "product-summary-not-visible"):
         if marker not in scripts:
             errors.append(f"shared outcome audit runtime is missing marker: {marker}")
+    for marker in ("VibeDiagramLayout", "exportBlob", "receipt", "bindComparison"):
+        if marker not in scripts:
+            errors.append(f"公共排版、阅读或交付能力缺失：{marker}")
+    for element in parser.elements:
+        if "data-vd-layout" in element.attrs and (element.tag != "svg" or element.attrs["data-vd-layout"] != "auto" or not element.identifier or "data-vd-zoom-target" not in element.attrs):
+            errors.append("自动排版必须标记在有编号、可缩放的 SVG 上，值为 auto")
     if "@media print" not in styles or "prefers-reduced-motion" not in styles:
         errors.append("shared shell must preserve print and reduced-motion behavior")
     errors.extend(_resource_errors(parser, html_text))
@@ -580,18 +604,44 @@ def lint(path: Path, expected_family: str = "", allow_candidates: bool = False) 
         if target not in dialog_ids:
             errors.append(f"detail trigger references missing dialog: {target}")
 
+    for task in [element for element in parser.elements if "data-vd-task" in element.attrs]:
+        kind = task.attrs["data-vd-task"]
+        policies = {"code-review": ["current", "scenario", "repair", "acceptance"], "fault-debugging": ["symptom", "impact", "repair", "verification"], "technical-design": ["change", "boundary", "decision", "acceptance"]}
+        if not task.identifier or kind not in policies:
+            errors.append("任务容器必须有编号，并使用 code-review、fault-debugging 或 technical-design")
+            continue
+        sections = [element.attrs["data-vd-task-section"] for element in parser.elements if element.task_id == task.identifier and "data-vd-task-section" in element.attrs and not element.hidden and element.text]
+        for required in policies[kind]:
+            if required not in sections:
+                errors.append(f"任务 {task.identifier} 缺少可见内容：{required}")
+        if kind == "code-review" and all(value in sections for value in policies[kind]) and [sections.index(value) for value in policies[kind]] != sorted(sections.index(value) for value in policies[kind]):
+            errors.append(f"审查 {task.identifier} 必须按现状、场景、修复、验收阅读")
+        if kind == "fault-debugging" and not {"cause", "hypothesis"}.intersection(sections):
+            errors.append(f"故障 {task.identifier} 必须显示已确认原因或待验证假设")
+
     return sorted(set(errors))
 
 
+def lint(path: Path, expected_family: str = "", allow_candidates: bool = False) -> List[str]:
+    """保留现有命令与发布脚本的文件检查入口。"""
+    try:
+        return lint_text(path.read_text(encoding="utf-8"), expected_family, allow_candidates)
+    except (OSError, UnicodeError) as exc:
+        return [f"无法读取图形文件：{exc}"]
+
+
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    """读取检查选项；JSON 诊断便于交付流程逐项修复。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("path", help="self-contained HTML artifact")
     parser.add_argument("--type", dest="diagram_type", default="", help="expected primary family")
     parser.add_argument("--allow-candidates", action="store_true", help="allow explicit peer design candidates")
+    parser.add_argument("--json", action="store_true", help="以 JSON 输出错误清单")
     return parser.parse_args(argv)
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
+    """运行静态检查，不将其提升为浏览器或产品阅读验收。"""
     args = parse_args(argv)
     path = Path(args.path).expanduser().resolve()
     try:
@@ -599,6 +649,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except LintError as exc:
         errors = [str(exc)]
     if errors:
+        if args.json:
+            print(json.dumps({"status": "failed", "issues": [{"code": "artifact-contract", "message": error} for error in errors]}, ensure_ascii=False))
+            return 1
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 1

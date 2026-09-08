@@ -1,24 +1,11 @@
-# Archetype: Basic Logic Flow
+# 流程图
 
-Use for order, decisions, branches, merges, loops, and terminal outcomes.
+适用于先后步骤、判断、分支、汇合、泳道、异常与补偿。
 
-## Recognizable shape
+- 显示开始、活动、判断与所有实际结束结果，主方向通常从上到下。
+- 判断使用有区别的形状，每条出口显示真实业务条件，不用裸 true/false。
+- 分支实际汇合时画出汇合，重试或补偿回路写明条件与限制。
+- 需要职责时增加泳道；泳道表示真实角色，跨泳道箭头显示交接，不复制同一角色来方便排版。
+- 异常在真实发生点分出，并接到恢复、拒绝或终止结果；不为压缩长度省略失败路径。
 
-- A visible start enters a dominant directional path, normally north to south.
-- Activities are connected by anchored arrows.
-- Decisions use a distinct decision shape; every outgoing branch has a factual label.
-- Parallel or alternative paths visibly rejoin when the process rejoins.
-- Success, rejection, failure, and other terminal outcomes are explicit.
-
-## Avoid
-
-- two columns of before/after cards;
-- branch explanations placed only in prose;
-- arrows that terminate near a node without touching its boundary;
-- hiding exceptions to keep one short path.
-
-Add as many activities and branches as the real process needs.
-
-## Product-manager reading
-
-Make it possible to answer who does what, under which rule, where the path rejects or loops, and what each terminal outcome means. Decision labels use business conditions and destinations, never bare booleans.
+图类标记：`business-flow`。流程与泳道共用自动分层和避障；嵌套泳道可手工编排。收益是普通和异常流程不再各维护模板；取舍是复杂职责图仍需要拆分可读视图。
