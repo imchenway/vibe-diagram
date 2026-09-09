@@ -10,7 +10,7 @@
   "interface": {
     "displayName": "Vibe Diagram",
     "shortDescription": "Product-readable HTML diagrams with technical evidence",
-    "longDescription": "Create product-manager-first, model-authored architecture, workflow, sequence, state, data, debugging, comparison, technical-design, code-review, and page-prototype visuals as self-contained HTML with mapped technical evidence.",
+    "longDescription": "Create product-manager-first, model-authored architecture, workflow, sequence, state, data, debugging, technical-design, and code-review visuals as self-contained HTML with mapped technical evidence.",
     "developerName": "imchenway",
     "category": "Developer Tools",
     "capabilities": [

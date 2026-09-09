@@ -16,7 +16,7 @@ python3 <skill-root>/scripts/vibe_diagram_build.py --input <diagram.json> --mani
 python3 <skill-root>/scripts/vibe_diagram_build.py --svg <diagram.svg> --manifest <coverage.json> --summary '<业务结论与规则>' --output <draft.html>
 ```
 
-比较表和页面原型才运行 `vibe_diagram_scaffold.py --output <draft.html> --title '<内容类型｜业务主题>' --lang zh-CN`，替换其空内容与清单。图形不能用这个空外壳绕过完整查看器。命令拒绝覆盖已有输出；源或布局失败时先修输入，不能删关系、关闭质量门禁或拼另一套简化运行代码。
+命令拒绝覆盖已有输出；源或布局失败时先修输入，不能删关系、关闭质量门禁或拼另一套简化运行代码。
 
 ## 检查独立候选
 

@@ -54,7 +54,6 @@ REQUIRED_CANONICAL = {
     "references/artifact-authoring.md",
     "scripts/update_skill.py",
     "scripts/vibe_diagram_lint.py",
-    "scripts/vibe_diagram_scaffold.py",
     "scripts/vibe_diagram_artifact.py",
 }
 FORBIDDEN_CANONICAL = {
@@ -62,11 +61,12 @@ FORBIDDEN_CANONICAL = {
     "contracts/template-routing.json",
     "scripts/vibe_diagram_render.py",
     "scripts/vibe_diagram_spec.py",
+    "scripts/vibe_diagram_scaffold.py",
 }
 # 五种基础图法是唯一的图形指导，不按业务场景复制。
 ARCHETYPE_NAMES = {'state-machine.md', 'architecture.md', 'basic-flow.md', 'code-sequence.md', 'er-data-flow.md'}
-# 比较表和页面原型仍按原生 HTML 能力校验。
-FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'page-prototype', 'state-machine', 'comparison-matrix'}
+# 产物清单只允许五种基础图法。
+FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'state-machine'}
 
 
 class BuildError(RuntimeError):
@@ -344,12 +344,8 @@ def validate_canonical(root: Path) -> TreeRecord:
     if schema.get("$id") != "vibe-diagram/artifact-manifest@1" or "nodes" in schema.get("properties", {}):
         raise _fail("ArtifactManifest must be open to model-authored DOM and contain no node inventory")
 
-    scaffold = files[PurePosixPath("scripts/vibe_diagram_scaffold.py")].read_text(encoding="utf-8")
     linter = files[PurePosixPath("scripts/vibe_diagram_lint.py")].read_text(encoding="utf-8")
     shell_js = files[PurePosixPath("assets/shell/v1.js")].read_text(encoding="utf-8")
-    for marker in ("--output", "--title", "--lang", "data-vd-author-style"):
-        if marker not in scaffold:
-            raise _fail(f"blank scaffold is missing marker: {marker}")
     for marker in ("ArtifactManifest", "data-vd-critical", "family-outcomes.json"):
         if marker not in linter:
             raise _fail(f"outcome linter is missing marker: {marker}")

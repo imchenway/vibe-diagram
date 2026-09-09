@@ -1,6 +1,6 @@
 ---
 name: vibe-diagram
-description: Create and deliver a product-manager-first, self-contained HTML visual artifact when the user asks to draw or when architecture, workflow, sequence, state, data, debugging, code-review, technical-design, comparison, or page-prototype relationships materially need a diagram; ordinary explanations stay textual unless a diagram is requested, and Mermaid alone never completes the request.
+description: Create and deliver a product-manager-first, self-contained HTML visual artifact when the user asks to draw or when architecture, workflow, sequence, state, data, debugging, code-review, or technical-design relationships materially need a diagram; ordinary explanations stay textual unless a diagram is requested, and Mermaid alone never completes the request.
 ---
 
 # Vibe Diagram
@@ -12,7 +12,7 @@ The model owns fact selection, business meaning and relationships. The packaged 
 1. 从当前 Skill 目录运行 `python3 <skill-root>/scripts/update_skill.py --check-and-update --json`。offline 或 failed 时沿用已安装内容并简短说明；明确手动更新才加 `--force-check`，不绕过完整性检查。
 2. 通读 [运行步骤](references/runtime-workflow.md) 和 [作者契约](references/artifact-authoring.md)。按需加载 at most two 基础图法。
 3. 检查用户的真实证据，先确定产品问题、业务含义、关键事实和证据状态。
-4. 图形按 [原生生成入口](references/native-engine.md) 编写图类源或 SVG，运行 `vibe_diagram_build.py`；比较表、页面原型才使用空 HTML 外壳。检查独立候选、产品阅读和交互后再交付。
+4. 图形按 [原生生成入口](references/native-engine.md) 编写图类源或 SVG，运行 `vibe_diagram_build.py`。检查独立候选、产品阅读和交互后再交付。
 
 ## 只选必要的图法
 
@@ -22,7 +22,7 @@ The model owns fact selection, business meaning and relationships. The packaged 
 - 生命周期与转换：[状态图](references/archetypes/state-machine.md)
 - 实体、字段与数量关系：[数据关系图](references/archetypes/er-data-flow.md)
 
-比较表和页面原型直接使用 HTML 表格、真实控件。故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。
+故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。
 
 ## 共同能力
 

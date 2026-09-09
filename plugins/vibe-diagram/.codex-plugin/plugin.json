@@ -15,11 +15,11 @@
     ],
     "developerName": "imchenway",
     "displayName": "Vibe Diagram",
-    "longDescription": "Create product-manager-first, model-authored architecture, workflow, sequence, state, data, debugging, comparison, technical-design, code-review, and page-prototype visuals as self-contained HTML with mapped technical evidence.",
+    "longDescription": "Create product-manager-first, model-authored architecture, workflow, sequence, state, data, debugging, technical-design, and code-review visuals as self-contained HTML with mapped technical evidence.",
     "shortDescription": "Product-readable HTML diagrams with technical evidence"
   },
   "license": "Apache-2.0",
   "name": "vibe-diagram",
   "skills": "./skills/",
-  "version": "0.2.2"
+  "version": "0.2.3"
 }

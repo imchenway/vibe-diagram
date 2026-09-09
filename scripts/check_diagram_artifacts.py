@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""直接运行技能的真实生成入口，检查五种图法、原生 HTML 和失败保护；不伪造浏览器结果。"""
+"""直接运行技能的真实生成入口，检查五种图法、类型移除和失败保护；不伪造浏览器结果。"""
 from __future__ import annotations
 import argparse
 import json
@@ -16,7 +16,6 @@ ROOT = Path(__file__).resolve().parents[1]
 CORE = ROOT / 'skills/vibe-diagram'
 sys.path.insert(0, str(CORE / 'scripts'))
 from vibe_diagram_lint import lint_text
-from vibe_diagram_scaffold import render, SHELL_CSS, SHELL_JS
 from vibe_diagram_artifact import accept, compare, digest, parse, prepare
 from update_skill import _verify_candidate, tree_sha256, UpdateError
 
@@ -111,18 +110,19 @@ def check(output, core):
     english_manifest=manifest('data-english','data-model','Data model｜Customers & bookings <rules>',english_summary);english_manifest['language']='en'
     (output/'data-english.manifest.json').write_text(json.dumps(english_manifest))
     records.append(run_cli(core,['--svg',svg,'--summary',english_summary,'--manifest',output/'data-english.manifest.json','--output',output/'data-english.html']))
-    # 原生 HTML 表格仍走轻量外壳，避免给静态表格塞入图形控件。
-    title='比较表｜预约结果';text=render(title,'zh-CN',SHELL_CSS.read_text(),SHELL_JS.read_text())
-    payload=manifest('matrix','comparison-matrix',title,summary)
-    start=text.index('<script id="vibe-diagram-manifest"');end=text.index('</script>',start)
-    text=text[:start]+'<script id="vibe-diagram-manifest" type="application/json">'+json.dumps(payload,ensure_ascii=False)+text[end:]
-    text=text.replace('<p data-vd-summary data-vd-scaffold-empty></p>','<p data-vd-summary>示例：仅有名额时确认预约。</p>')
-    start=text.index('<main data-vd-content');end=text.index('</main>',start)
-    text=text[:start]+'''<main data-vd-content><section id="matrix-view" data-vd-view="matrix" data-vd-family="comparison-matrix" data-vd-view-role="primary"><h2 data-vd-view-title>比较表｜预约结果</h2><p id="diagram-summary" data-vd-critical>有名额则确认，没有名额则提示改期。</p><table data-vd-matrix><tr><th>条件</th><th>结果</th></tr><tr data-vd-difference><th>有名额</th><td>确认预约</td></tr><tr><th>无名额</th><td>提示改期</td></tr></table><p data-vd-conclusion>名额检查先于预约确认。</p></section>'''+text[end:]
-    assert not lint_text(text),lint_text(text)
-    (output/'matrix.html').write_text(text)
     # 几何变化与事实变化必须独立，稳定身份不按近似名称合并。
     flow=(output/'workflow.html').read_text()
+    # 已退出的类型在生成入口和成品检查中均被拒绝，不能写出半成品。
+    for removed in ('comparison-matrix', 'page-prototype'):
+        rejected = flow.replace('business-flow', removed)
+        assert any('unsupported family: ' + removed in error for error in lint_text(rejected))
+        payload = json.loads((output/'workflow.manifest.json').read_text())
+        payload['views'][0]['family'] = removed
+        removed_manifest = output/(removed+'.manifest.json')
+        removed_manifest.write_text(json.dumps(payload, ensure_ascii=False))
+        result = run_cli(core, ['--input', output/'workflow.json', '--manifest', removed_manifest, '--output', output/(removed+'.html')], False)
+        assert result['status'] == 'failed', result
+        assert not (output/(removed+'.html')).exists()
     assert any(item['kind']=='changed' for item in compare(flow,flow.replace('提示改期','建议其他时段'))['changes'])
     assert lint_text((output/'data.html').read_text().replace('data-vd-cardinality="1:0..N"',''))
     before=(output/'workflow.html').read_bytes()

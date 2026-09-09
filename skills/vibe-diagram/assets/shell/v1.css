@@ -128,22 +128,6 @@ h1 {
   box-shadow: 0 6px 18px rgba(31, 72, 108, 0.06);
 }
 
-[data-vd-zoom] {
-  min-inline-size: 44px;
-  min-block-size: 38px;
-  padding: 6px 10px;
-  border: 0;
-  border-radius: 8px;
-  color: var(--vd-muted);
-  background: transparent;
-  font: 800 0.75rem/1 inherit;
-  cursor: pointer;
-}
-
-[data-vd-zoom]:hover { color: var(--vd-blue); background: var(--vd-blue-soft); }
-[data-vd-zoom][aria-pressed="true"] { color: #fff; background: var(--vd-blue); }
-[data-vd-zoom]:focus-visible { outline: 3px solid rgba(23, 106, 166, 0.3); outline-offset: 2px; }
-
 [data-vd-content] {
   display: grid;
   gap: 24px;

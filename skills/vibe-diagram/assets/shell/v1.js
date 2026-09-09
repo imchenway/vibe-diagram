@@ -7,12 +7,8 @@
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   // 检查记录与用户阅读层分开保存。
   const auditOutput = () => $("[data-vd-audit-output]");
-  // 图形交互统一交给完整原生查看器；HTML 内容只保留公共阅读控件。
-  const nativeViewer = document.documentElement.dataset.vdRuntime === "archify";
   // 公共交付数据损坏时不能被几何检查覆盖。
   let layoutIssues = [];
-  // 保存初始化前的完整 HTML，下载后重新初始化，不复制临时控件与选择状态。
-  let authoredHTML = "";
   // 中英文控件沿用外壳语言；其他语言可由作者提供完整词条。
   const zh = document.documentElement.lang.toLowerCase().startsWith("zh");
   // 统一交互文案避免每种图重复维护按钮。
@@ -29,72 +25,6 @@
     unsupported: zh ? "此视图包含图片无法完整保留的内容，请使用打印整页或原 HTML。" : "This view contains content an image cannot preserve completely. Print the page or share the HTML.",
     diagnose: zh ? "当前图需要修正" : "This diagram needs repair", locate: zh ? "定位" : "Locate"
   };
-
-  // 选择实际内容的缩放目标。
-  function zoomTargets() {
-    const explicit = $$('[data-vd-zoom-target]');
-    return explicit.length ? explicit : $$('[data-vd-view]');
-  }
-
-  // 查找目标所属的横向阅读窗口。
-  function viewportFor(target) {
-    return target.closest('[data-vd-viewport]') || target.parentElement;
-  }
-
-  // 测量未缩放内容的真实宽度。
-  function naturalWidth(target) {
-    const previous = target.style.zoom;
-    target.style.zoom = "1";
-    const width = Math.max(target.scrollWidth, target.getBoundingClientRect().width, 1);
-    target.style.zoom = previous;
-    return width;
-  }
-
-  // HTML 外壳按清晰阅读比例缩放。
-  function applyZoom(request) {
-    let allApplied = true;
-    zoomTargets().forEach((target) => {
-      const viewport = viewportFor(target);
-      if (!viewport) return;
-      const width = naturalWidth(target);
-      const available = Math.max(viewport.clientWidth, 1);
-      const requested = request === "fit" ? Math.min(1, available / width) : Number(request);
-      const applied = Math.max(0.75, Math.min(1, requested || 1));
-      // 所有缩放档位都应允许视图内横滚，不能把宽图撑出页面。
-      const overflow = width * applied > available + 1;
-      target.style.zoom = String(applied);
-      target.dataset.vdAppliedZoom = String(applied);
-      viewport.style.overflowX = overflow ? "auto" : "visible";
-      viewport.dataset.vdHorizontalOverflow = String(overflow);
-      if (request === "fit" && requested < 0.75) allApplied = false;
-    });
-
-    $$('[data-vd-zoom]').forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.vdZoom === request));
-    });
-    const controls = $('[data-vd-controls]');
-    if (controls) {
-      controls.dataset.vdZoomRequest = request;
-      controls.dataset.vdZoomFullyApplied = String(allApplied);
-    }
-    return allApplied;
-  }
-
-  // HTML 控件与窗口变化共用缩放入口。
-  function bindZoom() {
-    $$('[data-vd-zoom]').forEach((button) => {
-      button.addEventListener("click", () => applyZoom(button.dataset.vdZoom || "fit"));
-    });
-    let frame = 0;
-    window.addEventListener("resize", () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const request = $('[data-vd-controls]')?.dataset.vdZoomRequest || "fit";
-        applyZoom(request);
-      });
-    });
-    applyZoom("fit");
-  }
 
   // 绑定详情打开关闭与焦点返回。
   function bindDetails() {
@@ -329,7 +259,7 @@
       issues.push(issue("page-horizontal-overflow", document.documentElement));
     }
     const controls = $('[data-vd-controls]');
-    if (!controls || (nativeViewer ? $$('[data-view]', controls).length !== 3 : $$('[data-vd-zoom]', controls).length !== 4)) issues.push(issue("zoom-controls-incomplete", controls));
+    if (!controls || $$('[data-view]', controls).length !== 3) issues.push(issue("zoom-controls-incomplete", controls));
 
     const report = {
       status: issues.length ? "failed" : "passed",
@@ -374,11 +304,9 @@
   function highlight(view, id) {
     // 比较定位复用查看器的真实节点与关系身份。
     const target = id ? document.getElementById(id) : null;
-    if (nativeViewer) {
-      if (!target) { globalThis.Archify?.focus.clear(); return; }
-      if (target.dataset.nodeId) globalThis.Archify?.focus.set(target.dataset.nodeId);
-      else globalThis.Archify?.focus.inspectRelationshipById(target.closest('[data-edge-id]')?.dataset.edgeId || target.dataset.edgeId);
-    } else { target?.scrollIntoView({ block: "center", inline: "center" }); target?.focus(); }
+    if (!target) { globalThis.Archify?.focus.clear(); return; }
+    if (target.dataset.nodeId) globalThis.Archify?.focus.set(target.dataset.nodeId);
+    else globalThis.Archify?.focus.inspectRelationshipById(target.closest('[data-edge-id]')?.dataset.edgeId || target.dataset.edgeId);
   }
 
   // 差异数据由本地命令从两份 HTML 解析而来，旧脚本不会载入页面。
@@ -424,19 +352,6 @@
     panel.append(summary, list); $('[data-vd-content]').after(panel);
   }
 
-  // 原生 HTML 表格和原型只提供整页打印与完整 HTML 下载。
-  function bindHtmlDelivery() {
-    const controls = $('[data-vd-controls]');
-    controls.append(button(copy.print, () => window.print()));
-    controls.append(button(zh ? "下载交互 HTML" : "Download interactive HTML", () => {
-      // 下载初始化前的正文，重新打开时只绑定一次控件。
-      const url = URL.createObjectURL(new Blob([authoredHTML], { type: "text/html;charset=utf-8" }));
-      const link = document.createElement("a");
-      link.href = url; link.download = document.title + ".html"; link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-    }));
-  }
-
   // 浏览器记录以候选标识绑定独立磁盘文件；最终 SHA-256 由交付命令核对。
   function receipt() {
     const candidate = $('meta[name="vibe-diagram-candidate"]')?.content;
@@ -445,13 +360,11 @@
   }
 
   // 对外提供当前画面的检查和图片生成，供真实浏览器验收使用。
-  globalThis.VibeDiagramQuality = { auditAll, applyZoom, receipt, highlight };
+  globalThis.VibeDiagramQuality = { auditAll, receipt, highlight };
 
   // 等待整个 HTML 解析，确保文末的差异数据也已存在。
   const ready = Promise.all([document.fonts?.ready || Promise.resolve(), document.readyState === "loading" ? new Promise(resolve => document.addEventListener("DOMContentLoaded", resolve, { once: true })) : Promise.resolve()]);
   ready.then(() => {
-    authoredHTML = "<!doctype html>\n" + document.documentElement.outerHTML;
-    if (!nativeViewer) { bindZoom(); bindHtmlDelivery(); }
     bindDetails();
     bindEvidence();
     try { bindComparison(); }

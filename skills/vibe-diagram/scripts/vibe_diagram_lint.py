@@ -465,24 +465,6 @@ def _validate_family(view: Element, elements: List[Element], policy: Mapping[str
         for edge in edges:
             if not edge.attrs.get("data-vd-cardinality") or edge.identifier not in labels:
                 errors.append(f"数据关系 {edge.identifier} 必须标明并显示数量关系；数据流转使用 architecture 图法")
-    elif mode == "matrix":
-        matrices = [element for element in elements if "data-vd-matrix" in element.attrs]
-        differences = [element for element in elements if "data-vd-difference" in element.attrs]
-        conclusions = [element for element in elements if "data-vd-conclusion" in element.attrs]
-        if not matrices or not any(element.tag == "table" for element in matrices):
-            errors.append(f"comparison view {view_id} requires a real table marked data-vd-matrix")
-        if not differences:
-            errors.append(f"comparison view {view_id} must visibly mark important differences")
-        if not conclusions:
-            errors.append(f"comparison view {view_id} requires a visible conclusion")
-    elif mode == "prototype":
-        if not any("data-vd-prototype" in element.attrs for element in elements):
-            errors.append(f"page-prototype view {view_id} requires data-vd-prototype")
-        controls = [element for element in elements if element.tag in {"button", "input", "select", "textarea"}]
-        if len(controls) < 2:
-            errors.append(f"page-prototype view {view_id} requires real interactive controls")
-        if not any("data-vd-responsive-state" in element.attrs for element in elements):
-            errors.append(f"page-prototype view {view_id} requires an authored responsive state")
 
     view_titles = [element.text for element in elements if "data-vd-view-title" in element.attrs]
     if not view_titles or any("｜" not in title for title in view_titles):
@@ -547,11 +529,12 @@ def lint_text(html_text: str, expected_family: str = "", allow_candidates: bool 
     if not allow_candidates and any("data-vd-candidate" in element.attrs for element in parser.elements):
         errors.append("candidate views require an explicit exploration request and --allow-candidates")
     controls = [element for element in parser.elements if "data-vd-controls" in element.attrs]
-    zoom_values = [element.attrs.get("data-vd-zoom") for element in parser.elements if element.attrs.get("data-vd-zoom")]
     # 原生查看器拥有自己的镜头缩放；不再同时注入另一组图形控件。
     native = any(element.tag == "html" and element.attrs.get("data-vd-runtime") == "archify" for element in parser.elements)
+    if not native:
+        errors.append("图形须通过 vibe_diagram_build.py 组装完整原生查看器")
     native_zoom = [element.attrs["data-view"] for element in parser.elements if "data-view" in element.attrs]
-    if len(controls) != 1 or (native_zoom != ["out", "reset", "in"] if native else zoom_values != ["0.75", "0.9", "1", "fit"]):
+    if len(controls) != 1 or native_zoom != ["out", "reset", "in"]:
         errors.append("图形缩放控件缺失或重复")
     scripts = "\n".join(parser.script_chunks)
     styles = "\n".join(parser.style_chunks)
@@ -559,7 +542,7 @@ def lint_text(html_text: str, expected_family: str = "", allow_candidates: bool 
         if marker not in scripts:
             errors.append(f"shared outcome audit runtime is missing marker: {marker}")
     # 只检查当前产物实际使用的完整能力，不接受旧的简化图形模块。
-    capabilities = ("Archify.routeProbe", "Archify.guidedViews", "Archify.motion", "Archify.exportMenu", "VibeDiagramCanvas", "vibeAuthoredHtml") if native else ("bindHtmlDelivery",)
+    capabilities = ("Archify.routeProbe", "Archify.guidedViews", "Archify.motion", "Archify.exportMenu", "VibeDiagramCanvas", "vibeAuthoredHtml")
     for marker in (*capabilities, "receipt", "bindComparison"):
         if marker not in scripts:
             errors.append(f"公共排版、阅读或交付能力缺失：{marker}")
@@ -593,8 +576,6 @@ def lint_text(html_text: str, expected_family: str = "", allow_candidates: bool 
             if not isinstance(policy, dict):
                 errors.append(f"view {view.attrs.get('data-vd-view')} uses unsupported family: {family}")
                 continue
-            if policy.get("mode") not in {"matrix", "prototype"} and not native:
-                errors.append("图形须通过 vibe_diagram_build.py 组装完整原生查看器")
             errors.extend(_validate_family(view, _view_records(parser, view.attrs.get("data-vd-view", "")), policy, parser))
         if expected_family:
             primary_families = {

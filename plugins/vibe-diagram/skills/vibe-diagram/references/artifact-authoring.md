@@ -74,13 +74,13 @@ Use these markers on the final authored elements:
 | `data-vd-critical` | A visible target that directly answers a critical question or fact. |
 | `data-vd-detail-for="element-id"` | Authored detail for one semantic element. |
 
-Additional family markers are allowed. Common useful markers are `data-vd-lifeline-for`, `data-vd-message-kind`, `data-vd-cardinality`, `data-vd-review-section`, `data-vd-matrix`, and `data-vd-prototype`.
+Additional family markers are allowed. Common useful markers are `data-vd-lifeline-for`, `data-vd-message-kind`, `data-vd-cardinality`, and `data-vd-review-section`.
 
 标记不限制业务文字或数量。原生编译器生成一次最终几何；直接编写的 SVG 保留作者几何，两者都使用同一个完整查看器。
 
 ## Global shell
 
-保留用户确定的渐变背景、二十四像素方格、系统字体、配色和留白。图形调用完整原生查看器，公共层只负责主题、覆盖检查、差异与交付；不能再写一套简化的阅读、动效或导出逻辑。表格与页面原型继续使用公共 HTML 外壳的缩放、详情、打印和 HTML 下载。
+保留用户确定的渐变背景、二十四像素方格、系统字体、配色和留白。图形调用完整原生查看器，公共层只负责主题、覆盖检查、差异与交付；不能再写一套简化的阅读、动效或导出逻辑。
 
 图形支持名称查找、关联对象、上下游、路径、地图、筛选、章节、镜头、演示、流程线条动效及导出。一个原生文件声明一个主要图形视图，多条阅读路线用章节，不增加同义模板。问题确实需要多种图法时可以交付多份互相关联的 HTML；不要为了合成一幅图混淆时序、结构与实体含义。
 
@@ -116,8 +116,6 @@ The machine-readable policy is `contracts/family-outcomes.json`. It verifies onl
 - state: initial state, authored states, transitions, guards when applicable, and a terminal or explicitly cyclic lifecycle;
 - data model: independent entities with visible cardinality; data movement belongs to architecture;
 - architecture: real components/boundaries plus visible dependency, ownership, trust, or data relations;
-- comparison: real row/column axes, visible fact values, differences, and conclusion without invented weights;
-- page prototype: real controls and responsive states;
 
 No family policy sets a maximum node count, a DOM skeleton, business wording, coordinate system, or required number of views.
 
@@ -146,7 +144,5 @@ Close every detail and ignore visually secondary implementation identifiers. Use
 - `fault-debugging`：symptom、impact、cause 或 hypothesis、repair、verification，假设与已确认原因必须区分。
 - `code-review`：每条发现一个容器，依次显示 current、scenario、repair、acceptance；场景必须是真实触发过程，不能只写泛泛风险。
 - `technical-design`：change、boundary、decision、acceptance；按问题补充必要的基础视图。
-- `comparison-matrix`：原生 `table[data-vd-matrix]`，条件和候选形成两条轴，关键差异 `data-vd-difference` 与结论 `data-vd-conclusion` 可见，不编造评分。
-- `page-prototype`：真实 HTML 控件，`data-vd-prototype` 与 `data-vd-responsive-state`；空、加载、失败、权限与成功状态按需求可见或可达。
 
 场景容器检查能发现内容遗漏，不能证明事实或业务判断正确。没有把属性标上就视作验证通过的捷径。

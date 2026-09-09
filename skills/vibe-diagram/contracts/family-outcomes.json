@@ -73,21 +73,7 @@
       "required_any_node_roles": [
         "entity"
       ]
-    },
-    "comparison-matrix": {
-      "mode": "matrix",
-      "requires_edges": false,
-      "requires_groups": false,
-      "required_node_roles": [],
-      "required_any_node_roles": []
-    },
-    "page-prototype": {
-      "mode": "prototype",
-      "requires_edges": false,
-      "requires_groups": false,
-      "required_node_roles": [],
-      "required_any_node_roles": []
     }
   },
-  "$comment": "五种基础图法加比较表与页面原型；故障、审查、设计按任务内容独立检查。"
+  "$comment": "仅支持五种基础图法；故障、审查、设计按任务内容独立检查。"
 }

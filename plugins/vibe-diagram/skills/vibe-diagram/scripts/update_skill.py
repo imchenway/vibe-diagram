@@ -58,7 +58,6 @@ REQUIRED_FILES = {
     "contracts/family-outcomes.json",
     "scripts/update_skill.py",
     "scripts/vibe_diagram_lint.py",
-    "scripts/vibe_diagram_scaffold.py",
     "scripts/vibe_diagram_artifact.py",
 }
 FORBIDDEN_FILES = {
@@ -66,6 +65,7 @@ FORBIDDEN_FILES = {
     "contracts/template-routing.json",
     "scripts/vibe_diagram_render.py",
     "scripts/vibe_diagram_spec.py",
+    "scripts/vibe_diagram_scaffold.py",
 }
 
 
