@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+- 将图形生成接入固定的 Archify 编译器和完整查看器，保留原有画布、网格、字体与颜色；实体关系 SVG 使用同一查看器，比较表和页面原型保留轻量 HTML。
+- 同步升级包的原生运行文件清单，统一所有图类及作者 SVG 的文档标题，修复英文生成失败。
+- 状态图只显示实际使用的分组，避免上游默认的空区域暗示不存在的业务过程。
+
+## [0.2.1] - 2026-09-08
+
+- 将重复场景指导收敛为架构关系、流程、时序、状态、数据关系五种图法，保留比较表、真实页面原型及故障、审查、设计的内容审核。
+- 公共外壳增加基于现有 SVG 标记的测量排版、避障、关联高亮、按稳定编号对比及完整视图 SVG/PNG 导出。
+- 新增独立候选与安全交付命令：绑定文件指纹、真实浏览器记录及产品阅读声明，失败不覆盖旧图。
 - Fixed cross-version runtime verification so a previous immutable release is checked against its own manifest and tree digest instead of the current release's file inventory; this preserves strict target validation while allowing real upgrades across contract migrations.
 
 ## [0.2.0] - 2026-08-24

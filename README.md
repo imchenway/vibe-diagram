@@ -2,6 +2,8 @@
 
 `vibe-diagram` is a portable Agent Skill that turns code, documentation, and requirements into product-manager-first, self-contained, single-file HTML visuals. Every artifact explains the business meaning first while preserving exact technical evidence in mapped supporting views and details.
 
+生成图形需要 Python 3.10+ 与 Node.js 18+。技能包内含固定的 Archify 编译器及完整查看器，无需另行安装 npm 依赖；已生成的 HTML 可离线阅读。五种基础图法共享交互、动效和导出，并保留原有背景、渐变、网格与字体。
+
 ## Install
 
 ### Codex

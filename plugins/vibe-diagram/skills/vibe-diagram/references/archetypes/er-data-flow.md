@@ -1,22 +1,10 @@
-# Archetype: ER and Data Flow
+# 数据关系图
 
-Use for entities, fields, cardinality, stores, transformations, reads, writes, and data movement.
+适用于业务实体、关键字段、所有权和一对一、一对多等数量关系。
 
-## Recognizable shape
+- 独立实体保持独立，关键字段只保留影响业务规则的部分，完整字段表可放详情。
+- 每条实体关系标明 `data-vd-cardinality`，并在可见关系标签中写出对应数量含义。
+- 数量关系、所有权、事务边界必须有证据，不能从表名推断。
+- 数据运行时的读取、写入、转换、来源与去向使用架构关系图；两类问题都重要时使用关联视图。
 
-- ER views show independent entities with relationship cardinality and meaningful key fields.
-- Data-flow views distinguish source, process, store, and sink when those roles exist.
-- Reads, writes, emits, consumes, and transforms are visible relations.
-- Ownership or transaction boundaries appear only when supported by evidence.
-- Use separate mapped views when entity structure and runtime movement are both important.
-
-## Avoid
-
-- a state machine used as a database model;
-- one generic “data” node containing many unrelated tables;
-- cardinality inferred from naming alone;
-- listing fields without showing the relationships the user asked about.
-
-## Product-manager reading
-
-Explain which business object is created, owned, transformed, shared, or rejected and why that matters to the process. Keep key fields and exact stores visible only when they affect product rules; put exhaustive schemas in the evidence layer.
+图类标记：`data-model`；直接编写实体 SVG 后运行 `vibe_diagram_build.py --svg`，接入相同查看器。原生 dataflow 不是实体关系引擎。收益是字段、数量关系保真且共享交互导出；代价是实体布局由作者安排并通过几何检查。

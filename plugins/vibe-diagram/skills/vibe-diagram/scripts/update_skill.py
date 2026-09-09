@@ -35,6 +35,7 @@ LEGACY_BACKUP_RE = re.compile(
 )
 NO_BACKUP_UPDATER_VERSION = (0, 1, 8)
 MANIFEST_KEYS = {"schema_version", "channel", "version", "ref", "tree_sha256"}
+# 更新包必须包含当前原生引擎、画布适配和安全交付入口。
 REQUIRED_FILES = {
     "SKILL.md",
     "VERSION",
@@ -44,11 +45,21 @@ REQUIRED_FILES = {
     "references/archetypes/basic-flow.md",
     "assets/shell/v1.css",
     "assets/shell/v1.js",
+    "assets/native/canvas.css",
+    "assets/native/canvas.js",
+    "assets/archify/source.json",
+    "assets/archify/LICENSE",
+    "assets/archify/assets/template.html",
+    "references/native-engine.md",
+    "scripts/vibe_diagram_build.py",
+    "scripts/vibe_diagram_native.py",
+    "scripts/vibe_diagram_svg.mjs",
     "contracts/artifact-manifest.schema.json",
     "contracts/family-outcomes.json",
     "scripts/update_skill.py",
     "scripts/vibe_diagram_lint.py",
     "scripts/vibe_diagram_scaffold.py",
+    "scripts/vibe_diagram_artifact.py",
 }
 FORBIDDEN_FILES = {
     "contracts/diagram-document.schema.json",

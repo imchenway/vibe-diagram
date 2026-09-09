@@ -60,6 +60,7 @@ def _shell_copy(language: str) -> dict[str, str]:
 
 
 def render(title: str, language: str, css: str, script: str) -> str:
+    """组合单文件外壳；输入仍是作者最终 HTML，而非第二套图描述。"""
     safe_title = html.escape(title, quote=True)
     safe_language = html.escape(language, quote=True)
     copy = _shell_copy(language)
@@ -73,7 +74,7 @@ def render(title: str, language: str, css: str, script: str) -> str:
 {css.rstrip()}
   </style>
   <style data-vd-author-style="1">
-  /* Author the visual grammar for the current evidence here. */
+  /* 在此编写当前表格或原型需要的样式。 */
   </style>
 </head>
 <body>
@@ -91,7 +92,7 @@ def render(title: str, language: str, css: str, script: str) -> str:
       </div>
     </header>
     <main data-vd-content data-vd-scaffold-empty>
-      <!-- Directly author one or more semantic HTML/SVG views here. -->
+      <!-- 此入口仅编写比较表或页面原型；图形使用 vibe_diagram_build.py。 -->
     </main>
     <output data-vd-audit-output aria-live="polite"></output>
   </div>

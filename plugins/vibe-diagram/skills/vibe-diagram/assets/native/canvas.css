@@ -1,0 +1,104 @@
+/* 原生查看器的画布适配：颜色值和背景规则取自原有公共外壳。 */
+:root {
+  --vd-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+}
+
+/* 浅色默认外观使用原来的配色；深色仍由读者主动切换。 */
+[data-theme="light"][data-preset] {
+  --bg: var(--vd-paper);
+  --grid: var(--vd-grid-ink);
+  --text: var(--vd-ink);
+  --text-muted: var(--vd-muted);
+  --text-dim: var(--vd-muted);
+  --text-faint: var(--vd-muted);
+  --panel: var(--vd-panel);
+  --panel-border: var(--vd-line);
+  --lane-fill: rgba(232, 243, 251, 0.30);
+  --lane-stroke: var(--vd-line);
+  --mask: #fff;
+  --arrow: var(--vd-blue);
+  --arrow-emphasis: var(--vd-green);
+  --frontend-fill: var(--vd-blue-soft);
+  --frontend-stroke: var(--vd-blue);
+  --backend-fill: var(--vd-green-soft);
+  --backend-stroke: var(--vd-green);
+  --database-fill: var(--vd-violet-soft);
+  --database-stroke: var(--vd-violet);
+  --cloud-fill: var(--vd-amber-soft);
+  --cloud-stroke: var(--vd-amber);
+  --security-fill: var(--vd-amber-soft);
+  --security-stroke: var(--vd-amber);
+  --messagebus-fill: var(--vd-blue-soft);
+  --messagebus-stroke: var(--vd-blue);
+  --external-fill: #fff;
+  --external-stroke: var(--vd-muted);
+  --toolbar-bg: var(--vd-panel);
+  --toolbar-border: var(--vd-line);
+  --toolbar-text: var(--vd-ink);
+  --toolbar-hover: var(--vd-blue-soft);
+  --toolbar-menu-bg: #fff;
+}
+
+/* 画布与导出图形都使用用户原先的系统字体，不加载远程字体。 */
+body, svg, button, input, select, textarea {
+  font-family: var(--vd-font);
+}
+
+/* 页面留白沿用原公共外壳；原生镜头仍负责图内移动与缩放。 */
+html:not([data-present="true"]):not([data-embed="true"]) body {
+  padding: 24px 16px 64px;
+}
+
+/* 浅色画布保留两团淡渐变、二十四像素方格及纸张底色。 */
+html[data-theme="light"][data-preset] body {
+  color: var(--vd-ink);
+  background:
+    radial-gradient(circle at 12% 0%, var(--vd-wash-blue), transparent var(--vd-wash-blue-radius)),
+    radial-gradient(circle at 88% 4%, var(--vd-wash-green), transparent var(--vd-wash-green-radius)),
+    linear-gradient(var(--vd-grid-ink) 1px, transparent 1px),
+    linear-gradient(90deg, var(--vd-grid-ink) 1px, transparent 1px),
+    linear-gradient(180deg, var(--vd-page-top) 0%, var(--vd-page-middle) 55%, var(--vd-page-bottom) 100%);
+  background-size: auto, auto, var(--vd-grid) var(--vd-grid), var(--vd-grid) var(--vd-grid), auto;
+  background-attachment: scroll;
+}
+
+/* 图形容器透出原有方格，保留原生镜头所需的裁切和空间测量。 */
+html[data-theme="light"][data-preset] .diagram-container {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--vd-line);
+  border-radius: var(--vd-radius);
+  box-shadow: var(--vd-shadow);
+}
+
+/* 标题层级沿用原公共外壳，工具条继续使用原生布局。 */
+html[data-preset] h1 {
+  font-family: var(--vd-font);
+  font-size: clamp(1.65rem, 3vw, 2.5rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+html[data-preset] .subtitle {
+  margin-top: 10px;
+  font-size: 1.04rem;
+  font-weight: 650;
+  line-height: 1.65;
+}
+
+/* 导出图形里的标题和说明使用同一字体与主题，排版由适配函数计算。 */
+.t-vibe-export-title { fill: var(--text); font-family: var(--vd-font); }
+.t-vibe-export-summary { fill: var(--text-muted); font-family: var(--vd-font); }
+
+/* 窄屏标题避免被工具条挤压，原生横向阅读和浮层保持可操作。 */
+@media (max-width: 720px) {
+  html:not([data-present="true"]):not([data-embed="true"]) body { padding: 16px 12px 36px; }
+  html[data-preset] .subtitle { font-size: 0.94rem; }
+  /* 原生工具条改为相对定位后清除旧偏移，避免最左按钮越出页面。 */
+  html:not([data-present="true"]):not([data-embed="true"]) .toolbar { top: 0; right: 0; }
+  /* 窄屏通过图内横向滚动阅读，保持自然大小，不继续缩小中文。 */
+  html:not([data-embed="true"]) .diagram-container[data-wide-diagram="true"] > svg { min-width: var(--vibe-diagram-natural-width); }
+}
+
+/* 差异与事实来源折叠在图后，不占据主要关系画布。 */
+[data-vd-evidence], [data-vd-comparison], [data-vd-diagnostics] { margin: 16px 0; color: var(--text-muted); font: 14px/1.7 var(--vd-font); }
+[data-vd-evidence] summary, [data-vd-comparison] summary, [data-vd-diagnostics] summary { cursor: pointer; color: var(--text); }
+[data-vd-evidence] p, [data-vd-comparison] pre { white-space: pre-wrap; overflow-wrap: anywhere; }
