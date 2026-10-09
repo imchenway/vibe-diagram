@@ -17,6 +17,8 @@
   }
   // 在障碍边界组成的正交网格中搜索最短折线路径。
   function route(start, end, obstacles, used = []) {
+    // 无遮挡的对齐端点直接连接，不为网格搜索制造转折。
+    if ((start.x === end.x || start.y === end.y) && !obstacles.some(r => hits(start, end, r))) return [start, end];
     // ponytail: 网格随障碍数量平方增长；大图先分视图，确需百节点密图时再换稀疏可见性图。
     const xs = [...new Set([start.x, end.x, ...obstacles.flatMap(r => [r.x, r.x + r.w])])].sort((a, b) => a - b);
     // 横纵坐标只取可能绕行的边界。
@@ -26,24 +28,31 @@
     // 路径距离与前驱只保存已到达的点。
     const begin = key(xs.indexOf(start.x), ys.indexOf(start.y)), finish = key(xs.indexOf(end.x), ys.indexOf(end.y));
     // 优先队列按估算总路程排序；小型视图用数组即可。
-    const queue = [{ id: begin, cost: 0, score: 0 }], costs = new Map([[begin, 0]]), previous = new Map();
+    // 同一点保留不同入射方向，才能比较转弯次数，避免等长路径反复折返。
+    const queue = [{ id: begin * 3, cost: 0, score: 0 }], costs = new Map([[begin * 3, 0]]), previous = new Map();
     while (queue.length) {
       queue.sort((a, b) => b.score - a.score || b.id - a.id);
       // 跳过已被更短路径替代的队列项。
       const current = queue.pop();
       if (current.cost !== costs.get(current.id)) continue;
-      if (current.id === finish) {
+      // 状态末位记录无方向、水平或垂直，网格点编号保持独立。
+      const pointId = Math.floor(current.id / 3);
+      if (pointId === finish) {
         // 从终点回溯，起终点都必须保留。
         const points = [];
-        for (let id = finish; id !== undefined; id = previous.get(id)) points.push({ x: xs[id % xs.length], y: ys[Math.floor(id / xs.length)] });
+        for (let id = current.id; id !== undefined; id = previous.get(id)) {
+          const point = Math.floor(id / 3);
+          points.push({ x: xs[point % xs.length], y: ys[Math.floor(point / xs.length)] });
+        }
         return simplify(points.reverse());
       }
       // 每个网格点只尝试上下左右四个相邻点。
-      const x = current.id % xs.length, y = Math.floor(current.id / xs.length), a = { x: xs[x], y: ys[y] };
+      const x = pointId % xs.length, y = Math.floor(pointId / xs.length), a = { x: xs[x], y: ys[y] };
       for (const [nx, ny] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) {
         if (nx < 0 || ny < 0 || nx >= xs.length || ny >= ys.length) continue;
         // 线段不得进入节点或已放置标签。
-        const b = { x: xs[nx], y: ys[ny] }, id = key(nx, ny);
+        const direction = nx === x ? 2 : 1;
+        const b = { x: xs[nx], y: ys[ny] }, id = key(nx, ny) * 3 + direction;
         if (obstacles.some(r => hits(a, b, r))) continue;
         // 曼哈顿距离作为可重复的搜索权重。
         const overlap = used.flatMap(path => path.slice(1).map((q, index) => {
@@ -52,7 +61,9 @@
           if (a.y === b.y && p.y === q.y && a.y === p.y) return Math.max(0, Math.min(Math.max(a.x, b.x), Math.max(p.x, q.x)) - Math.max(Math.min(a.x, b.x), Math.min(p.x, q.x)));
           return 0;
         })).reduce((sum, value) => sum + value, 0);
-        const cost = current.cost + Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + overlap * 4;
+        // 在长度与共线重叠之外惩罚多余转折；避障始终优先于简化。
+        const bend = current.id % 3 && current.id % 3 !== direction ? 24 : 0;
+        const cost = current.cost + Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + overlap * 4 + bend;
         if (cost >= (costs.get(id) ?? Infinity)) continue;
         costs.set(id, cost); previous.set(id, current.id);
         queue.push({ id, cost, score: cost + Math.abs(b.x - end.x) + Math.abs(b.y - end.y) });
@@ -88,11 +99,11 @@
     // 标签整体范围用于分配足够空间。
     const boxes = texts.map(text => text.getBBox()), left = Math.min(...boxes.map(b => b.x)), top = Math.min(...boxes.map(b => b.y));
     // 判定形状类型，菱形为决策文字额外留出四角。
-    const diamond = shape.localName === "polygon", original = shape.getBBox();
-    // 尺寸是测量值与作者最小尺寸中较大者。
-    const w = Math.ceil(Math.max(original.width, (Math.max(...boxes.map(b => b.x + b.width)) - left + 32) * (diamond ? 2 : 1)));
-    // 多行文本按真实高度计算，不假定固定字数。
-    const h = Math.ceil(Math.max(original.height, (Math.max(...boxes.map(b => b.y + b.height)) - top + 28) * (diamond ? 2 : 1)));
+    const factor = shape.localName === "polygon" ? 2 : shape.localName === "ellipse" ? Math.SQRT2 : 1;
+    // 自动尺寸只保留明确的最小值，不继承草稿大框；曲边形状保留文字四角空间。
+    const w = Math.ceil(Math.max(56, Number(element.dataset.vdMinWidth) || 0, (Math.max(...boxes.map(b => b.x + b.width)) - left + 24) * factor));
+    // 多行文本按真实高度计算，不缩小字号或丢弃作者换行。
+    const h = Math.ceil(Math.max(36, Number(element.dataset.vdMinHeight) || 0, (Math.max(...boxes.map(b => b.y + b.height)) - top + 16) * factor));
     if (![w, h].every(value => Number.isFinite(value) && value > 0)) throw new Error(element.id + "：节点尺寸不可用。");
     if (shape.localName === "rect") Object.entries({ x: 0, y: 0, width: w, height: h }).forEach(([key, value]) => shape.setAttribute(key, value));
     else if (shape.localName === "ellipse") Object.entries({ cx: w / 2, cy: h / 2, rx: w / 2, ry: h / 2 }).forEach(([key, value]) => shape.setAttribute(key, value));
@@ -114,30 +125,64 @@
       : { x: node.x + node.w / 2 + (side === "right" ? 1 : -1) * node.w / 2 * extent, y: node.y + node.h / 2 + offset };
   }
   // 将路径及其标签安排在节点之间；已放标签也成为后续连线的障碍。
-  function connect(edges, nodes, svg) {
+  function connect(edges, nodes, svg, horizontal) {
+    // 先安排局部主线，再让跨层分支绕开已有节点和标签，避免长旁路抢占主线空间。
+    edges = [...edges].sort((left, right) => {
+      // 中心距离仅决定几何布线顺序，不改变关系或时间语义。
+      const length = edge => {
+        const a = nodes.find(n => n.id === edge.from), b = nodes.find(n => n.id === edge.to);
+        return Math.abs(a.x + a.w / 2 - b.x - b.w / 2) + Math.abs(a.y + a.h / 2 - b.y - b.h / 2);
+      };
+      return length(left) - length(right);
+    });
     // 障碍安全边距给箭头和文字留空，不改变实际端点。
     const obstacles = nodes.map(n => ({ x: n.x - 16, y: n.y - 16, w: n.w + 32, h: n.h + 32 }));
     // 记录已有线路，后续标签不能遮住它们。
     const drawn = [];
-    for (const edge of edges) {
+    // 端口按主方向选择；回路走外侧，同层分支使用相对的侧边。
+    const ports = edges.map(edge => {
+      // 只读取已存在的节点，不推断主线或成功条件。
+      const a = nodes.find(n => n.id === edge.from), b = nodes.find(n => n.id === edge.to);
+      // 主轴上不重叠表示前向或返回，其余关系沿横轴相接。
+      const forward = horizontal ? b.x >= a.x + a.w : b.y >= a.y + a.h;
+      const backward = horizontal ? a.x >= b.x + b.w : a.y >= b.y + b.h;
+      if (a === b) return { from: "right", to: "top" };
+      if (forward) {
+        // 判断的侧向分支从菱形侧顶点离开，主轴直连仍使用前顶点。
+        const offset = horizontal ? b.y + b.h / 2 - a.y - a.h / 2 : b.x + b.w / 2 - a.x - a.w / 2;
+        const from = a.shape === "polygon" && Math.abs(offset) > 2
+          ? (horizontal ? (offset > 0 ? "bottom" : "top") : (offset > 0 ? "right" : "left"))
+          : (horizontal ? "right" : "bottom");
+        return { from, to: horizontal ? "left" : "top" };
+      }
+      if (backward) return { from: horizontal ? "bottom" : "right", to: horizontal ? "bottom" : "right" };
+      return horizontal ? (b.y > a.y ? { from: "bottom", to: "top" } : { from: "top", to: "bottom" })
+        : (b.x > a.x ? { from: "right", to: "left" } : { from: "left", to: "right" });
+    });
+    // 沿端口法线离开自身安全区，弯曲形状同样使用真实锚点。
+    const outside = (node, point, side) => ({
+      x: side === "left" ? node.x - 16 : side === "right" ? node.x + node.w + 16 : point.x,
+      y: side === "top" ? node.y - 16 : side === "bottom" ? node.y + node.h + 16 : point.y,
+    });
+    for (const [edgeIndex, edge] of edges.entries()) {
       // 选择面向目标的出入口，自环使用相邻的两个边。
       const a = nodes.find(n => n.id === edge.from), b = nodes.find(n => n.id === edge.to);
-      // 自动分层默认向下；同层或回路改走左右通道。
-      const down = b.y > a.y + a.h, up = a.y > b.y + b.h;
-      // 平行边用不同端口；相同关系的多条线路保持独立。
-      const outgoing = edges.filter(e => e.from === edge.from), incoming = edges.filter(e => e.to === edge.to);
+      // 仅同一侧的多条关系分配端口，其他侧的关系不会挤偏直连。
+      const sides = ports[edgeIndex];
+      const outgoing = edges.filter((e, i) => e.from === edge.from && ports[i].from === sides.from);
+      const incoming = edges.filter((e, i) => e.to === edge.to && ports[i].to === sides.to);
       // 端口分布于边的中间一半，相同端点的多条关系仍各自可见。
-      const fromFraction = ((outgoing.indexOf(edge) + 1) / (outgoing.length + 1) - 0.5) / 2;
+      const fromFraction = a.shape === "polygon" ? 0 : ((outgoing.indexOf(edge) + 1) / (outgoing.length + 1) - 0.5) / 2;
       // 入边同样独立分配，合法汇合依然保留真实目标。
-      const toFraction = ((incoming.indexOf(edge) + 1) / (incoming.length + 1) - 0.5) / 2;
+      const toFraction = b.shape === "polygon" ? 0 : ((incoming.indexOf(edge) + 1) / (incoming.length + 1) - 0.5) / 2;
       // 起终点的短接入段只穿过自身节点的安全边距。
-      const start = port(a, down ? "bottom" : "right", fromFraction);
+      const start = port(a, sides.from, fromFraction);
       // 自环从右侧绕回顶侧。
-      const end = port(b, a === b || down ? "top" : up ? "right" : "left", toFraction);
+      const end = port(b, sides.to, toFraction);
       // 路由仅在节点外搜索，防止切入端点主体。
-      const outsideStart = down ? { x: start.x, y: a.y + a.h + 16 } : { x: a.x + a.w + 16, y: start.y };
+      const outsideStart = outside(a, start, sides.from);
       // 目标外侧坐标与目标锚点同一法线。
-      const outsideEnd = a === b || down ? { x: end.x, y: b.y - 16 } : up ? { x: b.x + b.w + 16, y: end.y } : { x: b.x - 16, y: end.y };
+      const outsideEnd = outside(b, end, sides.to);
       // 标签先布置在线段旁，再接入后续障碍列表。
       const points = simplify([start, ...route(outsideStart, outsideEnd, obstacles, drawn), end]);
       edge.element.setAttribute("d", points.map((p, index) => (index ? "L" : "M") + p.x + " " + p.y).join(" "));
@@ -147,9 +192,12 @@
         // 标签在水平/垂直段旁依次尝试；无法放置时明确失败。
         const box = label.getBBox();
         let placed = false;
-        for (let index = 1; index < points.length && !placed; index += 1) {
+        // 优先使用长直段，不把文字挤在节点旁的短接入段。
+        const segments = points.slice(1).map((q, i) => [points[i], q]).sort(([a, b], [c, d]) =>
+          Math.abs(d.x - c.x) + Math.abs(d.y - c.y) - Math.abs(b.x - a.x) - Math.abs(b.y - a.y));
+        for (const [p, q] of segments) {
+          if (placed) break;
           // 枚举段中间及四分点，避免多个标签抢同一位置。
-          const p = points[index - 1], q = points[index];
           for (const fraction of [0.5, 0.25, 0.75]) {
             // 标签与线路之间留出可见空隙。
             const x = p.x + (q.x - p.x) * fraction, y = p.y + (q.y - p.y) * fraction;
@@ -187,10 +235,16 @@
       if (edges.some(e => !ids.has(e.from) || !ids.has(e.to))) throw new Error("连线端点不存在于当前 SVG。");
       // 实测文字后再决定节点尺寸。
       const nodes = nodeElements.map(measure), sequence = svg.closest("[data-vd-family]")?.dataset.vdFamily === "code-sequence";
+      // 流程默认横读；作者可明确纵读。其他图法维持既有主方向。
+      const direction = svg.dataset.vdDirection || (svg.closest("[data-vd-family]")?.dataset.vdFamily === "business-flow" ? "right" : "down");
+      if (!["right", "down"].includes(direction)) throw new Error("布局方向只能是 right 或 down。");
+      const horizontal = direction === "right";
       // 行距随最长标签增长，避免长文案占用相邻步骤。
       const labels = all("[data-vd-edge-label]", svg), labelWidth = Math.max(0, ...labels.map(l => l.getBBox().width));
+      // 纵向间距按标签高度计算，避免长横向文案把整张图拉成长卷。
+      const labelHeight = Math.max(0, ...labels.map(l => l.getBBox().height));
       // 作者可以增大而不能压缩默认安全间距。
-      const spacing = Math.max(gap, Number(svg.dataset.vdGap) || gap, labelWidth + 40);
+      const spacing = Math.max(gap, Number(svg.dataset.vdGap) || gap, (horizontal || sequence ? labelWidth : labelHeight) + 40);
       // 真实边界独立占列，未归属节点也保持独立列。
       const groups = all("[data-vd-group]", svg), groupIds = groups.map(g => g.id);
       if (groups.some(g => g.parentElement !== svg || !g.id || !g.querySelector("rect")) || new Set(groupIds).size !== groups.length || nodes.some(n => n.group && !groupIds.includes(n.group))) throw new Error("自动边界需要独立编号和矩形；节点归属必须存在。");
@@ -202,23 +256,35 @@
       } else {
         // 普通关系、流程、状态和数据关系共用分层与避障。
         const levels = ranks(nodes, edges), lanes = [...new Set(nodes.map(n => n.group))];
-        let x = gap;
+        // 主轴和横轴共用一套排版；同层居中，连续步骤中心对齐。
+        const cross = horizontal ? "y" : "x", main = horizontal ? "x" : "y";
+        const breadth = horizontal ? "h" : "w", depth = horizontal ? "w" : "h";
+        // 横向泳道还需容纳上方标题和下方内边距，边界不能彼此覆盖。
+        const crossGap = Math.max(horizontal && groups.length ? 96 : gap, Number(svg.dataset.vdGap) || gap, (horizontal ? labelHeight : labelWidth) + 40);
+        let x = gap + (horizontal && groups.length ? 40 : 0);
         for (const lane of lanes) {
           // 同层同归属的节点横向排列，分支不互相覆盖。
           const members = nodes.filter(n => n.group === lane), rows = [...new Set(members.map(n => levels.get(n.id)))].sort((a, b) => a - b);
-          let width = 0;
+          // 每条泳道以最宽层为边界，各层独立居中，不按左边缘错位。
+          const width = Math.max(...rows.map(row => {
+            const rowNodes = members.filter(n => levels.get(n.id) === row);
+            return rowNodes.reduce((sum, n) => sum + n[breadth], 0) + (rowNodes.length - 1) * crossGap;
+          }));
           for (const row of rows) {
-            let cursor = x;
-            members.filter(n => levels.get(n.id) === row).forEach(n => { n.x = cursor; cursor += n.w + spacing; });
-            width = Math.max(width, cursor - x - spacing);
+            // 分支按作者顺序展开；单节点层保持泳道中心线。
+            const rowNodes = members.filter(n => levels.get(n.id) === row);
+            const size = rowNodes.reduce((sum, n) => sum + n[breadth], 0) + (rowNodes.length - 1) * crossGap;
+            let cursor = x + (width - size) / 2;
+            rowNodes.forEach(n => { n[cross] = cursor; cursor += n[breadth] + crossGap; });
           }
-          x += width + spacing;
+          x += width + crossGap;
         }
         // 所有归属共享层高，跨归属交接不丢失阅读顺序。
-        let y = gap + (groups.length ? 40 : 0);
+        let y = gap + (!horizontal && groups.length ? 40 : 0);
         for (const row of [...new Set(levels.values())].sort((a, b) => a - b)) {
           const members = nodes.filter(n => levels.get(n.id) === row);
-          members.forEach(n => { n.y = y; }); y += Math.max(...members.map(n => n.h)) + spacing;
+          const size = Math.max(...members.map(n => n[depth]));
+          members.forEach(n => { n[main] = y + (size - n[depth]) / 2; }); y += size + spacing;
         }
       }
       nodes.forEach(n => n.element.setAttribute("transform", "translate(" + n.x + " " + n.y + ")"));
@@ -241,7 +307,7 @@
             label.setAttribute("transform", "translate(" + (x - box.x) + " " + (y - box.y - box.height - 10 - i * (box.height + 6)) + ")");
           });
         });
-      } else connect(edges, nodes, svg);
+      } else connect(edges, nodes, svg, horizontal);
       groups.forEach(group => {
         const members = nodes.filter(n => n.group === group.id);
         if (!members.length) throw new Error(group.id + "：边界没有成员。");

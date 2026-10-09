@@ -127,7 +127,9 @@ Close every detail and ignore visually secondary implementation identifiers. Use
 
 ## 共享排版、阅读与导出
 
-默认对五种基础图法使用 `svg[data-vd-layout="auto"][data-vd-zoom-target]`，外套 `data-vd-viewport`。SVG 内直接放置作者确定的节点 `<g id="…" data-vd-node="…">`、连线 `<path id="…" data-vd-edge="…" data-from="…" data-to="…">` 与有编号的 `<text data-vd-edge-label="连线编号">`，所有文字在字体载入后测量。节点内用 `data-vd-shape` 标记一个 rect、ellipse 或决策 polygon；文本可用 tspan 分行，程序扩大形状，不缩字或删文案。连线的箭头 marker、含义和证据由作者保留。
+默认对五种基础图法使用 `svg[data-vd-layout="auto"][data-vd-zoom-target]`，外套 `data-vd-viewport`。SVG 内直接放置作者确定的节点 `<g id="…" data-vd-node="…">`、连线 `<path id="…" data-vd-edge="…" data-from="…" data-to="…">` 与有编号的 `<text data-vd-edge-label="连线编号">`，所有文字在字体载入后测量。节点内用 `data-vd-shape` 标记一个 rect、ellipse 或决策 polygon；文本可用 tspan 分行。程序按实际文字加内边距收紧形状，不继承草稿的大框，不缩字或删文案。确需为内容保留空间时在节点显式声明 `data-vd-min-width`、`data-vd-min-height`；大段说明应移至映射详情。
+
+流程默认横向，其他非时序图默认纵向；SVG 上 `data-vd-direction="right|down"` 可明确主方向，时序仍按消息顺序。中心对齐的相邻节点优先直连，分支、回路或障碍才需要折线。图标仅作辅助且通常为 16–20 像素，不代替流程符号。连线 marker 的形状、含义和证据由作者保留；普通箭头使用 `markerUnits="userSpaceOnUse"`、`markerWidth="8"`、`markerHeight="8"`、`viewBox="0 0 10 10"`、`refX="10"`、`refY="5"`、`orient="auto-start-reverse"`，箭头尖端与路径终点重合，不随线宽放大。数据关系和时序的专用符号保留自身语义。
 
 单层边界用同级 `<g id="边界编号" data-vd-group="职责"><rect/><text>业务职责</text></g>`，节点用 `data-vd-member-of="边界编号"` 表明归属。时序消息使用已有 `data-vd-message-kind`，每个参与者有 `line[data-vd-lifeline-for="参与者编号"]`；消息 DOM 顺序即时间顺序，返回、异步、错误和超时仍需可见区别。手工绘制的执行条使用 `data-vd-activation-for="参与者编号"`，处于该执行区间的消息连接执行条真实边缘，不补造执行时段。`data-vd-gap` 可增大留白。
 

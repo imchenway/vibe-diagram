@@ -14,6 +14,8 @@ The model owns fact selection, business meaning, topology and authored HTML/SVG.
 3. 检查用户的真实证据，先确定产品问题、业务含义、关键事实和证据状态。
 4. 从空外壳编写最终 HTML/SVG；使用共享排版，复杂边界直接编排。检查独立候选、阅读和交互后再交付。
 
+流程按业务动作、判断、分支、汇合与结果组织，不按日志顺序罗列。先使用紧凑的通用流程符号、对齐的直连主线与侧方例外；方向和分区服从业务关系。具体规则见流程图指导。
+
 ## 只选必要的图法
 
 - 业务能力、系统职责、依赖、因果、数据流转：[架构关系图](references/archetypes/architecture.md)

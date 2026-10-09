@@ -34,7 +34,7 @@ def edge(identifier: str, source: str, target: str, label: str, kind: str = "flo
 
 def example() -> str:
     """示例说明当前改图与交付机制；验收场景不冒充外部生产事实。"""
-    flow = node("draft", "start", "编写修改") + node("check", "decision", "静态检查通过？") + node("candidate", "activity", "冻结独立候选") + node("browser", "activity", "检查画面与产品阅读") + node("accepted", "end", "安全替换交付文件", critical=True) + node("preserved", "end", "失败，原文件保留")
+    flow = node("draft", "start", "编写修改") + node("check", "decision", "静态检查通过？") + node("candidate", "activity", "冻结独立候选") + node("browser", "decision", "画面与阅读通过？") + node("accepted", "end", "安全替换交付文件", critical=True) + node("preserved", "end", "失败，原文件保留")
     flow += edge("draft-check", "draft", "check", "准备草稿") + edge("check-candidate", "check", "candidate", "通过") + edge("check-preserved", "check", "preserved", "未通过") + edge("candidate-browser", "candidate", "browser", "检查同一文件") + edge("browser-accepted", "browser", "accepted", "验收通过") + edge("browser-preserved", "browser", "preserved", "验收未通过")
     architecture = node("author", "participant", "作者确定事实") + node("shell", "component", "公共外壳") + node("delivery", "component", "安全交付命令")
     architecture += edge("author-shell", "author", "shell", "编写节点与关系", "authors") + edge("shell-delivery", "shell", "delivery", "提供检查记录", "supplies")
@@ -53,7 +53,7 @@ def example() -> str:
         role = "primary" if index == 0 else "supporting"
         # 手工执行条保留自然尺寸和作者坐标，窄屏由共享缩放及横滚处理。
         geometry = ' viewBox="0 0 760 400" width="760" height="400"' if family == "code-sequence" else ' data-vd-layout="auto"'
-        body.append('<section id="' + identifier + '-view" data-vd-view="' + identifier + '" data-vd-family="' + family + '" data-vd-view-role="' + role + '"><h2 data-vd-view-title>' + title + '</h2><div data-vd-viewport><svg id="' + identifier + '-svg"' + geometry + ' data-vd-zoom-target xmlns="http://www.w3.org/2000/svg"><title>' + title + '的辅助说明</title>' + ('<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#176aa6"/></marker></defs>' if index == 0 else '') + content + '</svg></div></section>')
+        body.append('<section id="' + identifier + '-view" data-vd-view="' + identifier + '" data-vd-family="' + family + '" data-vd-view-role="' + role + '"><h2 data-vd-view-title>' + title + '</h2><div data-vd-viewport><svg id="' + identifier + '-svg"' + geometry + ' data-vd-zoom-target xmlns="http://www.w3.org/2000/svg"><title>' + title + '的辅助说明</title>' + ('<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#176aa6"/></marker></defs>' if index == 0 else '') + content + '</svg></div></section>')
         records.append({"id": identifier, "family": family, "role": role, "elementId": identifier + "-view"})
     # 场景要求复用同一组图法，不固定布局或视图数量。
     body.append('<aside id="review-task" data-vd-task="code-review"><p data-vd-task-section="current">现状：直接覆盖输出会失去上一份图。</p><p data-vd-task-section="scenario">场景：改图后检查失败。</p><p data-vd-task-section="repair">修复：候选独立检查后才替换。</p><p data-vd-task-section="acceptance">验收：失败后原文件字节不变。</p></aside>')
@@ -123,7 +123,7 @@ def check(output: Path) -> dict:
         except ValueError:
             assert final.read_bytes() == b"previous accepted output"
     # 直接检查纯路由算法，不以此代替浏览器的形状与可读性检查。
-    javascript = 'require(process.argv[1]); const assert = require("node:assert/strict"); const path = VibeDiagramLayout.route({x:0,y:0},{x:100,y:0},[{x:40,y:-10,w:20,h:20}]); assert(path.some(p => Math.abs(p.y) >= 10)); assert.deepEqual(path[0],{x:0,y:0}); assert.deepEqual(path.at(-1),{x:100,y:0}); const levels = VibeDiagramLayout.ranks([{id:"a"},{id:"b"},{id:"c"}],[{from:"a",to:"b"},{from:"b",to:"a"},{from:"b",to:"c"}]); assert(levels.get("c") > levels.get("b"));'
+    javascript = 'require(process.argv[1]); const assert = require("node:assert/strict"); const path = VibeDiagramLayout.route({x:0,y:0},{x:100,y:0},[{x:40,y:-10,w:20,h:20}]); assert(path.some(p => Math.abs(p.y) >= 10)); assert.deepEqual(path[0],{x:0,y:0}); assert.deepEqual(path.at(-1),{x:100,y:0}); for (const end of [{x:100,y:0},{x:0,y:100}]) assert.deepEqual(VibeDiagramLayout.route({x:0,y:0},end,[]),[{x:0,y:0},end]); const levels = VibeDiagramLayout.ranks([{id:"a"},{id:"b"},{id:"c"}],[{from:"a",to:"b"},{from:"b",to:"a"},{from:"b",to:"c"}]); assert(levels.get("c") > levels.get("b"));'
     subprocess.run(["node", "-e", javascript, str(CORE / "assets/shell/layout.js")], check=True)
     output.mkdir(parents=True, exist_ok=True)
     draft, previous, candidate = output / "draft.html", output / "previous.html", output / "candidate.html"
