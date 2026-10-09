@@ -18,7 +18,7 @@ The primary artifact produced by this project is a model-authored, self-containe
 | business-first label | The primary visible name of an object, action, state, failure, or relation states its business meaning; an exact code, API, field, table, or infrastructure identifier may follow as secondary evidence. |
 | technical evidence layer | Supporting or appendix content that preserves exact source locations, identifiers, logs, calls, fields, and implementation mechanics without making them prerequisites for understanding the primary product story. |
 | Diagram Brief | The model's private reasoning summary of product questions, decisions, facts, evidence states, primary relationships, business-first labels, information hierarchy, and suitable views. It is not a rendering input or persisted node specification. |
-| visual archetype | 五种基础图法的按需指导：架构关系、流程、时序、状态、数据关系。比较表和页面原型使用原生 HTML；故障、审查、技术设计是内容组织要求，不是独立模板。 |
+| visual archetype | 只保留五种基础图法的按需指导：架构关系、流程、时序、状态、数据关系。故障、审查、技术设计是内容组织要求；比较表和页面原型已退出，图形修改前后的差异对比仍保留。 |
 | global artifact shell | 内嵌于单文件的公共排版、缩放、关联高亮、差异阅读、导出、打印和检查能力；不生成业务含义。 |
 | automatic layout | 对显式选择自动排版的 SVG，读取已有节点、边和归属，测量文字后安排位置与避障路线；复杂嵌套边界可直接编排，但必须通过同一几何检查。 |
 | accepted artifact | 独立候选文件经过静态检查、对应文件的浏览器检查和产品阅读后，才原子替换的交付文件；失败保留原文件并报告本次失败。 |
@@ -33,7 +33,7 @@ The primary artifact produced by this project is a model-authored, self-containe
 | critical coverage | A question or fact mapped to one or more visible `data-vd-critical` elements in a primary view. A closed detail, hidden candidate, or appendix cannot satisfy it. |
 | evidence state | One of `observed`, `inferred`, `proposed`, `unresolved`, or `verified`; visual completeness never permits promotion to a stronger state. |
 | true diagram | A primary visual whose decision-relevant objects and relationships are encoded as visible shapes, axes, lifelines, states, controls, or anchored routes. A card inventory or prose report is not a true diagram. |
-| technical-design orchestration | A product-readable primary design overview plus only the architecture, flow, sequence, state, data, comparison, recovery, or prototype views the current implementation question needs. It has no fixed view count. |
+| technical-design orchestration | A product-readable primary design overview plus only the architecture, flow, sequence, state, data, or recovery views the current implementation question needs. It has no fixed view count. |
 | candidate mode | Multiple peer designs shown only when the user explicitly requests visual exploration. Sequential steps or ordinary follow-up content are not candidates. |
 | readable floor | `75%` zoom. If a natural diagram cannot fit at that scale, use view-local horizontal scrolling or split mapped views; never keep shrinking, delete facts, or create nested vertical scrolling. |
 | authored output language | The language inferred from the current request and used for every visible label, title, control, detail, fallback, and evidence statement. |

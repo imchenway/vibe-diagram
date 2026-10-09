@@ -146,7 +146,7 @@
   // 按真实 SVG 轮廓测量端点距离，避免把菱形和椭圆的包围框当成边界。
   function boundaryDistance(point, element) {
     if (!point) return Infinity;
-    const shape = element.matches("[data-vd-lifeline-for]") ? element : $('[data-vd-shape]', element);
+    const shape = element.matches("[data-vd-lifeline-for], [data-vd-activation-for]") ? element : $('[data-vd-shape]', element);
     if (shape instanceof SVGGeometryElement) {
       const length = shape.getTotalLength();
       let distance = Infinity;
@@ -167,7 +167,7 @@
       id: element?.id || element?.getAttribute?.("data-vd-view") || "",
       detail,
       measured,
-      hint: /anchored/.test(code) ? (zh ? "让端点接触真实节点边界或生命线。" : "Anchor the endpoint to its node or lifeline.")
+      hint: /anchored/.test(code) ? (zh ? "让端点接触真实节点边界、生命线或执行条。" : "Anchor the endpoint to its node, lifeline, or activation bar.")
         : /collision|overlap|through/.test(code) ? (zh ? "增大留白、移动标签或重新走线，保留全部关系后复查。" : "Add space, move the label or reroute, then check again without removing relations.")
         : (zh ? "检查该元素的可见性、内容范围与归属。" : "Check this element's visibility, bounds and ownership.")
     };
@@ -194,6 +194,7 @@
     };
   }
 
+  // 按真实绘制边界检查节点、标签、连线与端点。
   function auditView(view) {
     const issues = [];
     // 零长度路径或隐藏标记不能因过滤不可见元素而漏过检查。
@@ -209,7 +210,7 @@
     nodes.forEach((node) => {
       const box = rect(node);
       if (!contains(authoredBounds(node, viewRect), box, 2)) issues.push(issue("node-outside-view", node));
-      if (node.scrollWidth > node.clientWidth + 2 || node.scrollHeight > node.clientHeight + 2) {
+      if (!(node instanceof SVGGraphicsElement) && (node.scrollWidth > node.clientWidth + 2 || node.scrollHeight > node.clientHeight + 2)) {
         issues.push(issue("node-content-overflow", node));
       }
       // SVG 没有 HTML 的 scrollWidth 溢出信号，单独检查文字与主体范围。
@@ -242,7 +243,10 @@
 
     labels.forEach((label, index) => {
       const box = rect(label);
-      if (label.scrollWidth > label.clientWidth + 2 || label.scrollHeight > label.clientHeight + 2) {
+      // SVG 标签以实际绘制边界检查，HTML 标签仍检查滚动尺寸。
+      const overflow = label instanceof SVGGraphicsElement ? !contains(authoredBounds(label, viewRect), box, 1)
+        : label.scrollWidth > label.clientWidth + 2 || label.scrollHeight > label.clientHeight + 2;
+      if (overflow) {
         issues.push(issue("edge-label-overflow", label));
       }
       nodes.forEach((node) => {
@@ -261,10 +265,14 @@
         const length = edge.getTotalLength();
         const start = screenPoint(edge, 0);
         const end = screenPoint(edge, length);
-        // 时序消息锚定到参与者生命线，而不是顶部标题框。
-        const anchor = node => view.dataset.vdFamily === "code-sequence"
-          ? $$('[data-vd-lifeline-for]', view).find(line => line.dataset.vdLifelineFor === node.id) || node : node;
-        const startDistance = boundaryDistance(start, anchor(from)), endDistance = boundaryDistance(end, anchor(to));
+        // 时序消息优先连接作者明确绘制的执行条，否则连接生命线。
+        const anchor = (node, point) => {
+          if (view.dataset.vdFamily !== "code-sequence") return node;
+          // 按参与者和端点所在时间区间选择执行条，不补造执行时段。
+          const activation = $$('[data-vd-activation-for]', view).find(bar => bar.dataset.vdActivationFor === node.id && point && point.y >= rect(bar).top && point.y <= rect(bar).bottom);
+          return activation || $$('[data-vd-lifeline-for]', view).find(line => line.dataset.vdLifelineFor === node.id) || node;
+        };
+        const startDistance = boundaryDistance(start, anchor(from, start)), endDistance = boundaryDistance(end, anchor(to, end));
         if (startDistance > 6) issues.push(issue("edge-start-not-anchored", edge, from.id, { distance: startDistance, tolerance: 6 }));
         if (endDistance > 6) issues.push(issue("edge-end-not-anchored", edge, to.id, { distance: endDistance, tolerance: 6 }));
         const excluded = new Set([from, to]);

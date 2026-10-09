@@ -72,7 +72,7 @@ Use these markers on the final authored elements:
 | `data-vd-critical` | A visible target that directly answers a critical question or fact. |
 | `data-vd-detail-for="element-id"` | Authored detail for one semantic element. |
 
-Additional family markers are allowed. Common useful markers are `data-vd-lifeline-for`, `data-vd-message-kind`, `data-vd-cardinality`, `data-vd-review-section`, `data-vd-matrix`, and `data-vd-prototype`.
+Additional family markers are allowed. Common useful markers are `data-vd-lifeline-for`, `data-vd-activation-for`, `data-vd-message-kind`, `data-vd-cardinality`, and `data-vd-review-section`.
 
 通常标记不限制标签、形状和数量。明确选择自动排版的 SVG 采用下方最小结构要求；其余复杂组合仍直接编排。
 
@@ -118,8 +118,6 @@ The machine-readable policy is `contracts/family-outcomes.json`. It verifies onl
 - state: initial state, authored states, transitions, guards when applicable, and a terminal or explicitly cyclic lifecycle;
 - data model: independent entities with visible cardinality; data movement belongs to architecture;
 - architecture: real components/boundaries plus visible dependency, ownership, trust, or data relations;
-- comparison: real row/column axes, visible fact values, differences, and conclusion without invented weights;
-- page prototype: real controls and responsive states;
 
 No family policy sets a maximum node count, a DOM skeleton, business wording, coordinate system, or required number of views.
 
@@ -131,7 +129,7 @@ Close every detail and ignore visually secondary implementation identifiers. Use
 
 默认对五种基础图法使用 `svg[data-vd-layout="auto"][data-vd-zoom-target]`，外套 `data-vd-viewport`。SVG 内直接放置作者确定的节点 `<g id="…" data-vd-node="…">`、连线 `<path id="…" data-vd-edge="…" data-from="…" data-to="…">` 与有编号的 `<text data-vd-edge-label="连线编号">`，所有文字在字体载入后测量。节点内用 `data-vd-shape` 标记一个 rect、ellipse 或决策 polygon；文本可用 tspan 分行，程序扩大形状，不缩字或删文案。连线的箭头 marker、含义和证据由作者保留。
 
-单层边界用同级 `<g id="边界编号" data-vd-group="职责"><rect/><text>业务职责</text></g>`，节点用 `data-vd-member-of="边界编号"` 表明归属。时序消息使用已有 `data-vd-message-kind`，每个参与者有 `line[data-vd-lifeline-for="参与者编号"]`；消息 DOM 顺序即时间顺序，返回、异步、错误和超时仍需可见区别。`data-vd-gap` 可增大留白。
+单层边界用同级 `<g id="边界编号" data-vd-group="职责"><rect/><text>业务职责</text></g>`，节点用 `data-vd-member-of="边界编号"` 表明归属。时序消息使用已有 `data-vd-message-kind`，每个参与者有 `line[data-vd-lifeline-for="参与者编号"]`；消息 DOM 顺序即时间顺序，返回、异步、错误和超时仍需可见区别。手工绘制的执行条使用 `data-vd-activation-for="参与者编号"`，处于该执行区间的消息连接执行条真实边缘，不补造执行时段。`data-vd-gap` 可增大留白。
 
 复杂嵌套边界、时序片段或自由形状直接编排并保留同样的检查，不强行转成统一卡片。自动布局失败会恢复原 SVG 并明确报错，不能带着失败状态交付。该边界的优势是共用排版而不另建图描述协议；代价是高密度图仍可能需要分图和人工安排。
 
@@ -146,7 +144,5 @@ Close every detail and ignore visually secondary implementation identifiers. Use
 - `fault-debugging`：symptom、impact、cause 或 hypothesis、repair、verification，假设与已确认原因必须区分。
 - `code-review`：每条发现一个容器，依次显示 current、scenario、repair、acceptance；场景必须是真实触发过程，不能只写泛泛风险。
 - `technical-design`：change、boundary、decision、acceptance；按问题补充必要的基础视图。
-- `comparison-matrix`：原生 `table[data-vd-matrix]`，条件和候选形成两条轴，关键差异 `data-vd-difference` 与结论 `data-vd-conclusion` 可见，不编造评分。
-- `page-prototype`：真实 HTML 控件，`data-vd-prototype` 与 `data-vd-responsive-state`；空、加载、失败、权限与成功状态按需求可见或可达。
 
 场景容器检查能发现内容遗漏，不能证明事实或业务判断正确。没有把属性标上就视作验证通过的捷径。

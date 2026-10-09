@@ -1,6 +1,6 @@
 ---
 name: vibe-diagram
-description: Create and deliver a product-manager-first, self-contained HTML visual artifact when the user asks to draw or when architecture, workflow, sequence, state, data, debugging, code-review, technical-design, comparison, or page-prototype relationships materially need a diagram; ordinary explanations stay textual unless a diagram is requested, and Mermaid alone never completes the request.
+description: Create and deliver a product-manager-first, self-contained HTML visual artifact when the user asks to draw or when architecture, workflow, sequence, state, data, debugging, code-review, or technical-design relationships materially need a diagram; ordinary explanations stay textual unless a diagram is requested, and Mermaid alone never completes the request.
 ---
 
 # Vibe Diagram
@@ -22,7 +22,7 @@ The model owns fact selection, business meaning, topology and authored HTML/SVG.
 - 生命周期与转换：[状态图](references/archetypes/state-machine.md)
 - 实体、字段与数量关系：[数据关系图](references/archetypes/er-data-flow.md)
 
-比较表和页面原型直接使用 HTML 表格、真实控件。故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。
+故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。不生成独立比较表或页面原型；图形修改前后的差异对比仍保留。
 
 ## 交付底线
 

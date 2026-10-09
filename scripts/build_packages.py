@@ -57,8 +57,8 @@ FORBIDDEN_CANONICAL = {
 }
 # 五种基础图法是唯一的图形指导，不按业务场景复制。
 ARCHETYPE_NAMES = {'state-machine.md', 'architecture.md', 'basic-flow.md', 'code-sequence.md', 'er-data-flow.md'}
-# 比较表和页面原型仍按原生 HTML 能力校验。
-FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'page-prototype', 'state-machine', 'comparison-matrix'}
+# 产物清单只允许五种基础图法，空白生成入口仍是旧绘图方式的必要资源。
+FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'state-machine'}
 
 
 class BuildError(RuntimeError):

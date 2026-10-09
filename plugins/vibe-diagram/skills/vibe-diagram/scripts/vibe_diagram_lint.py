@@ -46,6 +46,7 @@ class LintError(RuntimeError):
 
 @dataclass
 class Element:
+    """记录真实元素的语义、归属、源位置和作者几何。"""
     tag: str
     attrs: Dict[str, str]
     line: int
@@ -54,6 +55,8 @@ class Element:
     text_parts: List[str] = field(default_factory=list)
     # 记录任务归属与作者几何，供跨视图审核和修改对比复用。
     task_id: str = ""
+    # SVG 辅助标题不能计入 HTML 页面标题。
+    in_svg: bool = False
     # 自动布局不将节点位置计作业务变化。
     automatic: bool = False
     # 只记录作者写入的坐标，不混入运行时的缩放或高亮。
@@ -75,6 +78,7 @@ class StackEntry:
 
 
 class ArtifactParser(HTMLParser):
+    """解析最终产物，区分 SVG 辅助内容与页面元信息。"""
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.doctype = False
@@ -120,6 +124,7 @@ class ArtifactParser(HTMLParser):
                     view_id = entry.element.view_id
                     break
         element = Element(tag, values, self.getpos()[0], inherited_hidden or own_hidden, view_id)
+        element.in_svg = tag == "svg" or any(entry.element.tag == "svg" for entry in self.stack)
         element.task_id = values.get("id", "") if "data-vd-task" in values else next((entry.element.task_id for entry in reversed(self.stack) if entry.element.task_id), "")
         element.automatic = values.get("data-vd-layout") == "auto" or any(entry.element.automatic for entry in self.stack)
         geometry = {key: value for key, value in values.items() if key in {"x", "y", "x1", "x2", "y1", "y2", "width", "height", "cx", "cy", "rx", "ry", "r", "d", "points", "transform", "viewbox"}}
@@ -250,6 +255,7 @@ def _validate_manifest(
     parser: ArtifactParser,
     families: Mapping[str, Any],
 ) -> Tuple[List[str], Dict[str, Any]]:
+    """核对产物清单、页面标题及事实与可见元素的绑定。"""
     errors: List[str] = []
     if not isinstance(manifest, dict):
         return ["ArtifactManifest must be a JSON object"], {}
@@ -369,7 +375,7 @@ def _validate_manifest(
     html_elements = [element for element in parser.elements if element.tag == "html"]
     if len(html_elements) == 1 and language and html_elements[0].attrs.get("lang") != language:
         errors.append("ArtifactManifest language must match html lang")
-    titles = [element.text for element in parser.elements if element.tag == "title"]
+    titles = [element.text for element in parser.elements if element.tag == "title" and not element.in_svg]
     headings = [element.text for element in parser.elements if element.tag == "h1"]
     if len(titles) != 1 or titles[0] != title:
         errors.append("ArtifactManifest title must match the document title")
@@ -462,24 +468,6 @@ def _validate_family(view: Element, elements: List[Element], policy: Mapping[str
         for edge in edges:
             if not edge.attrs.get("data-vd-cardinality") or edge.identifier not in labels:
                 errors.append(f"数据关系 {edge.identifier} 必须标明并显示数量关系；数据流转使用 architecture 图法")
-    elif mode == "matrix":
-        matrices = [element for element in elements if "data-vd-matrix" in element.attrs]
-        differences = [element for element in elements if "data-vd-difference" in element.attrs]
-        conclusions = [element for element in elements if "data-vd-conclusion" in element.attrs]
-        if not matrices or not any(element.tag == "table" for element in matrices):
-            errors.append(f"comparison view {view_id} requires a real table marked data-vd-matrix")
-        if not differences:
-            errors.append(f"comparison view {view_id} must visibly mark important differences")
-        if not conclusions:
-            errors.append(f"comparison view {view_id} requires a visible conclusion")
-    elif mode == "prototype":
-        if not any("data-vd-prototype" in element.attrs for element in elements):
-            errors.append(f"page-prototype view {view_id} requires data-vd-prototype")
-        controls = [element for element in elements if element.tag in {"button", "input", "select", "textarea"}]
-        if len(controls) < 2:
-            errors.append(f"page-prototype view {view_id} requires real interactive controls")
-        if not any("data-vd-responsive-state" in element.attrs for element in elements):
-            errors.append(f"page-prototype view {view_id} requires an authored responsive state")
 
     view_titles = [element.text for element in elements if "data-vd-view-title" in element.attrs]
     if not view_titles or any("｜" not in title for title in view_titles):

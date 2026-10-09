@@ -38,8 +38,11 @@ def example() -> str:
     flow += edge("draft-check", "draft", "check", "准备草稿") + edge("check-candidate", "check", "candidate", "通过") + edge("check-preserved", "check", "preserved", "未通过") + edge("candidate-browser", "candidate", "browser", "检查同一文件") + edge("browser-accepted", "browser", "accepted", "验收通过") + edge("browser-preserved", "browser", "preserved", "验收未通过")
     architecture = node("author", "participant", "作者确定事实") + node("shell", "component", "公共外壳") + node("delivery", "component", "安全交付命令")
     architecture += edge("author-shell", "author", "shell", "编写节点与关系", "authors") + edge("shell-delivery", "shell", "delivery", "提供检查记录", "supplies")
-    sequence = "".join(node(identifier, "participant", label) + '<line data-vd-lifeline-for="' + identifier + '"/>' for identifier, label in [("writer", "作者"), ("validator", "检查命令"), ("reader", "浏览器")])
-    sequence += edge("prepare-message", "writer", "validator", "准备独立候选", "message", 'data-vd-message-kind="sync"') + edge("prepared-message", "validator", "writer", "返回文件指纹", "message", 'data-vd-message-kind="return"') + edge("open-message", "writer", "reader", "打开候选检查", "message", 'data-vd-message-kind="async"') + edge("receipt-message", "reader", "writer", "返回画面检查记录", "message", 'data-vd-message-kind="return"')
+    # 手工时序图用执行条真实边缘连接消息；旧生命线端点检查会误报。
+    sequence = "".join(node(identifier, "participant", label).replace(' data-vd-node=', f' transform="translate({x} 20)" data-vd-node=', 1) + f'<line data-vd-lifeline-for="{identifier}" x1="{x + 90}" y1="84" x2="{x + 90}" y2="370" stroke="#93a9ba" stroke-dasharray="5 4"/><rect data-vd-activation-for="{identifier}" x="{x + 78}" y="120" width="24" height="230" fill="#eaf3fc" stroke="#176aa6"/>' for identifier, label, x in [("writer", "作者", 20), ("validator", "检查命令", 280), ("reader", "浏览器", 540)])
+    # 消息顺序和标签坐标属于明确样例，不由检查器推断关系。
+    for identifier, source, target, label, kind, start, end, y, label_x in [("prepare-message", "writer", "validator", "准备独立候选", "sync", 122, 358, 145, 180), ("prepared-message", "validator", "writer", "返回文件指纹", "return", 358, 122, 200, 180), ("open-message", "writer", "reader", "打开候选检查", "async", 122, 618, 255, 300), ("receipt-message", "reader", "writer", "返回画面检查记录", "return", 618, 122, 310, 280)]:
+        sequence += edge(identifier, source, target, label, "message", f'data-vd-message-kind="{kind}" d="M{start} {y}H{end}"').replace(f'data-vd-edge-label="{identifier}"', f'data-vd-edge-label="{identifier}" x="{label_x}" y="{y - 10}"')
     state = node("start-state", "initial", "草稿") + node("candidate-state", "state", "等待验收") + node("failed-state", "state", "需要修正") + node("accepted-state", "terminal", "已交付")
     state += edge("freeze-transition", "start-state", "candidate-state", "静态通过后冻结", "transition") + edge("fail-transition", "candidate-state", "failed-state", "检查发现问题", "transition") + edge("repair-transition", "failed-state", "candidate-state", "修正后重新冻结", "transition") + edge("accept-transition", "candidate-state", "accepted-state", "全部验收通过", "transition")
     data = node("candidate-record", "entity", "候选文件") + node("browser-record", "entity", "视口检查记录")
@@ -48,12 +51,10 @@ def example() -> str:
     body, records = [], []
     for index, (identifier, family, title, content) in enumerate(views):
         role = "primary" if index == 0 else "supporting"
-        body.append('<section id="' + identifier + '-view" data-vd-view="' + identifier + '" data-vd-family="' + family + '" data-vd-view-role="' + role + '"><h2 data-vd-view-title>' + title + '</h2><div data-vd-viewport><svg id="' + identifier + '-svg" data-vd-layout="auto" data-vd-zoom-target xmlns="http://www.w3.org/2000/svg">' + ('<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#176aa6"/></marker></defs>' if index == 0 else '') + content + '</svg></div></section>')
+        # 手工执行条保留自然尺寸和作者坐标，窄屏由共享缩放及横滚处理。
+        geometry = ' viewBox="0 0 760 400" width="760" height="400"' if family == "code-sequence" else ' data-vd-layout="auto"'
+        body.append('<section id="' + identifier + '-view" data-vd-view="' + identifier + '" data-vd-family="' + family + '" data-vd-view-role="' + role + '"><h2 data-vd-view-title>' + title + '</h2><div data-vd-viewport><svg id="' + identifier + '-svg"' + geometry + ' data-vd-zoom-target xmlns="http://www.w3.org/2000/svg"><title>' + title + '的辅助说明</title>' + ('<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#176aa6"/></marker></defs>' if index == 0 else '') + content + '</svg></div></section>')
         records.append({"id": identifier, "family": family, "role": role, "elementId": identifier + "-view"})
-    # 原生内容的结构检查继续存在，不增加第六套图形模板。
-    body.append('<section id="matrix-view" data-vd-view="matrix" data-vd-family="comparison-matrix" data-vd-view-role="supporting"><h2 data-vd-view-title>比较表｜检查与交付</h2><table data-vd-matrix><tr><th>结果</th><th>候选</th><th>原交付图</th></tr><tr data-vd-difference><th>检查失败</th><td>保留并修正</td><td>不替换</td></tr></table><p data-vd-conclusion>只有验收通过才替换。</p></section>')
-    body.append('<section id="prototype-view" data-vd-view="prototype" data-vd-family="page-prototype" data-vd-view-role="supporting"><h2 data-vd-view-title>页面原型｜本地评审记录</h2><form data-vd-prototype data-vd-responsive-state><label>评审结论 <input placeholder="填写实际观察" /></label><button type="reset">清空草稿</button></form></section>')
-    records += [{"id": identifier, "family": family, "role": "supporting", "elementId": identifier + "-view"} for identifier, family in [("matrix", "comparison-matrix"), ("prototype", "page-prototype")]]
     # 场景要求复用同一组图法，不固定布局或视图数量。
     body.append('<aside id="review-task" data-vd-task="code-review"><p data-vd-task-section="current">现状：直接覆盖输出会失去上一份图。</p><p data-vd-task-section="scenario">场景：改图后检查失败。</p><p data-vd-task-section="repair">修复：候选独立检查后才替换。</p><p data-vd-task-section="acceptance">验收：失败后原文件字节不变。</p></aside>')
     body.append('<aside id="fault-task" data-vd-task="fault-debugging"><p data-vd-task-section="symptom">示例故障：连线没有接到节点。</p><p data-vd-task-section="impact">影响：读者无法确定结果。</p><p data-vd-task-section="hypothesis">待验证假设：手工坐标没有随文字更新。</p><p data-vd-task-section="repair">修复方向：重新排版并检查端点。</p><p data-vd-task-section="verification">验收：真实浏览器检查通过。</p></aside>')
@@ -62,7 +63,7 @@ def example() -> str:
     text = render(manifest["title"], "zh-CN", SHELL_CSS.read_text(), SHELL_JS.read_text())
     start, end = text.index('<script id="vibe-diagram-manifest"'), text.index('</script>', text.index('<script id="vibe-diagram-manifest"'))
     text = text[:start] + '<script id="vibe-diagram-manifest" type="application/json">' + json.dumps(manifest, ensure_ascii=False) + text[end:]
-    text = text.replace('<p data-vd-summary data-vd-scaffold-empty></p>', '<p data-vd-summary>修改先形成独立候选。画面和产品阅读验收通过后，才替换正式文件；失败时原图保留。下方展示五种基本图法与原生内容。</p>')
+    text = text.replace('<p data-vd-summary data-vd-scaffold-empty></p>', '<p data-vd-summary>修改先形成独立候选。画面和产品阅读验收通过后，才替换正式文件；失败时原图保留。下方展示五种基础图法。</p>')
     start, end = text.index('<main data-vd-content'), text.index('</main>')
     return text[:start] + '<main data-vd-content>' + "\n".join(body) + text[end:]
 
@@ -71,6 +72,8 @@ def check(output: Path) -> dict:
     """检查根因约束及失败保护，再留下真实浏览器可打开的独立候选。"""
     text = example()
     assert not lint_text(text), lint_text(text)
+    # SVG 辅助标题应通过，真正的 HTML 标题不一致仍须拒绝。
+    assert any("document title" in error for error in lint_text(text.replace("<title>", "<title>错误的页面标题", 1)))
     assert lint_text(text.replace('data-vd-cardinality="1:N"', ""))
     assert lint_text(text.replace('data-vd-task-section="acceptance"', 'data-vd-task-section="missing"'))
     before = text.replace("冻结独立候选", "准备候选")
@@ -92,6 +95,15 @@ def check(output: Path) -> dict:
     with tempfile.TemporaryDirectory() as temporary:
         directory = Path(temporary)
         draft, candidate, final = directory / "draft.html", directory / "candidate.html", directory / "final.html"
+        # 已退出的图类既不能通过成品检查，也不能写出交付候选。
+        for removed in ("comparison-matrix", "page-prototype"):
+            draft.write_text(text.replace("business-flow", removed))
+            assert any("unsupported family: " + removed in error for error in lint_text(draft.read_text()))
+            try:
+                prepare(SimpleNamespace(input=str(draft), output=str(candidate), previous=None, allow_candidates=False))
+                raise AssertionError("已退出类型不能生成候选")
+            except ValueError:
+                assert not candidate.exists()
         draft.write_text(text)
         final.write_bytes(b"previous accepted output")
         prepared = prepare(SimpleNamespace(input=str(draft), output=str(candidate), previous=None, allow_candidates=False))
