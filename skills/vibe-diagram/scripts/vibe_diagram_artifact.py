@@ -124,7 +124,7 @@ def prepare(args: argparse.Namespace) -> dict:
             raise ValueError("不能覆盖上一份图来准备新候选")
         comparison = compare(previous.read_text(encoding="utf-8"), text)
         data = json.dumps(comparison, ensure_ascii=False, allow_nan=False).replace("<", "\\u003c")
-        text = text.replace("</head>", '<script id="vibe-diagram-comparison" type="application/json">' + data + "</script>\n</head>")
+        text = text.replace("</body>", '<script id="vibe-diagram-comparison" type="application/json">' + data + "</script>\n</body>")
     token = uuid.uuid4().hex
     text = text.replace("</head>", '<meta name="vibe-diagram-candidate" content="' + token + '">\n</head>')
     if candidate_id(text) != token:

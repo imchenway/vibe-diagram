@@ -1,18 +1,18 @@
 ---
 name: vibe-diagram
-description: Create and deliver a product-manager-first, self-contained HTML visual artifact when the user asks to draw or when architecture, workflow, sequence, state, data, debugging, code-review, or technical-design relationships materially need a diagram; ordinary explanations stay textual unless a diagram is requested, and Mermaid alone never completes the request.
+description: Create and deliver a product-manager-first, self-contained HTML visual artifact when the user asks to draw or when architecture, workflow, sequence, state, data, debugging, code-review, technical-design, comparison, or page-prototype relationships materially need a diagram; ordinary explanations stay textual unless a diagram is requested, and Mermaid alone never completes the request.
 ---
 
 # Vibe Diagram
 
-The model owns fact selection, business meaning and relationships. The packaged native engine compiles the selected diagram source and supplies the full viewer; authored SVG uses that same viewer. Never invent facts to complete a picture.
+The model owns fact selection, business meaning, topology and authored HTML/SVG. Shared code measures and lays out marked SVG, checks results, and supplies reading, comparison and export. Never invent facts to complete a picture.
 
 ## 执行
 
 1. 从当前 Skill 目录运行 `python3 <skill-root>/scripts/update_skill.py --check-and-update --json`。offline 或 failed 时沿用已安装内容并简短说明；明确手动更新才加 `--force-check`，不绕过完整性检查。
 2. 通读 [运行步骤](references/runtime-workflow.md) 和 [作者契约](references/artifact-authoring.md)。按需加载 at most two 基础图法。
 3. 检查用户的真实证据，先确定产品问题、业务含义、关键事实和证据状态。
-4. 图形按 [原生生成入口](references/native-engine.md) 编写图类源或 SVG，运行 `vibe_diagram_build.py`。检查独立候选、产品阅读和交互后再交付。
+4. 从空外壳编写最终 HTML/SVG；使用共享排版，复杂边界直接编排。检查独立候选、阅读和交互后再交付。
 
 ## 只选必要的图法
 
@@ -22,11 +22,7 @@ The model owns fact selection, business meaning and relationships. The packaged 
 - 生命周期与转换：[状态图](references/archetypes/state-machine.md)
 - 实体、字段与数量关系：[数据关系图](references/archetypes/er-data-flow.md)
 
-故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。
-
-## 共同能力
-
-五种图法共享原生查找、关系聚焦、上下游、两点路径、地图、章节讲解、镜头、流程动效和演示；导出支持 SVG、PNG、JPEG、WebP、分享图、交互 HTML，以及浏览器支持时的视频与复制。保留原有背景、渐变、格子、配色和系统字体，不增加场景模板。生成需要 Python 3.10+ 和 Node.js 18+；无需联网安装依赖，生成的 HTML 可离线打开。
+比较表和页面原型直接使用 HTML 表格、真实控件。故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。
 
 ## 交付底线
 

@@ -39,21 +39,14 @@ REQUIRED_CANONICAL = {
     "update.json",
     "assets/shell/v1.css",
     "assets/shell/v1.js",
-    "assets/native/canvas.css",
-    "assets/native/canvas.js",
-    "assets/archify/source.json",
-    "assets/archify/LICENSE",
-    "assets/archify/assets/template.html",
-    "scripts/vibe_diagram_build.py",
-    "scripts/vibe_diagram_native.py",
-    "scripts/vibe_diagram_svg.mjs",
-    "references/native-engine.md",
+    "assets/shell/layout.js",
     "contracts/artifact-manifest.schema.json",
     "contracts/family-outcomes.json",
     "references/runtime-workflow.md",
     "references/artifact-authoring.md",
     "scripts/update_skill.py",
     "scripts/vibe_diagram_lint.py",
+    "scripts/vibe_diagram_scaffold.py",
     "scripts/vibe_diagram_artifact.py",
 }
 FORBIDDEN_CANONICAL = {
@@ -61,12 +54,11 @@ FORBIDDEN_CANONICAL = {
     "contracts/template-routing.json",
     "scripts/vibe_diagram_render.py",
     "scripts/vibe_diagram_spec.py",
-    "scripts/vibe_diagram_scaffold.py",
 }
 # 五种基础图法是唯一的图形指导，不按业务场景复制。
 ARCHETYPE_NAMES = {'state-machine.md', 'architecture.md', 'basic-flow.md', 'code-sequence.md', 'er-data-flow.md'}
-# 产物清单只允许五种基础图法。
-FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'state-machine'}
+# 比较表和页面原型仍按原生 HTML 能力校验。
+FAMILY_NAMES = {'architecture', 'business-flow', 'data-model', 'code-sequence', 'page-prototype', 'state-machine', 'comparison-matrix'}
 
 
 class BuildError(RuntimeError):
@@ -344,25 +336,18 @@ def validate_canonical(root: Path) -> TreeRecord:
     if schema.get("$id") != "vibe-diagram/artifact-manifest@1" or "nodes" in schema.get("properties", {}):
         raise _fail("ArtifactManifest must be open to model-authored DOM and contain no node inventory")
 
+    scaffold = files[PurePosixPath("scripts/vibe_diagram_scaffold.py")].read_text(encoding="utf-8")
     linter = files[PurePosixPath("scripts/vibe_diagram_lint.py")].read_text(encoding="utf-8")
     shell_js = files[PurePosixPath("assets/shell/v1.js")].read_text(encoding="utf-8")
+    for marker in ("--output", "--title", "--lang", "data-vd-author-style"):
+        if marker not in scaffold:
+            raise _fail(f"blank scaffold is missing marker: {marker}")
     for marker in ("ArtifactManifest", "data-vd-critical", "family-outcomes.json"):
         if marker not in linter:
             raise _fail(f"outcome linter is missing marker: {marker}")
     for marker in ("edge-through-node", "edge-label-collision", "critical-target-not-primary-visible", "auditAll"):
         if marker not in shell_js:
             raise _fail(f"browser outcome audit is missing marker: {marker}")
-
-    # 引擎来源随技能包核对，禁止靠开发目录补齐缺少的运行文件。
-    provenance = read_json_unique(skill_root / "assets/archify/source.json")
-    for relative, expected in provenance.get("files", {}).items():
-        bundled = skill_root / "assets/archify" / relative
-        if bundled.is_symlink() or not bundled.is_file() or not bundled.resolve().is_relative_to((skill_root / "assets/archify").resolve()):
-            raise _fail(f"内置引擎文件缺失或路径无效：{relative}")
-        if hashlib.sha256(bundled.read_bytes()).hexdigest() != expected:
-            raise _fail(f"内置引擎文件与来源不一致：{relative}")
-    if not provenance.get("files"):
-        raise _fail("内置引擎来源清单不能为空")
 
     version = read_version(root)
     skill_version = files[PurePosixPath("VERSION")].read_text(encoding="ascii")

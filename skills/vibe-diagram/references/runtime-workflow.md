@@ -4,19 +4,13 @@
 
 1. 读取请求和真实证据，形成私有 Diagram Brief：产品问题、结论、业务影响、规则、关键事实、证据状态和验收含义。
 2. 按关系选择五种基础图法中的必要部分，读取 at most two 指导。Diagram Brief 不是第二套渲染输入。
-3. 图形先读取 [原生生成入口](native-engine.md) 及对应包内 schema。事实与关系只写入一份图形源，覆盖清单只映射问题、事实与证据。生成命令调用包内固定引擎及完整查看器，不从 docs、研究 checkout、CDN 或另一技能目录取得运行代码。
+3. 创建独立草稿；共享行为全部内嵌，最终仍是单文件 HTML。
 
 ```sh
-python3 <skill-root>/scripts/vibe_diagram_build.py --input <diagram.json> --manifest <coverage.json> --output <draft.html>
+python3 <skill-root>/scripts/vibe_diagram_scaffold.py --output <draft.html> --title '<图类型｜业务主题>' --lang zh-CN
 ```
 
-实体数量关系以及原生图类不能准确表达的复杂组合，编写有语义标记的独立 SVG，使用同一个查看器：
-
-```sh
-python3 <skill-root>/scripts/vibe_diagram_build.py --svg <diagram.svg> --manifest <coverage.json> --summary '<业务结论与规则>' --output <draft.html>
-```
-
-命令拒绝覆盖已有输出；源或布局失败时先修输入，不能删关系、关闭质量门禁或拼另一套简化运行代码。
+命令拒绝覆盖已有文件。按 [作者契约](artifact-authoring.md) 替换空内容、清单和占位标记，编写产品可读的主要视图和映射技术证据。常规 SVG 使用共享测量、排版与走线，复杂组合直接编排。不要使用已退役的 --spec、--template、--review-kind、--review-spec 输入，也不重建 DiagramDocumentSpec。
 
 ## 检查独立候选
 
@@ -29,9 +23,9 @@ python3 <skill-root>/scripts/vibe_diagram_artifact.py prepare --input <draft.htm
 
 保存 prepare 返回的完整文件 SHA-256 和字节数；它只证明静态检查和文件一致性。候选修改后必须重新 prepare，不能沿用旧浏览器记录。候选不能覆盖草稿或上一份交付图。
 
-在当前宿主提供的真实浏览器中打开该候选，等待字体与原生查看器初始化完成，分别以 1440×900、1280×800、390×844 检查。运行 `VibeDiagramQuality.receipt()`，把三次真实返回值原样保存到一个 JSON 数组文件。每次必须 status=passed、issues=[]，页面上的错误提示可定位具体元素。没有可用浏览器时保留为未验候选，不能模拟记录。
+在当前宿主提供的真实浏览器中打开该候选，等待字体与自动排版完成，分别以 1440×900、1280×800、390×844 检查。运行 `VibeDiagramQuality.receipt()`，把三次真实返回值原样保存到一个 JSON 数组文件。每次必须 status=passed、issues=[]，页面上的错误提示可定位具体元素。没有可用浏览器时保留为未验候选，不能模拟记录。
 
-检查缩放、窄屏视图内横滚、节点点击/Enter/空格高亮与 Esc 恢复；存在详情时检查开关和焦点返回；存在对比时检查新增、删除及变化。检查名称查找、上下游和两点路径，反向不可达时不能留着旧路径。播放时核对真实线段、时间推进、暂停与章节停止，减少动效与后台应保留完整静态内容。实际生成图片，核对背景、网格、标题字号和图注完整且没有临时高亮或描线；重新打开下载的 HTML，不能重复初始化工具条。复制图片需记录真实权限结果，不能将失败算作成功。打印保留完整阅读内容。默认阅读使用清晰的自然比例，窄屏在图内横滚；主动缩放和地图总览由原生镜头控制。页面只使用页面级纵向滚动。
+检查缩放、窄屏视图内横滚、节点点击/Enter/空格高亮与 Esc 恢复；存在详情时检查开关和焦点返回；存在对比时检查新增、删除及变化；存在图片按钮时检查 SVG/PNG 实际生成、标题图注完整且没有临时高亮；打印保留完整阅读内容。缩放不能低于 75%，页面只使用页面级纵向滚动。
 
 关闭详情完成产品阅读：每个关键问题能否从摘要和主要视图得到答案，业务结论、影响、规则、决策、验收及待确认事项是否清楚，精确证据是否仍可追溯。将实际阅读结论写入交付参数，不能用静态通过代替阅读。
 

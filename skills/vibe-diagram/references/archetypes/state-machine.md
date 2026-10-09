@@ -7,4 +7,4 @@
 - 状态名表示已经处于什么条件，不能把临时操作当成持久状态。
 - 回路必须有含义，不能凭视觉完整性补造最终成功。
 
-图类标记：`state-machine`；使用原生 `lifecycle` 的 states、transitions。每条转换有 id 与 label，清单 nodeRoles 明确 initial、state、terminal 或 cyclic。引擎的装饰轨道不作为额外转换。收益是完整状态与转换交互；代价是列距和复杂回路需要按真实语义安排。
+图类标记：`state-machine`。节点角色为 initial、state、terminal 或 cyclic，连线使用 transition。收益是状态与活动不会混淆；取舍是自动排列不能代替生命周期事实核实。

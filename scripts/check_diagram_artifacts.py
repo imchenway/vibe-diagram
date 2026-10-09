@@ -1,159 +1,126 @@
 #!/usr/bin/env python3
-"""直接运行技能的真实生成入口，检查五种图法、类型移除和失败保护；不伪造浏览器结果。"""
+"""运行最小验收自检，并生成供 Zeus 浏览器检查的代表性 HTML；不模拟浏览器通过。"""
+
 from __future__ import annotations
+
 import argparse
 import json
-import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 from types import SimpleNamespace
 
-# 全部行为从当前 canonical 核心取得，示例只提供业务数据。
+# 所有示例使用当前 canonical 外壳，避免复制一份运行代码。
 ROOT = Path(__file__).resolve().parents[1]
-# 隔离技能包验证可覆盖此位置，不依赖 docs 中的文件。
-CORE = ROOT / 'skills/vibe-diagram'
-sys.path.insert(0, str(CORE / 'scripts'))
+# 本地验收只导入脚本，不执行更新或安装。
+CORE = ROOT / "skills/vibe-diagram"
+sys.path.insert(0, str(CORE / "scripts"))
+from vibe_diagram_scaffold import render, SHELL_CSS, SHELL_JS
 from vibe_diagram_lint import lint_text
-from vibe_diagram_artifact import accept, compare, digest, parse, prepare
-from update_skill import _verify_candidate, tree_sha256, UpdateError
+from vibe_diagram_artifact import accept, compare, digest, prepare
 
 
-def manifest(name, family, title, summary, roles=None):
-    """验收设定明确标成拟议示例，不声称生产事实。"""
-    return {'$schema':'vibe-diagram/artifact-manifest@1','artifactId':'native-'+name,'language':'zh-CN','title':title,'audience':['product-manager'],'questions':[{'id':'main-question','text':'这张图说明什么业务规则？','priority':'critical','answeredBy':['diagram-summary']}],'criticalFacts':[{'id':'main-rule','statement':summary,'status':'proposed','visibleIn':['diagram-summary'],'evidenceIds':['example']}],'views':[{'id':name,'family':family,'role':'primary','elementId':name+'-view'}],'evidence':[{'id':'example','status':'proposed','sourceKind':'demonstration','source':'本地验收设定，不代表生产规则','supports':['main-rule']}],'extensions':{'nodeRoles':roles or {}}}
+def node(identifier: str, role: str, label: str, *, critical: bool = False) -> str:
+    """用作者选定的形状表达语义，坐标交由共享排版。"""
+    shape = '<polygon data-vd-shape points="90,0 180,45 90,90 0,45"/>' if role == "decision" else '<ellipse data-vd-shape cx="85" cy="28" rx="85" ry="28"/>' if role in {"start", "end", "initial", "terminal"} else '<rect data-vd-shape width="180" height="64" rx="10"/>'
+    return '<g id="' + identifier + '" data-vd-node="' + role + '"' + (' data-vd-critical' if critical else '') + '>' + shape + '<text x="16" y="36">' + label + '</text></g>'
 
 
-def meta(title, summary):
-    """固定业务语言及原主题预设，不固定节点或关系模板。"""
-    return {'title':title,'subtitle':summary,'locale':'zh-CN','animation':'trace','visual_preset':'signal-flow','quality_profile':'showcase'}
+def edge(identifier: str, source: str, target: str, label: str, kind: str = "flows", extra: str = "") -> str:
+    """每条关系都保留独立编号、可见标签和作者选择的箭头。"""
+    return '<path id="' + identifier + '" data-vd-edge="' + kind + '" data-from="' + source + '" data-to="' + target + '" marker-end="url(#arrow)" ' + extra + '/><text id="' + identifier + '-label" data-vd-edge-label="' + identifier + '">' + label + '</text>'
 
 
-def sources():
-    """五类独立事实用于验证入口，没有在生产技能中固化业务节点。"""
-    # 架构关系体现分工与信息流向。
-    architecture={'schema_version':1,'diagram_type':'architecture','meta':meta('架构关系图｜预约提醒分工','示例设定：预约服务保存预约，消息服务负责向用户发送提醒。'),'components':[{'id':'booking','type':'backend','label':'预约服务','pos':[40,100],'size':[140,64]},{'id':'records','type':'database','label':'预约记录','pos':[340,100],'size':[140,64]},{'id':'notice','type':'messagebus','label':'提醒服务','pos':[640,100],'size':[140,64]}],'connections':[{'id':'save','from':'booking','to':'records','label':'保存预约'},{'id':'remind','from':'records','to':'notice','label':'提供到期预约'}]}
-    # 流程包含条件出口；无库存与成功结束不能合并。
-    workflow={'schema_version':2,'diagram_type':'workflow','meta':meta('流程图｜预约名额检查','示例设定：有名额才确认预约；没有名额时提示改期，不占用名额。'),'lanes':[{'id':'main','label':'预约办理'},{'id':'exit','label':'未确认'}],'phases':[],'groups':[],'mainPath':['start','available','confirm'],'nodes':[{'id':'start','type':'external','label':'提交预约','lane':'main','col':0,'width':140},{'id':'available','type':'security','label':'还有名额？','lane':'main','col':1,'width':140},{'id':'confirm','type':'backend','label':'确认预约','lane':'main','col':2,'width':140},{'id':'rejected','type':'external','label':'提示改期','lane':'exit','col':2,'width':140}],'edges':[{'id':'request','from':'start','to':'available','label':'检查名额'},{'id':'yes','from':'available','to':'confirm','label':'有名额'},{'id':'no','from':'available','to':'rejected','label':'无名额'}]}
-    # 时序保留请求、返回及异步发送的区别。
-    sequence={'schema_version':1,'diagram_type':'sequence','meta':meta('时序图｜预约确认与提醒','示例设定：页面收到预约结果后立即展示；提醒另行异步发送。'),'participants':[{'id':'page','type':'frontend','label':'预约页面'},{'id':'service','type':'backend','label':'预约服务'},{'id':'notice','type':'messagebus','label':'提醒服务'}],'messages':[{'id':'submit','from':'page','to':'service','y':175,'label':'提交预约','variant':'default'},{'id':'result','from':'service','to':'page','y':230,'label':'返回预约结果','variant':'return'},{'id':'notify','from':'service','to':'notice','y':310,'label':'异步安排提醒','variant':'dashed'}]}
-    sequence['meta']['viewBox']=[680,480]
-    # 状态转换使用明确事件，不凭相邻排列补造转换。
-    lifecycle={'schema_version':1,'diagram_type':'lifecycle','meta':meta('状态图｜预约状态变化','示例设定：待确认的预约可被确认；已确认后由核销事件进入已完成。'),'lanes':[{'id':'main','label':'预约状态'}],'states':[{'id':'pending','type':'start','label':'待确认','lane':'main','col':0,'width':100},{'id':'confirmed','type':'active','label':'已确认','lane':'main','col':1,'width':100},{'id':'completed','type':'success','label':'已完成','lane':'main','col':2,'width':100}],'transitions':[{'id':'confirm','from':'pending','to':'confirmed','label':'确认预约'},{'id':'finish','from':'confirmed','to':'completed','label':'核销完成'}]}
-    lifecycle['meta']['viewBox']=[720,566]
-    return [('architecture','architecture',architecture,{}),('workflow','business-flow',workflow,{'start':'start','available':'decision','confirm':'end','rejected':'end'}),('sequence','code-sequence',sequence,{}),('lifecycle','state-machine',lifecycle,{'pending':'initial','completed':'terminal'})]
+def example() -> str:
+    """示例说明当前改图与交付机制；验收场景不冒充外部生产事实。"""
+    flow = node("draft", "start", "编写修改") + node("check", "decision", "静态检查通过？") + node("candidate", "activity", "冻结独立候选") + node("browser", "activity", "检查画面与产品阅读") + node("accepted", "end", "安全替换交付文件", critical=True) + node("preserved", "end", "失败，原文件保留")
+    flow += edge("draft-check", "draft", "check", "准备草稿") + edge("check-candidate", "check", "candidate", "通过") + edge("check-preserved", "check", "preserved", "未通过") + edge("candidate-browser", "candidate", "browser", "检查同一文件") + edge("browser-accepted", "browser", "accepted", "验收通过") + edge("browser-preserved", "browser", "preserved", "验收未通过")
+    architecture = node("author", "participant", "作者确定事实") + node("shell", "component", "公共外壳") + node("delivery", "component", "安全交付命令")
+    architecture += edge("author-shell", "author", "shell", "编写节点与关系", "authors") + edge("shell-delivery", "shell", "delivery", "提供检查记录", "supplies")
+    sequence = "".join(node(identifier, "participant", label) + '<line data-vd-lifeline-for="' + identifier + '"/>' for identifier, label in [("writer", "作者"), ("validator", "检查命令"), ("reader", "浏览器")])
+    sequence += edge("prepare-message", "writer", "validator", "准备独立候选", "message", 'data-vd-message-kind="sync"') + edge("prepared-message", "validator", "writer", "返回文件指纹", "message", 'data-vd-message-kind="return"') + edge("open-message", "writer", "reader", "打开候选检查", "message", 'data-vd-message-kind="async"') + edge("receipt-message", "reader", "writer", "返回画面检查记录", "message", 'data-vd-message-kind="return"')
+    state = node("start-state", "initial", "草稿") + node("candidate-state", "state", "等待验收") + node("failed-state", "state", "需要修正") + node("accepted-state", "terminal", "已交付")
+    state += edge("freeze-transition", "start-state", "candidate-state", "静态通过后冻结", "transition") + edge("fail-transition", "candidate-state", "failed-state", "检查发现问题", "transition") + edge("repair-transition", "failed-state", "candidate-state", "修正后重新冻结", "transition") + edge("accept-transition", "candidate-state", "accepted-state", "全部验收通过", "transition")
+    data = node("candidate-record", "entity", "候选文件") + node("browser-record", "entity", "视口检查记录")
+    data += edge("candidate-records", "candidate-record", "browser-record", "一份候选对应多个视口记录", "has", 'data-vd-cardinality="1:N"')
+    views = [("flow", "business-flow", "流程图｜修改失败保留原图", flow), ("architecture", "architecture", "架构关系图｜共享能力职责", architecture), ("sequence", "code-sequence", "时序图｜冻结与检查", sequence), ("state", "state-machine", "状态图｜候选到交付", state), ("data", "data-model", "数据关系图｜文件与检查记录", data)]
+    body, records = [], []
+    for index, (identifier, family, title, content) in enumerate(views):
+        role = "primary" if index == 0 else "supporting"
+        body.append('<section id="' + identifier + '-view" data-vd-view="' + identifier + '" data-vd-family="' + family + '" data-vd-view-role="' + role + '"><h2 data-vd-view-title>' + title + '</h2><div data-vd-viewport><svg id="' + identifier + '-svg" data-vd-layout="auto" data-vd-zoom-target xmlns="http://www.w3.org/2000/svg">' + ('<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#176aa6"/></marker></defs>' if index == 0 else '') + content + '</svg></div></section>')
+        records.append({"id": identifier, "family": family, "role": role, "elementId": identifier + "-view"})
+    # 原生内容的结构检查继续存在，不增加第六套图形模板。
+    body.append('<section id="matrix-view" data-vd-view="matrix" data-vd-family="comparison-matrix" data-vd-view-role="supporting"><h2 data-vd-view-title>比较表｜检查与交付</h2><table data-vd-matrix><tr><th>结果</th><th>候选</th><th>原交付图</th></tr><tr data-vd-difference><th>检查失败</th><td>保留并修正</td><td>不替换</td></tr></table><p data-vd-conclusion>只有验收通过才替换。</p></section>')
+    body.append('<section id="prototype-view" data-vd-view="prototype" data-vd-family="page-prototype" data-vd-view-role="supporting"><h2 data-vd-view-title>页面原型｜本地评审记录</h2><form data-vd-prototype data-vd-responsive-state><label>评审结论 <input placeholder="填写实际观察" /></label><button type="reset">清空草稿</button></form></section>')
+    records += [{"id": identifier, "family": family, "role": "supporting", "elementId": identifier + "-view"} for identifier, family in [("matrix", "comparison-matrix"), ("prototype", "page-prototype")]]
+    # 场景要求复用同一组图法，不固定布局或视图数量。
+    body.append('<aside id="review-task" data-vd-task="code-review"><p data-vd-task-section="current">现状：直接覆盖输出会失去上一份图。</p><p data-vd-task-section="scenario">场景：改图后检查失败。</p><p data-vd-task-section="repair">修复：候选独立检查后才替换。</p><p data-vd-task-section="acceptance">验收：失败后原文件字节不变。</p></aside>')
+    body.append('<aside id="fault-task" data-vd-task="fault-debugging"><p data-vd-task-section="symptom">示例故障：连线没有接到节点。</p><p data-vd-task-section="impact">影响：读者无法确定结果。</p><p data-vd-task-section="hypothesis">待验证假设：手工坐标没有随文字更新。</p><p data-vd-task-section="repair">修复方向：重新排版并检查端点。</p><p data-vd-task-section="verification">验收：真实浏览器检查通过。</p></aside>')
+    body.append('<aside id="design-task" data-vd-task="technical-design"><p data-vd-task-section="change">变化：五种图法共用能力。</p><p data-vd-task-section="boundary">边界：只处理已有事实和关系。</p><p data-vd-task-section="decision">决定：HTML/SVG 保持唯一图形来源。</p><p data-vd-task-section="acceptance">验收：保留事实、检查文件和交互。</p></aside>')
+    manifest = {"$schema": "vibe-diagram/artifact-manifest@1", "artifactId": "safe-diagram-delivery", "language": "zh-CN", "title": "流程图｜改图与安全交付", "audience": ["product-manager"], "questions": [{"id": "delivery-question", "text": "什么时候替换原交付图？", "priority": "critical", "answeredBy": ["accepted"]}], "criticalFacts": [{"id": "safe-delivery", "statement": "验收通过才替换交付文件", "status": "observed", "visibleIn": ["accepted"], "evidenceIds": ["source"]}], "views": records, "evidence": [{"id": "source", "status": "observed", "sourceKind": "source-code", "source": "skills/vibe-diagram/scripts/vibe_diagram_artifact.py:accept", "supports": ["safe-delivery"]}], "extensions": {}}
+    text = render(manifest["title"], "zh-CN", SHELL_CSS.read_text(), SHELL_JS.read_text())
+    start, end = text.index('<script id="vibe-diagram-manifest"'), text.index('</script>', text.index('<script id="vibe-diagram-manifest"'))
+    text = text[:start] + '<script id="vibe-diagram-manifest" type="application/json">' + json.dumps(manifest, ensure_ascii=False) + text[end:]
+    text = text.replace('<p data-vd-summary data-vd-scaffold-empty></p>', '<p data-vd-summary>修改先形成独立候选。画面和产品阅读验收通过后，才替换正式文件；失败时原图保留。下方展示五种基本图法与原生内容。</p>')
+    start, end = text.index('<main data-vd-content'), text.index('</main>')
+    return text[:start] + '<main data-vd-content>' + "\n".join(body) + text[end:]
 
 
-def entity_svg():
-    """实体图直接编写实际 SVG，保留关键字段与可见数量关系。"""
-    return '''<svg xmlns="http://www.w3.org/2000/svg" id="entities" viewBox="0 0 760 280">
-<style>/* 实体使用既有主题色，字段和连线在离线导出中保持可编辑。 */
-text {font-family:system-ui,-apple-system,sans-serif;fill:#10243a;font-size:15px} .entity-box{fill:#e8f3fb;stroke:#176aa6;stroke-width:1.5} .relation{fill:none;stroke:#176aa6;stroke-width:1.5}</style>
-<g id="customer" data-vd-node="entity"><rect data-vd-shape="" class="entity-box" x="40" y="80" width="200" height="140" rx="12"/><text x="60" y="112" font-weight="600">客户</text><text x="60" y="150">客户编号 · 唯一</text><text x="60" y="180">姓名</text></g>
-<g id="booking" data-vd-node="entity"><rect data-vd-shape="" class="entity-box" x="520" y="80" width="200" height="140" rx="12"/><text x="540" y="112" font-weight="600">预约</text><text x="540" y="150">预约编号 · 唯一</text><text x="540" y="180">所属客户编号</text></g>
-<path id="customer-bookings" class="relation" d="M240 150 H520" data-vd-edge="owns" data-from="customer" data-to="booking" data-vd-cardinality="1:0..N"/>
-<text id="customer-bookings-label" data-vd-edge-label="customer-bookings" x="380" y="130" text-anchor="middle">一位客户可有零至多份预约</text>
-</svg>'''
-
-
-def run_cli(core, arguments, success=True):
-    """调用独立进程；失败输入不得悄悄生成部分文件。"""
-    result=subprocess.run([sys.executable,str(core/'scripts/vibe_diagram_build.py'),*map(str,arguments)],capture_output=True,text=True)
-    if (result.returncode == 0) != success:
-        raise RuntimeError(result.stdout+result.stderr)
-    return json.loads(result.stdout or result.stderr)
-
-
-def check(output, core):
-    """生成代表性产物并核对关系数量、语义差异、不可覆盖与失效候选拒绝。"""
-    output.mkdir(parents=True,exist_ok=True)
-    # 升级器验证直接分发核心；客户端生成包另含适配文件，由包管理器负责完整性。
-    _verify_candidate(CORE, json.loads((CORE/'update.json').read_text()))
-    with tempfile.TemporaryDirectory() as directory:
-        # 即使重新计算摘要，缺少运行入口的包也必须被安装前检查拒绝。
-        candidate=Path(directory)/'candidate';shutil.copytree(CORE,candidate,ignore=shutil.ignore_patterns('__pycache__'))
-        (candidate/'scripts/vibe_diagram_native.py').unlink()
-        candidate_manifest=json.loads((candidate/'update.json').read_text())
-        candidate_manifest['tree_sha256']=tree_sha256(candidate)
-        (candidate/'update.json').write_text(json.dumps(candidate_manifest))
+def check(output: Path) -> dict:
+    """检查根因约束及失败保护，再留下真实浏览器可打开的独立候选。"""
+    text = example()
+    assert not lint_text(text), lint_text(text)
+    assert lint_text(text.replace('data-vd-cardinality="1:N"', ""))
+    assert lint_text(text.replace('data-vd-task-section="acceptance"', 'data-vd-task-section="missing"'))
+    before = text.replace("冻结独立候选", "准备候选")
+    differences = compare(before, text)["changes"]
+    assert any(change["id"] == "candidate" and change["kind"] == "changed" for change in differences)
+    # 自动坐标变化不计为内容变化，手工坐标变化单独分类。
+    manual = text.replace('data-vd-layout="auto"', '').replace('id="candidate" data-vd-node', 'id="candidate" transform="translate(1 2)" data-vd-node')
+    assert any(item["kind"] == "moved" for item in compare(manual, manual.replace('translate(1 2)', 'translate(3 4)'))["changes"])
+    assert not compare(text, text.replace('id="candidate" data-vd-node', 'id="candidate" transform="translate(3 4)" data-vd-node'))["changes"]
+    # 编号变化必须表现为新增和删除，不能按相同文字自动合并。
+    changed_identity = text.replace('id="candidate" data-vd-node', 'id="candidate-new" data-vd-node')
+    identity_changes = compare(text, changed_identity)["changes"]
+    assert {item["kind"] for item in identity_changes if item["id"] in {"candidate", "candidate-new"}} == {"added", "removed"}
+    try:
+        compare(text.replace('"safe-diagram-delivery"', '"another-artifact"'), text)
+        raise AssertionError("不同身份不能比较")
+    except ValueError:
+        pass
+    with tempfile.TemporaryDirectory() as temporary:
+        directory = Path(temporary)
+        draft, candidate, final = directory / "draft.html", directory / "candidate.html", directory / "final.html"
+        draft.write_text(text)
+        final.write_bytes(b"previous accepted output")
+        prepared = prepare(SimpleNamespace(input=str(draft), output=str(candidate), previous=None, allow_candidates=False))
+        candidate.write_text(candidate.read_text() + "<!-- changed after check -->")
         try:
-            _verify_candidate(candidate,candidate_manifest)
-        except UpdateError as error:
-            assert 'scripts/vibe_diagram_native.py' in str(error)
-        else:
-            raise AssertionError('缺少原生入口的包不能通过检查')
-    # 独立输出目录防止覆盖上一次人工检查的候选。
-    records=[]
-    for name,family,source,roles in sources():
-        payload=manifest(name,family,source['meta']['title'],source['meta']['subtitle'],roles)
-        source_path=output/(name+'.json');manifest_path=output/(name+'.manifest.json')
-        source_path.write_text(json.dumps(source,ensure_ascii=False,indent=2));manifest_path.write_text(json.dumps(payload,ensure_ascii=False,indent=2))
-        records.append(run_cli(core,['--input',source_path,'--manifest',manifest_path,'--output',output/(name+'.html')]))
-    # 单一生命周期不能凭空出现未定义的中断区或结果区。
-    lifecycle_parser,_=parse((output/'lifecycle.html').read_text())
-    lifecycle_text=' '.join(element.text for element in lifecycle_parser.elements if element.tag=='text')
-    assert '预约状态' in lifecycle_text and 'Interruptions + recovery' not in lifecycle_text and 'Outcomes' not in lifecycle_text
-    # 相同查看器承接实体数量关系，数据流引擎不冒充实体关系引擎。
-    svg=output/'data.svg';svg.write_text(entity_svg())
-    summary='示例设定：一位客户可有零至多份预约；每份预约只属于一位客户。'
-    payload=manifest('data','data-model','数据关系图｜客户与预约',summary)
-    data_manifest=output/'data.manifest.json';data_manifest.write_text(json.dumps(payload,ensure_ascii=False,indent=2))
-    records.append(run_cli(core,['--svg',svg,'--summary',summary,'--manifest',data_manifest,'--output',output/'data.html']))
-    # 英文标题包含特殊字符，数据流和作者 SVG 必须与页面及覆盖清单逐字一致。
-    english_title='Data flow｜Booking & reminder <rules>'
-    english_summary='Demonstration: confirmed bookings supply reminder recipients.'
-    english={'schema_version':1,'diagram_type':'dataflow','meta':{'title':english_title,'subtitle':english_summary,'locale':'en'},'stages':[{'label':'Booking'},{'label':'Reminder'}],'nodes':[{'id':'bookings','type':'database','label':'Bookings','stage':0,'row':0},{'id':'reminders','type':'backend','label':'Reminders','stage':1,'row':0}],'flows':[{'id':'recipients','from':'bookings','to':'reminders','label':'Supply recipients'}]}
-    english_manifest=manifest('dataflow','architecture',english_title,english_summary);english_manifest['language']='en'
-    (output/'dataflow.json').write_text(json.dumps(english));(output/'dataflow.manifest.json').write_text(json.dumps(english_manifest))
-    records.append(run_cli(core,['--input',output/'dataflow.json','--manifest',output/'dataflow.manifest.json','--output',output/'dataflow.html']))
-    english_manifest=manifest('data-english','data-model','Data model｜Customers & bookings <rules>',english_summary);english_manifest['language']='en'
-    (output/'data-english.manifest.json').write_text(json.dumps(english_manifest))
-    records.append(run_cli(core,['--svg',svg,'--summary',english_summary,'--manifest',output/'data-english.manifest.json','--output',output/'data-english.html']))
-    # 几何变化与事实变化必须独立，稳定身份不按近似名称合并。
-    flow=(output/'workflow.html').read_text()
-    # 已退出的类型在生成入口和成品检查中均被拒绝，不能写出半成品。
-    for removed in ('comparison-matrix', 'page-prototype'):
-        rejected = flow.replace('business-flow', removed)
-        assert any('unsupported family: ' + removed in error for error in lint_text(rejected))
-        payload = json.loads((output/'workflow.manifest.json').read_text())
-        payload['views'][0]['family'] = removed
-        removed_manifest = output/(removed+'.manifest.json')
-        removed_manifest.write_text(json.dumps(payload, ensure_ascii=False))
-        result = run_cli(core, ['--input', output/'workflow.json', '--manifest', removed_manifest, '--output', output/(removed+'.html')], False)
-        assert result['status'] == 'failed', result
-        assert not (output/(removed+'.html')).exists()
-    assert any(item['kind']=='changed' for item in compare(flow,flow.replace('提示改期','建议其他时段'))['changes'])
-    assert lint_text((output/'data.html').read_text().replace('data-vd-cardinality="1:0..N"',''))
-    before=(output/'workflow.html').read_bytes()
-    run_cli(core,['--input',output/'workflow.json','--manifest',output/'workflow.manifest.json','--output',output/'workflow.html'],False)
-    assert (output/'workflow.html').read_bytes()==before
-    # 错误端点不允许产生目标 HTML。
-    source=json.loads((output/'workflow.json').read_text());source['edges'][0]['to']='missing'
-    bad=output/'bad-source.json';bad.write_text(json.dumps(source,ensure_ascii=False))
-    run_cli(core,['--input',bad,'--manifest',output/'workflow.manifest.json','--output',output/'bad.html'],False)
-    assert not (output/'bad.html').exists()
-    with tempfile.TemporaryDirectory() as directory:
-        # 只构造拒绝路径，不生成任何伪造的通过记录。
-        folder=Path(directory);candidate=folder/'candidate.html';final=folder/'final.html';final.write_bytes(b'previous output')
-        result=prepare(SimpleNamespace(input=str(output/'workflow.html'),output=str(candidate),previous=None,allow_candidates=False))
-        candidate.write_text(candidate.read_text()+'<!-- modified -->')
-        try:
-            accept(SimpleNamespace(input=str(candidate),output=str(final),sha256=result['sha256'],previous_sha256=digest(final.read_bytes()),report='not-read.json',reading_review='不应执行',allow_candidates=False))
-            raise AssertionError('失效候选不能替换旧图')
+            accept(SimpleNamespace(input=str(candidate), output=str(final), sha256=prepared["sha256"], previous_sha256=digest(final.read_bytes()), report="not-read.json", reading_review="不应执行", allow_candidates=False))
+            raise AssertionError("失效候选不能替换输出")
         except ValueError:
-            assert final.read_bytes()==b'previous output'
-    return {'status':'generation-checks-passed','artifacts':records,'browser_layout':'not-verified','client_runtime':'not-verified'}
+            assert final.read_bytes() == b"previous accepted output"
+        # 人为构造失败记录仅检查拒绝路径，不能当作真实浏览器验收证据。
+        candidate.write_text(candidate.read_text().replace('<!-- changed after check -->', ''))
+        failed_report = directory / "failed-report.json"
+        failed_report.write_text(json.dumps([{"status": "failed", "candidate": prepared["candidate"], "issues": [{"code": "deliberate-check-failure"}]}]))
+        try:
+            accept(SimpleNamespace(input=str(candidate), output=str(final), sha256=prepared["sha256"], previous_sha256=digest(final.read_bytes()), report=str(failed_report), reading_review="不应执行", allow_candidates=False))
+            raise AssertionError("失败检查记录不能替换输出")
+        except ValueError:
+            assert final.read_bytes() == b"previous accepted output"
+    # 直接检查纯路由算法，不以此代替浏览器的形状与可读性检查。
+    javascript = 'require(process.argv[1]); const assert = require("node:assert/strict"); const path = VibeDiagramLayout.route({x:0,y:0},{x:100,y:0},[{x:40,y:-10,w:20,h:20}]); assert(path.some(p => Math.abs(p.y) >= 10)); assert.deepEqual(path[0],{x:0,y:0}); assert.deepEqual(path.at(-1),{x:100,y:0}); const levels = VibeDiagramLayout.ranks([{id:"a"},{id:"b"},{id:"c"}],[{from:"a",to:"b"},{from:"b",to:"a"},{from:"b",to:"c"}]); assert(levels.get("c") > levels.get("b"));'
+    subprocess.run(["node", "-e", javascript, str(CORE / "assets/shell/layout.js")], check=True)
+    output.mkdir(parents=True, exist_ok=True)
+    draft, previous, candidate = output / "draft.html", output / "previous.html", output / "candidate.html"
+    draft.write_text(text); previous.write_text(before)
+    return prepare(SimpleNamespace(input=str(draft), output=str(candidate), previous=str(previous), allow_candidates=False))
 
 
-def main():
-    """输出具名生成证据，浏览器验收另行进行。"""
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output',required=True,type=Path)
-    parser.add_argument('--core',type=Path,default=CORE)
-    args=parser.parse_args()
-    print(json.dumps(check(args.output.resolve(),args.core.resolve()),ensure_ascii=False))
-
-
-if __name__=='__main__':
-    main()
+if __name__ == "__main__":
+    # 输出目录显式指定，候选仍拒绝覆盖。
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", required=True)
+    print(json.dumps(check(Path(parser.parse_args().output).resolve()), ensure_ascii=False))

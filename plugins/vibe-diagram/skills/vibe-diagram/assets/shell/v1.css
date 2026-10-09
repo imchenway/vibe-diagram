@@ -18,15 +18,6 @@
   --vd-shadow: 0 14px 38px rgba(31, 72, 108, 0.09);
   --vd-radius: 18px;
   --vd-grid: 24px;
-  /* 背景参数供页面与图片导出共同读取，保持原有颜色和比例。 */
-  --vd-grid-ink: rgba(78, 118, 154, 0.045);
-  --vd-wash-blue: rgba(207, 230, 249, 0.62);
-  --vd-wash-green: rgba(221, 243, 234, 0.58);
-  --vd-wash-blue-radius: 29rem;
-  --vd-wash-green-radius: 26rem;
-  --vd-page-top: #fff;
-  --vd-page-middle: #f7fbff;
-  --vd-page-bottom: #fbfdff;
 }
 
 * { box-sizing: border-box; }
@@ -40,11 +31,11 @@ body {
   color: var(--vd-ink);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
   background:
-    radial-gradient(circle at 12% 0%, var(--vd-wash-blue), transparent var(--vd-wash-blue-radius)),
-    radial-gradient(circle at 88% 4%, var(--vd-wash-green), transparent var(--vd-wash-green-radius)),
-    linear-gradient(var(--vd-grid-ink) 1px, transparent 1px),
-    linear-gradient(90deg, var(--vd-grid-ink) 1px, transparent 1px),
-    linear-gradient(180deg, var(--vd-page-top) 0%, var(--vd-page-middle) 55%, var(--vd-page-bottom) 100%);
+    radial-gradient(circle at 12% 0%, rgba(207, 230, 249, 0.62), transparent 29rem),
+    radial-gradient(circle at 88% 4%, rgba(221, 243, 234, 0.58), transparent 26rem),
+    linear-gradient(rgba(78, 118, 154, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(78, 118, 154, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, #fff 0%, #f7fbff 55%, #fbfdff 100%);
   background-size: auto, auto, var(--vd-grid) var(--vd-grid), var(--vd-grid) var(--vd-grid), auto;
 }
 
@@ -127,6 +118,22 @@ h1 {
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 6px 18px rgba(31, 72, 108, 0.06);
 }
+
+[data-vd-zoom] {
+  min-inline-size: 44px;
+  min-block-size: 38px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--vd-muted);
+  background: transparent;
+  font: 800 0.75rem/1 inherit;
+  cursor: pointer;
+}
+
+[data-vd-zoom]:hover { color: var(--vd-blue); background: var(--vd-blue-soft); }
+[data-vd-zoom][aria-pressed="true"] { color: #fff; background: var(--vd-blue); }
+[data-vd-zoom]:focus-visible { outline: 3px solid rgba(23, 106, 166, 0.3); outline-offset: 2px; }
 
 [data-vd-content] {
   display: grid;
@@ -213,19 +220,6 @@ svg text { font-family: inherit; font-size: 16px; fill: var(--vd-ink); }
 [data-vd-comparison] summary, [data-vd-diagnostics] summary { cursor: pointer; font-weight: 700; }
 [data-vd-comparison] li, [data-vd-diagnostics] li { margin: 8px 0; line-height: 1.6; }
 [data-vd-comparison] pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.85rem; }
-/* 新增功能沿用现有色值和按钮形状，展开后才显示查找与导出选项。 */
-[data-vd-view-tools] [hidden] { display: none !important; }
-[data-vd-view-tools] details { min-width: 0; max-width: 100%; }
-[data-vd-view-tools] summary { cursor: pointer; padding: 10px 12px; border: 1px solid var(--vd-line); border-radius: 8px; background: #fff; }
-[data-vd-reader-panel] { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 0; max-width: 100%; }
-[data-vd-reader-panel] input, [data-vd-reader-panel] select { min-height: 44px; min-width: 0; max-width: 100%; padding: 8px; font: inherit; color: var(--vd-ink); border: 1px solid var(--vd-line); border-radius: 8px; background: #fff; }
-[data-vd-reader-panel] input, [data-vd-search-results], [data-vd-reader-panel] p { flex-basis: 100%; margin: 0; }
-[data-vd-search-results] { display: flex; flex-wrap: wrap; gap: 8px; }
-[data-vd-view-tools] button:disabled { opacity: .5; cursor: default; }
-[data-vd-view-tools] button[aria-pressed="true"] { color: #fff; background: var(--vd-blue); }
-[data-vd-edge][role="button"] { cursor: pointer; }
-[data-vd-edge]:focus-visible { outline: 2px solid var(--vd-blue); outline-offset: 4px; }
-[data-vd-motion-overlay] { pointer-events: none; }
 
 @media (max-width: 48rem) {
   [data-vd-artifact="1"] { width: min(100vw - 20px, 48rem); padding-top: 14px; }
@@ -235,7 +229,6 @@ svg text { font-family: inherit; font-size: 16px; fill: var(--vd-ink); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.001ms !important; }
-  [data-vd-motion-overlay] { display: none !important; }
 }
 
 @media print {
@@ -243,7 +236,6 @@ svg text { font-family: inherit; font-size: 16px; fill: var(--vd-ink); }
   [data-vd-artifact="1"] { width: 100%; padding: 0; }
   [data-vd-controls], [data-vd-audit-output] { display: none !important; }
   [data-vd-view-tools], [data-vd-diagnostics] { display: none !important; }
-  [data-vd-motion-overlay] { display: none !important; }
   [data-vd-emphasis] { opacity: 1 !important; }
   [data-vd-viewport] { overflow: visible !important; }
   [data-vd-zoom-target] { zoom: 1 !important; transform: none !important; }

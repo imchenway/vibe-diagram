@@ -7,7 +7,7 @@
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
   // 检查记录与用户阅读层分开保存。
   const auditOutput = () => $("[data-vd-audit-output]");
-  // 公共交付数据损坏时不能被几何检查覆盖。
+  // 自动排版失败不能被后续几何通过覆盖。
   let layoutIssues = [];
   // 中英文控件沿用外壳语言；其他语言可由作者提供完整词条。
   const zh = document.documentElement.lang.toLowerCase().startsWith("zh");
@@ -26,7 +26,67 @@
     diagnose: zh ? "当前图需要修正" : "This diagram needs repair", locate: zh ? "定位" : "Locate"
   };
 
-  // 绑定详情打开关闭与焦点返回。
+  function zoomTargets() {
+    const explicit = $$('[data-vd-zoom-target]');
+    return explicit.length ? explicit : $$('[data-vd-view]');
+  }
+
+  function viewportFor(target) {
+    return target.closest('[data-vd-viewport]') || target.parentElement;
+  }
+
+  function naturalWidth(target) {
+    const previous = target.style.zoom;
+    target.style.zoom = "1";
+    const width = Math.max(target.scrollWidth, target.getBoundingClientRect().width, 1);
+    target.style.zoom = previous;
+    return width;
+  }
+
+  function applyZoom(request) {
+    let allApplied = true;
+    zoomTargets().forEach((target) => {
+      const viewport = viewportFor(target);
+      if (!viewport) return;
+      const width = naturalWidth(target);
+      const available = Math.max(viewport.clientWidth, 1);
+      const requested = request === "fit" ? Math.min(1, available / width) : Number(request);
+      const applied = Math.max(0.75, Math.min(1, requested || 1));
+      // 所有缩放档位都应允许视图内横滚，不能把宽图撑出页面。
+      const overflow = width * applied > available + 1;
+      target.style.zoom = String(applied);
+      target.dataset.vdAppliedZoom = String(applied);
+      viewport.style.overflowX = overflow ? "auto" : "visible";
+      viewport.dataset.vdHorizontalOverflow = String(overflow);
+      if (request === "fit" && requested < 0.75) allApplied = false;
+    });
+
+    $$('[data-vd-zoom]').forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.vdZoom === request));
+    });
+    const controls = $('[data-vd-controls]');
+    if (controls) {
+      controls.dataset.vdZoomRequest = request;
+      controls.dataset.vdZoomFullyApplied = String(allApplied);
+    }
+    return allApplied;
+  }
+
+  function bindZoom() {
+    $$('[data-vd-zoom]').forEach((button) => {
+      button.addEventListener("click", () => applyZoom(button.dataset.vdZoom || "fit"));
+    });
+    let frame = 0;
+    window.addEventListener("resize", () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const request = $('[data-vd-controls]')?.dataset.vdZoomRequest || "fit";
+        applyZoom(request);
+      });
+    });
+    applyZoom("fit");
+  }
+
   function bindDetails() {
     // HTML 和 SVG 触发器都应能在关闭后取回焦点。
     let returnFocus = null;
@@ -75,7 +135,6 @@
     inner.left >= outer.left - tolerance && inner.right <= outer.right + tolerance &&
     inner.top >= outer.top - tolerance && inner.bottom <= outer.bottom + tolerance;
 
-  // 把路径位置转换为真实屏幕坐标。
   function screenPoint(path, length) {
     if (!(path instanceof SVGGeometryElement) || typeof path.getPointAtLength !== "function") return null;
     const point = path.getPointAtLength(length);
@@ -87,7 +146,7 @@
   // 按真实 SVG 轮廓测量端点距离，避免把菱形和椭圆的包围框当成边界。
   function boundaryDistance(point, element) {
     if (!point) return Infinity;
-    const shape = element.matches("[data-vd-lifeline-for], [data-vd-activation-for]") ? element : $('[data-vd-shape]', element);
+    const shape = element.matches("[data-vd-lifeline-for]") ? element : $('[data-vd-shape]', element);
     if (shape instanceof SVGGeometryElement) {
       const length = shape.getTotalLength();
       let distance = Infinity;
@@ -120,7 +179,6 @@
     return zh ? names[code] || "内容或排版需要检查" : code.replaceAll("-", " ");
   }
 
-  // 读取作者内容的完整边界，保留宽图横滚空间。
   function authoredBounds(element, fallback) {
     const svg = element.closest("svg");
     if (svg) return rect(svg);
@@ -136,7 +194,6 @@
     };
   }
 
-  // 检查真实节点、关系、标签和端点几何。
   function auditView(view) {
     const issues = [];
     // 零长度路径或隐藏标记不能因过滤不可见元素而漏过检查。
@@ -152,7 +209,7 @@
     nodes.forEach((node) => {
       const box = rect(node);
       if (!contains(authoredBounds(node, viewRect), box, 2)) issues.push(issue("node-outside-view", node));
-      if (!(node instanceof SVGGraphicsElement) && (node.scrollWidth > node.clientWidth + 2 || node.scrollHeight > node.clientHeight + 2)) {
+      if (node.scrollWidth > node.clientWidth + 2 || node.scrollHeight > node.clientHeight + 2) {
         issues.push(issue("node-content-overflow", node));
       }
       // SVG 没有 HTML 的 scrollWidth 溢出信号，单独检查文字与主体范围。
@@ -185,10 +242,7 @@
 
     labels.forEach((label, index) => {
       const box = rect(label);
-      // SVG 文本平移后的滚动尺寸与实际文本框不一致，应检查真实绘制范围。
-      const overflow = label instanceof SVGGraphicsElement ? !contains(authoredBounds(label, viewRect), box, 1)
-        : label.scrollWidth > label.clientWidth + 2 || label.scrollHeight > label.clientHeight + 2;
-      if (overflow) {
+      if (label.scrollWidth > label.clientWidth + 2 || label.scrollHeight > label.clientHeight + 2) {
         issues.push(issue("edge-label-overflow", label));
       }
       nodes.forEach((node) => {
@@ -208,13 +262,9 @@
         const start = screenPoint(edge, 0);
         const end = screenPoint(edge, length);
         // 时序消息锚定到参与者生命线，而不是顶部标题框。
-        const anchor = (node, point) => {
-          if (view.dataset.vdFamily !== "code-sequence") return node;
-          // 作者明确绘制执行区间时，消息锚定执行条，否则接到生命线。
-          const activation = $$('[data-vd-activation-for]', view).find(bar => bar.dataset.vdActivationFor === node.id && point && point.y >= rect(bar).top && point.y <= rect(bar).bottom);
-          return activation || $$('[data-vd-lifeline-for]', view).find(line => line.dataset.vdLifelineFor === node.id) || node;
-        };
-        const startDistance = boundaryDistance(start, anchor(from, start)), endDistance = boundaryDistance(end, anchor(to, end));
+        const anchor = node => view.dataset.vdFamily === "code-sequence"
+          ? $$('[data-vd-lifeline-for]', view).find(line => line.dataset.vdLifelineFor === node.id) || node : node;
+        const startDistance = boundaryDistance(start, anchor(from)), endDistance = boundaryDistance(end, anchor(to));
         if (startDistance > 6) issues.push(issue("edge-start-not-anchored", edge, from.id, { distance: startDistance, tolerance: 6 }));
         if (endDistance > 6) issues.push(issue("edge-end-not-anchored", edge, to.id, { distance: endDistance, tolerance: 6 }));
         const excluded = new Set([from, to]);
@@ -243,7 +293,6 @@
     return issues;
   }
 
-  // 汇总当前视图、事实覆盖与页面布局检查。
   function auditAll() {
     // 每次重测当前画面，并保留尚未修复的自动布局错误。
     const issues = [...layoutIssues];
@@ -259,7 +308,7 @@
       issues.push(issue("page-horizontal-overflow", document.documentElement));
     }
     const controls = $('[data-vd-controls]');
-    if (!controls || $$('[data-view]', controls).length !== 3) issues.push(issue("zoom-controls-incomplete", controls));
+    if (!controls || $$('[data-vd-zoom]', controls).length !== 4) issues.push(issue("zoom-controls-incomplete", controls));
 
     const report = {
       status: issues.length ? "failed" : "passed",
@@ -300,13 +349,18 @@
     panel.replaceChildren(summary, list);
   }
 
-  // 公共调用入口与读者点击使用同一组真实关系。
+  // 只高亮作者已画出的直接关联，不推断系统影响。
   function highlight(view, id) {
-    // 比较定位复用查看器的真实节点与关系身份。
-    const target = id ? document.getElementById(id) : null;
-    if (!target) { globalThis.Archify?.focus.clear(); return; }
-    if (target.dataset.nodeId) globalThis.Archify?.focus.set(target.dataset.nodeId);
-    else globalThis.Archify?.focus.inspectRelationshipById(target.closest('[data-edge-id]')?.dataset.edgeId || target.dataset.edgeId);
+    const items = $$('[data-vd-node], [data-vd-edge], [data-vd-edge-label]', view);
+    const edges = $$('[data-vd-edge]', view).filter(e => e.id === id || e.dataset.from === id || e.dataset.to === id);
+    const related = new Set([id, ...edges.flatMap(e => [e.id, e.dataset.from, e.dataset.to])]);
+    items.forEach(item => {
+      if (!id) delete item.dataset.vdEmphasis;
+      else item.dataset.vdEmphasis = related.has(item.id) || related.has(item.dataset.vdEdgeLabel) ? "related" : "quiet";
+      if (item.hasAttribute("data-vd-node")) item.setAttribute("aria-pressed", String(item.id === id));
+    });
+    const status = $('[data-vd-view-status]', view);
+    if (status) status.textContent = id ? copy.selected : "";
   }
 
   // 差异数据由本地命令从两份 HTML 解析而来，旧脚本不会载入页面。
@@ -332,24 +386,126 @@
     panel.append(summary, note, list); $('[data-vd-content]').before(panel);
   }
 
-  // 技术来源按需展开，读者可在离线文件中追溯清单中的事实与证据。
-  function bindEvidence() {
-    // 数据始终作为文字渲染，不执行来源字符串或创建外部请求。
-    const data = JSON.parse(document.getElementById("vibe-diagram-manifest").textContent);
-    if (!data.evidence.length) return;
-    // 原状态保留含义，不能把分析判断标成已验证。
-    const statuses = zh ? { observed: "已确认事实", inferred: "分析判断", proposed: "拟议方案", unresolved: "待确认", verified: "已验证" } : {};
-    // 一级正文继续保持图形，完整来源位于可访问的折叠内容中。
-    const panel = document.createElement("details"), summary = document.createElement("summary"), list = document.createElement("ul");
-    panel.dataset.vdEvidence = ""; summary.textContent = zh ? "事实与依据" : "Facts and evidence";
-    data.criticalFacts.forEach(fact => {
-      // 从当前清单关联精确来源，不另存一份业务事实。
-      const item = document.createElement("li"), sources = document.createElement("p");
-      item.textContent = (statuses[fact.status] || fact.status) + " · " + fact.statement;
-      sources.textContent = data.evidence.filter(evidence => fact.evidenceIds.includes(evidence.id)).map(evidence => evidence.source).join("；");
-      item.append(sources); list.append(item);
+  // 图片范围必须完整；HTML 控件、多个 SVG 或未声明的外部图注不静默丢弃。
+  function exportSource(view) {
+    const svgs = $$('svg', view).filter(svg => !svg.parentElement.closest("svg"));
+    if (svgs.length !== 1 || $('foreignObject, image, script', svgs[0])) throw new Error(copy.unsupported);
+    const svg = svgs[0];
+    const otherText = $$('*', view).some(element => !element.closest("svg, [data-vd-view-tools], [data-vd-view-title], [data-vd-export-note], dialog") &&
+      Array.from(element.childNodes).some(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim()));
+    if (otherText || $$('input, select, textarea, table, img', view).length) throw new Error(copy.unsupported);
+    return svg;
+  }
+
+  // 导出时临时取消阅读状态，再内联计算样式；操作同步完成后立即恢复。
+  function cleanSVG(svg) {
+    const marked = $$('[data-vd-emphasis]', svg), saved = marked.map(element => element.dataset.vdEmphasis);
+    marked.forEach(element => delete element.dataset.vdEmphasis);
+    try {
+      const clone = svg.cloneNode(true), originals = [svg, ...$$('*', svg)], copies = [clone, ...$$('*', clone)];
+      // 仅导出 SVG 可绘制属性，避免把页面布局和交互效果带入图片。
+      const properties = ["fill", "fill-opacity", "stroke", "stroke-width", "stroke-opacity", "stroke-dasharray", "stroke-linecap", "stroke-linejoin", "opacity", "font-family", "font-size", "font-weight", "font-style", "font-stretch", "font-variant", "letter-spacing", "word-spacing", "text-decoration", "text-anchor", "dominant-baseline", "paint-order", "marker-start", "marker-mid", "marker-end"];
+      // 公共箭头可能定义在另一幅 SVG，独立导出时带上其真实定义。
+      const definitions = document.createElementNS("http://www.w3.org/2000/svg", "defs"), included = new Set();
+      originals.forEach(element => properties.forEach(property => {
+        const match = getComputedStyle(element).getPropertyValue(property).match(/url\(["']?[^)"']*#([^)'"\s]+)/);
+        if (!match || included.has(match[1])) return;
+        const reference = document.getElementById(match[1]);
+        if (!reference || svg.contains(reference)) return;
+        if (!reference.matches("marker, clipPath, linearGradient, radialGradient, pattern")) throw new Error(copy.unsupported);
+        included.add(match[1]);
+        const duplicated = reference.cloneNode(true);
+        definitions.append(duplicated); originals.push(reference, ...$$('*', reference)); copies.push(duplicated, ...$$('*', duplicated));
+      }));
+      if (definitions.childNodes.length) clone.prepend(definitions);
+      // 内嵌字体也随图片保存，避免独立 SVG 换字体后文字撑出节点。
+      const fonts = Array.from(document.styleSheets).flatMap(sheet => Array.from(sheet.cssRules).filter(rule => rule.type === CSSRule.FONT_FACE_RULE).map(rule => rule.cssText));
+      if (fonts.length) { const style = document.createElementNS("http://www.w3.org/2000/svg", "style"); style.textContent = fonts.join("\n"); clone.prepend(style); }
+      originals.forEach((element, index) => {
+        const style = getComputedStyle(element), target = copies[index];
+        target.removeAttribute("style"); target.removeAttribute("tabindex"); target.removeAttribute("role"); target.removeAttribute("aria-pressed");
+        Array.from(target.attributes).filter(a => a.name.startsWith("on") || a.name.startsWith("data-vd-")).forEach(a => target.removeAttribute(a.name));
+        properties.forEach(property => target.style.setProperty(property, style.getPropertyValue(property).replace(/url\(["']?[^)"']*#([^)'"\s]+)["']?\)/g, "url(#$1)")));
+      });
+      return clone;
+    } finally { marked.forEach((element, index) => { element.dataset.vdEmphasis = saved[index]; }); }
+  }
+
+  // 包含标题、摘要和明确图注的 SVG 图片；保持原始图形的字号。
+  async function exportBlob(view, format) {
+    await (document.fonts?.ready || Promise.resolve());
+    if (!["svg", "png"].includes(format)) throw new Error("Unsupported image format");
+    if (layoutIssues.length || auditView(view).length) throw new Error(zh ? "请先修正当前图的排版问题。" : "Repair the view before exporting.");
+    const svg = exportSource(view), clone = cleanSVG(svg), bounds = svg.viewBox.baseVal;
+    const width = Math.max(600, bounds.width || svg.getBBox().width), graphHeight = bounds.height || svg.getBBox().height;
+    const canvas = document.createElement("canvas"), context = canvas.getContext("2d");
+    if (!context) throw new Error(zh ? "浏览器无法创建图片画布。" : "Canvas is unavailable.");
+    context.font = "16px sans-serif";
+    // 按实际字宽换行，中文无空格文本同样适用。
+    const lines = [];
+    [$('[data-vd-view-title]', view)?.textContent, $('[data-vd-summary]')?.textContent, ...$$('[data-vd-export-note]', view).map(e => e.textContent)].filter(Boolean).forEach(text => {
+      let line = "";
+      for (const character of text.trim()) {
+        if (context.measureText(line + character).width > width - 64) { lines.push(line); line = ""; }
+        line += character;
+      }
+      if (line) lines.push(line);
     });
-    panel.append(summary, list); $('[data-vd-content]').after(panel);
+    const header = 32 + lines.length * 26, height = header + graphHeight + 32;
+    // 外层 SVG 自带白底和说明；内层保留原始 viewBox，包括负坐标路线。
+    const ns = "http://www.w3.org/2000/svg", image = document.createElementNS(ns, "svg"), background = document.createElementNS(ns, "rect");
+    image.setAttribute("xmlns", ns); image.setAttribute("width", width); image.setAttribute("height", height); image.setAttribute("viewBox", "0 0 " + width + " " + height);
+    Object.entries({ width: "100%", height: "100%", fill: "white" }).forEach(([key, value]) => background.setAttribute(key, value)); image.append(background);
+    lines.forEach((line, index) => {
+      const text = document.createElementNS(ns, "text");
+      Object.entries({ x: 32, y: 30 + index * 26, "font-family": "sans-serif", "font-size": 16, fill: "#10243a" }).forEach(([key, value]) => text.setAttribute(key, value)); text.textContent = line; image.append(text);
+    });
+    clone.setAttribute("x", 0); clone.setAttribute("y", header); clone.setAttribute("width", width); clone.setAttribute("height", graphHeight); image.append(clone);
+    const blob = new Blob([new XMLSerializer().serializeToString(image)], { type: "image/svg+xml;charset=utf-8" });
+    if (format === "svg") return blob;
+    // 限制总像素避免浏览器内存爆炸；大图通过分视图保留可读字号。
+    const scale = Math.min(2, Math.sqrt(16000000 / (width * height)));
+    if (scale < 0.75 || width * scale > 16000 || height * scale > 16000) throw new Error(zh ? "图片过大，请分图或导出 SVG。" : "Image too large; split the view or export SVG.");
+    canvas.width = Math.ceil(width * scale); canvas.height = Math.ceil(height * scale);
+    const url = URL.createObjectURL(blob), bitmap = new Image();
+    try {
+      await new Promise((resolve, reject) => { bitmap.onload = resolve; bitmap.onerror = () => reject(new Error(zh ? "图片解码失败。" : "Image decoding failed.")); bitmap.src = url; });
+      context.scale(scale, scale); context.drawImage(bitmap, 0, 0);
+      return await new Promise((resolve, reject) => canvas.toBlob(result => result ? resolve(result) : reject(new Error(zh ? "图片生成失败。" : "Image encoding failed.")), "image/png"));
+    } finally { URL.revokeObjectURL(url); }
+  }
+
+  // 用户主动点击时下载本地图片，并在当前视图内反馈失败。
+  async function download(view, format) {
+    const status = $('[data-vd-view-status]', view);
+    try {
+      const blob = await exportBlob(view, format), url = URL.createObjectURL(blob), link = document.createElement("a");
+      link.href = url; link.download = (view.dataset.vdView || "diagram") + "." + format; link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000); status.textContent = copy.exported;
+    } catch (error) { status.textContent = copy.failed + error.message; }
+  }
+
+  // 为所有图复用关联阅读和导出；原型与比较表保留整页打印。
+  function bindReading() {
+    $$('[data-vd-view]').forEach(view => {
+      const toolbar = document.createElement("div"), status = document.createElement("p");
+      toolbar.dataset.vdViewTools = ""; status.dataset.vdViewStatus = ""; status.setAttribute("role", "status");
+      if ($('[data-vd-node]', view)) toolbar.append(button(copy.clear, () => highlight(view, "")));
+      try { exportSource(view); toolbar.append(button(copy.svg, () => download(view, "svg")), button(copy.png, () => download(view, "png"))); toolbar.title = copy.imageScope; }
+      catch { toolbar.title = copy.unsupported; }
+      toolbar.append(button(copy.print, () => window.print()), status); view.append(toolbar);
+      $$('[data-vd-node]', view).forEach(node => {
+        // 已有详情或原生控件维持其本来操作，不覆盖作者的点击语义。
+        if (node.hasAttribute("data-vd-detail-trigger") || node.matches("button, input, a") || $("button, input, a", node)) return;
+        node.setAttribute("tabindex", "0"); node.setAttribute("role", "button"); node.setAttribute("aria-pressed", "false"); node.setAttribute("aria-label", node.textContent.trim());
+        const select = () => highlight(view, node.getAttribute("aria-pressed") === "true" ? "" : node.id);
+        node.addEventListener("click", select);
+        node.addEventListener("keydown", event => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); select(); } });
+      });
+      view.addEventListener("keydown", event => { if (event.key === "Escape") highlight(view, ""); });
+    });
+    try { bindComparison(); }
+    catch (error) { layoutIssues.push(issue("comparison-data-invalid", document.getElementById("vibe-diagram-comparison"), error.message)); }
   }
 
   // 浏览器记录以候选标识绑定独立磁盘文件；最终 SHA-256 由交付命令核对。
@@ -360,15 +516,15 @@
   }
 
   // 对外提供当前画面的检查和图片生成，供真实浏览器验收使用。
-  globalThis.VibeDiagramQuality = { auditAll, receipt, highlight };
+  globalThis.VibeDiagramQuality = { auditAll, applyZoom, receipt, exportBlob, highlight };
 
   // 等待整个 HTML 解析，确保文末的差异数据也已存在。
   const ready = Promise.all([document.fonts?.ready || Promise.resolve(), document.readyState === "loading" ? new Promise(resolve => document.addEventListener("DOMContentLoaded", resolve, { once: true })) : Promise.resolve()]);
   ready.then(() => {
+    layoutIssues = globalThis.VibeDiagramLayout?.run() || [];
+    bindZoom();
     bindDetails();
-    bindEvidence();
-    try { bindComparison(); }
-    catch (error) { layoutIssues.push(issue("comparison-data-invalid", document.getElementById("vibe-diagram-comparison"), error.message)); }
+    bindReading();
     requestAnimationFrame(() => requestAnimationFrame(auditAll));
   });
 })();
