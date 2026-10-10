@@ -55,11 +55,15 @@ def inventory(text: str) -> tuple[str, dict]:
         labels = [item.text for item in parser.elements if item.attrs.get("data-vd-edge-label") == element.identifier]
         details = [item.text for item in parser.elements if item.attrs.get("data-vd-detail-for") == element.identifier]
         semantics = {key: value for key, value in attrs.items() if key in {"data-vd-node", "data-vd-group", "data-vd-edge", "data-from", "data-to", "data-vd-member-of", "data-vd-message-kind", "data-vd-cardinality", "data-vd-evidence-state"}}
-        semantics.update(text=element.text, labels=labels, details=details, view=element.view_id)
+        # 视图仅表示展示归属，单独保存；职责归属仍在业务语义中参与比较。
+        semantics.update(text=element.text, labels=labels, details=details)
         # 时序消息 DOM 顺序就是作者给出的时间顺序，不能只比较端点。
         if "data-vd-message-kind" in attrs:
-            semantics["order"] = len([item for item in result.values() if item["content"].get("view") == element.view_id and "order" in item["content"]])
-        result[element.identifier] = {"label": element.text or " / ".join(labels) or element.identifier, "content": semantics, "geometry": [] if element.automatic else element.geometry}
+            semantics["order"] = len([item for item in result.values() if item["view"] == element.view_id and "order" in item["content"]])
+        # 无文字关系以已有端点文案命名，避免把内部编号当作读者标题。
+        endpoints = [next((item.text for item in parser.elements if item.identifier == attrs.get(key)), "") for key in ("data-from", "data-to")]
+        relation_label = " → ".join(endpoints) if all(endpoints) else ""
+        result[element.identifier] = {"label": element.text or " / ".join(labels) or relation_label or element.identifier, "content": semantics, "view": element.view_id, "geometry": [] if element.automatic else element.geometry}
     # 清单和入口变更也必须出现，不能只比较画布节点。
     for key in ("title", "questions", "criticalFacts", "views", "evidence"):
         result["manifest:" + key] = {"label": {"title": "标题", "questions": "关注问题", "criticalFacts": "关键事实", "views": "视图安排", "evidence": "证据"}[key], "content": manifest.get(key), "geometry": []}
@@ -77,6 +81,9 @@ def compare(before: str, after: str) -> dict:
     for identifier in sorted(old.keys() | new.keys()):
         previous, current = old.get(identifier), new.get(identifier)
         kind = "added" if previous is None else "removed" if current is None else "changed" if previous["content"] != current["content"] else "moved" if previous["geometry"] != current["geometry"] else ""
+        # 展示分区变化只记录清单的一项调整，不能逐个重复报告为业务内容变化。
+        if identifier == "manifest:views" and kind == "changed":
+            kind = "reorganized"
         if kind:
             changes.append({"id": identifier, "kind": kind, "label": (current or previous)["label"], "beforeLabel": previous["label"] if previous else "", "afterLabel": current["label"] if current else "", "before": json.dumps(previous["geometry"] if kind == "moved" else previous["content"], ensure_ascii=False, sort_keys=True) if previous else "", "after": json.dumps(current["geometry"] if kind == "moved" else current["content"], ensure_ascii=False, sort_keys=True) if current else ""})
     return {"artifactId": new_id, "changes": changes}

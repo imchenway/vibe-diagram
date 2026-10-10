@@ -166,22 +166,27 @@ h1 {
 [data-vd-detail-trigger] { cursor: pointer; }
 
 dialog[data-vd-detail-for] {
-  width: min(34rem, calc(100vw - 32px));
-  max-height: min(74vh, 44rem);
+  /* 节点详情使用就近非模态浮层，位置由当前节点的屏幕边界计算。 */
+  position: fixed;
+  z-index: 1000;
+  margin: 0;
+  width: min(24rem, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
   padding: 0;
   border: 1px solid rgba(108, 148, 184, 0.6);
-  border-radius: 16px;
+  border-radius: 12px;
   color: var(--vd-ink);
   background: #fff;
-  box-shadow: 0 24px 68px rgba(20, 52, 82, 0.22);
+  box-shadow: 0 8px 28px rgba(20, 52, 82, 0.16);
 }
 
-dialog[data-vd-detail-for]::backdrop { background: rgba(14, 31, 48, 0.28); backdrop-filter: blur(2px); }
-
-.vd-detail-body { padding: 20px; overflow: auto; }
-.vd-detail-body h2 { margin: 0 0 8px; font-size: 1.2rem; }
+.vd-detail-body { padding: 16px; overflow: auto; overflow-wrap: anywhere; }
+/* 长来源、代码名和链接可换行，窄屏详情不生成额外横向滚动条。 */
+.vd-detail-body pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.vd-detail-body h2 { margin: 0 0 8px; padding-inline-end: 68px; min-height: 44px; font-size: 1.2rem; }
 .vd-detail-body p, .vd-detail-body li { line-height: 1.55; }
-.vd-detail-close { float: right; margin: 12px 12px 0; }
+/* 关闭键仅占标题区域，不用浮动把全部正文挤成窄列。 */
+.vd-detail-close { position: absolute; top: 12px; right: 12px; margin: 0; }
 
 .vd-visually-hidden,
 [data-vd-audit-output] {
@@ -197,6 +202,8 @@ dialog[data-vd-detail-for]::backdrop { background: rgba(14, 31, 48, 0.28); backd
 
 /* 五种图法共用可读的基础笔触；作者仍决定形状与业务含义。 */
 svg text { font-family: inherit; font-size: 16px; fill: var(--vd-ink); }
+/* 图内图例与真实笔触相同，说明文字保持次级但可读。 */
+[data-vd-legend] text { font-size: 14px; font-weight: 400; fill: var(--vd-muted); }
 [data-vd-shape] { fill: #fff; stroke: var(--vd-line); stroke-width: 2; }
 [data-vd-node="decision"] [data-vd-shape] { fill: var(--vd-amber-soft); stroke: var(--vd-amber); }
 [data-vd-edge], [data-vd-lifeline-for] { fill: none; stroke: var(--vd-blue); stroke-width: 2; }
@@ -239,5 +246,6 @@ svg text { font-family: inherit; font-size: 16px; fill: var(--vd-ink); }
   [data-vd-emphasis] { opacity: 1 !important; }
   [data-vd-viewport] { overflow: visible !important; }
   [data-vd-zoom-target] { zoom: 1 !important; transform: none !important; }
-  dialog[data-vd-detail-for] { display: block; position: static; width: auto; max-height: none; margin: 1rem 0; box-shadow: none; }
+  dialog[data-vd-detail-for] { display: block; position: static; width: auto; max-width: none !important; max-height: none; margin: 1rem 0; box-shadow: none; }
+  [data-vd-detail-close] { display: none !important; }
 }

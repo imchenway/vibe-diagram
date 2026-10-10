@@ -19,6 +19,7 @@
     selected: zh ? "已突出当前图中直接相关的对象与连线。" : "Directly connected objects and relations highlighted.",
     compare: zh ? "修改前后对比" : "Before and after", added: zh ? "新增" : "Added", removed: zh ? "删除" : "Removed",
     changed: zh ? "内容变化" : "Content changed", moved: zh ? "手工位置或走线变化" : "Authored geometry changed",
+    reorganized: zh ? "视图安排变化" : "View organization changed",
     unchanged: zh ? "未发现内容或手工几何变化。" : "No content or authored geometry changes.",
     scope: zh ? "按稳定编号比较；自动排版不计作内容变化。" : "Matched by stable identity; automatic layout is not a content change.",
     imageScope: zh ? "图片包含本图、标题、摘要和图注；交互详情保留在 HTML 中。" : "Images include this view, title, summary and notes; interactive details remain in HTML.",
@@ -88,22 +89,47 @@
   }
 
   function bindDetails() {
-    // HTML 和 SVG 触发器都应能在关闭后取回焦点。
-    let returnFocus = null;
+    // 非模态浮层保留图形上下文；同一时间只打开一个节点详情。
+    let active = null, returnFocus = null;
+    // 优先放在节点右侧，其次左侧或上下，并限制在可见窗口内。
+    const position = () => {
+      if (!active || !returnFocus) return;
+      // 浮层采用屏幕坐标，因此能够跟随缩放、横滚和页面滚动。
+      const margin = 12, gap = 12, width = document.documentElement.clientWidth, height = window.innerHeight;
+      // 可用宽度扣除滚动条，避免窄屏浮层边框落到滚动条后面。
+      active.style.maxWidth = Math.max(0, width - margin * 2) + "px";
+      const anchor = returnFocus.getBoundingClientRect(), box = active.getBoundingClientRect();
+      const choices = [
+        { x: anchor.right + gap, y: anchor.top },
+        { x: anchor.left - box.width - gap, y: anchor.top },
+        { x: anchor.left, y: anchor.bottom + gap },
+        { x: anchor.left, y: anchor.top - box.height - gap }
+      ];
+      const chosen = choices.find(point => point.x >= margin && point.x + box.width <= width - margin && point.y >= margin && point.y + box.height <= height - margin) || choices[2];
+      active.style.left = Math.max(margin, Math.min(chosen.x, width - box.width - margin)) + "px";
+      active.style.top = Math.max(margin, Math.min(chosen.y, height - box.height - margin)) + "px";
+    };
+    // 鼠标、键盘与深链接共用同一个打开入口。
+    const show = trigger => {
+      const dialog = document.getElementById(trigger.getAttribute("data-vd-detail-trigger"));
+      if (!(dialog instanceof HTMLDialogElement)) return;
+      if (active) { returnFocus?.setAttribute("aria-expanded", "false"); active.close(); }
+      returnFocus = trigger; active = dialog;
+      trigger.setAttribute("aria-expanded", "true");
+      dialog.setAttribute("aria-modal", "false"); dialog.show(); position();
+      $('[data-vd-detail-close]', dialog)?.focus({ preventScroll: true });
+    };
     $$('[data-vd-detail-trigger]').forEach((trigger) => {
       // SVG 详情节点没有原生按钮行为，补齐键盘入口。
       const native = trigger.matches("button, a[href], input");
       if (!native) { trigger.setAttribute("tabindex", "0"); trigger.setAttribute("role", "button"); }
+      trigger.setAttribute("aria-haspopup", "dialog"); trigger.setAttribute("aria-expanded", "false");
+      trigger.setAttribute("aria-controls", trigger.getAttribute("data-vd-detail-trigger"));
       // 同一个打开函数接收鼠标与键盘，避免两条行为分叉。
       const open = (event) => {
         if (event.type === "keydown" && !["Enter", " "].includes(event.key)) return;
-        const targetId = trigger.getAttribute("data-vd-detail-trigger");
-        const dialog = targetId ? document.getElementById(targetId) : null;
-        if (!(dialog instanceof HTMLDialogElement)) return;
         event.preventDefault();
-        returnFocus = trigger;
-        dialog.showModal();
-        $('[data-vd-detail-close]', dialog)?.focus();
+        show(trigger);
       };
       trigger.addEventListener("click", open);
       if (!native) trigger.addEventListener("keydown", open);
@@ -114,10 +140,26 @@
         if (event.target === dialog) dialog.close();
       });
       dialog.addEventListener("close", () => {
-        if (returnFocus?.isConnected && typeof returnFocus.focus === "function") returnFocus.focus();
-        returnFocus = null;
+        if (active !== dialog || dialog.open) return;
+        const trigger = returnFocus;
+        active = null; returnFocus = null;
+        trigger?.setAttribute("aria-expanded", "false");
+        if (trigger?.isConnected) trigger.focus({ preventScroll: true });
       });
     });
+    // 非模态 dialog 不会自动处理 Esc 或遮罩点击，统一在文档上处理关闭。
+    document.addEventListener("keydown", event => { if (event.key === "Escape" && active) { event.preventDefault(); active.close(); } });
+    document.addEventListener("pointerdown", event => { if (active && !active.contains(event.target) && !returnFocus?.contains(event.target)) active.close(); });
+    window.addEventListener("resize", position);
+    window.addEventListener("scroll", position, true);
+    // 稳定节点编号允许分享直达详情，默认页面不会自动打开。
+    const followHash = () => {
+      let id;
+      try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+      const trigger = document.getElementById(id);
+      if (trigger?.hasAttribute("data-vd-detail-trigger")) { trigger.scrollIntoView({ block: "center" }); show(trigger); }
+    };
+    window.addEventListener("hashchange", followHash); followHash();
   }
 
   const rect = (element) => element.getBoundingClientRect();
@@ -206,6 +248,18 @@
     const groups = $$('[data-vd-group]', view).filter(visible);
     const labels = $$('[data-vd-edge-label]', view).filter(visible);
     const edges = $$('[data-vd-edge]', view).filter(visible);
+    // 同图使用多种关系笔触时，必须有引用真实关系的本地图例。
+    const edgeStyles = new Set(edges.map(edge => {
+      const style = getComputedStyle(edge);
+      return [style.stroke, style.strokeDasharray].join("|");
+    }));
+    if (edgeStyles.size > 1 && !$('svg [data-vd-legend]', view)) issues.push(issue("local-legend-missing", view, zh ? "不同关系笔触需要图内说明。" : "Explain distinct relation styles inside this diagram."));
+    $$('[data-vd-legend]', view).forEach(legend => {
+      // 图例必须真正可见且不压住图形，不以存在一个空标记替代说明。
+      if (!visible(legend) || !legend.textContent.trim() || !$('[data-vd-legend-for]', legend)) issues.push(issue("legend-invalid", legend));
+      const box = rect(legend);
+      [...nodes, ...labels].forEach(item => { if (intersects(box, rect(item), 1)) issues.push(issue("legend-content-overlap", legend, item.id)); });
+    });
 
     nodes.forEach((node) => {
       const box = rect(node);
@@ -321,7 +375,15 @@
     const report = {
       status: issues.length ? "failed" : "passed",
       viewport: { width: window.innerWidth, height: window.innerHeight },
-      issues
+      issues,
+      // 阅读数据供观察者核对长卷、留白和重复视图，不能由几何通过推导产品阅读通过。
+      readingMetrics: {
+        pageHeight: document.documentElement.scrollHeight,
+        views: $$('[data-vd-view]').map(view => ({
+          id: view.id, width: rect(view).width, height: rect(view).height,
+          diagrams: $$('svg[data-vd-zoom-target]', view).map(svg => ({ width: svg.viewBox.baseVal.width, height: svg.viewBox.baseVal.height, nodes: $$('[data-vd-node]', svg).length, edges: $$('[data-vd-edge]', svg).length }))
+        }))
+      }
     };
     const output = auditOutput();
     if (output) {

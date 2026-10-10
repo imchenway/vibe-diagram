@@ -98,6 +98,10 @@ def render(title: str, language: str, css: str, script: str) -> str:
     </main>
     <output data-vd-audit-output aria-live="polite"></output>
   </div>
+  <noscript>
+    <!-- 无脚本时直接展开作者详情，保留来源阅读；不提供不可用的关闭控件。 -->
+    <style>dialog[data-vd-detail-for] {{ display:block; position:static; width:auto; max-width:none; max-height:none; margin:1rem; }} [data-vd-detail-close] {{ display:none; }}</style>
+  </noscript>
   <script id="vibe-diagram-manifest" type="application/json">
 {_manifest(title, language)}
   </script>

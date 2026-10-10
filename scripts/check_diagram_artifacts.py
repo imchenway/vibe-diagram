@@ -43,6 +43,8 @@ def example() -> str:
     # 消息顺序和标签坐标属于明确样例，不由检查器推断关系。
     for identifier, source, target, label, kind, start, end, y, label_x in [("prepare-message", "writer", "validator", "准备独立候选", "sync", 122, 358, 145, 180), ("prepared-message", "validator", "writer", "返回文件指纹", "return", 358, 122, 200, 180), ("open-message", "writer", "reader", "打开候选检查", "async", 122, 618, 255, 300), ("receipt-message", "reader", "writer", "返回画面检查记录", "return", 618, 122, 310, 280)]:
         sequence += edge(identifier, source, target, label, "message", f'data-vd-message-kind="{kind}" d="M{start} {y}H{end}"').replace(f'data-vd-edge-label="{identifier}"', f'data-vd-edge-label="{identifier}" x="{label_x}" y="{y - 10}"')
+    # 实际消息类型的图例直接引用当前时序边，手工图预留顶部位置。
+    sequence += '<g data-vd-legend transform="translate(20 0)"><g data-vd-legend-for="prepare-message"><text>同步请求</text></g><g data-vd-legend-for="prepared-message"><text>返回</text></g><g data-vd-legend-for="open-message"><text>异步</text></g></g>'
     state = node("start-state", "initial", "草稿") + node("candidate-state", "state", "等待验收") + node("failed-state", "state", "需要修正") + node("accepted-state", "terminal", "已交付")
     state += edge("freeze-transition", "start-state", "candidate-state", "静态通过后冻结", "transition") + edge("fail-transition", "candidate-state", "failed-state", "检查发现问题", "transition") + edge("repair-transition", "failed-state", "candidate-state", "修正后重新冻结", "transition") + edge("accept-transition", "candidate-state", "accepted-state", "全部验收通过", "transition")
     data = node("candidate-record", "entity", "候选文件") + node("browser-record", "entity", "视口检查记录")

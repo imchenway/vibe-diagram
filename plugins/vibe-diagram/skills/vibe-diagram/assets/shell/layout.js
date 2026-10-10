@@ -101,9 +101,9 @@
     // 判定形状类型，菱形为决策文字额外留出四角。
     const factor = shape.localName === "polygon" ? 2 : shape.localName === "ellipse" ? Math.SQRT2 : 1;
     // 自动尺寸只保留明确的最小值，不继承草稿大框；曲边形状保留文字四角空间。
-    const w = Math.ceil(Math.max(56, Number(element.dataset.vdMinWidth) || 0, (Math.max(...boxes.map(b => b.x + b.width)) - left + 24) * factor));
+    const w = Math.ceil(Math.max(56, Number(element.dataset.vdMinWidth) || 0, (Math.max(...boxes.map(b => b.x + b.width)) - left) * factor + 24));
     // 多行文本按真实高度计算，不缩小字号或丢弃作者换行。
-    const h = Math.ceil(Math.max(36, Number(element.dataset.vdMinHeight) || 0, (Math.max(...boxes.map(b => b.y + b.height)) - top + 16) * factor));
+    const h = Math.ceil(Math.max(36, Number(element.dataset.vdMinHeight) || 0, (Math.max(...boxes.map(b => b.y + b.height)) - top) * factor + 16));
     if (![w, h].every(value => Number.isFinite(value) && value > 0)) throw new Error(element.id + "：节点尺寸不可用。");
     if (shape.localName === "rect") Object.entries({ x: 0, y: 0, width: w, height: h }).forEach(([key, value]) => shape.setAttribute(key, value));
     else if (shape.localName === "ellipse") Object.entries({ cx: w / 2, cy: h / 2, rx: w / 2, ry: h / 2 }).forEach(([key, value]) => shape.setAttribute(key, value));
@@ -219,6 +219,36 @@
       drawn.push(points);
     }
   }
+  // 图例含义由作者写明，色样直接读取本图真实对象，禁止另造不一致的颜色说明。
+  function legend(svg, arrange = false) {
+    const root = svg.querySelector("[data-vd-legend]");
+    if (!root) return;
+    // 自动图先移除旧位置再量主体，重复排版不会把图例留白不断扩大。
+    const previousDisplay = root.style.display;
+    root.style.display = "none";
+    const bounds = svg.getBBox();
+    root.style.display = previousDisplay;
+    // 图例沿主体宽度换行，外部不添加卡片、边框或阅读说明段落。
+    let x = 0, y = 0, rowHeight = 0;
+    for (const item of all("[data-vd-legend-for]", root)) {
+      const target = document.getElementById(item.dataset.vdLegendFor);
+      const label = item.querySelector("text");
+      if (!target || target.closest("svg") !== svg || !label) throw new Error("图例必须引用同图真实对象并提供文字含义。");
+      const source = target.querySelector("[data-vd-shape]") || target;
+      const style = getComputedStyle(source), edge = target.hasAttribute("data-vd-edge");
+      let sample = item.querySelector("[data-vd-legend-sample]");
+      if (!sample) { sample = document.createElementNS("http://www.w3.org/2000/svg", edge ? "path" : "rect"); sample.dataset.vdLegendSample = ""; item.prepend(sample); }
+      // 普通边的箭头和虚线也随真实关系同步，节点色样使用小矩形。
+      Object.entries(edge ? { d: "M0 8H26" } : { x: 0, y: 0, width: 22, height: 16, rx: 2 }).forEach(([name, value]) => sample.setAttribute(name, value));
+      for (const property of ["fill", "stroke", "stroke-width", "stroke-dasharray", "marker-end"]) sample.style.setProperty(property, edge && property === "fill" ? "none" : style.getPropertyValue(property));
+      label.setAttribute("x", "36"); label.setAttribute("y", "13");
+      const box = item.getBBox();
+      if (x && x + box.width > Math.max(200, bounds.width)) { x = 0; y += rowHeight + 12; rowHeight = 0; }
+      item.setAttribute("transform", "translate(" + x + " " + y + ")");
+      x += box.width + 28; rowHeight = Math.max(rowHeight, box.height);
+    }
+    if (arrange) root.setAttribute("transform", "translate(" + bounds.x + " " + (bounds.y - root.getBBox().height - 28) + ")");
+  }
   // 单个自动 SVG 的排版入口，失败时恢复整个 SVG，不留下半幅新图。
   function layout(svg) {
     // 元素副本仅用于出错回滚，成功路径保留原 DOM 身份。
@@ -256,6 +286,18 @@
       } else {
         // 普通关系、流程、状态和数据关系共用分层与避障。
         const levels = ranks(nodes, edges), lanes = [...new Set(nodes.map(n => n.group))];
+        // 判断旁的独立终止出口与判断同行；只改变几何，不改拓扑、分支条件或归属。
+        const sideEnds = new Map();
+        nodes.forEach(node => {
+          // 多个入口、后续活动和回路必须仍按原有分层，不能折叠为终止旁支。
+          const incoming = edges.filter(edge => edge.to === node.id);
+          if (incoming.length !== 1 || edges.some(edge => edge.from === node.id)) return;
+          // 至少存在一条继续执行的出口，才能把独立叶子放在判断侧方。
+          const parent = nodes.find(item => item.id === incoming[0].from);
+          if (parent.shape !== "polygon" || !edges.some(edge => edge.from === parent.id && edge.to !== node.id)) return;
+          if (!incoming[0].element.hasAttribute("data-vd-side-branch") && !edges.some(edge => edge.from === parent.id && edge.to !== node.id && edges.some(next => next.from === edge.to))) return;
+          levels.set(node.id, levels.get(parent.id)); sideEnds.set(node.id, parent);
+        });
         // 主轴和横轴共用一套排版；同层居中，连续步骤中心对齐。
         const cross = horizontal ? "y" : "x", main = horizontal ? "x" : "y";
         const breadth = horizontal ? "h" : "w", depth = horizontal ? "w" : "h";
@@ -266,16 +308,20 @@
           // 同层同归属的节点横向排列，分支不互相覆盖。
           const members = nodes.filter(n => n.group === lane), rows = [...new Set(members.map(n => levels.get(n.id)))].sort((a, b) => a - b);
           // 每条泳道以最宽层为边界，各层独立居中，不按左边缘错位。
-          const width = Math.max(...rows.map(row => {
-            const rowNodes = members.filter(n => levels.get(n.id) === row);
-            return rowNodes.reduce((sum, n) => sum + n[breadth], 0) + (rowNodes.length - 1) * crossGap;
-          }));
+          // 同归属的终止旁支占侧列，主线中心不会随旁支宽度左右摆动。
+          const isSide = n => sideEnds.get(n.id)?.group === lane;
+          const span = items => items.reduce((sum, n) => sum + n[breadth], 0) + Math.max(0, items.length - 1) * crossGap;
+          const coreWidth = Math.max(0, ...rows.map(row => span(members.filter(n => levels.get(n.id) === row && !isSide(n)))));
+          const sideWidth = Math.max(0, ...rows.map(row => span(members.filter(n => levels.get(n.id) === row && isSide(n)))));
+          const width = coreWidth + (coreWidth && sideWidth ? crossGap : 0) + sideWidth;
           for (const row of rows) {
             // 分支按作者顺序展开；单节点层保持泳道中心线。
-            const rowNodes = members.filter(n => levels.get(n.id) === row);
-            const size = rowNodes.reduce((sum, n) => sum + n[breadth], 0) + (rowNodes.length - 1) * crossGap;
-            let cursor = x + (width - size) / 2;
-            rowNodes.forEach(n => { n[cross] = cursor; cursor += n[breadth] + crossGap; });
+            for (const side of [false, true]) {
+              // 每一列单独居中；不同职责的终止出口仍留在其原有职责列。
+              const rowNodes = members.filter(n => levels.get(n.id) === row && isSide(n) === side);
+              let cursor = x + (side ? coreWidth + (coreWidth ? crossGap : 0) : 0) + ((side ? sideWidth : coreWidth) - span(rowNodes)) / 2;
+              rowNodes.forEach(n => { n[cross] = cursor; cursor += n[breadth] + crossGap; });
+            }
           }
           x += width + crossGap;
         }
@@ -316,6 +362,7 @@
         const title = group.querySelector("text");
         if (title) { title.setAttribute("x", x + 16); title.setAttribute("y", y + 24); }
       });
+      legend(svg, true);
       // 画布完整包住节点、路线、标签和边界，包括回路的负向留白。
       const box = svg.getBBox(), x = Math.min(0, box.x - 24), y = Math.min(0, box.y - 24), w = Math.ceil(box.x + box.width + gap - x), h = Math.ceil(box.y + box.height + gap - y);
       svg.setAttribute("viewBox", [x, y, w, h].join(" ")); svg.setAttribute("width", w); svg.setAttribute("height", h);
@@ -327,5 +374,13 @@
     }
   }
   // 对已选择自动布局的视图统一执行；其余 HTML 和 SVG 不变。
-  globalThis.VibeDiagramLayout = { run: () => all('svg[data-vd-layout="auto"]', document).flatMap(layout), route, ranks };
+  globalThis.VibeDiagramLayout = { run: () => {
+    // 手工 SVG 保留作者预留的图例位置；自动 SVG 将图例放在实际画布左上方。
+    const issues = [];
+    all('svg', document).forEach(svg => {
+      if (svg.dataset.vdLayout === "auto") issues.push(...layout(svg));
+      else try { legend(svg); } catch (error) { issues.push({ code: "legend-invalid", id: svg.id, detail: error.message }); }
+    });
+    return issues;
+  }, route, ranks };
 })();

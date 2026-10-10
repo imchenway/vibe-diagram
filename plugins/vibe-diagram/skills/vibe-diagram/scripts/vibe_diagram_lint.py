@@ -582,6 +582,11 @@ def lint_text(html_text: str, expected_family: str = "", allow_candidates: bool 
             if expected_family not in primary_families:
                 errors.append(f"expected primary family {expected_family}, found {sorted(value for value in primary_families if isinstance(value, str))}")
 
+    # 图例必须在画布内引用同一视图的真实对象，不允许脱离关系另写一套色样。
+    for item in [element for element in parser.elements if "data-vd-legend-for" in element.attrs]:
+        target = parser.ids.get(item.attrs["data-vd-legend-for"])
+        if not item.in_svg or not item.text or not target or target.view_id != item.view_id:
+            errors.append("legend requires a same-view target and visible meaning: " + item.identifier)
     detail_targets = {element.attrs.get("data-vd-detail-for") for element in parser.elements if element.attrs.get("data-vd-detail-for")}
     for target in detail_targets:
         if target not in parser.ids:

@@ -82,7 +82,7 @@ Keep the generated shell's title region, controls, audit output, style block, an
 
 - restrained light canvas, grid, type and shared visual tokens;
 - a persistent `75% / 90% / 100% / fit` control group at the title's right;
-- optional authored detail dialogs and focus restoration;
+- optional node-anchored non-modal detail popovers and focus restoration;
 - print, reduced-motion, keyboard, and narrow-screen behavior;
 - computed geometry inspection, optional measured layout, direct-relation highlighting, stable-identity comparison and complete-view SVG/PNG export.
 
@@ -125,6 +125,8 @@ No family policy sets a maximum node count, a DOM skeleton, business wording, co
 
 Close every detail and ignore visually secondary implementation identifiers. Use only the visible summary and primary view to answer each critical Manifest question. Confirm the current conclusion or target change, business impact, applicable rules or branches, decision or next action, acceptance meaning, and unresolved items when those concepts matter to the request. Then verify that exact technical evidence remains traceable from the corresponding fact. Record `product-reading-reviewed` only when both conditions pass; lint and browser geometry cannot establish it.
 
+同时查看真实页面截图与 `receipt().readingMetrics`，核对节点留白、主线与侧支、页面长度及重复内容。页面高或图数多本身不是错误；但把相同链路逐例复制、窄图占满宽屏、用阶段切片维持流水账，都需要重新构图。按真实问题选择共用视图、差异标注或独立视图，不规定统一图数、方向或坐标。小样例和几何检查不能代替当前真实需求的阅读。
+
 ## 共享排版、阅读与导出
 
 默认对五种基础图法使用 `svg[data-vd-layout="auto"][data-vd-zoom-target]`，外套 `data-vd-viewport`。SVG 内直接放置作者确定的节点 `<g id="…" data-vd-node="…">`、连线 `<path id="…" data-vd-edge="…" data-from="…" data-to="…">` 与有编号的 `<text data-vd-edge-label="连线编号">`，所有文字在字体载入后测量。节点内用 `data-vd-shape` 标记一个 rect、ellipse 或决策 polygon；文本可用 tspan 分行。程序按实际文字加内边距收紧形状，不继承草稿的大框，不缩字或删文案。确需为内容保留空间时在节点显式声明 `data-vd-min-width`、`data-vd-min-height`；大段说明应移至映射详情。
@@ -132,6 +134,10 @@ Close every detail and ignore visually secondary implementation identifiers. Use
 流程默认横向，其他非时序图默认纵向；SVG 上 `data-vd-direction="right|down"` 可明确主方向，时序仍按消息顺序。中心对齐的相邻节点优先直连，分支、回路或障碍才需要折线。图标仅作辅助且通常为 16–20 像素，不代替流程符号。连线 marker 的形状、含义和证据由作者保留；普通箭头使用 `markerUnits="userSpaceOnUse"`、`markerWidth="8"`、`markerHeight="8"`、`viewBox="0 0 10 10"`、`refX="10"`、`refY="5"`、`orient="auto-start-reverse"`，箭头尖端与路径终点重合，不随线宽放大。数据关系和时序的专用符号保留自身语义。
 
 单层边界用同级 `<g id="边界编号" data-vd-group="职责"><rect/><text>业务职责</text></g>`，节点用 `data-vd-member-of="边界编号"` 表明归属。时序消息使用已有 `data-vd-message-kind`，每个参与者有 `line[data-vd-lifeline-for="参与者编号"]`；消息 DOM 顺序即时间顺序，返回、异步、错误和超时仍需可见区别。手工绘制的执行条使用 `data-vd-activation-for="参与者编号"`，处于该执行区间的消息连接执行条真实边缘，不补造执行时段。`data-vd-gap` 可增大留白。
+
+需要解释关系或证据状态时，把短图例放在本图 SVG 左上角，不用独立的阅读指南段落、卡片或边框。写成 `<g data-vd-legend><g data-vd-legend-for="本图真实元素编号"><text>实际业务含义</text></g></g>`；共享代码从引用元素复制真实色样和线型，并为自动图安排位置。手工图为外层图例组预留位置。图族和证据决定图例项目，不把所有图固定为三种状态。不同关系笔触缺少图内图例会使浏览器检查失败。执行过与未执行过通常是关系状态，无真实职责边界时不要为颜色另造泳道。
+
+详情沿用 `dialog[data-vd-detail-for]` 和稳定触发编号，由共享代码显示为节点旁的非模态小浮层。保留关闭、外部点击、Esc、键盘焦点返回、节点深链接、无脚本来源和打印；不要调用 showModal 或模糊整张图来显示节点详情。窄屏浮层可占可用宽度，不能移到画面外。
 
 复杂嵌套边界、时序片段或自由形状直接编排并保留同样的检查，不强行转成统一卡片。自动布局失败会恢复原 SVG 并明确报错，不能带着失败状态交付。该边界的优势是共用排版而不另建图描述协议；代价是高密度图仍可能需要分图和人工安排。
 
