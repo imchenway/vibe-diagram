@@ -101,6 +101,8 @@ Treat these as reading responsibilities, not fixed regions or a required number 
 
 Use business-first labels. A visible primary label says what an object or action means; an exact implementation name may follow in smaller or visually quieter text. If the exact name does not help the product decision, put it only in the mapped detail. For example, prefer `CRM 导入没有执行品牌匹配` with `CrmMaintenanceOrderImportService.resolveBrandCode` as secondary evidence, not the reverse.
 
+用户明确要求完整数据库表结构时，按 [数据关系图的表结构布局](archetypes/er-data-flow.md) 展示精确表名、字段、中文注释、类型和索引。表名与表注释、字段名与字段注释分别同行，类型独立右对齐；业务概述保留在页面入口。不能以“产品经理优先”为由只留关键字段，或把用户要求直接看到的完整结构移入弹窗。此规则只适用于完整表结构请求，不改变概念模型和数据流视图。
+
 Express evidence states in the artifact language while retaining the stable Manifest value. In Chinese, suitable visible meanings are `已确认事实`, `分析判断`, `拟议方案`, `待确认`, and `已验证`. Never use friendlier wording to strengthen the evidence state.
 
 Critical elements must be visibly rendered in a primary view at load time. A target inside a closed `details`, unopened `dialog`, hidden candidate tab, or appendix does not satisfy critical coverage. Keep cause, difference, decision, and result copy concise enough to scan, but preserve full evidence in mapped details.

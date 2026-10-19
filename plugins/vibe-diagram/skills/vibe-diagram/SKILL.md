@@ -22,7 +22,7 @@ The model owns fact selection, business meaning, topology and authored HTML/SVG.
 - 步骤、判断、泳道、异常和补偿：[流程图](references/archetypes/basic-flow.md)
 - 同步、异步、重试、回调和超时：[时序图](references/archetypes/code-sequence.md)
 - 生命周期与转换：[状态图](references/archetypes/state-machine.md)
-- 实体、字段与数量关系：[数据关系图](references/archetypes/er-data-flow.md)
+- 实体、字段与数量关系：[数据关系图](references/archetypes/er-data-flow.md)。用户要求完整数据库表结构或数据库 UML 样式时，必须读取其中的表结构布局规则，直接展示表名注释、字段同行注释、右对齐类型、键字段分区和独立索引区。
 
 故障、代码审查、技术设计按作者契约组织上述图法，不再选择独立场景模板。不生成独立比较表或页面原型；图形修改前后的差异对比仍保留。
 
