@@ -127,7 +127,7 @@ No family policy sets a maximum node count, a DOM skeleton, business wording, co
 
 Close every detail and ignore visually secondary implementation identifiers. Use only the visible summary and primary view to answer each critical Manifest question. Confirm the current conclusion or target change, business impact, applicable rules or branches, decision or next action, acceptance meaning, and unresolved items when those concepts matter to the request. Then verify that exact technical evidence remains traceable from the corresponding fact. Record `product-reading-reviewed` only when both conditions pass; lint and browser geometry cannot establish it.
 
-同时查看真实页面截图与 `receipt().readingMetrics`，核对节点留白、主线与侧支、页面长度及重复内容。页面高或图数多本身不是错误；但把相同链路逐例复制、窄图占满宽屏、用阶段切片维持流水账，都需要重新构图。按真实问题选择共用视图、差异标注或独立视图，不规定统一图数、方向或坐标。小样例和几何检查不能代替当前真实需求的阅读。
+直接检查渲染后的 HTML 页面与 `receipt().readingMetrics`，核对节点留白、主线与侧支、页面长度及重复内容。截图仅在排查具体视觉问题时按需使用，不是默认步骤或交付前置条件；不能把截图缺失当作阅读检查通过。页面高或图数多本身不是错误；但把相同链路逐例复制、窄图占满宽屏、用阶段切片维持流水账，都需要重新构图。按真实问题选择共用视图、差异标注或独立视图，不规定统一图数、方向或坐标。小样例和几何检查不能代替当前真实需求的阅读。
 
 ## 共享排版、阅读与导出
 
@@ -143,7 +143,9 @@ Close every detail and ignore visually secondary implementation identifiers. Use
 
 复杂嵌套边界、时序片段或自由形状直接编排并保留同样的检查，不强行转成统一卡片。自动布局失败会恢复原 SVG 并明确报错，不能带着失败状态交付。该边界的优势是共用排版而不另建图描述协议；代价是高密度图仍可能需要分图和人工安排。
 
-节点支持点击、Enter、空格高亮当前图的直接关联；Esc 或取消高亮恢复全图。已有详情与原生控件维持其操作。图片按视图导出，清除临时高亮，附带标题、摘要和 `data-vd-export-note` 图注；图片不代替 HTML 里的交互证据。需要图片的视图应只包含一幅 SVG、视图标题和声明的图注，不能把必要图例放到未声明的旁边。
+节点支持点击、Enter、空格高亮当前图的直接关联；Esc 或取消高亮恢复全图。已有详情与原生控件维持其操作。常规流程只交付 HTML，不自动调用生图工具、图片导出或生成预览；共享外壳的手动导出能力不构成额外交付要求。
+
+只有用户另行明确要求图片时，才按视图导出，清除临时高亮，附带标题、摘要和 `data-vd-export-note` 图注；图片不代替 HTML 里的交互证据。需要图片的视图应只包含一幅 SVG、视图标题和声明的图注，不能把必要图例放到未声明的旁边。
 
 混排表格、原型、多个 SVG、HTML 控件等无法完整转成单幅 SVG 时只提供整页打印，不能静默导出局部。PNG 使用浏览器原生画布并限制总像素，大图使用 SVG 或分图。无需第三方运行依赖。
 
